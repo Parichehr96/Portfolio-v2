@@ -1,0 +1,1215 @@
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #111323;
+  --cream: #F9F5EB;
+  --cream-dark: #EDEAE4;
+  --navy-light: #B3BAE1;
+  --gray-navy: #5A5D70;
+  --overlay: rgba(249, 245, 235, 0.04);
+  --nav-bg: rgba(12, 15, 32, 0.8);
+}
+
+/* ===== Reset ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== Base ===== */
+html,
+body {
+  width: 100%;
+  background-color: var(--bg);
+  font-family: "Figtree", sans-serif;
+  font-weight: 400;
+  color: var(--cream);
+  /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT turning the
+     element into a scroll container — `hidden` would make overflow-y compute to
+     `auto`, which breaks position: sticky on the sidebars. */
+  overflow-x: clip;
+}
+
+/* Hide scrollbar but keep scrolling functional */
+html {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / legacy Edge */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / WebKit */
+}
+
+/* Media never overflows its container */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Per-section identity header — only shown on mobile (< 768px), where the
+   shared left sidebar is hidden. See the responsive block at the end. */
+.section-identity {
+  display: none;
+}
+
+/* ===== Layout ===== */
+main {
+  width: 100%;
+  /* No curtain offset: #home sits at scroll position 0, always present behind
+     the fixed splash overlay. The splash fades away on scroll to reveal it. */
+}
+
+section {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ===== #splash — full-viewport intro overlay ===== */
+#splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--bg);
+  /* Everything centered both axes */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 120px 120px 120px;
+  /* Exit (opacity 1→0, scale 1→0.95) is driven on scroll in JS; scales from its
+     center so all content shrinks as one unit. */
+  transform-origin: center center;
+  will-change: opacity, transform;
+}
+
+/* Content stack: name block → 120px → headline → 40px → CTA */
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Name block — items left-aligned, 16px between the two lines */
+.splash-name-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.splash-name {
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+.splash-role {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--cream);
+}
+
+.splash-headline {
+  margin-top: 120px;
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--cream);
+  text-align: center;
+}
+
+/* CTA — dashed border pill */
+.splash-cta {
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 40px;
+  border: 1px dashed #F9F5EB;
+  border-radius: 120px;
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-style 0.3s ease, background 0.3s ease;
+}
+
+/* Hover: dashed border becomes solid */
+.splash-cta:hover {
+  border-style: solid;
+}
+
+.splash-cta-icon {
+  --fill-0: #F9F5EB;
+  flex-shrink: 0;
+  display: block;
+}
+
+.splash-cta-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--cream);
+}
+
+/* ===== Floating navigation ===== */
+.floating-nav {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  gap: 16px;
+  padding: 4px;
+  background: var(--nav-bg);
+  border: 0.2px solid #F9F5EB;
+  border-radius: 122px;
+  /* Hidden until the splash curtain begins lifting */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.floating-nav.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-item {
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.4s ease;
+}
+
+/* Recolor the Figma icons to cream via their CSS-variable fallbacks */
+.nav-item .icon {
+  --fill-0: #F9F5EB;
+  --stroke-0: #F9F5EB;
+  width: 20px;   /* 44 - 2 * 12 padding */
+  height: 20px;
+  display: block;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+/* Outline by default, filled when active */
+.nav-item .icon-filled {
+  display: none;
+}
+
+.nav-item.active {
+  background: rgba(249, 245, 235, 0.12);
+}
+
+.nav-item.active .icon-outline {
+  display: none;
+}
+
+.nav-item.active .icon-filled {
+  display: block;
+}
+
+/* Hover on inactive items: most icons are fill-based so stroke width can't be
+   changed uniformly — use the brightness/scale fallback for a subtle emphasis. */
+.nav-item:not(.active):hover .icon {
+  filter: brightness(1.15);
+  transform: scale(1.08);
+}
+
+/* ===== Continuous 3-column page layout =====
+   One layout wraps every section. The two sidebars are sticky siblings of the
+   long middle column, so they persist (never reset/repeat) across #home →
+   #works — including while the footer expands into the contact view. */
+.layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+/* Proportional sidebars: 320 / 1512 = 21.16% (matches the Figma 320px columns at
+   the 1512 design width, and scales down proportionally — ~271px @1280, ~217px
+   @1024). Middle column takes the remaining ~57.68% via flex: 1. */
+.layout-left,
+.layout-right {
+  width: 21.16%;
+  flex-shrink: 0;
+  position: sticky;
+  top: 40px;
+  align-self: flex-start;
+  height: fit-content;
+}
+
+/* Left sidebar content — 40px horizontal padding, 8px line gap */
+.layout-left {
+  padding-left: 40px;
+  padding-right: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Middle column — every section's content stacks here */
+.layout-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.layout-main > section {
+  width: 100%;
+}
+
+/* #home is always present behind the fixed splash overlay — no reveal needed. */
+
+/* Left sidebar */
+.home-name {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 28px;
+  color: #F9F5EB;
+}
+
+.home-role {
+  font-size: 15px;
+  font-weight: 400;
+  color: #F9F5EB;
+  opacity: 0.7;
+}
+
+.home-portfolio {
+  font-size: 15px;
+  color: #F9F5EB;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--cream-dark);
+  padding-bottom: 4px;
+}
+
+/* Per-section content wrapper inside the middle column */
+.home-middle {
+  width: 100%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+/* ===== #home middle — content blocks ===== */
+.mid-block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section header: uppercase label on the LEFT + dashed rule filling the rest of
+   the row (Figma: flex row, align-items center, 16px gap). */
+.mid-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.mid-label {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 28px;
+  text-transform: uppercase;
+  color: var(--navy-light);
+  white-space: nowrap;
+}
+
+.mid-rule {
+  flex: 1;
+  height: 0;
+  /* Solid, low-opacity divider (never dashed) */
+  border-top: 1px solid rgba(249, 245, 235, 0.15);
+}
+
+.mid-body {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: var(--cream);
+}
+
+/* Summary location line */
+.mid-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 28px;
+  text-transform: uppercase;
+  color: var(--navy-light);
+}
+
+.mid-flag {
+  font-size: 15px;
+}
+
+/* === FIGMA DESIGN TOKENS — Item component (node 662:8621) ===
+   Vars: Cream #F9F5EB · Cream Dark #EDEAE4 · White #FFFFFF · Navy lightest #B3BAE1 · Gray Navy #5A5D70
+   ---
+   SMALL / Default (662:8622)  — row: flex, gap 12, items-center
+     title  : Figtree Regular 15px, #F9F5EB, underline 0.5px dashed #EDEAE4, pb 4px
+     label  : Figtree Regular 14px, #F9F5EB @ 70%   (org; absent on Works list rows)
+     leader : 0.5px line, #EDEAE4 @ 40%, dash 2/4  (PRESENT in default)
+     time   : Figtree Regular 14px, #F9F5EB @ 100%
+   SMALL / Hover (662:8628)
+     title #FFFFFF · label #EDEAE4 @100% · time #FFFFFF · leader unchanged
+     icon  : vuesax send (Arrow/link), 14px, flipped scaleX(-1) — EXTERNAL items only
+   LARGE / Default (662:8634) — col: gap 8, items-start, padding 8 0
+     header: flex gap 16 items-center → title (Figtree Regular 15px/28, #B3BAE1, UPPERCASE)
+             + line (flex-1, 0.6px SOLID #5A5D70).  NO year.
+     body  : flex gap 16 items-start → thumb 343x240 bg rgba(255,255,255,0.08) r16
+             + info (Figtree Light 300, gap 16, leading 1.4, #F9F5EB):
+                 desc 14px · meta row gap 8 → label 11px @70% w44 + value 13px
+   LARGE / Hover (662:8654)
+     container border 1px dashed #F9F5EB, r16, padding 8 16, col gap 16
+     header gap 8 → title #F9F5EB (line hidden) + chevron far-right
+             (vuesax arrow-down chevron, rotate -90°, 16px, #F9F5EB)
+     thumb bg rgba(255,255,255,0.16)
+   ============================================================ */
+
+/* --- Works list (Small item, INTERNAL: scroll to a project → no hover icon) --- */
+.work-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.work-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: 15px;
+  color: var(--cream);
+  transition: all 0.2s ease;
+}
+
+/* Title: dashed underline, 0.5px #EDEAE4, pb 4px */
+.work-name {
+  border-bottom: 0.5px dashed var(--cream-dark);
+  padding-bottom: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* Leader line — present in BOTH states: 0.5px, #EDEAE4 @40%, dash 2px / gap 4px */
+.work-dots {
+  flex: 1;
+  height: 0.5px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(237, 234, 228, 0.4) 0,
+    rgba(237, 234, 228, 0.4) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+.work-year {
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--cream);
+  transition: all 0.2s ease;
+}
+
+/* Hover: title + year → white (leader unchanged) */
+.work-row:hover .work-name {
+  color: #FFFFFF;
+}
+
+.work-row:hover .work-year {
+  color: #FFFFFF;
+}
+
+/* --- Service / filter chips — 4 equal columns filling the row --- */
+.service-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.chip {
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--cream);
+  background: transparent;
+  border: 1px dashed #F9F5EB;
+  border-radius: 122px;
+  padding: 12px 16px;
+  text-align: center;
+  /* wrap rather than overflow when a label is too long for its 1fr column */
+  min-width: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Active chip: solid 0.2px border + 4% cream fill (Figma) */
+.chip.active {
+  background: rgba(249, 245, 235, 0.04);
+  border: 0.2px solid #F9F5EB;
+}
+
+/* --- Strengths --- */
+.strengths {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.strength-p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: var(--cream);
+}
+
+.strength-p strong {
+  font-weight: 600;
+}
+
+/* --- How I work: 2x2 cards --- */
+.how-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.how-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(249, 245, 235, 0.04);
+  border-radius: 16px;
+  padding: 16px 24px;
+}
+
+/* Step number + title share one row */
+.how-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 28px;
+}
+
+.how-num {
+  font-size: 14px;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+.how-title {
+  font-size: 15px;
+  color: var(--cream);
+}
+
+.how-desc {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+/* --- Footer component --- */
+.mid-footer {
+  width: 100%;
+  background: rgba(249, 245, 235, 0.04);
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  text-align: center;
+}
+
+.mid-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 80px;
+}
+
+.footer-link {
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--cream-dark);
+  padding-bottom: 4px;
+}
+
+.mid-footer-copy {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--cream-dark);
+  opacity: 0.7;
+}
+
+/* --- Lead rows (Academia / Contribution / Certificate) --- */
+.lead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Small item, EXTERNAL variant (About: Academia / Contribution / Certificate).
+   Matches Figma Item/Small + Small/Hover. Default: dashed-underlined title + org
+   (70%) + leader (present) + year (100%). Hover: title/year → white, org →
+   #EDEAE4, and the vuesax send (↗) icon appears between org and leader. */
+.lead-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lead-name {
+  border-bottom: 0.5px dashed var(--cream-dark);
+  padding-bottom: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.lead-org {
+  font-size: 14px;
+  color: var(--cream);
+  opacity: 0.7;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* ↗ send icon — vuesax send, flipped scaleX(-1). 14px, hover only. */
+.lead-arrow {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.lead-arrow svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  transform: scaleX(-1);
+}
+
+/* Leader line — present in BOTH states: 0.5px, #EDEAE4 @40%, dash 2px / gap 4px */
+.lead-dots {
+  flex: 1;
+  height: 0.5px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(237, 234, 228, 0.4) 0,
+    rgba(237, 234, 228, 0.4) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+.lead-year {
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--cream);
+  transition: all 0.2s ease;
+}
+
+.lead-row:hover .lead-name {
+  color: #FFFFFF;
+}
+
+.lead-row:hover .lead-org {
+  color: var(--cream-dark);
+  opacity: 1;
+}
+
+.lead-row:hover .lead-arrow {
+  opacity: 1;
+}
+
+.lead-row:hover .lead-year {
+  color: #FFFFFF;
+}
+
+/* --- Tri cards (Skill / All Time Favorite) --- */
+.tri-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.tri-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(249, 245, 235, 0.04);
+  border-radius: 16px;
+  padding: 24px 16px;
+}
+
+/* Card head label + a solid low-opacity divider beneath it */
+.tri-card-head {
+  display: block;
+  font-size: 14px;
+  color: var(--navy-light);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(249, 245, 235, 0.15);
+}
+
+.tri-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tri-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tri-item-name {
+  font-size: 14px;
+  color: var(--cream);
+}
+
+.tri-item-sub {
+  font-size: 12px;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+/* --- Works projects --- */
+/* Projects sit 40px apart (Figma), tighter than the 80px section rhythm. */
+#works .home-middle {
+  gap: 40px;
+}
+
+/* Large/Desktop item (clickable link). Default: no border/bg, 8px vertical
+   padding, 8px gap between header and body. A 1px dashed TRANSPARENT border is
+   reserved so the hover border doesn't shift layout (border-box). */
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  border: 1px dashed transparent;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover (Large/Desktop/Hover): 1px dashed #F9F5EB border, 16px horizontal
+   padding, header↔body gap grows 8 → 16. */
+.project:hover {
+  border-color: #F9F5EB;
+  padding: 8px 16px;
+  gap: 16px;
+}
+
+/* Filtered-out projects collapse out of the layout */
+.project[hidden] {
+  display: none;
+}
+
+/* Header row — gap 16 (default) / 8 (hover) */
+.project-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.project:hover .project-head {
+  gap: 8px;
+}
+
+/* Title: Figtree Regular 15px / 28, uppercase. #B3BAE1 → #F9F5EB on hover. */
+.project-title {
+  font-size: 15px;
+  line-height: 28px;
+  text-transform: uppercase;
+  color: var(--navy-light);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.project:hover .project-title {
+  color: #F9F5EB;
+}
+
+/* Header line — 0.6px SOLID #5A5D70. Stays flex-1 always; on hover the stroke
+   goes transparent (line disappears) and the chevron takes the far right. */
+.project-rule {
+  flex: 1;
+  height: 0;
+  border-top: 0.6px solid var(--gray-navy);
+  transition: all 0.2s ease;
+}
+
+.project:hover .project-rule {
+  border-top-color: transparent;
+}
+
+/* Right chevron (vuesax arrow-down chevron rotated -90°). 16px, far right,
+   hover only — sits after the (transparent) rule so it lands at the row end. */
+.project-arrow {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: none;
+}
+
+.project-arrow svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.project:hover .project-arrow {
+  display: block;
+}
+
+.project-body {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Info column — Figtree Light (300), gap 16, leading 1.4, #F9F5EB */
+.project-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-weight: 300;
+}
+
+.project-desc {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--cream);
+}
+
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-label {
+  flex: 0 0 44px;
+  font-size: 11px;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+.meta-value {
+  font-size: 13px;
+  color: var(--cream);
+}
+
+/* Thumbnail — fixed 343 × 240, on the LEFT. rgba(255,255,255,0.08) →
+   0.16 on hover. */
+.project-media {
+  flex: 0 0 343px;
+  width: 343px;
+  height: 240px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.project:hover .project-media {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ===== Footer → Contact: ONE element, two states =====
+   #footer-cta is the single morphing card. .footer-stage is a fixed-height
+   scroll runway below the Works content; JS sets its height to (collapsed card
+   height + one viewport) so the card can expand to fill the viewport WITHOUT
+   reflowing the document. Expansion progress (0 → 1) is driven by scroll
+   position (1:1) or by a 400ms click animation — both go through the same JS
+   render, which switches the card to position: fixed while expanding. */
+.footer-stage {
+  position: relative;
+  width: 100%;
+}
+
+/* The morphing card. Inherits bg + base box from .mid-footer; padding is dropped
+   here (each state layer owns its own padding) and the card is hinted clickable. */
+#footer-cta {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  /* OPAQUE background = the page (#111323) with .mid-footer's 4% cream tint
+     baked in (rgba(249,245,235,0.04) over #111323 = #1A1C2B). Identical to the
+     translucent card in the default state, but when the card goes position:fixed
+     and overlays the page while expanding, page content can't bleed through it. */
+  background: #1A1C2B;
+  /* JS interpolates border-radius 16 → 24 and, while 0 < progress ≤ 1, switches
+     this to position: fixed (bottom-anchored, height grows to fill the viewport,
+     left/width matched to the .footer-stage box so the left sidebar stays visible). */
+}
+
+/* DEFAULT state — the 4-link row */
+.footer-default {
+  width: 100%;
+  padding: 40px;
+}
+
+/* EXPANDED state — full contact, overlaid (absolute) so it never adds to the
+   card's natural collapsed height. JS crossfades opacity + pointer-events. */
+.footer-expanded {
+  position: absolute;
+  inset: 0;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  overflow-y: auto;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contact-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;                 /* breathing room between the 3 groups */
+}
+
+/* Header→rows gap + label sizing, scoped to the expanded contact only. */
+.footer-expanded .mid-block {
+  gap: 24px;
+}
+
+.footer-expanded .mid-label {
+  font-size: clamp(10px, 1.2vh, 15px);
+}
+
+/* Group headers reuse .mid-header / .mid-label / .mid-rule (solid rule). */
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: clamp(10px, 1.4vh, 15px);
+  color: var(--cream);
+}
+
+/* Platform name — dashed underline on the name only */
+.contact-name {
+  border-bottom: 1px dashed var(--cream-dark);
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+/* Dashed leader line filling the space between name and handle */
+.contact-leader {
+  flex: 1;
+  height: 0;
+  position: relative;
+  top: 6px;
+  border-top: 1px dashed rgba(249, 245, 235, 0.2);
+}
+
+.contact-value {
+  white-space: nowrap;
+  color: var(--cream);
+  opacity: 0.7;
+}
+
+/* Bottom row: copyright left, last-updated right */
+.contact-bottom {
+  margin-top: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.contact-copy,
+.contact-updated {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--cream-dark);
+  opacity: 0.7;
+}
+
+/* Right sidebar — intentionally empty; width + sticky come from the shared
+   .home-left, .home-right rule above. */
+
+/* ============================================================================
+   RESPONSIVE — breakpoints cascade via max-width (each tier overrides the last)
+     Desktop  ≥ 1280px : base styles above
+     Laptop   ≤ 1279px : proportional columns, tighter padding/gap
+     ≤ 1023px          : proportional columns, smaller text + thumbnails
+     Tablet   ≤  768px : single column — left sidebar becomes full-width header,
+                         right column hidden
+     Mobile   ≤  576px : sidebars gone, per-section identity header, content
+                         full-width with 24px padding, blocks stack
+   The 3-column proportions (21.16% / flex-1 / 21.16%) stay consistent at every
+   width ABOVE 768px — no fixed px overrides.
+   ============================================================================ */
+
+/* ---------- Laptop (1024–1279px) — columns stay proportional ---------- */
+@media (max-width: 1279px) {
+  .home-middle {
+    padding: 32px;
+    gap: 60px;
+  }
+  #works .home-middle {
+    gap: 36px;
+  }
+}
+
+/* ---------- ≤1023px — still 3 proportional columns; scale text + thumbnails ---------- */
+@media (max-width: 1023px) {
+  .home-middle {
+    padding: 24px;
+    gap: 48px;
+  }
+  #works .home-middle {
+    gap: 28px;
+  }
+
+  /* Body / header / list text scales down slightly */
+  .mid-label,
+  .mid-body,
+  .strength-p,
+  .footer-link,
+  .work-row,
+  .work-year,
+  .lead-row,
+  .contact-row {
+    font-size: 14px;
+  }
+
+  /* Works thumbnail shrinks but stays beside the info */
+  .project-media {
+    flex: 0 0 240px;
+    width: 240px;
+    height: 160px;
+  }
+
+  /* Chips → 2×2 */
+  .service-chips {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Skill / Favourite cards stay 3-up but tighter */
+  .tri-card {
+    padding: 16px 12px;
+  }
+  .tri-grid {
+    gap: 8px;
+  }
+
+  /* Footer links closer together */
+  .mid-footer-links {
+    gap: 40px;
+  }
+
+  /* Contact expanded — reduced padding */
+  .footer-default,
+  .footer-expanded {
+    padding: 28px;
+  }
+}
+
+/* ---------- Tablet (≤768px) — left sidebar becomes a full-width header ---------- */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  /* Left sidebar → static, full-width header row at the top of the page */
+  .layout-left {
+    width: 100%;
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    padding: 24px;
+  }
+  .layout-right {
+    display: none;
+  }
+  /* The shared left header stands in for the per-section identity here */
+  .section-identity {
+    display: none;
+  }
+}
+
+/* ---------- Mobile (≤576px) — sidebars gone, content full width ---------- */
+@media (max-width: 576px) {
+  /* Hide the header sidebar; each section shows its own identity instead */
+  .layout-left {
+    display: none;
+  }
+  .section-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Content full width with 24px padding */
+  .home-middle {
+    padding: 24px;
+    gap: 40px;
+  }
+  #works .home-middle {
+    gap: 24px;
+  }
+
+  /* Typography */
+  .mid-label {
+    font-size: 13px;
+  }
+  .mid-body,
+  .strength-p {
+    font-size: 14px;
+  }
+
+  /* Works project cards stack: thumbnail BELOW info, full width. DOM order is
+     media-first (desktop puts it left), so reverse the column to keep info on
+     top and the thumbnail beneath it on mobile. */
+  .project-body {
+    flex-direction: column-reverse;
+  }
+  .project-media {
+    flex: none;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 343 / 240;
+    border-radius: 12px;
+  }
+
+  /* Chips → 2×2, slightly smaller, comfortable tap target */
+  .service-chips {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .chip {
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+
+  /* Skill / Favourite cards stack full width */
+  .tri-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* How I Work → single column */
+  .how-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer (default) → 2×2 grid of links */
+  .mid-footer {
+    padding: 24px;
+  }
+  .mid-footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+    justify-items: center;
+  }
+
+  /* Contact (expanded) — compact padding, groups stack with 32px gap */
+  .footer-default,
+  .footer-expanded {
+    padding: 24px;
+  }
+  .contact-groups {
+    gap: 32px;
+  }
+  /* Long handles wrap instead of forcing horizontal overflow */
+  .contact-value {
+    white-space: normal;
+    word-break: break-word;
+    text-align: right;
+  }
+  .contact-leader {
+    min-width: 16px;
+  }
+  .contact-bottom {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Floating nav — smaller icons + padding (stays centered, fixed bottom) */
+  .floating-nav {
+    gap: 8px;
+  }
+  .nav-item {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+  }
+
+  /* Splash — compact padding, smaller identity + CTA */
+  #splash {
+    padding: 40px 24px 80px;
+  }
+  .splash-name {
+    font-size: 20px;
+  }
+  .splash-role {
+    font-size: 24px;
+  }
+  .splash-headline {
+    margin-top: 64px;
+  }
+  .splash-cta {
+    margin-top: 32px;
+    padding: 16px 28px;
+  }
+  .splash-cta-text {
+    font-size: 14px;
+  }
+}
