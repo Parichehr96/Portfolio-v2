@@ -1183,6 +1183,22 @@ section {
   .section-identity {
     display: none;
   }
+
+  /* Works project cards stack: title → thumbnail → description → metadata.
+     DOM order is media-first then info(desc, meta), so a plain column produces
+     exactly that order. Thumbnail goes full width between title and description.
+     Applies in both default and hover states (flex-direction is unaffected by
+     hover). */
+  .project-body {
+    flex-direction: column;
+  }
+  .project-media {
+    flex: none;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 343 / 240;
+    border-radius: 12px;
+  }
 }
 
 /* ---------- Mobile (≤576px) — sidebars gone, content full width ---------- */
@@ -1217,19 +1233,8 @@ section {
     font-size: 14px;
   }
 
-  /* Works project cards stack: thumbnail BELOW info, full width. DOM order is
-     media-first (desktop puts it left), so reverse the column to keep info on
-     top and the thumbnail beneath it on mobile. */
-  .project-body {
-    flex-direction: column-reverse;
-  }
-  .project-media {
-    flex: none;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 343 / 240;
-    border-radius: 12px;
-  }
+  /* (Project card stacking — title → thumbnail → description → metadata — is
+     handled in the ≤768 block above and inherited here.) */
 
   /* Chips → 2×2, slightly smaller, comfortable tap target */
   .service-chips {
