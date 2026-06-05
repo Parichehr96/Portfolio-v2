@@ -583,7 +583,8 @@ section {
   width: 100%;
   background: rgba(249, 245, 235, 0.04);
   border-radius: 16px;
-  padding: 40px;
+  /* Figma 662:8687 — 24px vertical / 40px horizontal. */
+  padding: 24px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -591,11 +592,15 @@ section {
   text-align: center;
 }
 
+/* Links group (Figma 662:8688): fills the width left of the title (flex:1) and
+   spreads the 3 links across equal, centered thirds — NOT bunched at the right. */
 .mid-footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 80px;
+  justify-items: center;
+  align-items: center;
 }
 
 .footer-link {
@@ -611,6 +616,25 @@ section {
    specific link is hovered, not the empty space between them). */
 .mid-footer-links:has(.footer-link:hover) .footer-link:not(:hover) {
   opacity: 0.4;
+}
+
+/* Default footer layout (Figma 662:8687): the card is a flex row — title hugs
+   its text on the left, links group (flex:1) fills the rest, gap 80px between. */
+.footer-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+/* "CONTACT ME" — Figma: Figtree Regular 14px / 20px, uppercase, #B3BAE1, hug. */
+.mid-footer-title {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: uppercase;
+  color: var(--navy-light);
+  white-space: nowrap;
 }
 
 .mid-footer-copy {
@@ -992,7 +1016,8 @@ section {
 /* DEFAULT state — the 4-link row */
 .footer-default {
   width: 100%;
-  padding: 40px;
+  /* Figma default footer — 24px vertical / 40px horizontal. */
+  padding: 24px 40px;
 }
 
 /* EXPANDED state — full contact, overlaid (absolute) so it never adds to the
@@ -1257,9 +1282,13 @@ section {
     grid-template-columns: 1fr;
   }
 
-  /* Footer (default) → 2×2 grid of links */
+  /* Footer (default) → title stacks above a 2×2 grid of links */
   .mid-footer {
     padding: 24px;
+  }
+  .footer-row {
+    flex-direction: column;
+    gap: 24px;
   }
   .mid-footer-links {
     display: grid;
@@ -1319,5 +1348,59 @@ section {
   }
   .splash-cta-text {
     font-size: 14px;
+  }
+}
+
+/* ============================================================================
+   SCROLL REVEAL — middle-column items fade up + slide in on first intersection.
+   Opt-in via `.reveal-item`; the shared observer in reveal.js toggles
+   `.revealed`. Initial → revealed is a 550ms transition; the observer applies a
+   per-item staggered transition-delay (then clears it) so batches cascade.
+   NOTE: scoped to in-flow middle-column content only — sidebars, floating nav,
+   splash, and the footer/contact card are intentionally NOT tagged.
+   ============================================================================ */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-item.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Preserve existing interactive transitions on tagged elements ---------- */
+/* The base `.reveal-item` rule replaces these elements' own `transition`, so we
+   re-declare their hover/dim transitions alongside the reveal ones. */
+
+/* Project card: keep the 0.2s hover morph (border / padding / gap). It never
+   animates opacity on hover, so there's no clash with the reveal opacity. */
+.project.reveal-item {
+  transition:
+    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease,
+    padding 0.2s ease,
+    gap 0.2s ease;
+}
+
+/* List rows dim siblings via opacity on hover. While the dim state is active,
+   restore the snappy 0.2s opacity transition (more specific than the reveal
+   base, so it wins only during the hover-dim). */
+.work-list:has(.work-row:hover) .work-row.reveal-item:not(:hover),
+.lead-list:has(.lead-row:hover) .lead-row.reveal-item:not(:hover) {
+  transition: opacity 0.2s ease;
+}
+
+/* --- Reduced motion: no animation, final state immediately. !important beats
+   the per-element transition overrides above regardless of specificity. ------ */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

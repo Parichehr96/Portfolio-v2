@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONTON — Case Study · Parichehr Talebzadeh</title>
+
+  <!-- Figtree from Google Fonts (300, 400, 600) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Shared design system (CSS variables, layout, nav, footer, mid-* blocks) -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ============================================================
+       Case-study-specific styles. Built ON TOP of the shared design
+       system in styles.css: same CSS variables, same .layout / sidebars /
+       footer component / .mid-header section headers. (No floating nav on
+       case-study pages.)
+       ============================================================ -->
+  <style>
+    /* The case study reuses .home-middle (40px padding, 80px block rhythm). */
+
+    /* --- Prose --- */
+    .case-prose {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-body {
+      /* Figma Body/medium — Figtree Regular 14px (line-height opened to 1.7
+         for long-form reading). */
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--cream);
+    }
+    .case-body strong {
+      font-weight: 600;
+    }
+    /* A bolded lead phrase that opens a paragraph (Token Hunter, For organizers…) */
+    .case-lead {
+      font-weight: 600;
+    }
+
+    /* --- Image / mockup placeholders (Works-thumbnail style) --- */
+    .case-figure {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0;
+    }
+    .case-media {
+      width: 100%;
+      /* Cream-tinted image holder (matches the hero .case-phone placeholders). */
+      background: rgba(249, 245, 235, 0.06);
+      border: 0.5px solid rgba(249, 245, 235, 0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+    }
+    .case-media--md { min-height: 360px; }
+    .case-media--lg { min-height: 480px; }
+    .case-media--xl { min-height: 620px; align-items: flex-start; }
+    /* Centered panel title baked into some diagram mockups */
+    .case-media-title {
+      font-size: 22px;
+      line-height: 28px;
+      color: var(--cream);
+      opacity: 0.5;
+    }
+    .case-caption {
+      font-size: 12px;
+      line-height: 1.5;
+      /* Muted cream — same family as .meta-label text elsewhere on the site. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+
+    /* Hero: a row of 4 app-screenshot placeholders */
+    .case-phones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .case-phone {
+      aspect-ratio: 9 / 19;
+      background: rgba(249, 245, 235, 0.06);
+      border: 0.5px solid rgba(249, 245, 235, 0.1);
+      border-radius: 16px;
+    }
+
+    /* --- Introduction metadata (label / value rows) --- */
+    .case-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .case-inforow {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
+      align-items: baseline;
+    }
+    .case-infolabel {
+      font-size: 15px;
+      /* Muted cream (definition-list label), NOT navy — navy is reserved for
+         section-level headers only. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-infovalue {
+      font-size: 15px;
+      color: var(--cream);
+    }
+
+    /* --- Numbered sub-decisions (Key Design Decisions) --- */
+    .case-subs {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+    .case-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--cream);
+    }
+
+    /* --- Data tables (Impact) --- */
+    .case-tablewrap {
+      width: 100%;
+      overflow-x: auto;
+      background: rgba(249, 245, 235, 0.04);
+      border-radius: 16px;
+    }
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .case-table th {
+      text-align: left;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 28px;
+      color: var(--cream);
+      padding: 24px;
+      white-space: nowrap;
+    }
+    .case-table td {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--cream);
+      padding: 20px 24px;
+      border-top: 1px solid rgba(249, 245, 235, 0.1);
+      vertical-align: top;
+    }
+    .case-table td:first-child,
+    .case-table th:first-child {
+      color: var(--cream);
+    }
+
+    /* --- Definition list (Reflection: term + description rows) --- */
+    /* Sub-items separated by whitespace only — no divider lines (the section
+       header keeps its own rule). */
+    .case-deflist {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .case-defrow {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 24px;
+    }
+    .case-defterm {
+      font-size: 14px;
+      line-height: 1.5;
+      /* Muted cream label, NOT navy. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-defdesc {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--cream);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1023px) {
+      .case-body,
+      .case-defterm,
+      .case-defdesc,
+      .case-infolabel,
+      .case-infovalue {
+        font-size: 14px;
+      }
+      .case-table th { font-size: 18px; }
+    }
+    @media (max-width: 768px) {
+      .case-phones { grid-template-columns: repeat(2, 1fr); }
+      .case-inforow { grid-template-columns: 100px 1fr; }
+      .case-defrow { grid-template-columns: 1fr; gap: 8px; }
+    }
+    @media (max-width: 576px) {
+      .case-phones { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .case-media--md,
+      .case-media--lg,
+      .case-media--xl { min-height: 240px; }
+      .case-inforow { grid-template-columns: 88px 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- One continuous 3-column page layout; sidebars persist across the page -->
+    <div class="layout">
+      <!-- Left sidebar — sticky. Figma: project title + tagline + "Go Back". -->
+      <aside class="layout-left">
+        <h2 class="home-name">ONTON</h2>
+        <p class="home-role">Designing the “Social-Chain” Bridge</p>
+        <a class="home-portfolio go-back" href="index.html#works">Go Back</a>
+      </aside>
+
+      <!-- Middle column — the case study -->
+      <div class="layout-main">
+        <section id="onton">
+          <div class="home-middle">
+
+            <!-- 1. HERO — 1-MINUTE READ -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">1-Minute Read</span>
+                <span class="mid-rule"></span>
+              </div>
+              <!-- Row of 4 app-onboarding screenshots (placeholders) -->
+              <div class="case-phones reveal-item" aria-hidden="true">
+                <div class="case-phone"></div>
+                <div class="case-phone"></div>
+                <div class="case-phone"></div>
+                <div class="case-phone"></div>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">ONTON is a Telegram app connecting crypto communities to on-chain event verification.</p>
+                <p class="case-body reveal-item">Organisers issue proof-of-attendance badges directly in-app; participants collect them as credentials. I joined as the founding product designer before there was a design system, a defined user flow, or a clear picture of who the product was actually for.</p>
+                <p class="case-body reveal-item">The challenge wasn’t one problem, it was a system of interconnected ones. Two distinct user types with opposite mental models. An event creation flow that required technical knowledge most organisers didn’t have. A badge collection experience that felt transactional when it needed to feel rewarding. And an underlying blockchain integration that had to stay completely invisible to users who didn’t care about the technology at all.</p>
+                <p class="case-body reveal-item">Over 13 months I designed the full product from scratch: information architecture, design system, organiser flows, attendee experience, and onboarding for both sides.<br />I reduced event creation time by 36% through flow restructuring and progressive disclosure. Daily active users grew from 87 to over 1,500 — a 17× increase.</p>
+                <p class="case-body reveal-item">ONTON is no longer active, but it shipped, it scaled, and it proved that Web3 infrastructure can be wrapped in an experience that doesn’t ask users to understand it.</p>
+              </div>
+            </div>
+
+            <!-- 2. INTRODUCTION — metadata -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Introduction</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-info">
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Role</span><span class="case-infovalue">Product / UX Designer</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Timeline</span><span class="case-infovalue">13 months · May 2024 – June 2025</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Team</span><span class="case-infovalue">Sole designer, 1 lead, 4 developers, 3 marketers</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Client</span><span class="case-infovalue">Pome group (Finnish studio)</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Industry</span><span class="case-infovalue">Mobile App · Consumer · Web3</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Tools</span><span class="case-infovalue">Figma, Miro, FigJam, Metabase</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Status</span><span class="case-infovalue">Shipped product · No longer active</span></div>
+              </div>
+            </div>
+
+            <!-- 3. THE PROBLEM -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">The Problem: Community Lives in Chat, Trust Lives on the Blockchain</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">This is the story of how we turned Telegram conversations into verified experiences. In the TON ecosystem, crypto communities organise through Telegram, but verifying identity, distributing event badges, and connecting wallets all happen outside of it. Users bounce between bots, external links, and unfamiliar interfaces just to attend a meetup.</p>
+                <p class="case-body reveal-item">When I joined in May 2024, the product was a legacy Telegram bot serving 87 daily active users. It worked, but barely. The flows weren’t architecturally designed, they had grown organically without a design system, brand identity, or consistent interaction patterns. Users couldn’t easily understand what to do, and the technical infrastructure couldn’t support the features the business needed, especially in-app wallet connection.</p>
+                <p class="case-body reveal-item">The company wanted to pivot from the legacy bot to a Telegram Mini App. I was brought on as the sole designer to lead that transition.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <div class="case-media case-media--lg" aria-hidden="true">
+                  <span class="case-media-title">Mini App event screens</span>
+                </div>
+                <figcaption class="case-caption">Mini App event screens after multiple iterations</figcaption>
+              </figure>
+            </div>
+
+            <!-- 4. MY ROLE -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">My Role</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">I was the only designer for the full 13 months. Other designers joined briefly, usually for about a month, but rarely got through onboarding before leaving. I maintained roughly 90% of all design output myself.</p>
+                <p class="case-body reveal-item">My responsibilities covered the full scope: I initiated the design system, defined the feature list, sketched wireframes, designed high-fidelity interfaces, and iterated on flows continuously based on analytics and user feedback. I worked directly with the founder (who also acted as product manager), the dev team on technical feasibility, and a distributed marketing team with researchers in Russia, Ukraine, Belarus, Finland, and Bali.</p>
+              </div>
+            </div>
+
+            <!-- 5. RESEARCH INSIGHTS -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Research Insights</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item"><span class="case-lead">The Token Hunter Problem</span><br />The marketing team had investigators embedded in TON community hubs across five countries. They spent time with real community members, observing behaviour, gathering feedback, and reporting insights back to the team.</p>
+                <p class="case-body reveal-item">The most important finding reshaped how I thought about the product: <strong>the majority of users weren’t attending events for the events. They were hunting badges and tokens, hoping these proof-of-attendance assets would eventually convert to real cryptocurrency value.</strong></p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <div class="case-media case-media--xl" aria-hidden="true">
+                  <span class="case-media-title">Participants &amp; Organizers</span>
+                </div>
+                <figcaption class="case-caption">Diagram: the two-sided trust problem — organisers vs. participants</figcaption>
+              </figure>
+              <div class="case-prose">
+                <p class="case-body reveal-item">This created a two-sided design problem:</p>
+                <p class="case-body reveal-item"><strong>For organizers:</strong> How do you verify that attendees actually showed up, without creating an administrative burden?</p>
+                <p class="case-body reveal-item"><strong>For participants:</strong> How do you make wallet connection and badge claiming feel safe, inside an environment (Telegram) where external links and wallet prompts are associated with scams and “drainers”?</p>
+              </div>
+            </div>
+
+            <!-- 6. DESIGN PRINCIPLES -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Design Principles</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">Three principles emerged from the research and guided decisions throughout the project:</p>
+                <p class="case-body reveal-item"><strong>1. If it’s not in the chat, it’s not happening.</strong> Users live in Telegram. Every flow needed to feel native — no external links, no app switching, no new mental models.</p>
+                <p class="case-body reveal-item"><strong>2. Security through familiarity.</strong> Wallet connection and verification had to feel like standard system behaviour, not a crypto-specific interaction. Reduce jargon, increase trust.</p>
+                <p class="case-body reveal-item"><strong>3. Simplify by default, expand by choice.</strong> Not every organiser needs advanced features. The default flow should be fast and general; complexity should be opt-in.</p>
+              </div>
+            </div>
+
+            <!-- 7. THE LEGACY SYSTEM -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">The Legacy System: What I Started With</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">The existing bot had two core flows: organisers could create events, and participants could join them.<br />Event creation required the organiser to set: name, description, date/time, event type (online/offline), venue location, capacity, category, whether the event required a password for badge claiming, and whether registration needed a form submission with organiser approval.</p>
+                <p class="case-body reveal-item">Participation surfaced this information and let users register. But the interface was a command-line-style bot — no visual hierarchy, no brand consistency, no designed flows. Users typed commands rather than navigating an interface.</p>
+                <p class="case-body reveal-item">The system worked for a small community, but couldn’t scale. There was no infrastructure for in-app wallet connection, no way to expand features without breaking existing flows, and no design language to build on.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <div class="case-media case-media--lg" aria-hidden="true">
+                  <span class="case-media-title">Legacy bot flow</span>
+                </div>
+                <figcaption class="case-caption">Legacy bot interaction flow — command-based, unstructured</figcaption>
+              </figure>
+            </div>
+
+            <!-- 8. KEY DESIGN DECISIONS -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Key Design Decisions</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-subs">
+                <!-- 8.1 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">1. Design System Aligned with Telegram</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">To make this Mini App feel native rather than foreign, I built the design system around Telegram’s own visual language — matching its colours, spacing patterns, and general appearance. This was a deliberate constraint: users should feel like they’re still inside Telegram, not visiting an external product.</p>
+                    <p class="case-body reveal-item">The exception was the event ticket itself — I used glassmorphic card styling specifically to create a moment of visual distinction. Telegram didn’t offer anything like it, so there were no existing expectations to break. The ticket needed to feel “ownable,” like a collectible rather than a receipt.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <div class="case-media case-media--lg" aria-hidden="true">
+                      <span class="case-media-title">Event participation</span>
+                    </div>
+                    <figcaption class="case-caption">Event Participation. Telegram-vibed components + glassmorphic ticket card. Event list + Event Details + Ticket to the event</figcaption>
+                  </figure>
+                </div>
+
+                <!-- 8.2 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">2. Wallet Connection as a Native Moment</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">The biggest trust barrier was wallet connection. In the crypto space, pop-ups asking users to connect wallets are strongly associated with scams. I worked with the dev team to implement TON Connect as a nested flow — the wallet prompt appeared like a native system alert rather than an external redirect. I replaced technical copy like “Sign this message” with “Verify your identity” to lower the psychological barrier.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <div class="case-media case-media--md" aria-hidden="true">
+                      <span class="case-media-title">Wallet connection flow</span>
+                    </div>
+                    <figcaption class="case-caption">Wallet connection flow: tap “Join” → native-feeling wallet prompt → verified</figcaption>
+                  </figure>
+                </div>
+
+                <!-- 8.3 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">3. The Password Pivot: From Notification to Confirmation</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">To combat token hunters seeking bots to claim badges without attending, we introduced a password system. The organiser could set a password, then trigger a push notification during the event — attendees had a two-minute window to enter it and claim their badge.</p>
+                    <p class="case-body reveal-item">It failed. Users complained about missing the notification despite being physically present. The time pressure created anxiety rather than security. People felt punished for being in the room but not watching their phone at the right moment.</p>
+                    <p class="case-body reveal-item">We pivoted to a simpler model: the password remained active throughout the entire event duration. Attendees could confirm at any point. It was less “secure” in theory, but far more humane in practice — and it eliminated the complaints entirely.</p>
+                  </div>
+                </div>
+
+                <!-- 8.4 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">4. Event Creation: Simplifying a Complex Flow</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">The creation flow carried a lot of options — password, forms, capacity, categories, online/offline toggle, location. For power users running large community events, these were essential. For someone organising a casual meetup, they were overwhelming.</p>
+                    <p class="case-body reveal-item">Looking back, one of my clearest regrets is not implementing a progressive disclosure pattern earlier: a simplified default creation flow with advanced features hidden behind toggles (off by default). I eventually understood this, but the insight came later than it should have.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <div class="case-media case-media--md" aria-hidden="true">
+                      <span class="case-media-title">Event creation flow</span>
+                    </div>
+                    <figcaption class="case-caption">Paid event creation flow — key screens with annotation on complexity points</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <!-- 9. IMPACT -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Impact</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">Over 13 months, the product grew from a small legacy bot to a functioning platform:</p>
+              </div>
+              <div class="case-tablewrap reveal-item">
+                <table class="case-table">
+                  <thead>
+                    <tr><th scope="col">Metric</th><th scope="col">Before</th><th scope="col">After</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Daily Active Users</td><td>87</td><td>~1,500 (17× growth)</td></tr>
+                    <tr><td>Total User Profiles</td><td>—</td><td>30,000+</td></tr>
+                    <tr><td>Event Creation Time</td><td>3 min 34 sec</td><td>2 min 17 sec (36% reduction)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">The 30-second claim for the participant join flow — from chat message to verified ticket — was measured across multiple users after the new ticket interface was implemented.</p>
+              </div>
+              <div class="case-tablewrap reveal-item">
+                <table class="case-table">
+                  <thead>
+                    <tr><th scope="col">KPI</th><th scope="col">How It’s Measured</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Task Completion Time</td><td>Time taken for each step and total event creation time.</td></tr>
+                    <tr><td>Task Success Rate</td><td>% of users who complete each task without assistance.</td></tr>
+                    <tr><td>Error Rate</td><td># of misclicks, form submission errors, or moments of confusion.</td></tr>
+                    <tr><td>User Satisfaction</td><td>Post-task ratings (1–5 scale) and qualitative feedback.</td></tr>
+                    <tr><td>Cognitive Load</td><td>Observed hesitation, pauses, and confidence levels (e.g., “Where do I click next?”).</td></tr>
+                    <tr><td>Feature Discovery Rate</td><td>% of users who successfully find and use key features like “Spin to Win,” NFT gating, or templates.</td></tr>
+                    <tr><td>NPS-style Recommendation</td><td>“Would you recommend this tool to others to create events?” (scale 0–10).</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 10. WHAT HAPPENED TO THE PROJECT -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">What Happened to the Project</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">I want to be transparent: the business was on a downward trajectory, and shortly after I exited, the project failed. The service is no longer available, though the website, campaign tokens, and code repository still exist.</p>
+                <p class="case-body reveal-item">This doesn’t diminish the design work. The product shipped, served real users, and grew significantly during its lifespan. But it’s a reminder that good design doesn’t guarantee business survival — and I think it’s important to say that honestly.</p>
+              </div>
+            </div>
+
+            <!-- 11. REFLECTION -->
+            <div class="mid-block">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Reflection</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-deflist">
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What worked</span>
+                  <div class="case-defdesc">
+                    <p>The Telegram-native design system was the right call. By constraining the visual language to match Telegram’s patterns, we removed the “this feels foreign” friction that kills adoption in Mini Apps. The glassmorphic ticket was a calculated exception — differentiation in the one place where users wanted to feel ownership.</p>
+                    <p>The password pivot is the interaction decision I’m most confident about. Choosing usability over theoretical security — and responding to real complaints rather than defending the original design — was the right instinct.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I’d do differently</span>
+                  <div class="case-defdesc">
+                    <p>I’d implement progressive disclosure in event creation much earlier. The toggle-based approach (simple by default, complex by choice) would have made the platform more accessible to casual organisers from day one rather than serving only power users.</p>
+                    <p>I’d also invest more in simplifying the attendance flow without compromising badge security. The tension between making it easy for real attendees and hard for bots is a design problem I didn’t fully resolve.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I took forward</span>
+                  <div class="case-defdesc">
+                    <p>Thirteen months as a solo designer under constant time pressure — shipping features, iterating on feedback, maintaining consistency across a growing product — taught me that I can design functional, intuitive interfaces fast. But more importantly, it taught me to stay grounded in user evidence even when the pace feels impossible. The features that worked best were always the ones informed by real feedback from the field researchers, not the ones we assumed would work.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 12. FOOTER → CONTACT — single morphing card (same as index.html) -->
+            <div class="footer-stage" id="footer-stage">
+              <div class="mid-footer" id="footer-cta">
+                <!-- DEFAULT state -->
+                <div class="footer-default">
+                  <div class="footer-row">
+                    <span class="mid-footer-title">Contact Me</span>
+                    <div class="mid-footer-links">
+                      <a class="footer-link" href="mailto:parichehr.t96@gmail.com">Email</a>
+                      <a class="footer-link" href="https://wa.me/31657248971" target="_blank" rel="noopener">Whatsapp</a>
+                      <a class="footer-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- EXPANDED state -->
+                <div class="footer-expanded" aria-hidden="true">
+                  <div class="contact-groups">
+                    <!-- MOST DIRECT (SUGGESTED) -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Most Direct (Suggested)</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="mailto:parichehr.t96@gmail.com">
+                          <span class="contact-name">Email</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">parichehr.t96@gmail.com</span>
+                        </a>
+                        <a class="contact-row" href="https://wa.me/31657248971" target="_blank" rel="noopener">
+                          <span class="contact-name">Whatsapp</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">+31-657248971</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- SOCIAL MEDIA -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Social Media</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">
+                          <span class="contact-name">Linkedin</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/parichehr-talebzadeh</span>
+                        </a>
+                        <a class="contact-row" href="https://x.com/PariUXD" target="_blank" rel="noopener">
+                          <span class="contact-name">Twitter (X)</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/PariUXD</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- MORE IN DEPTH -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">More In Depth</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://behance.net/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Behance</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://dribbble.com/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Dribbble</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://github.com/Parichehr96" target="_blank" rel="noopener">
+                          <span class="contact-name">GitHub</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/Parichehr96</span>
+                        </a>
+                        <a class="contact-row" href="https://medium.com/@pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Medium</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/@pariuxd</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-bottom">
+                    <span class="contact-copy">© 2026, Parichehr Talebzadeh</span>
+                    <span class="contact-updated" id="last-updated"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Right sidebar — sticky, intentionally empty -->
+      <aside class="layout-right"></aside>
+    </div>
+  </main>
+
+  <script src="onton.js"></script>
+  <script defer src="reveal.js"></script>
+</body>
+</html>
