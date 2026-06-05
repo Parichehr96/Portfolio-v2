@@ -186,6 +186,7 @@ section {
 }
 
 .nav-item {
+  position: relative;
   width: 44px;
   height: 44px;
   padding: 12px;
@@ -196,6 +197,51 @@ section {
   cursor: pointer;
   background: transparent;
   transition: background 0.4s ease;
+}
+
+/* Tooltip bubble — page name (from aria-label), centered 8px above the icon.
+   Only revealed for UNSELECTED items on hover. */
+.nav-item::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  padding: 6px 12px;
+  background: #000000;
+  color: #F9F5EB;
+  font-family: "Figtree", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+/* Small triangle pointing down from the tooltip toward the icon */
+.nav-item::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #000000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.nav-item:not(.active):hover::after,
+.nav-item:not(.active):hover::before {
+  opacity: 1;
 }
 
 /* Recolor the Figma icons to cream via their CSS-variable fallbacks */
