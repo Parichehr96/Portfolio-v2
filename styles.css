@@ -603,6 +603,13 @@ section {
   text-decoration: none;
   border-bottom: 1px dashed var(--cream-dark);
   padding-bottom: 4px;
+  transition: opacity 0.2s ease;
+}
+
+/* Hover dimming: hovering one footer link dims the others to 40% (only when a
+   specific link is hovered, not the empty space between them). */
+.mid-footer-links:has(.footer-link:hover) .footer-link:not(:hover) {
+  opacity: 0.4;
 }
 
 .mid-footer-copy {
