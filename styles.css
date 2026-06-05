@@ -199,16 +199,16 @@ section {
   transition: background 0.4s ease;
 }
 
-/* Tooltip bubble — page name (from aria-label), centered 8px above the icon.
+/* Tooltip bubble — page name (from aria-label), centered 4px above the icon.
    Only revealed for UNSELECTED items on hover. */
 .nav-item::after {
   content: attr(aria-label);
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  padding: 6px 12px;
+  padding: 12px 24px;
   background: #000000;
   color: #F9F5EB;
   font-family: "Figtree", sans-serif;
@@ -221,19 +221,20 @@ section {
   transition: opacity 0.15s ease;
 }
 
-/* Small triangle pointing down from the tooltip toward the icon */
+/* Small triangle pointing down from the tooltip toward the icon, bridging the
+   4px gap (base meets the bubble, apex at the icon top). */
 .nav-item::before {
   content: "";
   position: absolute;
-  bottom: calc(100% + 2px);
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid #000000;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #000000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
