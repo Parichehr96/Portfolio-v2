@@ -242,12 +242,12 @@ section {
   align-items: flex-start;
 }
 
-/* Proportional sidebars: 320 / 1512 = 21.16% (matches the Figma 320px columns at
-   the 1512 design width, and scales down proportionally — ~271px @1280, ~217px
-   @1024). Middle column takes the remaining ~57.68% via flex: 1. */
+/* Proportional sidebars: 360 / 1512 = 23.81% (360px each at the 1512 design
+   width, scaling down proportionally — ~305px @1280, ~244px @1024). Middle
+   column takes the remaining ~52.38% via flex: 1. */
 .layout-left,
 .layout-right {
-  width: 21.16%;
+  width: 23.81%;
   flex-shrink: 0;
   position: sticky;
   top: 40px;
