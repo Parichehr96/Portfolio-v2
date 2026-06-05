@@ -587,13 +587,8 @@ section {
   transition: all 0.2s ease;
 }
 
-/* Order the row so the ↗ arrow appears immediately AFTER the title's underline
-   (before the org), per spec: [title] [arrow] [org] [leader] [year]. */
-.lead-name { order: 1; }
-.lead-arrow { order: 2; }
-.lead-org { order: 3; }
-.lead-dots { order: 4; }
-.lead-year { order: 5; }
+/* DOM order is now [title] [arrow] [org] [leader] [year] — the arrow is a real
+   sibling immediately after the underlined title (no flex `order` needed). */
 
 .lead-name {
   border-bottom: 0.5px dashed var(--cream-dark);
@@ -632,7 +627,6 @@ section {
   width: 14px;
   height: 14px;
   display: block;
-  transform: scaleX(-1);
 }
 
 .lead-row:hover .lead-arrow {
