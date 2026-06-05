@@ -605,11 +605,11 @@ section {
   transition: all 0.2s ease;
 }
 
-/* ↗ send icon — vuesax send, flipped scaleX(-1). 14px, hover only. Sits right
-   after the title (see order above). Reserves NO space when hidden: width 0 +
-   overflow hidden, and a -12px left margin cancels the row's 12px gap so the
-   title sits flush against the org. On hover it expands to 14px (margin → 0),
-   appearing between the title and the org. */
+/* ↗ link arrow (clean diagonal). 14px, hover only. Sits AFTER the label/org:
+   [title] [label] [arrow] … leader … [year]. Reserves NO space when hidden:
+   width 0 + overflow hidden, and a -12px left margin cancels the row's 12px gap
+   so the label sits flush against the leader. On hover it expands to 14px
+   (margin → 0), appearing between the label and the leader. */
 .lead-arrow {
   flex-shrink: 0;
   width: 0;
