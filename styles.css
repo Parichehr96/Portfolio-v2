@@ -587,6 +587,14 @@ section {
   transition: all 0.2s ease;
 }
 
+/* Order the row so the ↗ arrow appears immediately AFTER the title's underline
+   (before the org), per spec: [title] [arrow] [org] [leader] [year]. */
+.lead-name { order: 1; }
+.lead-arrow { order: 2; }
+.lead-org { order: 3; }
+.lead-dots { order: 4; }
+.lead-year { order: 5; }
+
 .lead-name {
   border-bottom: 0.5px dashed var(--cream-dark);
   padding-bottom: 4px;
@@ -602,12 +610,21 @@ section {
   transition: all 0.2s ease;
 }
 
-/* ↗ send icon — vuesax send, flipped scaleX(-1). 14px, hover only. */
+/* ↗ send icon — vuesax send, flipped scaleX(-1). 14px, hover only. Sits right
+   after the title (see order above). Reserves NO space when hidden: width 0 +
+   overflow hidden, and a -12px left margin cancels the row's 12px gap so the
+   title sits flush against the org. On hover it expands to 14px (margin → 0),
+   appearing between the title and the org. */
 .lead-arrow {
   flex-shrink: 0;
-  width: 14px;
+  width: 0;
   height: 14px;
+  margin-left: -12px;
+  overflow: hidden;
   opacity: 0;
+  /* The icon is its own element (a sibling of the underlined title), so it is
+     never inside the underline and carries NO line beneath it. */
+  border-bottom: none;
   transition: all 0.2s ease;
 }
 
@@ -616,6 +633,12 @@ section {
   height: 14px;
   display: block;
   transform: scaleX(-1);
+}
+
+.lead-row:hover .lead-arrow {
+  width: 14px;
+  margin-left: 0;
+  opacity: 1;
 }
 
 /* Leader line — present in BOTH states: 0.5px, #EDEAE4 @40%, dash 2px / gap 4px */
@@ -647,12 +670,25 @@ section {
   opacity: 1;
 }
 
-.lead-row:hover .lead-arrow {
-  opacity: 1;
-}
-
 .lead-row:hover .lead-year {
   color: #FFFFFF;
+}
+
+/* ===== List hover dimming =====
+   Dimming triggers ONLY when a specific item is hovered (via :has) — NOT when
+   the cursor is merely in the empty space between items. Non-hovered siblings
+   drop to 40%; the hovered item stays full. The dim rule precedes the highlight
+   rule so the hovered item (equal specificity) wins. */
+.work-list:has(.work-row:hover) .work-row:not(:hover),
+.lead-list:has(.lead-row:hover) .lead-row:not(:hover),
+.contact-list:has(.contact-row:hover) .contact-row:not(:hover) {
+  opacity: 0.4;
+}
+
+/* contact-row lacks its own transition; add one so dimming animates smoothly
+   (work-row and lead-row already transition: all 0.2s ease). */
+.contact-row {
+  transition: opacity 0.2s ease;
 }
 
 /* --- Tri cards (Skill / All Time Favorite) --- */
@@ -671,13 +707,32 @@ section {
   padding: 24px 16px;
 }
 
-/* Card head label + a solid low-opacity divider beneath it */
+/* Card head: 16px icon + label (gap 8, centered), with a solid low-opacity
+   divider beneath. Title is cream (#F9F5EB) per spec; the icon keeps its Figma
+   colour (#B3BAE1, set on each inline SVG). */
 .tri-card-head {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
-  color: var(--navy-light);
+  color: #F9F5EB;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(249, 245, 235, 0.15);
+}
+
+/* Column-title icon (16×16, inline SVG exported from Figma) */
+.tri-card-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: block;
+  position: relative;
+}
+
+.tri-card-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .tri-list {
