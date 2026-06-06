@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initHomeMiddle();
   initWorks();
   initFooterContact();
+  initCycle();
 
   // Contact "Last updated" — derived from the document's last-modified date.
   const lastUpdated = document.getElementById("last-updated");
@@ -481,4 +482,39 @@ function initWorks() {
 
   // Default filter.
   filterWorks("product-design");
+}
+
+/**
+ * How I Work cycle diagram: the .cycle box is authored at the exact Figma size
+ * (792×421, cards at fixed px). Since the middle column is narrower and fluid,
+ * scale the whole box uniformly to fit its wrapper — this keeps every position,
+ * size and the connector arrows pixel-proportional to the design. Below 768px
+ * the CSS switches .cycle to a vertical stack, so we clear the inline transform.
+ */
+function initCycle() {
+  const cycles = Array.from(document.querySelectorAll(".cycle"));
+  if (!cycles.length) return;
+
+  const DESIGN_W = 792;
+  const DESIGN_H = 421;
+  const stacked = window.matchMedia("(max-width: 768px)");
+
+  const fit = () => {
+    cycles.forEach((cycle) => {
+      const wrap = cycle.parentElement;
+      if (stacked.matches) {
+        cycle.style.transform = "";
+        wrap.style.height = "";
+        return;
+      }
+      const scale = Math.min(1, wrap.clientWidth / DESIGN_W);
+      cycle.style.transform = "scale(" + scale + ")";
+      // Reserve the scaled height so the box doesn't overlap the next section.
+      wrap.style.height = DESIGN_H * scale + "px";
+    });
+  };
+
+  fit();
+  window.addEventListener("resize", fit);
+  window.addEventListener("load", fit); // re-fit once fonts settle
 }

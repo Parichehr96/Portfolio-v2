@@ -46,7 +46,6 @@
       <aside class="layout-left">
         <h2 class="home-name">Parichehr Talebzadeh</h2>
         <p class="home-role">Product Designer</p>
-        <a class="home-portfolio" href="#home">Portfolio</a>
       </aside>
 
       <!-- Middle column — holds every section's content -->
@@ -57,7 +56,6 @@
         <div class="section-identity">
           <h2 class="home-name">Parichehr Talebzadeh</h2>
           <p class="home-role">Product Designer</p>
-          <a class="home-portfolio" href="#home">Portfolio</a>
         </div>
         <!-- 1. SUMMARY -->
         <div class="mid-block">
@@ -69,7 +67,21 @@
           <p class="mid-meta reveal-item"><span class="mid-flag">🇱🇺</span> Based in the Netherlands.</p>
         </div>
 
-        <!-- 2. WORKS -->
+        <!-- 2. SERVICES (Figma: Services sits above Works) -->
+        <div class="mid-block">
+          <div class="mid-header reveal-item">
+            <span class="mid-label">Services</span>
+            <span class="mid-rule"></span>
+          </div>
+          <div class="service-chips reveal-item">
+            <button class="chip" type="button" data-filter="product-design">Product Design</button>
+            <button class="chip" type="button" data-filter="mobile-design">Mobile Design</button>
+            <button class="chip" type="button" data-filter="web-design">Web Design</button>
+            <button class="chip" type="button" data-filter="interaction-design">Interaction Design</button>
+          </div>
+        </div>
+
+        <!-- 3. WORKS -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
             <span class="mid-label">Works</span>
@@ -99,20 +111,6 @@
           </div>
         </div>
 
-        <!-- 3. SERVICES -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Services</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="service-chips reveal-item">
-            <button class="chip" type="button" data-filter="product-design">Product Design</button>
-            <button class="chip" type="button" data-filter="mobile-design">Mobile Design</button>
-            <button class="chip" type="button" data-filter="web-design">Web Design</button>
-            <button class="chip" type="button" data-filter="interaction-design">Interaction Design</button>
-          </div>
-        </div>
-
         <!-- 4. STRENGTHS -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
@@ -127,34 +125,105 @@
           </div>
         </div>
 
-        <!-- 5. HOW I WORK -->
+        <!-- 5. HOW I WORK — cycle diagram (Figma 662:8015) -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
             <span class="mid-label">How I Work</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body reveal-item">Design is not a straight line. It's a cycle. Every answer is just a better question.</p>
-          <div class="how-grid">
-            <div class="how-card reveal-item">
-              <div class="how-head"><span class="how-num">01</span><span class="how-title">Define</span></div>
-              <p class="how-desc">Frame the real problem, align on goals, and decide what success actually looks like.</p>
-            </div>
-            <div class="how-card reveal-item">
-              <div class="how-head"><span class="how-num">02</span><span class="how-title">Research</span></div>
-              <p class="how-desc">Talk to users, study the data, and map the landscape before drawing anything.</p>
-            </div>
-            <div class="how-card reveal-item">
-              <div class="how-head"><span class="how-num">03</span><span class="how-title">Design</span></div>
-              <p class="how-desc">Explore flows and interfaces, prototype fast, and refine toward the simplest solution.</p>
-            </div>
-            <div class="how-card reveal-item">
-              <div class="how-head"><span class="how-num">04</span><span class="how-title">Validate</span></div>
-              <p class="how-desc">Test with real users, measure against the goals, and loop back to sharpen the question.</p>
+          <p class="mid-body reveal-item">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
+          <!-- 4-card cycle (Define → Research → Design → Validate). The .cycle box
+               is the exact 792×421 Figma layout; initCycle() in script.js scales
+               it to fit the column. Below 768px it stacks vertically. -->
+          <div class="cycle-wrap">
+            <div class="cycle">
+              <!-- Cycle connectors: 4 L-shaped rounded arrows, one between each
+                 adjacent pair (Define→Research→Design→Validate→Define). viewBox
+                 matches the 792×421 container; preserveAspectRatio="none" so the
+                 lines scale with the layout. Sits behind the cards (z-index 0). -->
+              <svg class="cycle-lines" viewBox="0 0 792 421" width="100%" height="100%" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <marker id="arrow" viewBox="0 0 10 10" markerWidth="6" markerHeight="6" refX="8" refY="5" orient="auto">
+                    <path d="M0 0 L10 5 L0 10 Z" fill="rgba(249, 245, 235, 0.3)"/>
+                  </marker>
+                </defs>
+                <g stroke="rgba(249, 245, 235, 0.3)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- 01 Define → 02 Research (top-right) -->
+                  <path d="M556 88 H608 Q636 88 636 116 V154" marker-end="url(#arrow)"/>
+                  <!-- 02 Research → 03 Design (bottom-right) -->
+                  <path d="M636 267 V305 Q636 333 608 333 H556" marker-end="url(#arrow)"/>
+                  <!-- 03 Design → 04 Validate (bottom-left) -->
+                  <path d="M236 333 H184 Q156 333 156 305 V267" marker-end="url(#arrow)"/>
+                  <!-- 04 Validate → 01 Define (top-left) -->
+                  <path d="M156 154 V116 Q156 88 184 88 H236" marker-end="url(#arrow)"/>
+                </g>
+              </svg>
+              <div class="cycle-card reveal-item" data-pos="define">
+                <div class="cycle-head"><span class="cycle-num">01</span><span class="cycle-title">Define</span></div>
+                <p class="cycle-desc">Clarify the problem space, set success metrics, and align on scope before a single pixel gets designed.</p>
+              </div>
+              <div class="cycle-card reveal-item" data-pos="research">
+                <div class="cycle-head"><span class="cycle-num">02</span><span class="cycle-title">Research</span></div>
+                <p class="cycle-desc">Desk research, user interviews, and field observation to answer the right questions.</p>
+              </div>
+              <div class="cycle-card reveal-item" data-pos="design">
+                <div class="cycle-head"><span class="cycle-num">03</span><span class="cycle-title">Design</span></div>
+                <p class="cycle-desc">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
+              </div>
+              <div class="cycle-card reveal-item" data-pos="validate">
+                <div class="cycle-head"><span class="cycle-num">04</span><span class="cycle-title">Validate</span></div>
+                <p class="cycle-desc">Usability testing, real feedback, honest iteration. Ship what works, cut what doesn't.</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 6. FOOTER COMPONENT -->
+        <!-- 6. WHAT OTHERS THINK (Figma 699:9142) -->
+        <!-- TEMPORARILY HIDDEN — re-enable when testimonial content is ready (remove .hidden-section) -->
+        <div class="mid-block hidden-section">
+          <div class="mid-header reveal-item">
+            <span class="mid-label">What Others Think</span>
+            <span class="mid-rule"></span>
+          </div>
+          <p class="mid-body reveal-item">Now let the people I've built with describe me.</p>
+          <div class="testi-row">
+            <div class="testi-card reveal-item">
+              <div class="testi-top">
+                <span class="testi-avatar" aria-hidden="true"></span>
+                <div class="testi-id">
+                  <p class="testi-name">Amir Tavakoli</p>
+                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                </div>
+              </div>
+              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague.</p>
+              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Full version on Linkedin</a>
+            </div>
+            <div class="testi-card reveal-item">
+              <div class="testi-top">
+                <span class="testi-avatar" aria-hidden="true"></span>
+                <div class="testi-id">
+                  <p class="testi-name">Kirsten</p>
+                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                </div>
+              </div>
+              <p class="testi-quote">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
+              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+            </div>
+            <div class="testi-card reveal-item">
+              <div class="testi-top">
+                <span class="testi-avatar" aria-hidden="true"></span>
+                <div class="testi-id">
+                  <p class="testi-name">Kirsten</p>
+                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                </div>
+              </div>
+              <p class="testi-quote">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
+              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. FOOTER COMPONENT -->
         <div class="mid-footer">
           <div class="footer-row">
             <span class="mid-footer-title">Contact Me</span>
@@ -174,7 +243,6 @@
         <div class="section-identity">
           <h2 class="home-name">Parichehr Talebzadeh</h2>
           <p class="home-role">Product Designer</p>
-          <a class="home-portfolio" href="#home">Portfolio</a>
         </div>
         <!-- CALL ME PARI -->
         <div class="mid-block">
@@ -468,7 +536,6 @@
         <div class="section-identity">
           <h2 class="home-name">Parichehr Talebzadeh</h2>
           <p class="home-role">Product Designer</p>
-          <a class="home-portfolio" href="#home">Portfolio</a>
         </div>
         <!-- Filter chips (Product Design active by default) -->
         <div class="service-chips works-filter reveal-item">

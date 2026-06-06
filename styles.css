@@ -55,6 +55,12 @@ video {
   display: none;
 }
 
+/* Utility to temporarily hide a section/block without deleting its markup.
+   !important so it wins over later/breakpoint display rules (e.g. .mid-block). */
+.hidden-section {
+  display: none !important;
+}
+
 /* ===== Layout ===== */
 main {
   width: 100%;
@@ -395,6 +401,11 @@ section {
   color: var(--cream);
 }
 
+/* Inline emphasis (e.g. "cycle" in the How I Work intro) — Figtree SemiBold. */
+.mid-body strong {
+  font-weight: 600;
+}
+
 /* Summary location line */
 .mid-meta {
   display: flex;
@@ -535,47 +546,163 @@ section {
   font-weight: 600;
 }
 
-/* --- How I work: 2x2 cards --- */
-.how-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+/* --- How I Work: cycle diagram (Figma 662:8015) ---
+   The .cycle box reproduces the exact 792×421 Figma layout (cards at fixed px);
+   initCycle() in script.js scales it (transform-origin top-left) to fit the
+   column width. Below 768px it falls back to a vertical stack. */
+.cycle-wrap {
+  width: 100%;
 }
 
-.how-card {
+.cycle {
+  position: relative;
+  width: 792px;
+  height: 421px;
+  transform-origin: top left;
+}
+
+.cycle-lines {
+  position: absolute;
+  inset: 0;
+  width: 792px;
+  height: 421px;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Step card — very subtle 3% cream bg, centered content, 24/32 padding (Figma) */
+.cycle-card {
+  position: absolute;
+  width: 320px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  background: rgba(249, 245, 235, 0.04);
+  padding: 24px 32px;
+  background: rgba(249, 245, 235, 0.03);
   border-radius: 16px;
-  padding: 16px 24px;
+  z-index: 1;
 }
+.cycle-card[data-pos="define"]   { left: 236px; top: 0; }
+.cycle-card[data-pos="validate"] { left: 0;    top: 154px; }
+.cycle-card[data-pos="research"] { left: 472px; top: 154px; }
+.cycle-card[data-pos="design"]   { left: 236px; top: 308px; }
 
-/* Step number + title share one row */
-.how-head {
+.cycle-head {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  line-height: 28px;
+  white-space: nowrap;
 }
-
-.how-num {
-  font-size: 14px;
-  color: var(--cream);
-  opacity: 0.7;
+/* Number prefix (01–04): light weight, dimmed cream, inline before the title */
+.cycle-num {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 300;
+  color: rgba(249, 245, 235, 0.5);
 }
-
-.how-title {
+.cycle-title {
   font-size: 15px;
-  color: var(--cream);
+  line-height: 28px;
+  font-weight: 500;
+  color: #F9F5EB;
+}
+.cycle-desc {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(249, 245, 235, 0.6);
 }
 
-.how-desc {
+/* --- What Others Think: testimonial cards (Figma 699:9142) ---
+   Horizontal scroll-snap row: ~2 cards plus a peek of the third are visible,
+   and the rest scroll into view. Scrollbar hidden but scrolling stays
+   functional. */
+.testi-row {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 0;          /* row starts at the column's content edge */
+  scrollbar-width: none;           /* Firefox */
+}
+.testi-row::-webkit-scrollbar {    /* WebKit — hide but keep functional */
+  display: none;
+}
+.testi-card {
+  flex: 0 0 auto;
+  /* ~2 cards + a peek of the third at desktop column width */
+  width: calc((100% - 24px) / 2.2);
+  height: 280px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(249, 245, 235, 0.03);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.testi-top {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.testi-avatar {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+.testi-id {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+.testi-name {
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--cream);
+  white-space: nowrap;
+}
+/* Role/subtitle — clamps to exactly 2 lines, ellipsis at the END only. */
+.testi-role {
   font-size: 12px;
   font-weight: 300;
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.testi-quote {
+  flex: 1;
+  min-height: 0;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--cream);
+  opacity: 0.7;
+  overflow: hidden;
+}
+.testi-link {
+  flex-shrink: 0;
+  align-self: flex-start;
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--cream-dark);
+  padding-bottom: 4px;
 }
 
 /* --- Footer component --- */
@@ -1191,6 +1318,36 @@ section {
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
+    /* Stretch the (now stacked) columns to the viewport width. Without this the
+       base `align-items: flex-start` lets .layout-main size to its content's
+       min/max-content — and the horizontal scroll row (.testi-row) has a large
+       min-content, which would otherwise widen .layout-main past the viewport
+       and clip every full-width child (the cycle, etc.) under `overflow-x: clip`. */
+    align-items: stretch;
+  }
+
+  /* How I Work cycle → vertical stack (initCycle() leaves transform/height
+     cleared at this width). Cards read in cycle order; arrows hidden. */
+  .cycle {
+    position: static;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cycle-card {
+    position: static;
+    width: 100%;
+  }
+  .cycle-lines {
+    display: none;
+  }
+
+  /* Testimonials → full-width cards, one per view in the horizontal scroll row */
+  .testi-card {
+    width: 100%;
   }
   /* Left sidebar → static, full-width header row at the top of the page */
   .layout-left {
@@ -1225,15 +1382,38 @@ section {
     aspect-ratio: 343 / 240;
     border-radius: 12px;
   }
+
+  /* Default footer → "Default/mobile" variant (Figma 800:15079): the card
+     becomes a centered column — "CONTACT ME" on top, then the three links on a
+     single row of equal, centered thirds spread across the full width. It flips
+     here (not at 576) so it switches together with the single-column layout —
+     no desktop-row-in-mobile-layout intermediate state. The base .mid-footer
+     keeps its 24px/40px padding and 16px radius; .footer-row just stacks
+     (gap 24px title→links) and .mid-footer-links spans full width so the
+     repeat(3,1fr) thirds spread evenly. Applies to the plain footer (#home /
+     #about) and the collapsed morph footer (#footer-cta) shared by onton.html. */
+  .footer-row {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .mid-footer-links {
+    width: 100%;
+    /* Figma's 80px artboard gap reduced so 3 links never overflow a phone;
+       the 1fr thirds + justify-items:center keep the even spread. */
+    gap: 16px;
+  }
 }
 
 /* ---------- Mobile (≤576px) — sidebars gone, content full width ---------- */
 @media (max-width: 576px) {
-  /* Hide the header sidebar; each section shows its own identity instead */
+  /* Hide the header sidebar. The bio (name + role) renders ONCE, at the top of
+     #home only — not repeated above #about / #works. Each section still carries
+     its own .section-identity in the markup (base rule keeps them display:none);
+     we reveal only #home's here so the bio doesn't reappear per section. */
   .layout-left {
     display: none;
   }
-  .section-identity {
+  #home .section-identity {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1277,28 +1457,14 @@ section {
     grid-template-columns: 1fr;
   }
 
-  /* How I Work → single column */
-  .how-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Footer (default) → title stacks above a 2×2 grid of links */
-  .mid-footer {
-    padding: 24px;
-  }
-  .footer-row {
-    flex-direction: column;
-    gap: 24px;
-  }
-  .mid-footer-links {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px 16px;
-    justify-items: center;
+  /* Default footer mobile variant (column + single row of links) is handled in
+     the ≤768 block above, so it flips with the single-column layout. Here we
+     only tighten the collapsed morph card's padding for the narrowest phones. */
+  .footer-default {
+    padding: 24px 40px;
   }
 
   /* Contact (expanded) — compact padding, groups stack with 32px gap */
-  .footer-default,
   .footer-expanded {
     padding: 24px;
   }
