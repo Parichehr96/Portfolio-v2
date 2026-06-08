@@ -82,22 +82,75 @@ section {
   width: 100%;
   height: 100vh;
   background-color: var(--bg);
-  /* Everything centered both axes */
+  /* Figma 662:8524 — column, horizontally centered, 120px padding all sides. */
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 80px 120px 120px 120px;
+  padding: 120px;
   /* Exit (opacity 1→0, scale 1→0.95) is driven on scroll in JS; scales from its
      center so all content shrinks as one unit. */
   transform-origin: center center;
   will-change: opacity, transform;
 }
 
-/* Content stack: name block → 120px → headline → 40px → CTA */
+/* Star field — full-bleed layer behind the splash content (z-index 0). Stars are
+   generated programmatically in initSplashStars(). */
+.splash-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* A single star — position/size/color/opacity are set inline per star. */
+.splash-star {
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* Near (Layer 3) stars breathe: a gentle opacity pulse of ±0.2 around their base
+   (--op). Duration/delay are randomised per star inline (3–7s). transform-origin
+   stays centred so the accent-pulse scale grows from the star's middle. */
+.splash-star--near {
+  transform-origin: center;
+  will-change: opacity, transform;
+  animation: splash-breathe 5s ease-in-out infinite;
+}
+
+@keyframes splash-breathe {
+  0%, 100% { opacity: var(--op); }
+  25%      { opacity: calc(var(--op) + 0.2); }
+  50%      { opacity: var(--op); }
+  75%      { opacity: calc(var(--op) - 0.2); }
+}
+
+/* Bio container (Figma 662:8525) — fills the padded area; 3 equal rows, 40px gap.
+   position/z-index keep it above the star layer. */
 .splash-content {
+  position: relative;
+  z-index: 1;
+  flex: 1 0 0;
+  width: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* Info row (Figma 662:8533 / 822:10185 / 822:10190) — equal third, content
+   vertically + horizontally centered, 40px vertical padding. */
+.splash-info {
+  flex: 1 0 0;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
 }
 
 /* Name block — items left-aligned, 16px between the two lines */
@@ -112,33 +165,26 @@ section {
   font-size: 26px;
   font-weight: 400;
   letter-spacing: 0.5px;
+  line-height: normal;
   color: var(--cream);
   opacity: 0.7;
+  white-space: nowrap;
 }
 
 .splash-role {
   font-size: 32px;
   font-weight: 400;
   letter-spacing: 0.5px;
+  line-height: normal;
   color: var(--cream);
+  white-space: nowrap;
 }
 
-.splash-headline {
-  margin-top: 120px;
-  font-size: clamp(24px, 5vw, 40px);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--cream);
-  text-align: center;
-}
-
-/* CTA — dashed border pill */
+/* CTA — dashed border pill (Figma 822:10192), no icon */
 .splash-cta {
-  margin-top: 40px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   padding: 24px 40px;
   border: 1px dashed #F9F5EB;
   border-radius: 120px;
@@ -154,17 +200,68 @@ section {
   border-style: solid;
 }
 
-.splash-cta-icon {
-  --fill-0: #F9F5EB;
-  flex-shrink: 0;
-  display: block;
-}
-
 .splash-cta-text {
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
   color: var(--cream);
+  white-space: nowrap;
+}
+
+/* Hidden tagline (Figma 822:10189) — Figtree Medium 32px, coloured like the page
+   bg so it reads as invisible, while staying in the DOM and selectable. The
+   custom cursor's cream circle is what makes it legible (see .cursor-reveal). */
+.invisible-text {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1.8;        /* Figma 822:10189 — 2-line block, leading 1.8 */
+  text-align: center;      /* each line centred (Figma text-center) */
+  white-space: nowrap;
+  color: var(--bg);
+}
+
+/* ===== Custom cursor (desktop pointers only) ===== */
+/* Hide the system cursor everywhere on fine-pointer/hover devices; the custom
+   cursor replaces it. Touch / coarse pointers keep the system cursor untouched. */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+/* Cream follower dot — created in initCustomCursor(). Centres on its (cx,cy)
+   via the translate set in JS; grows to 120px over the hidden tagline. */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cream);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0; /* revealed on first mousemove */
+  transition: width 0.2s ease-out, height 0.2s ease-out, opacity 0.2s ease;
+  will-change: transform, width, height;
+}
+.custom-cursor.is-over {
+  width: 120px;
+  height: 120px;
+}
+
+/* Reveal copy of the tagline — a body-level clone sitting ABOVE the cursor so the
+   dark text reads on the cream circle. Clipped to a circle at the cursor; the
+   circle is collapsed (radius 0) when the cursor isn't over the tagline. */
+.cursor-reveal {
+  position: fixed;
+  z-index: 9999;
+  margin: 0;
+  pointer-events: none;
+  color: #111323;
+  clip-path: circle(0px at 0 0);
+  will-change: clip-path;
 }
 
 /* ===== Floating navigation ===== */
@@ -1505,11 +1602,7 @@ section {
   .splash-role {
     font-size: 24px;
   }
-  .splash-headline {
-    margin-top: 64px;
-  }
   .splash-cta {
-    margin-top: 32px;
     padding: 16px 28px;
   }
   .splash-cta-text {
@@ -1568,5 +1661,10 @@ section {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+  /* Stars hold their base opacity — no breathing (accent pulse is skipped in JS). */
+  .splash-star--near {
+    animation: none !important;
+    opacity: var(--op);
   }
 }

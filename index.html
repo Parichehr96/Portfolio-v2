@@ -18,26 +18,30 @@
 <body>
   <main>
     <section id="splash">
+      <!-- Bio container (Figma 662:8525): fills the viewport minus 120px padding
+           as 3 equal rows — name/role (top), an empty slot (middle), CTA (bottom). -->
       <div class="splash-content">
-        <!-- Name block — left-aligned within the centered stack -->
-        <div class="splash-name-block">
-          <p class="splash-name">Parichehr Talebzadeh</p>
-          <p class="splash-role">Product Designer</p>
+        <!-- Name / role — top third, left-aligned within the centered block -->
+        <div class="splash-info">
+          <div class="splash-name-block">
+            <p class="splash-name">Parichehr Talebzadeh</p>
+            <p class="splash-role">Product Designer</p>
+          </div>
         </div>
 
-        <!-- Headline -->
-        <h1 class="splash-headline">LET’S BUILD TOGETHER</h1>
+        <!-- Middle third — hidden tagline (Figma 822:10189). Same colour as the
+             page bg so it's invisible by default, but kept in the DOM and
+             selectable; the custom cursor reveals it like ink under a flashlight. -->
+        <div class="splash-info">
+          <p class="invisible-text">Good design is invisible.<br>I spend my days creating invisibility.</p>
+        </div>
 
-        <!-- CTA pill -->
-        <button class="splash-cta" type="button">
-          <!-- Vuesax arrow-down (Figma asset, inlined so it tints to #F9F5EB) -->
-          <svg class="splash-cta-icon" width="24" height="24" viewBox="0 0 24 24"
-               fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="var(--fill-0, #F9F5EB)"/>
-            <path d="M12 21.08C11.59 21.08 11.25 20.74 11.25 20.33V3.5C11.25 3.09 11.59 2.75 12 2.75C12.41 2.75 12.75 3.09 12.75 3.5V20.33C12.75 20.74 12.41 21.08 12 21.08Z" fill="var(--fill-0, #F9F5EB)"/>
-          </svg>
-          <span class="splash-cta-text">Scroll down to start exploring</span>
-        </button>
+        <!-- CTA pill — bottom third -->
+        <div class="splash-info">
+          <button class="splash-cta" type="button">
+            <span class="splash-cta-text">Scroll to start exploring</span>
+          </button>
+        </div>
       </div>
     </section>
     <!-- One continuous 3-column page layout; sidebars persist across ALL sections -->

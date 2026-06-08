@@ -6,7 +6,9 @@
 let contactExpanded = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+  initSplashStars();
   initSplashCurtain();
+  initCustomCursor();
   initNav();
   initHomeMiddle();
   initWorks();
@@ -49,85 +51,410 @@ function filterWorks(filter) {
 
 /**
  * Splash overlay: #splash is a fixed full-viewport layer (z-index 1000) sitting
- * on top of #home, which is always present at scroll position 0. The body is
- * never locked — the user scrolls naturally.
+ * on top of #home, which is always present at scroll position 0.
  *
- * As the user scrolls the first 300px, the splash fades out (opacity 1 → 0) and
- * scales down (1 → 0.95) as one unit. Once fully gone (scrollY ≥ 300) it is set
- * to display:none and stays gone — even on scroll back to top — for the rest of
- * this page view. The floating nav, hidden while the splash is up, fades in.
+ * Dismiss triggers on the FIRST vertical scroll-intent input — wheel (vertical-
+ * dominant deltaY, up OR down), a vertical touch swipe, a vertical scroll key
+ * (Space / Arrow Up·Down / Page Up·Down / Home / End), or a CTA click. Purely
+ * horizontal input (deltaX, horizontal swipes, Arrow Left·Right) is ignored. The
+ * triggering event is hijacked (preventDefault) so the document doesn't actually
+ * scroll; we then play the 400ms fade+scale exit, reveal the nav, and smooth-
+ * scroll to #home. All input listeners are removed on the first dismiss, so
+ * normal scrolling resumes immediately.
  *
- * The "dismissed" flag is kept in memory (not sessionStorage): it persists
- * across scroll-back within this page view, but a reload re-runs the script and
- * resets it, so the splash shows again from scratch on every reload — which is
- * why we also force the scroll position to the top on load.
- *
- * The CTA pill animates the splash out over 400ms, then scrolls to the top of
- * #home.
+ * A `sessionStorage` flag ("splashSeen") records the dismissal: within the same
+ * browser session a reload skips the splash entirely; a brand-new session shows
+ * it again. (sessionStorage access is wrapped in try/catch so private-mode or
+ * storage-blocked contexts degrade gracefully to per-load behaviour.)
  */
+const SPLASH_SEEN_KEY = "splashSeen";
+
+function splashSeen() {
+  try {
+    return sessionStorage.getItem(SPLASH_SEEN_KEY) === "1";
+  } catch (e) {
+    return false;
+  }
+}
+
+function markSplashSeen() {
+  try {
+    sessionStorage.setItem(SPLASH_SEEN_KEY, "1");
+  } catch (e) {
+    /* storage blocked — fall back to in-memory `dismissing` guard only */
+  }
+}
+
 function initSplashCurtain() {
   const splash = document.getElementById("splash");
   if (!splash) return;
 
   const nav = document.getElementById("nav");
   const cta = splash.querySelector(".splash-cta");
+  const home = document.getElementById("home");
 
-  const DURATION = 300; // px of scroll over which the splash fully fades out
-
-  let dismissed = false; // splash gone for the rest of this page view
-  let exiting = false;   // CTA exit animation in progress — pause scroll driver
-  let ticking = false;
-
-  // Tear the splash down for good (this page view) and reveal the nav.
-  const dismiss = () => {
-    if (dismissed) return;
-    dismissed = true;
+  // Already dismissed earlier this session → skip the splash entirely.
+  if (splashSeen()) {
     splash.style.display = "none";
     if (nav) nav.classList.add("visible");
-  };
-
-  const render = () => {
-    ticking = false;
-    if (dismissed || exiting) return;
-
-    const progress = Math.min(window.scrollY / DURATION, 1); // 0 → 1
-    splash.style.opacity = String(1 - progress);
-    splash.style.transform = `scale(${1 - 0.05 * progress})`; // 1 → 0.95
-
-    if (progress >= 1) dismiss();
-  };
-
-  const onScroll = () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(render);
-    }
-  };
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
-
-  // CTA → animate splash out over 400ms, then jump to the top of #home.
-  if (cta) {
-    cta.addEventListener("click", () => {
-      if (dismissed || exiting) return;
-      exiting = true;
-      splash.style.transition = "opacity 0.4s ease, transform 0.4s ease";
-      splash.style.opacity = "0";
-      splash.style.transform = "scale(0.95)";
-      window.setTimeout(() => {
-        dismiss();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 400);
-    });
+    return;
   }
 
-  // Always open on the splash, from scratch, on (re)load.
+  let dismissing = false; // first valid input wins; guards re-entry
+
+  // Listeners are tracked so they can all be torn down on the first dismiss.
+  const teardowns = [];
+  const on = (target, type, handler, opts) => {
+    target.addEventListener(type, handler, opts);
+    teardowns.push(() => target.removeEventListener(type, handler, opts));
+  };
+  const removeAllInputs = () => {
+    teardowns.forEach((fn) => fn());
+    teardowns.length = 0;
+  };
+
+  // Play the (unchanged) 400ms fade+scale exit, then jump to #home.
+  const dismiss = () => {
+    if (dismissing) return;
+    dismissing = true;
+    removeAllInputs();
+    markSplashSeen();
+
+    splash.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+    splash.style.opacity = "0";
+    splash.style.transform = "scale(0.95)";
+    if (nav) nav.classList.add("visible");
+
+    window.setTimeout(() => {
+      splash.style.display = "none";
+      // Land on the first section once the splash is gone.
+      window.scrollTo({ top: home ? home.offsetTop : 0, behavior: "smooth" });
+    }, 400);
+  };
+
+  // --- Vertical scroll-intent detectors (horizontal input is ignored) ---
+
+  // Wheel: dismiss when vertical movement dominates (covers up AND down; pure
+  // horizontal trackpad swipes report |deltaX| ≥ |deltaY| and are ignored).
+  on(
+    window,
+    "wheel",
+    (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        dismiss();
+      }
+    },
+    { passive: false }
+  );
+
+  // Touch: compare the swipe's vertical vs horizontal travel from its start.
+  let touchStartX = null;
+  let touchStartY = null;
+  on(
+    window,
+    "touchstart",
+    (e) => {
+      const t = e.touches && e.touches[0];
+      touchStartX = t ? t.clientX : null;
+      touchStartY = t ? t.clientY : null;
+    },
+    { passive: true }
+  );
+  on(
+    window,
+    "touchmove",
+    (e) => {
+      if (touchStartY == null) return;
+      const t = e.touches && e.touches[0];
+      if (!t) return;
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      // Vertical-dominant swipe (up or down) beyond a small intent threshold.
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 4) {
+        e.preventDefault();
+        dismiss();
+      }
+    },
+    { passive: false }
+  );
+
+  // Keyboard: only vertical scroll keys (Left/Right arrows are NOT included).
+  const VERTICAL_KEYS = new Set([
+    " ",
+    "Spacebar", // legacy key name for Space
+    "ArrowDown",
+    "ArrowUp",
+    "PageDown",
+    "PageUp",
+    "Home",
+    "End",
+  ]);
+  on(window, "keydown", (e) => {
+    if (VERTICAL_KEYS.has(e.key)) {
+      e.preventDefault();
+      dismiss();
+    }
+  });
+
+  // CTA click (preserved).
+  if (cta) on(cta, "click", () => dismiss());
+
+  // Open on the splash, pinned to the top, on (re)load.
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   window.scrollTo(0, 0);
+}
 
-  // Set initial state.
-  render();
+/**
+ * Splash star field — a layered night sky behind the splash content.
+ *
+ * Three depth layers are generated programmatically into a .splash-stars layer
+ * (≈180 stars total): distant (60%, tiny + faint), mid (30%), and near (10%,
+ * largest + brightest). Distribution is random across the viewport but biased
+ * toward the edges, with a ~400×200px clear zone kept around the centred name/
+ * role so the text always reads cleanly.
+ *
+ * Animation is split so each effect is independent and cheap:
+ *   • Breathing twinkle — near stars only, via the CSS `splash-breathe` keyframes
+ *     (opacity pulse ±0.2 around each star's base, randomised 3–7s, ease-in-out,
+ *     looping). Only ~18 elements animate; the other ~160 are static.
+ *   • Accent pulse — every 10–15s ONE random near star briefly flashes to opacity
+ *     1.0 and scales to 1.5× over 600ms (ease-out up, ease-in settle) via the Web
+ *     Animations API, which overrides the CSS opacity while it runs and hands
+ *     back to the breathing loop when it ends. Never the same star twice in a row.
+ *
+ * Positions regenerate (debounced) on resize. The accent loop stops once the
+ * splash is dismissed (display:none), so nothing runs behind the page.
+ */
+function initSplashStars() {
+  const splash = document.getElementById("splash");
+  if (!splash) return;
+
+  let layer = splash.querySelector(".splash-stars");
+  if (!layer) {
+    layer = document.createElement("div");
+    layer.className = "splash-stars";
+    layer.setAttribute("aria-hidden", "true");
+    splash.insertBefore(layer, splash.firstChild);
+  }
+
+  const TOTAL = 180; // ~60% distant / ~30% mid / ~10% near
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  let nearStars = [];
+  let lastAccent = -1;
+  let accentTimer = null;
+
+  // ~400×200 clear zone centred on the viewport (where name/role sit).
+  const inClearZone = (x, y, w, h) =>
+    Math.abs(x - w / 2) < 200 && Math.abs(y - h / 2) < 100;
+
+  // Pick a position: random, biased denser toward the edges, never in the clear
+  // zone. d = 0 at centre → 1 at an edge; keep-probability rises with d.
+  const pickPos = (w, h) => {
+    let x = Math.random() * w;
+    let y = Math.random() * h;
+    for (let i = 0; i < 40; i++) {
+      x = Math.random() * w;
+      y = Math.random() * h;
+      if (inClearZone(x, y, w, h)) continue;
+      const d = Math.max(Math.abs(x - w / 2) / (w / 2), Math.abs(y - h / 2) / (h / 2));
+      if (Math.random() < 0.3 + 0.7 * d) break;
+    }
+    return [x, y];
+  };
+
+  const makeStar = (depth, w, h) => {
+    const [x, y] = pickPos(w, h);
+    const el = document.createElement("div");
+    el.className = "splash-star";
+    el.dataset.depth = String(depth);
+    let size, op, color;
+    if (depth === 1) {
+      size = rand(0.5, 1);   op = rand(0.2, 0.4); color = "#ffffff";
+    } else if (depth === 2) {
+      size = rand(1, 1.5);   op = rand(0.5, 0.7); color = Math.random() < 0.2 ? "#fff8f0" : "#ffffff";
+    } else {
+      size = rand(1.5, 2.5); op = rand(0.8, 1);   color = Math.random() < 0.25 ? "#f0f4ff" : "#ffffff";
+    }
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.width = size + "px";
+    el.style.height = size + "px";
+    el.style.background = color;
+
+    if (depth === 3) {
+      el.classList.add("splash-star--near");
+      el.style.setProperty("--op", op.toFixed(3));
+      el.style.animationDuration = rand(3, 7).toFixed(2) + "s";
+      el.style.animationDelay = (-rand(0, 7)).toFixed(2) + "s"; // desync the loops
+      el.dataset.base = op.toFixed(3);
+      nearStars.push(el);
+    } else {
+      el.style.opacity = op.toFixed(3);
+    }
+    return el;
+  };
+
+  const generate = () => {
+    if (splash.style.display === "none") return;
+    layer.textContent = "";
+    nearStars = [];
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const nDistant = Math.round(TOTAL * 0.6);
+    const nMid = Math.round(TOTAL * 0.3);
+    const nNear = TOTAL - nDistant - nMid;
+    const frag = document.createDocumentFragment();
+    const add = (depth, n) => { for (let i = 0; i < n; i++) frag.appendChild(makeStar(depth, w, h)); };
+    add(1, nDistant);
+    add(2, nMid);
+    add(3, nNear);
+    layer.appendChild(frag);
+  };
+
+  // One random near star flashes brighter/bigger, then settles back.
+  const accent = () => {
+    if (splash.style.display === "none") return; // splash gone — stop the loop
+    if (nearStars.length) {
+      let i = Math.floor(Math.random() * nearStars.length);
+      if (nearStars.length > 1) {
+        while (i === lastAccent) i = Math.floor(Math.random() * nearStars.length);
+      }
+      lastAccent = i;
+      const star = nearStars[i];
+      const base = parseFloat(star.dataset.base);
+      if (typeof star.animate === "function") {
+        star.animate(
+          [
+            { opacity: base, transform: "scale(1)", easing: "ease-out" },
+            { opacity: 1, transform: "scale(1.5)", offset: 0.5, easing: "ease-in" },
+            { opacity: base, transform: "scale(1)" },
+          ],
+          { duration: 600 }
+        );
+      }
+    }
+    accentTimer = window.setTimeout(accent, rand(10000, 15000));
+  };
+
+  generate();
+  // Accent pulse is motion; honour the user's reduced-motion preference.
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduceMotion) {
+    accentTimer = window.setTimeout(accent, rand(10000, 15000));
+  }
+
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(generate, 200);
+  });
+}
+
+/**
+ * Custom cursor (desktop only): a cream follower dot that replaces the system
+ * cursor and reveals the hidden splash tagline like a flashlight over invisible
+ * ink.
+ *
+ * Layering — three stacked pieces:
+ *   • .invisible-text (in #splash) — the real tagline, coloured like the page bg
+ *     so it's invisible, but in the DOM and selectable for accessibility.
+ *   • .custom-cursor (z 9998) — the cream circle. Follows the mouse with a 0.15
+ *     lerp and grows to 120px while over the tagline.
+ *   • .cursor-reveal (z 9999, ABOVE the cursor) — a body-level clone of the
+ *     tagline in dark ink, positioned over the original and clipped to a circle
+ *     at the cursor. Where it overlaps the cream circle the dark text reads;
+ *     everywhere else it's dark-on-dark and invisible. (Approach B — render the
+ *     text twice and clip the dark copy with clip-path: circle().)
+ *
+ * Only runs on fine-pointer / hover devices; touch keeps the system cursor.
+ * Respects prefers-reduced-motion by snapping (lerp = 1) instead of smoothing.
+ */
+function initCustomCursor() {
+  // Desktop pointers only — leave touch/coarse devices with the system cursor.
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+  const cursor = document.createElement("div");
+  cursor.className = "custom-cursor";
+  cursor.setAttribute("aria-hidden", "true");
+  document.body.appendChild(cursor);
+
+  const splash = document.getElementById("splash");
+  const tagline = document.querySelector(".invisible-text");
+
+  // Dark clone of the tagline that sits above the cursor and gets clipped.
+  let reveal = null;
+  if (tagline) {
+    reveal = tagline.cloneNode(true);
+    reveal.classList.add("cursor-reveal");
+    reveal.removeAttribute("id");
+    reveal.setAttribute("aria-hidden", "true");
+    document.body.appendChild(reveal);
+  }
+
+  const REVEAL_RADIUS = 60; // half of the 120px expanded cursor
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const LERP = reduceMotion ? 1 : 0.15;
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let curX = mouseX;
+  let curY = mouseY;
+  let shown = false;
+  let rect = null; // cached tagline bounding box
+
+  const measure = () => {
+    // offsetParent is null once the splash is display:none (dismissed) → no rect.
+    rect = tagline && tagline.offsetParent !== null ? tagline.getBoundingClientRect() : null;
+    if (reveal && rect) {
+      reveal.style.left = rect.left + "px";
+      reveal.style.top = rect.top + "px";
+      reveal.style.width = rect.width + "px";
+      reveal.style.height = rect.height + "px";
+    }
+  };
+  measure();
+
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!shown) {
+      shown = true;
+      cursor.style.opacity = "1";
+    }
+  });
+  // Hide the dot when the pointer leaves the window; restore on return.
+  document.addEventListener("mouseleave", () => { cursor.style.opacity = "0"; });
+  document.addEventListener("mouseenter", () => { if (shown) cursor.style.opacity = "1"; });
+  window.addEventListener("resize", measure);
+  window.addEventListener("scroll", measure, { passive: true });
+
+  const splashGone = () => splash && splash.style.display === "none";
+
+  const frame = () => {
+    curX += (mouseX - curX) * LERP;
+    curY += (mouseY - curY) * LERP;
+    cursor.style.transform =
+      "translate(" + curX + "px, " + curY + "px) translate(-50%, -50%)";
+
+    // Over the tagline (only while the splash is still showing)?
+    const over =
+      !!rect &&
+      !splashGone() &&
+      mouseX >= rect.left && mouseX <= rect.right &&
+      mouseY >= rect.top && mouseY <= rect.bottom;
+
+    cursor.classList.toggle("is-over", over);
+    if (reveal) {
+      reveal.style.clipPath = over
+        ? "circle(" + REVEAL_RADIUS + "px at " + (curX - rect.left) + "px " + (curY - rect.top) + "px)"
+        : "circle(0px at 0 0)";
+    }
+
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
 }
 
 /**
