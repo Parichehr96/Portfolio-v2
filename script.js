@@ -8,7 +8,6 @@ let contactExpanded = false;
 document.addEventListener("DOMContentLoaded", () => {
   initSplashStars();
   initSplashCurtain();
-  initCustomCursor();
   initNav();
   initHomeMiddle();
   initWorks();
@@ -92,6 +91,19 @@ function initSplashCurtain() {
   const nav = document.getElementById("nav");
   const cta = splash.querySelector(".splash-cta");
   const home = document.getElementById("home");
+
+  // A reload (soft Cmd+R or hard Cmd+Shift+R — the browser can't tell them apart)
+  // should always re-show the splash, so clear the seen flag on reload before the
+  // check below. Within-session navigation (links, returning from a case study)
+  // is NOT a reload, so the flag survives and the splash stays hidden.
+  try {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+    if (navEntry && navEntry.type === "reload") {
+      sessionStorage.removeItem(SPLASH_SEEN_KEY);
+    }
+  } catch (e) {
+    /* Navigation Timing or storage unavailable — keep existing behaviour */
+  }
 
   // Already dismissed earlier this session → skip the splash entirely.
   if (splashSeen()) {
@@ -353,111 +365,6 @@ function initSplashStars() {
 }
 
 /**
- * Custom cursor (desktop only): a cream follower dot that replaces the system
- * cursor and reveals the hidden splash tagline like a flashlight over invisible
- * ink.
- *
- * Layering — three stacked pieces:
- *   • .invisible-text (in #splash) — the real tagline, coloured like the page bg
- *     so it's invisible, but in the DOM and selectable for accessibility.
- *   • .custom-cursor (z 9998) — the cream circle. Follows the mouse with a 0.15
- *     lerp and grows to 120px while over the tagline.
- *   • .cursor-reveal (z 9999, ABOVE the cursor) — a body-level clone of the
- *     tagline in dark ink, positioned over the original and clipped to a circle
- *     at the cursor. Where it overlaps the cream circle the dark text reads;
- *     everywhere else it's dark-on-dark and invisible. (Approach B — render the
- *     text twice and clip the dark copy with clip-path: circle().)
- *
- * Only runs on fine-pointer / hover devices; touch keeps the system cursor.
- * Respects prefers-reduced-motion by snapping (lerp = 1) instead of smoothing.
- */
-function initCustomCursor() {
-  // Desktop pointers only — leave touch/coarse devices with the system cursor.
-  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-
-  const cursor = document.createElement("div");
-  cursor.className = "custom-cursor";
-  cursor.setAttribute("aria-hidden", "true");
-  document.body.appendChild(cursor);
-
-  const splash = document.getElementById("splash");
-  const tagline = document.querySelector(".invisible-text");
-
-  // Dark clone of the tagline that sits above the cursor and gets clipped.
-  let reveal = null;
-  if (tagline) {
-    reveal = tagline.cloneNode(true);
-    reveal.classList.add("cursor-reveal");
-    reveal.removeAttribute("id");
-    reveal.setAttribute("aria-hidden", "true");
-    document.body.appendChild(reveal);
-  }
-
-  const REVEAL_RADIUS = 60; // half of the 120px expanded cursor
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const LERP = reduceMotion ? 1 : 0.15;
-
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let curX = mouseX;
-  let curY = mouseY;
-  let shown = false;
-  let rect = null; // cached tagline bounding box
-
-  const measure = () => {
-    // offsetParent is null once the splash is display:none (dismissed) → no rect.
-    rect = tagline && tagline.offsetParent !== null ? tagline.getBoundingClientRect() : null;
-    if (reveal && rect) {
-      reveal.style.left = rect.left + "px";
-      reveal.style.top = rect.top + "px";
-      reveal.style.width = rect.width + "px";
-      reveal.style.height = rect.height + "px";
-    }
-  };
-  measure();
-
-  window.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    if (!shown) {
-      shown = true;
-      cursor.style.opacity = "1";
-    }
-  });
-  // Hide the dot when the pointer leaves the window; restore on return.
-  document.addEventListener("mouseleave", () => { cursor.style.opacity = "0"; });
-  document.addEventListener("mouseenter", () => { if (shown) cursor.style.opacity = "1"; });
-  window.addEventListener("resize", measure);
-  window.addEventListener("scroll", measure, { passive: true });
-
-  const splashGone = () => splash && splash.style.display === "none";
-
-  const frame = () => {
-    curX += (mouseX - curX) * LERP;
-    curY += (mouseY - curY) * LERP;
-    cursor.style.transform =
-      "translate(" + curX + "px, " + curY + "px) translate(-50%, -50%)";
-
-    // Over the tagline (only while the splash is still showing)?
-    const over =
-      !!rect &&
-      !splashGone() &&
-      mouseX >= rect.left && mouseX <= rect.right &&
-      mouseY >= rect.top && mouseY <= rect.bottom;
-
-    cursor.classList.toggle("is-over", over);
-    if (reveal) {
-      reveal.style.clipPath = over
-        ? "circle(" + REVEAL_RADIUS + "px at " + (curX - rect.left) + "px " + (curY - rect.top) + "px)"
-        : "circle(0px at 0 0)";
-    }
-
-    requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
-}
-
-/**
  * Floating nav: highlights the section at the viewport center as the user
  * scrolls (IntersectionObserver) and smooth-scrolls to a section on click.
  * The content sections sit below a 100vh curtain zone (main padding-top),
@@ -601,6 +508,75 @@ function initFooterContact() {
     };
   })();
 
+  // Soft-landing easing — cubic-bezier(0.22, 1, 0.36, 1), the site's standard
+  // expansion curve (no overshoot). Drives the click/snap height animation.
+  const ease = (() => {
+    const x1 = 0.22, y1 = 1, x2 = 0.36, y2 = 1;
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t;
+    const sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => {
+      let t = clamp(x, 0, 1);
+      for (let i = 0; i < 8; i++) {
+        const e = sx(t) - x;
+        if (Math.abs(e) < 1e-6) break;
+        const d = dx(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= e / d;
+      }
+      return sy(t);
+    };
+  })();
+
+  // Expand grows the height over EXPAND_MS while content cascades in; collapse
+  // fades content out first (COLLAPSE_FADE_MS) then shrinks (COLLAPSE_MS) — snappier.
+  const EXPAND_MS = 600;
+  const COLLAPSE_MS = 400;
+  const COLLAPSE_FADE_MS = 200;
+
+  let contentOpen = false;
+  let collapseTimer = 0;
+
+  // Per-element transition-delays for the staggered open cascade.
+  const setStagger = () => {
+    let last = 200;
+    exp.querySelectorAll(".contact-groups > .mid-block").forEach((g, gi) => {
+      const gd = 200 + gi * 80; // groups ~80ms apart, starting 200ms in
+      const header = g.querySelector(".mid-header");
+      if (header) header.style.transitionDelay = gd + "ms";
+      g.querySelectorAll(".contact-row").forEach((row, ri) => {
+        const d = gd + (ri + 1) * 40; // items ~40ms apart within a group
+        row.style.transitionDelay = d + "ms";
+        if (d > last) last = d;
+      });
+    });
+    const bottom = exp.querySelector(".contact-bottom");
+    if (bottom) bottom.style.transitionDelay = last + 60 + "ms";
+  };
+  const clearStagger = () => {
+    exp.querySelectorAll(".mid-header, .contact-row, .contact-bottom").forEach(
+      (el) => { el.style.transitionDelay = ""; }
+    );
+  };
+  const openContent = () => {
+    if (contentOpen) return;
+    contentOpen = true;
+    card.classList.remove("contact-closing");
+    setStagger();
+    card.classList.add("contact-open");
+    exp.setAttribute("aria-hidden", "false");
+  };
+  const closeContent = (fast) => {
+    if (!contentOpen) return;
+    contentOpen = false;
+    clearStagger();
+    card.classList.remove("contact-open");
+    if (fast) card.classList.add("contact-closing");
+    exp.setAttribute("aria-hidden", "true");
+  };
+
   // Measure the collapsed card height (only valid while it's static, i.e.
   // progress 0) and size the runway to exactly (card + ED).
   const measure = () => {
@@ -615,16 +591,15 @@ function initFooterContact() {
   const applyGeometry = (p, fixed) => {
     const pc = clamp(p, 0, 1);
 
-    // Crossfade: default OUT over first 30%, expanded IN after 40%.
-    const defOpacity = clamp(1 - pc / 0.3, 0, 1);
-    const expOpacity = clamp((pc - 0.4) / 0.6, 0, 1);
-    def.style.opacity = String(defOpacity);
-    def.style.pointerEvents = defOpacity > 0.05 ? "auto" : "none";
-    exp.style.opacity = String(expOpacity);
-    exp.style.pointerEvents = expOpacity > 0.05 ? "auto" : "none";
-    exp.setAttribute("aria-hidden", pc > 0.5 ? "false" : "true");
+    // Content open/close is class-driven (openContent/closeContent → CSS stagger).
+    // A click animation manages the classes itself; the scroll path binds them to
+    // progress here so dragging the page still reveals/hides the contact content.
+    if (!animating) {
+      if (pc > 0.45) openContent();
+      else closeContent(false);
+    }
 
-    card.style.borderRadius = lerp(16, 24, pc) + "px";
+    card.style.borderRadius = "16px"; // Figma expanded radius (was lerp 16→24)
 
     if (!fixed && pc <= 0.0001) {
       // Collapsed → back to normal flow, clear inline geometry.
@@ -673,6 +648,8 @@ function initFooterContact() {
 
   const cancelAnim = () => {
     if (rafId) cancelAnimationFrame(rafId);
+    clearTimeout(collapseTimer);
+    card.style.willChange = "";
     rafId = 0;
     animating = false;
   };
@@ -684,32 +661,52 @@ function initFooterContact() {
     clearTimeout(snapTimer);
     cancelAnim();
     animating = true;
+    card.style.willChange = "height";
     const from = progress;
-    const startT = performance.now();
+    const expanding = target > from;
 
-    const frame = (now) => {
-      const t = clamp((now - startT) / SNAP_MS, 0, 1);
-      const e = spring(t); // may exceed 1 (overshoot)
-      const pVisual = from + (target - from) * e;
-      const pScroll = clamp(from + (target - from) * clamp(e, 0, 1), 0, 1);
-      applyGeometry(pVisual, true);
-      progress = clamp(pVisual, 0, 1);
-      const y = Math.round(startY() + pScroll * ED);
-      lastProgrammaticY = y;
-      window.scrollTo(0, y);
-      if (t < 1) {
-        rafId = requestAnimationFrame(frame);
-      } else {
-        progress = target;
-        const y2 = Math.round(startY() + target * ED);
-        lastProgrammaticY = y2;
-        window.scrollTo(0, y2);
-        applyGeometry(target, target > 0.0001);
-        rafId = 0;
-        animating = false;
-      }
+    // Content: cascade in as the card grows, or fade out fast before it shrinks.
+    if (expanding) openContent();
+    else closeContent(true);
+
+    // Grow/shrink the card height over `dur`, keeping scrollY in lockstep so the
+    // page tracks the expansion (and there's no jump when it lands).
+    const runHeight = (dur) => {
+      const startT = performance.now();
+      const frame = (now) => {
+        const t = clamp((now - startT) / dur, 0, 1);
+        const p = from + (target - from) * ease(t);
+        applyGeometry(p, true);
+        progress = clamp(p, 0, 1);
+        const y = Math.round(startY() + clamp(p, 0, 1) * ED);
+        lastProgrammaticY = y;
+        window.scrollTo(0, y);
+        if (t < 1) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          progress = target;
+          const y2 = Math.round(startY() + target * ED);
+          lastProgrammaticY = y2;
+          window.scrollTo(0, y2);
+          applyGeometry(target, target > 0.0001);
+          if (!expanding) card.classList.remove("contact-closing");
+          card.style.willChange = "";
+          rafId = 0;
+          animating = false;
+        }
+      };
+      rafId = requestAnimationFrame(frame);
     };
-    rafId = requestAnimationFrame(frame);
+
+    if (expanding) {
+      runHeight(EXPAND_MS);
+    } else {
+      // Collapse: let the content fade out first, then shrink the card.
+      collapseTimer = setTimeout(() => {
+        card.classList.remove("contact-closing");
+        runHeight(COLLAPSE_MS);
+      }, COLLAPSE_FADE_MS);
+    }
   };
 
   // Scroll-proportional progress: the ED px above maxScroll map 1:1 to 0 → 1.

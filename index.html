@@ -708,7 +708,10 @@
         <!-- FOOTER → CONTACT: ONE element with two states.
              .footer-stage is a fixed-height scroll runway so the card can expand
              without reflowing the document; #footer-cta is the single card that
-             morphs between its default (4 links) and expanded (full contact) state. -->
+             morphs between its default (4 links) and expanded (full contact) state.
+             #contact wraps the footer as the anchor target for "Contact Me" links
+             (footer-stage/footer-cta keep their JS-referenced ids untouched). -->
+        <div id="contact">
         <div class="footer-stage" id="footer-stage">
           <div class="mid-footer" id="footer-cta">
             <!-- DEFAULT state -->
@@ -804,6 +807,7 @@
             </div>
           </div>
         </div>
+        </div>
           </div>
         </section>
       </div>
@@ -865,5 +869,6 @@
 
   <script src="script.js"></script>
   <script defer src="reveal.js"></script>
+  <script defer src="cursor.js"></script>
 </body>
 </html>

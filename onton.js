@@ -6,6 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   initGoBack();
   initFooterContact();
+  initToc();
 
   // Contact "Last updated" — derived from the document's last-modified date.
   const lastUpdated = document.getElementById("last-updated");
@@ -37,6 +38,75 @@ function initGoBack() {
     }
     // else: let the href (index.html#works) navigate normally.
   });
+}
+
+/**
+ * Sticky table of contents (right sidebar). Each .toc-item links to a section
+ * (#sec-*). Clicking smooth-scrolls there; on scroll, the section currently at
+ * the top of the viewport is marked .is-active. Data-driven off the markup, so
+ * it works for any case study page that follows the same TOC structure.
+ */
+function initToc() {
+  const nav = document.querySelector(".toc-nav");
+  if (!nav) return;
+
+  const links = Array.prototype.slice.call(nav.querySelectorAll(".toc-item"));
+  const map = new Map(); // section element → its toc link
+  links.forEach((link) => {
+    const id = (link.getAttribute("href") || "").slice(1);
+    const sec = id && document.getElementById(id);
+    if (sec) map.set(sec, link);
+  });
+  const sections = Array.from(map.keys()); // document order = link order
+  if (!sections.length) return;
+
+  // Smooth-scroll on click (same pattern as the rest of the site).
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const sec = document.getElementById(link.getAttribute("href").slice(1));
+      if (!sec) return;
+      e.preventDefault();
+      sec.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  let active = null;
+  const setActive = (link) => {
+    if (link === active) return;
+    if (active) active.classList.remove("is-active");
+    if (link) link.classList.add("is-active");
+    active = link;
+  };
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    // Activation line at 30% down the viewport: the active section is the last
+    // one whose top has scrolled above that line.
+    const line = window.innerHeight * 0.3;
+    let current = sections[0];
+    for (let i = 0; i < sections.length; i++) {
+      if (sections[i].getBoundingClientRect().top <= line) current = sections[i];
+      else break;
+    }
+    // Pin the last section when the page is scrolled to the very bottom (the
+    // short final sections may never reach the activation line otherwise).
+    const docEl = document.documentElement;
+    if (window.scrollY + window.innerHeight >= docEl.scrollHeight - 2) {
+      current = sections[sections.length - 1];
+    }
+    setActive(map.get(current));
+  };
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update(); // set initial active item
 }
 
 /**
@@ -97,6 +167,75 @@ function initFooterContact() {
     };
   })();
 
+  // Soft-landing easing — cubic-bezier(0.22, 1, 0.36, 1), the site's standard
+  // expansion curve (no overshoot). Drives the click/snap height animation.
+  const ease = (() => {
+    const x1 = 0.22, y1 = 1, x2 = 0.36, y2 = 1;
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t;
+    const sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => {
+      let t = clamp(x, 0, 1);
+      for (let i = 0; i < 8; i++) {
+        const e = sx(t) - x;
+        if (Math.abs(e) < 1e-6) break;
+        const d = dx(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= e / d;
+      }
+      return sy(t);
+    };
+  })();
+
+  // Expand grows the height over EXPAND_MS while content cascades in; collapse
+  // fades content out first (COLLAPSE_FADE_MS) then shrinks (COLLAPSE_MS) — snappier.
+  const EXPAND_MS = 600;
+  const COLLAPSE_MS = 400;
+  const COLLAPSE_FADE_MS = 200;
+
+  let contentOpen = false;
+  let collapseTimer = 0;
+
+  // Per-element transition-delays for the staggered open cascade.
+  const setStagger = () => {
+    let last = 200;
+    exp.querySelectorAll(".contact-groups > .mid-block").forEach((g, gi) => {
+      const gd = 200 + gi * 80; // groups ~80ms apart, starting 200ms in
+      const header = g.querySelector(".mid-header");
+      if (header) header.style.transitionDelay = gd + "ms";
+      g.querySelectorAll(".contact-row").forEach((row, ri) => {
+        const d = gd + (ri + 1) * 40; // items ~40ms apart within a group
+        row.style.transitionDelay = d + "ms";
+        if (d > last) last = d;
+      });
+    });
+    const bottom = exp.querySelector(".contact-bottom");
+    if (bottom) bottom.style.transitionDelay = last + 60 + "ms";
+  };
+  const clearStagger = () => {
+    exp.querySelectorAll(".mid-header, .contact-row, .contact-bottom").forEach(
+      (el) => { el.style.transitionDelay = ""; }
+    );
+  };
+  const openContent = () => {
+    if (contentOpen) return;
+    contentOpen = true;
+    card.classList.remove("contact-closing");
+    setStagger();
+    card.classList.add("contact-open");
+    exp.setAttribute("aria-hidden", "false");
+  };
+  const closeContent = (fast) => {
+    if (!contentOpen) return;
+    contentOpen = false;
+    clearStagger();
+    card.classList.remove("contact-open");
+    if (fast) card.classList.add("contact-closing");
+    exp.setAttribute("aria-hidden", "true");
+  };
+
   const measure = () => {
     if (progress === 0) H = card.getBoundingClientRect().height;
     stage.style.height = H + ED + "px";
@@ -105,15 +244,15 @@ function initFooterContact() {
   const applyGeometry = (p, fixed) => {
     const pc = clamp(p, 0, 1);
 
-    const defOpacity = clamp(1 - pc / 0.3, 0, 1);
-    const expOpacity = clamp((pc - 0.4) / 0.6, 0, 1);
-    def.style.opacity = String(defOpacity);
-    def.style.pointerEvents = defOpacity > 0.05 ? "auto" : "none";
-    exp.style.opacity = String(expOpacity);
-    exp.style.pointerEvents = expOpacity > 0.05 ? "auto" : "none";
-    exp.setAttribute("aria-hidden", pc > 0.5 ? "false" : "true");
+    // Content open/close is class-driven (openContent/closeContent → CSS stagger).
+    // A click animation manages the classes itself; the scroll path binds them to
+    // progress here so dragging the page still reveals/hides the contact content.
+    if (!animating) {
+      if (pc > 0.45) openContent();
+      else closeContent(false);
+    }
 
-    card.style.borderRadius = lerp(16, 24, pc) + "px";
+    card.style.borderRadius = "16px"; // Figma expanded radius (was lerp 16→24)
 
     if (!fixed && pc <= 0.0001) {
       card.style.position = "";
@@ -151,6 +290,8 @@ function initFooterContact() {
 
   const cancelAnim = () => {
     if (rafId) cancelAnimationFrame(rafId);
+    clearTimeout(collapseTimer);
+    card.style.willChange = "";
     rafId = 0;
     animating = false;
   };
@@ -159,32 +300,52 @@ function initFooterContact() {
     clearTimeout(snapTimer);
     cancelAnim();
     animating = true;
+    card.style.willChange = "height";
     const from = progress;
-    const startT = performance.now();
+    const expanding = target > from;
 
-    const frame = (now) => {
-      const t = clamp((now - startT) / SNAP_MS, 0, 1);
-      const e = spring(t);
-      const pVisual = from + (target - from) * e;
-      const pScroll = clamp(from + (target - from) * clamp(e, 0, 1), 0, 1);
-      applyGeometry(pVisual, true);
-      progress = clamp(pVisual, 0, 1);
-      const y = Math.round(startY() + pScroll * ED);
-      lastProgrammaticY = y;
-      window.scrollTo(0, y);
-      if (t < 1) {
-        rafId = requestAnimationFrame(frame);
-      } else {
-        progress = target;
-        const y2 = Math.round(startY() + target * ED);
-        lastProgrammaticY = y2;
-        window.scrollTo(0, y2);
-        applyGeometry(target, target > 0.0001);
-        rafId = 0;
-        animating = false;
-      }
+    // Content: cascade in as the card grows, or fade out fast before it shrinks.
+    if (expanding) openContent();
+    else closeContent(true);
+
+    // Grow/shrink the card height over `dur`, keeping scrollY in lockstep so the
+    // page tracks the expansion (and there's no jump when it lands).
+    const runHeight = (dur) => {
+      const startT = performance.now();
+      const frame = (now) => {
+        const t = clamp((now - startT) / dur, 0, 1);
+        const p = from + (target - from) * ease(t);
+        applyGeometry(p, true);
+        progress = clamp(p, 0, 1);
+        const y = Math.round(startY() + clamp(p, 0, 1) * ED);
+        lastProgrammaticY = y;
+        window.scrollTo(0, y);
+        if (t < 1) {
+          rafId = requestAnimationFrame(frame);
+        } else {
+          progress = target;
+          const y2 = Math.round(startY() + target * ED);
+          lastProgrammaticY = y2;
+          window.scrollTo(0, y2);
+          applyGeometry(target, target > 0.0001);
+          if (!expanding) card.classList.remove("contact-closing");
+          card.style.willChange = "";
+          rafId = 0;
+          animating = false;
+        }
+      };
+      rafId = requestAnimationFrame(frame);
     };
-    rafId = requestAnimationFrame(frame);
+
+    if (expanding) {
+      runHeight(EXPAND_MS);
+    } else {
+      // Collapse: let the content fade out first, then shrink the card.
+      collapseTimer = setTimeout(() => {
+        card.classList.remove("contact-closing");
+        runHeight(COLLAPSE_MS);
+      }, COLLAPSE_FADE_MS);
+    }
   };
 
   const renderFromScroll = () => {
@@ -210,6 +371,18 @@ function initFooterContact() {
     if (e.target.closest("a")) return;
     animateTo(progress < 0.5 ? 1 : 0);
   });
+
+  // Right-sidebar "Contact Me" → scroll to THIS page's own footer (never navigate
+  // away). Smooth-scrolling to the page bottom (maxScroll = startY + ED) drives the
+  // existing scroll-based morph, so the card expands on the way down and lands fully
+  // open. Falls back to the href="#footer-stage" jump if this script doesn't run.
+  const contactLink = document.querySelector('.side-link[href="#footer-stage"]');
+  if (contactLink) {
+    contactLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: maxScroll(), behavior: "smooth" });
+    });
+  }
 
   const io = new IntersectionObserver(
     (entries) => {

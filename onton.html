@@ -46,34 +46,23 @@
       font-weight: 600;
     }
 
-    /* --- Image / mockup placeholders (Works-thumbnail style) --- */
+    /* --- Case-study images (exported from Figma, Assets/images/onton/) --- */
     .case-figure {
       display: flex;
       flex-direction: column;
       gap: 12px;
       margin: 0;
     }
-    .case-media {
+    /* Mockup / diagram images, exported from Figma already composited on the
+       page background (#111323) so they sit seamlessly on --bg with no card,
+       border, or radius — none of those exist in the design; the mockups float
+       directly on the dark page. Each <img> carries its natural width/height
+       attributes, so the aspect ratio is reserved up-front (no layout shift)
+       and height:auto scales it to the column. */
+    .case-img {
+      display: block;
       width: 100%;
-      /* Cream-tinted image holder (matches the hero .case-phone placeholders). */
-      background: rgba(249, 245, 235, 0.06);
-      border: 0.5px solid rgba(249, 245, 235, 0.1);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px;
-      text-align: center;
-    }
-    .case-media--md { min-height: 360px; }
-    .case-media--lg { min-height: 480px; }
-    .case-media--xl { min-height: 620px; align-items: flex-start; }
-    /* Centered panel title baked into some diagram mockups */
-    .case-media-title {
-      font-size: 22px;
-      line-height: 28px;
-      color: var(--cream);
-      opacity: 0.5;
+      height: auto;
     }
     .case-caption {
       font-size: 12px;
@@ -82,17 +71,12 @@
       color: rgba(249, 245, 235, 0.5);
     }
 
-    /* Hero: a row of 4 app-screenshot placeholders */
-    .case-phones {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-    .case-phone {
-      aspect-ratio: 9 / 19;
-      background: rgba(249, 245, 235, 0.06);
-      border: 0.5px solid rgba(249, 245, 235, 0.1);
-      border-radius: 16px;
+    /* Hero: the 4-phone onboarding composition, exported as one transparent
+       strip (tilted phones + shadows), so it sits borderless on the page. */
+    .case-hero-img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     /* --- Introduction metadata (label / value rows) --- */
@@ -209,15 +193,10 @@
       .case-table th { font-size: 18px; }
     }
     @media (max-width: 768px) {
-      .case-phones { grid-template-columns: repeat(2, 1fr); }
       .case-inforow { grid-template-columns: 100px 1fr; }
       .case-defrow { grid-template-columns: 1fr; gap: 8px; }
     }
     @media (max-width: 576px) {
-      .case-phones { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .case-media--md,
-      .case-media--lg,
-      .case-media--xl { min-height: 240px; }
       .case-inforow { grid-template-columns: 88px 1fr; }
     }
   </style>
@@ -227,10 +206,19 @@
     <!-- One continuous 3-column page layout; sidebars persist across the page -->
     <div class="layout">
       <!-- Left sidebar — sticky. Figma: project title + tagline + "Go Back". -->
-      <aside class="layout-left">
-        <h2 class="home-name">ONTON</h2>
-        <p class="home-role">Designing the “Social-Chain” Bridge</p>
-        <a class="home-portfolio go-back" href="index.html#works">Go Back</a>
+      <aside class="layout-left layout-left--case">
+        <div class="bio-summary">
+          <h2 class="home-name">ONTON</h2>
+          <p class="home-role">Designing the “Social-Chain” Bridge</p>
+        </div>
+        <a class="home-portfolio go-back" href="index.html#works">
+          <!-- Back icon — exact export from Figma node 858:10376 (lets-icons:back-light). -->
+          <svg class="go-back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M3.99997 10.0005L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L3.99997 10.0005ZM20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005H20.5ZM8.64597 15.3545L3.64597 10.3545L4.35397 9.64648L9.35397 14.6465L8.64597 15.3545ZM3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648ZM3.99997 9.50048H14V10.5005H3.99997V9.50048ZM20.5 16.0005V18.0005H19.5V16.0005H20.5ZM14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005H19.5C19.5 14.5418 18.9205 13.1428 17.8891 12.1114C16.8576 11.0799 15.4587 10.5005 14 10.5005V9.50048Z" fill="currentColor"/>
+            <path d="M3.64597 10.3545L3.99997 10.0005L3.64597 9.64648M3.64597 10.3545L8.64597 15.3545L9.35397 14.6465L4.35397 9.64648L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648M20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005M20.5 18.0005H19.5M20.5 18.0005V16.0005M19.5 18.0005V16.0005M14 9.50048H3.99997V10.5005H14M14 9.50048V10.5005M14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005M14 10.5005C15.4587 10.5005 16.8576 11.0799 17.8891 12.1114C18.9205 13.1428 19.5 14.5418 19.5 16.0005M20.5 16.0005H19.5" stroke="currentColor" stroke-width="0.6"/>
+          </svg>
+          Go Back
+        </a>
       </aside>
 
       <!-- Middle column — the case study -->
@@ -239,18 +227,17 @@
           <div class="home-middle">
 
             <!-- 1. HERO — 1-MINUTE READ -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-one-minute">
               <div class="mid-header reveal-item">
                 <span class="mid-label">1-Minute Read</span>
                 <span class="mid-rule"></span>
               </div>
-              <!-- Row of 4 app-onboarding screenshots (placeholders) -->
-              <div class="case-phones reveal-item" aria-hidden="true">
-                <div class="case-phone"></div>
-                <div class="case-phone"></div>
-                <div class="case-phone"></div>
-                <div class="case-phone"></div>
-              </div>
+              <!-- 4 app-onboarding screens, exported from Figma as one strip -->
+              <img class="case-hero-img reveal-item"
+                   src="Assets/images/onton/hero-onboarding.png"
+                   alt="ONTON onboarding flow shown across four app screens: Welcome to ONTON (decentralized events), Participate in Events (NFT-powered ticketing), Great Event Management, and a General Tutorial video screen"
+                   width="792" height="360"
+                   decoding="async" />
               <div class="case-prose">
                 <p class="case-body reveal-item">ONTON is a Telegram app connecting crypto communities to on-chain event verification.</p>
                 <p class="case-body reveal-item">Organisers issue proof-of-attendance badges directly in-app; participants collect them as credentials. I joined as the founding product designer before there was a design system, a defined user flow, or a clear picture of who the product was actually for.</p>
@@ -261,7 +248,7 @@
             </div>
 
             <!-- 2. INTRODUCTION — metadata -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-introduction">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Introduction</span>
                 <span class="mid-rule"></span>
@@ -278,7 +265,7 @@
             </div>
 
             <!-- 3. THE PROBLEM -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-problem">
               <div class="mid-header reveal-item">
                 <span class="mid-label">The Problem: Community Lives in Chat, Trust Lives on the Blockchain</span>
                 <span class="mid-rule"></span>
@@ -289,15 +276,17 @@
                 <p class="case-body reveal-item">The company wanted to pivot from the legacy bot to a Telegram Mini App. I was brought on as the sole designer to lead that transition.</p>
               </div>
               <figure class="case-figure reveal-item">
-                <div class="case-media case-media--lg" aria-hidden="true">
-                  <span class="case-media-title">Mini App event screens</span>
-                </div>
+                <img class="case-img"
+                     src="Assets/images/onton/mini-app-event-screens.png"
+                     alt="Two ONTON Mini App screens: an event browser with Ongoing, Discover and Local Events, and an organizers feed highlighting featured communities"
+                     width="792" height="885"
+                     loading="lazy" decoding="async" />
                 <figcaption class="case-caption">Mini App event screens after multiple iterations</figcaption>
               </figure>
             </div>
 
             <!-- 4. MY ROLE -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-my-role">
               <div class="mid-header reveal-item">
                 <span class="mid-label">My Role</span>
                 <span class="mid-rule"></span>
@@ -309,7 +298,7 @@
             </div>
 
             <!-- 5. RESEARCH INSIGHTS -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-research">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Research Insights</span>
                 <span class="mid-rule"></span>
@@ -319,9 +308,11 @@
                 <p class="case-body reveal-item">The most important finding reshaped how I thought about the product: <strong>the majority of users weren’t attending events for the events. They were hunting badges and tokens, hoping these proof-of-attendance assets would eventually convert to real cryptocurrency value.</strong></p>
               </div>
               <figure class="case-figure reveal-item">
-                <div class="case-media case-media--xl" aria-hidden="true">
-                  <span class="case-media-title">Participants &amp; Organizers</span>
-                </div>
+                <img class="case-img"
+                     src="Assets/images/onton/two-sided-trust-diagram.png"
+                     alt="Two-column flow diagram contrasting the organiser journey on the left with the participant journey on the right across the ONTON event lifecycle"
+                     width="792" height="646"
+                     loading="lazy" decoding="async" />
                 <figcaption class="case-caption">Diagram: the two-sided trust problem — organisers vs. participants</figcaption>
               </figure>
               <div class="case-prose">
@@ -332,7 +323,7 @@
             </div>
 
             <!-- 6. DESIGN PRINCIPLES -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-principles">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Design Principles</span>
                 <span class="mid-rule"></span>
@@ -346,7 +337,7 @@
             </div>
 
             <!-- 7. THE LEGACY SYSTEM -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-legacy">
               <div class="mid-header reveal-item">
                 <span class="mid-label">The Legacy System: What I Started With</span>
                 <span class="mid-rule"></span>
@@ -357,15 +348,17 @@
                 <p class="case-body reveal-item">The system worked for a small community, but couldn’t scale. There was no infrastructure for in-app wallet connection, no way to expand features without breaking existing flows, and no design language to build on.</p>
               </div>
               <figure class="case-figure reveal-item">
-                <div class="case-media case-media--lg" aria-hidden="true">
-                  <span class="case-media-title">Legacy bot flow</span>
-                </div>
+                <img class="case-img"
+                     src="Assets/images/onton/legacy-bot-flow.png"
+                     alt="The legacy ONTON Telegram bot screen — a command-driven chat interface with Discover Events and Create Event buttons"
+                     width="792" height="759"
+                     loading="lazy" decoding="async" />
                 <figcaption class="case-caption">Legacy bot interaction flow — command-based, unstructured</figcaption>
               </figure>
             </div>
 
             <!-- 8. KEY DESIGN DECISIONS -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-decisions">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Key Design Decisions</span>
                 <span class="mid-rule"></span>
@@ -379,9 +372,11 @@
                     <p class="case-body reveal-item">The exception was the event ticket itself — I used glassmorphic card styling specifically to create a moment of visual distinction. Telegram didn’t offer anything like it, so there were no existing expectations to break. The ticket needed to feel “ownable,” like a collectible rather than a receipt.</p>
                   </div>
                   <figure class="case-figure reveal-item">
-                    <div class="case-media case-media--lg" aria-hidden="true">
-                      <span class="case-media-title">Event participation</span>
-                    </div>
+                    <img class="case-img"
+                         src="Assets/images/onton/event-participation.png"
+                         alt="Three ONTON event participation screens: the event list, an event detail page for New Year Fest 2025, and a glassmorphic ticket card with a QR code"
+                         width="792" height="800"
+                         loading="lazy" decoding="async" />
                     <figcaption class="case-caption">Event Participation. Telegram-vibed components + glassmorphic ticket card. Event list + Event Details + Ticket to the event</figcaption>
                   </figure>
                 </div>
@@ -393,9 +388,11 @@
                     <p class="case-body reveal-item">The biggest trust barrier was wallet connection. In the crypto space, pop-ups asking users to connect wallets are strongly associated with scams. I worked with the dev team to implement TON Connect as a nested flow — the wallet prompt appeared like a native system alert rather than an external redirect. I replaced technical copy like “Sign this message” with “Verify your identity” to lower the psychological barrier.</p>
                   </div>
                   <figure class="case-figure reveal-item">
-                    <div class="case-media case-media--md" aria-hidden="true">
-                      <span class="case-media-title">Wallet connection flow</span>
-                    </div>
+                    <img class="case-img"
+                         src="Assets/images/onton/wallet-connection-flow.png"
+                         alt="Wide wallet-connection flow diagram: tapping Join opens a native-feeling TON wallet prompt that leads to a verified event ticket"
+                         width="792" height="508"
+                         loading="lazy" decoding="async" />
                     <figcaption class="case-caption">Wallet connection flow: tap “Join” → native-feeling wallet prompt → verified</figcaption>
                   </figure>
                 </div>
@@ -418,9 +415,11 @@
                     <p class="case-body reveal-item">Looking back, one of my clearest regrets is not implementing a progressive disclosure pattern earlier: a simplified default creation flow with advanced features hidden behind toggles (off by default). I eventually understood this, but the insight came later than it should have.</p>
                   </div>
                   <figure class="case-figure reveal-item">
-                    <div class="case-media case-media--md" aria-hidden="true">
-                      <span class="case-media-title">Event creation flow</span>
-                    </div>
+                    <img class="case-img"
+                         src="Assets/images/onton/event-creation-flow.png"
+                         alt="Wide paid-event-creation flow diagram showing the sequence of form screens an organiser completes to publish an event"
+                         width="792" height="468"
+                         loading="lazy" decoding="async" />
                     <figcaption class="case-caption">Paid event creation flow — key screens with annotation on complexity points</figcaption>
                   </figure>
                 </div>
@@ -428,7 +427,7 @@
             </div>
 
             <!-- 9. IMPACT -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-impact">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Impact</span>
                 <span class="mid-rule"></span>
@@ -470,7 +469,7 @@
             </div>
 
             <!-- 10. WHAT HAPPENED TO THE PROJECT -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-what-happened">
               <div class="mid-header reveal-item">
                 <span class="mid-label">What Happened to the Project</span>
                 <span class="mid-rule"></span>
@@ -482,7 +481,7 @@
             </div>
 
             <!-- 11. REFLECTION -->
-            <div class="mid-block">
+            <div class="mid-block" id="sec-reflection">
               <div class="mid-header reveal-item">
                 <span class="mid-label">Reflection</span>
                 <span class="mid-rule"></span>
@@ -613,11 +612,36 @@
       </div>
 
       <!-- Right sidebar — sticky, intentionally empty -->
-      <aside class="layout-right"></aside>
+      <aside class="layout-right layout-right--toc">
+        <!-- Sticky table of contents — tracks the active section on scroll. -->
+        <nav class="toc-nav" aria-label="On this page">
+          <a class="toc-item" href="#sec-one-minute">1-Minute Read</a>
+          <a class="toc-item" href="#sec-introduction">Introduction</a>
+          <a class="toc-item" href="#sec-problem">The Problem</a>
+          <a class="toc-item" href="#sec-my-role">My Role</a>
+          <a class="toc-item" href="#sec-research">Research Insights</a>
+          <a class="toc-item" href="#sec-principles">Design Principles</a>
+          <a class="toc-item" href="#sec-legacy">The Legacy System</a>
+          <a class="toc-item" href="#sec-decisions">Key Design Decisions</a>
+          <a class="toc-item" href="#sec-impact">Impact</a>
+          <a class="toc-item" href="#sec-what-happened">What Happened</a>
+          <a class="toc-item" href="#sec-reflection">Reflection</a>
+        </nav>
+        <nav class="side-links" aria-label="ONTON links">
+          <a class="side-link" href="https://t.me/theontonbot" target="_blank" rel="noopener">Telegram Bot</a>
+          <a class="side-link" href="https://t.me/ontonlive" target="_blank" rel="noopener">Telegram Channel</a>
+          <a class="side-link" href="#footer-stage">Contact Me</a>
+        </nav>
+      </aside>
     </div>
   </main>
 
+  <!-- Scroll progress bar (case-study pages only) — fills 0→100% with scroll. -->
+  <div class="scroll-progress"></div>
+
   <script src="onton.js"></script>
   <script defer src="reveal.js"></script>
+  <script defer src="cursor.js"></script>
+  <script defer src="scroll-progress.js"></script>
 </body>
 </html>

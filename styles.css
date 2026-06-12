@@ -236,8 +236,8 @@ section {
   position: fixed;
   top: 0;
   left: 0;
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--cream);
   pointer-events: none;
@@ -262,6 +262,23 @@ section {
   color: #111323;
   clip-path: circle(0px at 0 0);
   will-change: clip-path;
+}
+
+/* Scroll progress bar — case-study pages only. The .scroll-progress element is
+   added per case study page (index.html omits it), so this rule is inert there.
+   Fixed to the viewport bottom; only the filled portion shows (no track). JS sets
+   width 0→100% as a direct mapping of scroll position. z 1000 sits above page
+   content and the footer card, below the custom cursor (9998). */
+.scroll-progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  background: var(--cream);
+  z-index: 1000;
+  pointer-events: none;
+  will-change: width;
 }
 
 /* ===== Floating navigation ===== */
@@ -400,19 +417,106 @@ section {
   width: 23.81%;
   flex-shrink: 0;
   position: sticky;
-  top: 40px;
+  /* top: 0 — the 48px top inset comes from each column's padding-top (below), so
+     the sticky box hugs the viewport top and the content sits a steady 48px down,
+     both at rest and when stuck. Using top: 48px here would STACK with the
+     padding-top:48px to push content to 96px and make it jump on scroll. */
+  top: 0;
   align-self: flex-start;
   height: fit-content;
 }
 
-/* Left sidebar content — 40px horizontal padding, 8px line gap */
+/* Left sidebar content — 40px padding all sides (Figma Bio Container 662:7967),
+   8px gap between name and role. (Sticky offset handled by the shared rule above.) */
 .layout-left {
-  padding-left: 40px;
-  padding-right: 40px;
+  /* 48px top inset — aligns with the middle column and right sidebar. The sticky
+     box is top:0 (see shared rule above), so this padding is the only source of
+     the 48px and the content stays put at 48px whether at rest or stuck. */
+  padding: 48px 40px 40px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
+}
+
+/* Case-study left sidebar (onton + future case studies): the Bio Summary group
+   and the "Go Back" button are separated by 40px (Figma Bio Container 767:14044),
+   vs the 8px name→role gap inside the group. Index.html keeps the base 8px gap
+   (it has no .layout-left--case modifier). Mobile (≤768px) overrides this back to
+   the shared row layout further down. */
+.layout-left--case {
+  gap: 40px;
+}
+.bio-summary {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Right sidebar — mirrors the left: 48px top inset, 40px sides/bottom; sticky
+   top:0 (shared rule above). Top-aligned link list. */
+.layout-right {
+  /* 48px top inset — matches the other columns (see .layout-left). */
+  padding: 48px 40px 40px;
+}
+/* Case-study right sidebar: TOC group + project-links group, separated by 40px
+   (Figma 744-9630). */
+.layout-right--toc {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 40px;
+}
+.side-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* Sticky table of contents (Figma 864:10768). A 0.6px Gray-Navy rail runs the
+   full height; the active item gets a brighter 1px Cream-Dark left stroke. */
+.toc-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-left: 0.6px solid var(--gray-navy);
+}
+.toc-item {
+  box-sizing: border-box;
+  /* Pull each item's left edge onto the rail so the active stroke covers it. */
+  margin-left: -0.6px;
+  border-left: 1px solid transparent;
+  padding: 4px 0 4px 12px; /* 12px = stroke→text offset */
+  font-size: 14px;
+  line-height: normal;
+  color: rgba(249, 245, 235, 0.7); /* inactive: cream 70% */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+/* Hover affordance (not specified in Figma): inactive items brighten to cream. */
+.toc-item:hover {
+  color: var(--cream);
+}
+.toc-item.is-active {
+  border-left-color: var(--cream-dark); /* active stroke */
+  font-size: 15px;
+  color: var(--cream); /* 100% */
+}
+/* Right-sidebar links — Tertiary Button (Figma 662:8615): dashed cream
+   underline, pb 4px; hover → solid + Medium. Matches .home-portfolio/.footer-link. */
+.side-link {
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--cream);
+  padding-bottom: 4px;
+}
+.side-link:hover {
+  border-bottom-style: solid;
+  font-weight: 500;
 }
 
 /* Middle column — every section's content stacks here */
@@ -442,18 +546,37 @@ section {
   opacity: 0.7;
 }
 
+/* Tertiary Button (Figma 662:8615) — dashed cream underline, pb 4px. */
 .home-portfolio {
   font-size: 15px;
   color: #F9F5EB;
   text-decoration: none;
-  border-bottom: 1px dashed var(--cream-dark);
+  border-bottom: 1px dashed var(--cream);
   padding-bottom: 4px;
+  /* Figma Go Back is a Tertiary Button with a 14px back-arrow icon, 4px gap. */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* Tertiary Button hover: underline dashed→solid, weight Regular→Medium. */
+.home-portfolio:hover {
+  border-bottom-style: solid;
+  font-weight: 500;
+}
+/* Back-arrow icon before "Go Back" — 14px, inherits the link's cream colour. */
+.go-back-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 /* Per-section content wrapper inside the middle column */
 .home-middle {
   width: 100%;
-  padding: 40px;
+  /* 48px top inset — aligns the first section header with both sidebars. (This is
+     the middle column's effective top padding; .layout-main itself has none.)
+     Sides/bottom stay 40px. */
+  padding: 48px 40px 40px;
   display: flex;
   flex-direction: column;
   gap: 80px;
@@ -792,14 +915,19 @@ section {
   opacity: 0.7;
   overflow: hidden;
 }
+/* Tertiary Button (Figma 662:8615) instance — see .home-portfolio. */
 .testi-link {
   flex-shrink: 0;
   align-self: flex-start;
   font-size: 15px;
   color: var(--cream);
   text-decoration: none;
-  border-bottom: 1px dashed var(--cream-dark);
+  border-bottom: 1px dashed var(--cream);
   padding-bottom: 4px;
+}
+.testi-link:hover {
+  border-bottom-style: solid;
+  font-weight: 500;
 }
 
 /* --- Footer component --- */
@@ -827,13 +955,18 @@ section {
   align-items: center;
 }
 
+/* Tertiary Button (Figma 662:8615) instance — see .home-portfolio. */
 .footer-link {
   font-size: 15px;
   color: var(--cream);
   text-decoration: none;
-  border-bottom: 1px dashed var(--cream-dark);
+  border-bottom: 1px dashed var(--cream);
   padding-bottom: 4px;
   transition: opacity 0.2s ease;
+}
+.footer-link:hover {
+  border-bottom-style: solid;
+  font-weight: 500;
 }
 
 /* Hover dimming: hovering one footer link dims the others to 40% (only when a
@@ -1252,18 +1385,22 @@ section {
   padding: 40px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 40px;
   overflow-y: auto;
   text-align: left;
-  opacity: 0;
+  /* Content is interactive only once the card opens (class-driven below). */
   pointer-events: none;
 }
+.contact-open .footer-expanded {
+  pointer-events: auto;
+}
 
+/* Figma 662:8697 — the 3 groups fill the card height, spread by space-between. */
 .contact-groups {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 48px;                 /* breathing room between the 3 groups */
+  justify-content: space-between;
 }
 
 /* Header→rows gap + label sizing, scoped to the expanded contact only. */
@@ -1272,7 +1409,7 @@ section {
 }
 
 .footer-expanded .mid-label {
-  font-size: clamp(10px, 1.2vh, 15px);
+  font-size: 14px; /* Figma 662:8700 */
 }
 
 /* Group headers reuse .mid-header / .mid-label / .mid-rule (solid rule). */
@@ -1288,24 +1425,24 @@ section {
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  font-size: clamp(10px, 1.4vh, 15px);
+  font-size: 15px; /* Figma 662:8704/8706 */
   color: var(--cream);
 }
 
-/* Platform name — dashed underline on the name only */
+/* Platform name — Tertiary Button: dashed CREAM underline (Figma 662:8704). */
 .contact-name {
-  border-bottom: 1px dashed var(--cream-dark);
+  border-bottom: 1px dashed var(--cream);
   padding-bottom: 4px;
   white-space: nowrap;
 }
 
-/* Dashed leader line filling the space between name and handle */
+/* Dotted leader line filling the space between name and handle (Figma 662:8705). */
 .contact-leader {
   flex: 1;
   height: 0;
   position: relative;
   top: 6px;
-  border-top: 1px dashed rgba(249, 245, 235, 0.2);
+  border-top: 1px dotted rgba(249, 245, 235, 0.3);
 }
 
 .contact-value {
@@ -1328,6 +1465,43 @@ section {
   line-height: 16px;
   color: var(--cream-dark);
   opacity: 0.7;
+}
+
+/* ---- Expand animation: staggered content entrance ----
+   Each group header, contact row and the bottom line lifts + fades in. JS sets a
+   per-element transition-delay for the cascade (groups ~80ms apart, items ~40ms,
+   starting ~200ms into the 600ms height grow) when the card opens (.contact-open),
+   and a fast no-delay fade-out (.contact-closing) when it collapses. */
+.footer-expanded .mid-header,
+.footer-expanded .contact-row,
+.footer-expanded .contact-bottom {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 400ms ease-out,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.contact-open .footer-expanded .mid-header,
+.contact-open .footer-expanded .contact-row,
+.contact-open .footer-expanded .contact-bottom {
+  opacity: 1;
+  transform: none;
+}
+.contact-closing .footer-expanded .mid-header,
+.contact-closing .footer-expanded .contact-row,
+.contact-closing .footer-expanded .contact-bottom {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  transition-delay: 0ms !important;
+}
+/* Default 4-link row fades out as the card opens. */
+.footer-default {
+  transition: opacity 200ms ease;
+}
+.contact-open .footer-default {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Right sidebar — intentionally empty; width + sticky come from the shared
@@ -1659,6 +1833,14 @@ section {
 @media (prefers-reduced-motion: reduce) {
   .reveal-item {
     opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  /* Footer contact: keep the open/closed opacity toggle, drop the motion. */
+  .footer-expanded .mid-header,
+  .footer-expanded .contact-row,
+  .footer-expanded .contact-bottom,
+  .footer-default {
     transform: none !important;
     transition: none !important;
   }
