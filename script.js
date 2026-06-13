@@ -611,22 +611,29 @@ function initFooterContact() {
       card.style.zIndex = "";
       backdrop.style.display = "none";
     } else {
-      // Expanding → fixed, bottom-anchored, matched to the stage's column box.
+      // Expanding → fixed, matched to the stage's column box. Leave clearance at
+      // the bottom for the floating nav so the card (and its copyright row) never
+      // sits under it. Pages with no nav (case studies) measure navSpace = 0.
       const rect = stage.getBoundingClientRect();
-      const h = lerp(H, window.innerHeight, p); // raw p → spring
+      const nav = document.querySelector(".floating-nav");
+      const navSpace = nav
+        ? Math.max(0, window.innerHeight - nav.getBoundingClientRect().top + 16)
+        : 0;
+      const b = lerp(0, navSpace, p);
+      const h = lerp(H, window.innerHeight - navSpace, p);
       card.style.position = "fixed";
       card.style.left = rect.left + "px";
       card.style.width = rect.width + "px";
-      card.style.bottom = "0px";
+      card.style.bottom = b + "px";
       card.style.height = h + "px";
       card.style.zIndex = "150"; // above content + sidebars, below the nav (200)
-      // Backdrop shares the card's exact box (square corners → fills the card's
-      // rounded-corner gaps with page colour).
+      // Backdrop fills from the viewport bottom up to the card's top, so the nav
+      // sits on clean page colour (not works content) in the gap below the card.
       backdrop.style.display = "block";
       backdrop.style.left = rect.left + "px";
       backdrop.style.width = rect.width + "px";
       backdrop.style.bottom = "0px";
-      backdrop.style.height = h + "px";
+      backdrop.style.height = h + b + "px";
     }
 
     const nowExpanded = pc > 0.5;

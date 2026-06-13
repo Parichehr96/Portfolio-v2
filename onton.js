@@ -263,19 +263,26 @@ function initFooterContact() {
       card.style.zIndex = "";
       backdrop.style.display = "none";
     } else {
+      // Leave clearance for the floating nav (case-study pages have none, so
+      // navSpace measures 0 and the card fills to the viewport bottom as before).
       const rect = stage.getBoundingClientRect();
-      const h = lerp(H, window.innerHeight, p);
+      const nav = document.querySelector(".floating-nav");
+      const navSpace = nav
+        ? Math.max(0, window.innerHeight - nav.getBoundingClientRect().top + 16)
+        : 0;
+      const b = lerp(0, navSpace, p);
+      const h = lerp(H, window.innerHeight - navSpace, p);
       card.style.position = "fixed";
       card.style.left = rect.left + "px";
       card.style.width = rect.width + "px";
-      card.style.bottom = "0px";
+      card.style.bottom = b + "px";
       card.style.height = h + "px";
       card.style.zIndex = "150";
       backdrop.style.display = "block";
       backdrop.style.left = rect.left + "px";
       backdrop.style.width = rect.width + "px";
       backdrop.style.bottom = "0px";
-      backdrop.style.height = h + "px";
+      backdrop.style.height = h + b + "px";
     }
   };
 

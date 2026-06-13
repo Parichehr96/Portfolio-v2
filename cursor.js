@@ -8,8 +8,9 @@
  * `.invisible-text`, so the same code is safe everywhere.
  *
  * Layering — three stacked pieces:
- *   • .invisible-text (in #splash, index only) — the real tagline, coloured like
- *     the page bg so it's invisible, but in the DOM and selectable for a11y.
+ *   • .invisible-text (in #splash, index only) — the real tagline, fully
+ *     transparent so it's invisible over both the page bg AND the visible lead
+ *     sentence it overlaps, but in the DOM and selectable for a11y.
  *   • .custom-cursor (z 9998) — the cream circle. Follows the mouse with a 0.35
  *     lerp and grows to 120px while over the tagline.
  *   • .cursor-reveal (z 9999, ABOVE the cursor) — a body-level clone of the
@@ -31,7 +32,9 @@ function initCustomCursor() {
   document.body.appendChild(cursor);
 
   const splash = document.getElementById("splash");
-  const tagline = document.querySelector(".invisible-text");
+  const tagline = document.querySelector(".invisible-text"); // hidden tagline (Layer B)
+  const lead = document.querySelector(".splash-lead");       // visible sentence (Layer A)
+  const name = document.querySelector(".splash-name");       // visible title (Layer A)
 
   // Dark clone of the tagline that sits above the cursor and gets clipped.
   let reveal = null;
@@ -52,17 +55,37 @@ function initCustomCursor() {
   let curX = mouseX;
   let curY = mouseY;
   let shown = false;
-  let rect = null; // cached tagline bounding box
+  // Cached bounding boxes (re-measured on resize/scroll). offsetParent is null
+  // once the splash is display:none (dismissed) → null rect.
+  let tRect = null;    // hidden tagline (Layer B)
+  let lRect = null;    // visible lead sentence (Layer A)
+  let nRect = null;    // visible title (Layer A)
+  let zoneRect = null; // spotlight trigger zone = lead ∪ tagline
+
+  const visRect = (el) =>
+    el && el.offsetParent !== null ? el.getBoundingClientRect() : null;
+  const union = (a, b) => {
+    if (!a) return b;
+    if (!b) return a;
+    return {
+      left: Math.min(a.left, b.left),
+      top: Math.min(a.top, b.top),
+      right: Math.max(a.right, b.right),
+      bottom: Math.max(a.bottom, b.bottom),
+    };
+  };
 
   const measure = () => {
-    // offsetParent is null once the splash is display:none (dismissed) → no rect.
-    rect = tagline && tagline.offsetParent !== null ? tagline.getBoundingClientRect() : null;
-    if (reveal && rect) {
-      reveal.style.left = rect.left + "px";
-      reveal.style.top = rect.top + "px";
-      reveal.style.width = rect.width + "px";
-      reveal.style.height = rect.height + "px";
+    tRect = visRect(tagline);
+    lRect = visRect(lead);
+    nRect = visRect(name);
+    if (reveal && tRect) {
+      reveal.style.left = tRect.left + "px";
+      reveal.style.top = tRect.top + "px";
+      reveal.style.width = tRect.width + "px";
+      reveal.style.height = tRect.height + "px";
     }
+    zoneRect = union(tRect, lRect);
   };
   measure();
 
@@ -82,25 +105,44 @@ function initCustomCursor() {
 
   const splashGone = () => splash && splash.style.display === "none";
 
+  // Inverse mask: punch a transparent hole at the cursor into a visible layer
+  // (title / lead) so it vanishes inside the spotlight; --mr 0 = fully visible.
+  const setMask = (el, r, on) => {
+    if (!el) return;
+    if (on && r) {
+      el.style.setProperty("--mx", curX - r.left + "px");
+      el.style.setProperty("--my", curY - r.top + "px");
+      el.style.setProperty("--mr", REVEAL_RADIUS + "px");
+    } else {
+      el.style.setProperty("--mr", "0px");
+    }
+  };
+
   const frame = () => {
     curX += (mouseX - curX) * LERP;
     curY += (mouseY - curY) * LERP;
     cursor.style.transform =
       "translate(" + curX + "px, " + curY + "px) translate(-50%, -50%)";
 
-    // Over the tagline (only while the splash is still showing)?
+    // Spotlight active when the pointer is over the middle text block (visible
+    // lead sentence ∪ hidden tagline), while the splash is still showing.
     const over =
-      !!rect &&
+      !!zoneRect &&
       !splashGone() &&
-      mouseX >= rect.left && mouseX <= rect.right &&
-      mouseY >= rect.top && mouseY <= rect.bottom;
+      mouseX >= zoneRect.left && mouseX <= zoneRect.right &&
+      mouseY >= zoneRect.top && mouseY <= zoneRect.bottom;
 
     cursor.classList.toggle("is-over", over);
+
+    // Layer B (tagline) APPEARS inside the circle (clipped to its own box).
     if (reveal) {
-      reveal.style.clipPath = over
-        ? "circle(" + REVEAL_RADIUS + "px at " + (curX - rect.left) + "px " + (curY - rect.top) + "px)"
+      reveal.style.clipPath = over && tRect
+        ? "circle(" + REVEAL_RADIUS + "px at " + (curX - tRect.left) + "px " + (curY - tRect.top) + "px)"
         : "circle(0px at 0 0)";
     }
+    // Layer A (visible title + lead) DISAPPEARS inside the circle.
+    setMask(lead, lRect, over);
+    setMask(name, nRect, over);
 
     requestAnimationFrame(frame);
   };

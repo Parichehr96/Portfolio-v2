@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio</title>
 
-  <!-- Figtree from Google Fonts (300, 400, 600) -->
+  <!-- Figtree from Google Fonts (300, 400, 500, 600 + light italic) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
     rel="stylesheet"
   />
 
@@ -21,25 +21,27 @@
       <!-- Bio container (Figma 662:8525): fills the viewport minus 120px padding
            as 3 equal rows — name/role (top), an empty slot (middle), CTA (bottom). -->
       <div class="splash-content">
-        <!-- Name / role — top third, left-aligned within the centered block -->
+        <!-- Title — top third (Figma 720:9080). "Pari" larger than the rest. -->
         <div class="splash-info">
-          <div class="splash-name-block">
-            <p class="splash-name">Parichehr Talebzadeh</p>
-            <p class="splash-role">Product Designer</p>
-          </div>
+          <p class="splash-name"><span class="splash-name-lg">Pari</span><span class="splash-name-sm">chehr Talebzadeh</span></p>
         </div>
 
-        <!-- Middle third — hidden tagline (Figma 822:10189). Same colour as the
-             page bg so it's invisible by default, but kept in the DOM and
-             selectable; the custom cursor reveals it like ink under a flashlight. -->
-        <div class="splash-info">
+        <!-- Middle third — the visible lead sentence (Figma 875:10797) with the
+             hidden tagline (Figma 822:10189) overlaid on top of it. The tagline is
+             coloured like the page bg so it reads as invisible but stays in the DOM
+             and selectable. The custom cursor's spotlight swaps the two: inside the
+             circle the lead vanishes and the tagline appears. -->
+        <div class="splash-info splash-mid">
+          <p class="splash-lead">I solve problems through <span class="lead-strong">digital products</span>, from <span class="lead-em">research</span> to <span class="lead-em">ready-to-build</span> specs.</p>
           <p class="invisible-text">Good design is invisible.<br>I spend my days creating invisibility.</p>
         </div>
 
-        <!-- CTA pill — bottom third -->
+        <!-- CTA pill — bottom third (Figma 822:10192). Icon-only down chevron. -->
         <div class="splash-info">
-          <button class="splash-cta" type="button">
-            <span class="splash-cta-text">Scroll to start exploring</span>
+          <button class="splash-cta" type="button" aria-label="Scroll to start exploring">
+            <svg class="splash-cta-icon" width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
+              <path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -790,11 +792,6 @@
                       <span class="contact-name">GitHub</span>
                       <span class="contact-leader"></span>
                       <span class="contact-value">/Parichehr96</span>
-                    </a>
-                    <a class="contact-row" href="https://medium.com/@pariuxd" target="_blank" rel="noopener">
-                      <span class="contact-name">Medium</span>
-                      <span class="contact-leader"></span>
-                      <span class="contact-value">/@pariuxd</span>
                     </a>
                   </div>
                 </div>

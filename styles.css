@@ -153,31 +153,47 @@ section {
   padding: 40px 0;
 }
 
-/* Name block — items left-aligned, 16px between the two lines */
-.splash-name-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-}
-
+/* Title (Figma 720:9080 / 662:8534) — one centered line, "Pari" larger than the
+   rest, cream at 70%, 0.5px tracking. (Role removed in the updated design.) */
 .splash-name {
-  font-size: 26px;
-  font-weight: 400;
   letter-spacing: 0.5px;
   line-height: normal;
   color: var(--cream);
-  opacity: 0.7;
   white-space: nowrap;
+  text-align: center;
+}
+.splash-name-lg { font-size: 32px; }
+.splash-name-sm { font-size: 20px; }
+
+/* Middle third stacks the visible lead sentence and the hidden tagline in the
+   same spot (tagline absolutely centred) so the spotlight can swap them. */
+.splash-mid {
+  position: relative;
 }
 
-.splash-role {
-  font-size: 32px;
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  line-height: normal;
-  color: var(--cream);
-  white-space: nowrap;
+/* Visible lead sentence (Figma 875:10797) — Figtree Light 40px, #D9D9D9. */
+.splash-lead {
+  max-width: 792px;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.8;
+  color: #d9d9d9;
+  text-align: center;
+}
+.splash-lead .lead-strong { font-weight: 400; }
+.splash-lead .lead-em { font-style: italic; }
+
+/* Inverse spotlight mask: the visible title + lead are hidden INSIDE the cursor
+   circle — a transparent hole punched in an otherwise-opaque mask. cursor.js sets
+   --mx/--my to the cursor position (element-relative) and --mr to the hole radius;
+   --mr 0 leaves the element fully visible (default / touch devices). */
+.splash-name,
+.splash-lead {
+  --mx: 50%;
+  --my: 50%;
+  --mr: 0px;
+  -webkit-mask-image: radial-gradient(circle at var(--mx) var(--my), transparent var(--mr), #000 var(--mr));
+          mask-image: radial-gradient(circle at var(--mx) var(--my), transparent var(--mr), #000 var(--mr));
 }
 
 /* CTA — dashed border pill (Figma 822:10192), no icon */
@@ -185,9 +201,9 @@ section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 40px;
+  padding: 24px;
   border: 1px dashed #F9F5EB;
-  border-radius: 120px;
+  border-radius: 160px;
   background: transparent;
   color: var(--cream);
   cursor: pointer;
@@ -200,25 +216,41 @@ section {
   border-style: solid;
 }
 
-.splash-cta-text {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 24px;
+/* CTA icon (Figma 662:8557) — 28px down-chevron, cream. Gently bobs to hint
+   scrolling; only the icon moves, not the pill. */
+.splash-cta-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
   color: var(--cream);
-  white-space: nowrap;
+  animation: splash-cta-bob 1.5s ease-in-out infinite;
+}
+@keyframes splash-cta-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
 }
 
 /* Hidden tagline (Figma 822:10189) — Figtree Medium 32px, coloured like the page
    bg so it reads as invisible, while staying in the DOM and selectable. The
    custom cursor's cream circle is what makes it legible (see .cursor-reveal). */
 .invisible-text {
+  /* Overlaid on the visible lead sentence, centred in the middle third. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 32px;
   font-weight: 500;
   letter-spacing: 0.5px;
   line-height: 1.8;        /* Figma 822:10189 — 2-line block, leading 1.8 */
   text-align: center;      /* each line centred (Figma text-center) */
   white-space: nowrap;
-  color: var(--bg);
+  /* Fully transparent — NOT var(--bg). It sits on top of the visible light lead
+     sentence, so bg-coloured (dark) glyphs would show through over the lead.
+     Transparent paints nothing, so it's invisible over both the dark page and
+     the light lead. The spotlight reveal uses the dark .cursor-reveal clone,
+     so hiding the original here doesn't affect the hover reveal. */
+  color: transparent;
 }
 
 /* ===== Custom cursor (desktop pointers only) ===== */
@@ -258,6 +290,9 @@ section {
   position: fixed;
   z-index: 9999;
   margin: 0;
+  /* Reset the centring transform inherited from .invisible-text — the clone is
+     placed by JS via left/top (the tagline's viewport rect), no offset needed. */
+  transform: none;
   pointer-events: none;
   color: #111323;
   clip-path: circle(0px at 0 0);
@@ -1365,9 +1400,10 @@ section {
      translucent card in the default state, but when the card goes position:fixed
      and overlays the page while expanding, page content can't bleed through it. */
   background: #1A1C2B;
-  /* JS interpolates border-radius 16 → 24 and, while 0 < progress ≤ 1, switches
-     this to position: fixed (bottom-anchored, height grows to fill the viewport,
-     left/width matched to the .footer-stage box so the left sidebar stays visible). */
+  border-radius: 16px; /* all corners (Figma 662:8696) */
+  /* While 0 < progress ≤ 1 the JS switches this to position: fixed, sized to the
+     .footer-stage column box (so it never bleeds into the sidebars) and leaving
+     clearance at the bottom for the floating nav. */
 }
 
 /* DEFAULT state — the 4-link row */
@@ -1382,7 +1418,7 @@ section {
 .footer-expanded {
   position: absolute;
   inset: 0;
-  padding: 40px;
+  padding: 40px; /* 40px all sides (Figma 662:8696) */
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -1395,12 +1431,16 @@ section {
   pointer-events: auto;
 }
 
-/* Figma 662:8697 — the 3 groups fill the card height, spread by space-between. */
+/* Figma 662:8697 — the 3 groups fill the card height, spread by space-between
+   (≈55px between groups at the design height). The 48px gap is a floor so the
+   inter-group spacing never collapses below ~2× the 24px intra-item gap on
+   shorter viewports (it grows beyond 48px when there's room to fill). */
 .contact-groups {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 48px;
 }
 
 /* Header→rows gap + label sizing, scoped to the expanded contact only. */
@@ -1453,7 +1493,8 @@ section {
 
 /* Bottom row: copyright left, last-updated right */
 .contact-bottom {
-  margin-top: 40px;
+  /* 40px above the copyright row comes from .footer-expanded's gap (Figma
+     card gap-40); no extra margin needed. */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1463,7 +1504,7 @@ section {
 .contact-updated {
   font-size: 12px;
   line-height: 16px;
-  color: var(--cream-dark);
+  color: var(--cream-dark); /* #EDEAE4 */
   opacity: 0.7;
 }
 
@@ -1766,21 +1807,18 @@ section {
     padding: 8px;
   }
 
-  /* Splash — compact padding, smaller identity + CTA */
+  /* Splash — compact padding, smaller title / lead / CTA */
   #splash {
     padding: 40px 24px 80px;
   }
-  .splash-name {
+  .splash-name-lg { font-size: 22px; }
+  .splash-name-sm { font-size: 15px; }
+  .splash-lead {
     font-size: 20px;
-  }
-  .splash-role {
-    font-size: 24px;
+    max-width: 100%;
   }
   .splash-cta {
     padding: 16px 28px;
-  }
-  .splash-cta-text {
-    font-size: 14px;
   }
 }
 
@@ -1848,5 +1886,9 @@ section {
   .splash-star--near {
     animation: none !important;
     opacity: var(--op);
+  }
+  /* CTA icon: no scroll-hint bob. (The spotlight is geometric, so it still works.) */
+  .splash-cta-icon {
+    animation: none !important;
   }
 }
