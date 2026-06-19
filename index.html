@@ -38,10 +38,12 @@
 
         <!-- CTA pill — bottom third (Figma 822:10192). Icon-only down chevron. -->
         <div class="splash-info">
-          <button class="splash-cta" type="button" aria-label="Scroll to start exploring">
-            <svg class="splash-cta-icon" width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
-              <path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>
-            </svg>
+          <button class="btn-primary splash-cta show-icon" type="button" aria-label="Scroll to start exploring">
+            <span class="btn-primary-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 28 28" fill="none" focusable="false">
+                <path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>
+              </svg>
+            </span>
           </button>
         </div>
       </div>
@@ -69,8 +71,7 @@
             <span class="mid-label">Summary</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body reveal-item">I design digital products, from research to ready-to-build specs. I've shipped across various industries, usually as the sole designer. My work has helped teams build, iterate, and ship faster, grown products 17×, reduced friction, and turned messy multi-audience problems into systems that actually solve the problem.</p>
-          <p class="mid-meta reveal-item"><span class="mid-flag">🇱🇺</span> Based in the Netherlands.</p>
+          <p class="mid-body mid-body--light reveal-item">Currently based in the Netherlands, I’ve shipped digital product for +5 years across various industries, usually as the sole designer. My work has helped teams build, iterate, and ship faster, grown products 17×, reduced friction, and turned messy multi-audience problems into systems that actually solve the problem.</p>
         </div>
 
         <!-- 2. SERVICES (Figma: Services sits above Works) -->
@@ -80,10 +81,10 @@
             <span class="mid-rule"></span>
           </div>
           <div class="service-chips reveal-item">
-            <button class="chip" type="button" data-filter="product-design">Product Design</button>
-            <button class="chip" type="button" data-filter="mobile-design">Mobile Design</button>
-            <button class="chip" type="button" data-filter="web-design">Web Design</button>
-            <button class="chip" type="button" data-filter="interaction-design">Interaction Design</button>
+            <button class="btn-primary" type="button" data-filter="product-design"><span class="btn-primary-label">Product Design</span></button>
+            <button class="btn-primary" type="button" data-filter="mobile-design"><span class="btn-primary-label">Mobile Design</span></button>
+            <button class="btn-primary" type="button" data-filter="web-design"><span class="btn-primary-label">Web Design</span></button>
+            <button class="btn-primary" type="button" data-filter="interaction-design"><span class="btn-primary-label">Interaction Design</span></button>
           </div>
         </div>
 
@@ -125,9 +126,9 @@
           </div>
           <p class="mid-body reveal-item">I specialise in three things:</p>
           <div class="strengths">
-            <p class="strength-p reveal-item"><strong>End-to-end product design:</strong> I take products from first research through to ready-to-build specs — discovery, flows, UI, and a handoff engineers can actually build from.</p>
-            <p class="strength-p reveal-item"><strong>Systems thinking:</strong> I design reusable components and patterns instead of one-off screens, so products stay consistent and scale without breaking.</p>
-            <p class="strength-p reveal-item"><strong>Designing under constraint:</strong> Tight timelines, small teams, and technical limits — I make pragmatic calls that ship and still solve the real problem.</p>
+            <p class="strength-p reveal-item"><strong>End-to-end product design:</strong> I go from the first user interview to the final handoff spec. Research, testing, wireframes, high-fidelity prototypes — I cover the full process so nothing gets lost between thinking and building.</p>
+            <p class="strength-p reveal-item"><strong>Systems thinking:</strong> I don’t design only screens, I design systems. Every flow, every component, every decision connects back to the bigger picture; the business model, the different audiences, the product that needs to hold together at scale.</p>
+            <p class="strength-p reveal-item"><strong>Designing under constraint:</strong> Tight timelines, shifting requirements, no design team to lean on. I’ve built products solo from scratch, iterated fast, and still shipped scalable work I’m proud of. Pressure doesn’t slow me down, it sharpens my focus.</p>
           </div>
         </div>
 
@@ -137,7 +138,7 @@
             <span class="mid-label">How I Work</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body reveal-item">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
+          <p class="mid-body mid-body--tight reveal-item">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
           <!-- 4-card cycle (Define → Research → Design → Validate). The .cycle box
                is the exact 792×421 Figma layout; initCycle() in script.js scales
                it to fit the column. Below 768px it stacks vertically. -->
@@ -150,10 +151,10 @@
               <svg class="cycle-lines" viewBox="0 0 792 421" width="100%" height="100%" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                   <marker id="arrow" viewBox="0 0 10 10" markerWidth="6" markerHeight="6" refX="8" refY="5" orient="auto">
-                    <path d="M0 0 L10 5 L0 10 Z" fill="rgba(249, 245, 235, 0.3)"/>
+                    <path d="M0 0 L10 5 L0 10 Z" fill="rgba(249, 245, 235, 0.7)"/>
                   </marker>
                 </defs>
-                <g stroke="rgba(249, 245, 235, 0.3)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <g stroke="rgba(249, 245, 235, 0.7)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <!-- 01 Define → 02 Research (top-right) -->
                   <path d="M556 88 H608 Q636 88 636 116 V154" marker-end="url(#arrow)"/>
                   <!-- 02 Research → 03 Design (bottom-right) -->
@@ -165,19 +166,19 @@
                 </g>
               </svg>
               <div class="cycle-card reveal-item" data-pos="define">
-                <div class="cycle-head"><span class="cycle-num">01</span><span class="cycle-title">Define</span></div>
+                <div class="cycle-head"><span class="cycle-title">Define</span></div>
                 <p class="cycle-desc">Clarify the problem space, set success metrics, and align on scope before a single pixel gets designed.</p>
               </div>
               <div class="cycle-card reveal-item" data-pos="research">
-                <div class="cycle-head"><span class="cycle-num">02</span><span class="cycle-title">Research</span></div>
+                <div class="cycle-head"><span class="cycle-title">Research</span></div>
                 <p class="cycle-desc">Desk research, user interviews, and field observation to answer the right questions.</p>
               </div>
               <div class="cycle-card reveal-item" data-pos="design">
-                <div class="cycle-head"><span class="cycle-num">03</span><span class="cycle-title">Design</span></div>
+                <div class="cycle-head"><span class="cycle-title">Design</span></div>
                 <p class="cycle-desc">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
               </div>
               <div class="cycle-card reveal-item" data-pos="validate">
-                <div class="cycle-head"><span class="cycle-num">04</span><span class="cycle-title">Validate</span></div>
+                <div class="cycle-head"><span class="cycle-title">Validate</span></div>
                 <p class="cycle-desc">Usability testing, real feedback, honest iteration. Ship what works, cut what doesn't.</p>
               </div>
             </div>
@@ -545,10 +546,10 @@
         </div>
         <!-- Filter chips (Product Design active by default) -->
         <div class="service-chips works-filter reveal-item">
-          <button class="chip active" type="button" data-filter="product-design">Product Design</button>
-          <button class="chip" type="button" data-filter="mobile-design">Mobile Design</button>
-          <button class="chip" type="button" data-filter="web-design">Web Design</button>
-          <button class="chip" type="button" data-filter="interaction-design">Interaction Design</button>
+          <button class="btn-primary selected" type="button" data-filter="product-design"><span class="btn-primary-label">Product Design</span></button>
+          <button class="btn-primary" type="button" data-filter="mobile-design"><span class="btn-primary-label">Mobile Design</span></button>
+          <button class="btn-primary" type="button" data-filter="web-design"><span class="btn-primary-label">Web Design</span></button>
+          <button class="btn-primary" type="button" data-filter="interaction-design"><span class="btn-primary-label">Interaction Design</span></button>
         </div>
 
         <!-- 1. ONTON -->
@@ -578,7 +579,7 @@
         </a>
 
         <!-- 2. CHALLENQUIZ -->
-        <a class="project reveal-item" id="project-challenquiz" href="#" data-tags="product-design mobile-design">
+        <a class="project reveal-item" id="project-challenquiz" href="challenquiz.html" data-tags="product-design mobile-design">
           <div class="project-head">
             <span class="project-title">Challenquiz</span>
             <span class="project-rule"></span>
@@ -604,7 +605,7 @@
         </a>
 
         <!-- 3. EZAM PART -->
-        <a class="project reveal-item" id="project-ezam-part" href="#" data-tags="product-design web-design">
+        <a class="project reveal-item" id="project-ezam-part" href="ezam.html" data-tags="product-design web-design">
           <div class="project-head">
             <span class="project-title">Ezam Part</span>
             <span class="project-rule"></span>

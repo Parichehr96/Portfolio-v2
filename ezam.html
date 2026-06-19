@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ezam Part — Case Study · Parichehr Talebzadeh</title>
+
+  <!-- Figtree from Google Fonts (300, 400, 500, 600) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Shared design system (CSS variables, layout, nav, footer, mid-* blocks) -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ============================================================
+       Case-study-specific styles. Identical to onton.html /
+       challenquiz.html — built ON TOP of the shared design system in
+       styles.css: same CSS variables, same .layout / sidebars / footer
+       component / .mid-header section headers. (No floating nav here.)
+       ============================================================ -->
+  <style>
+    /* The case study reuses .home-middle (40px padding, 80px block rhythm). */
+
+    /* --- Prose --- */
+    .case-prose {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--cream);
+    }
+    .case-body strong {
+      font-weight: 600;
+    }
+    .case-lead {
+      font-weight: 600;
+    }
+
+    /* --- Case-study images (exported from Figma, Assets/images/ezam/) --- */
+    .case-figure {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0;
+    }
+    /* Mockup / diagram images, exported from Figma already composited on the
+       page background (#111323) so they sit seamlessly on --bg with no card,
+       border, or radius — the mockups float directly on the dark page. Natural
+       width/height attributes reserve the aspect ratio up-front (no layout
+       shift); height:auto scales to the column. */
+    .case-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .case-caption {
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(249, 245, 235, 0.5);
+    }
+
+    /* Hero cover — sits borderless on the page. */
+    .case-hero-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* --- Introduction metadata (label / value rows) --- */
+    .case-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .case-inforow {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
+      align-items: baseline;
+    }
+    .case-infolabel {
+      font-size: 15px;
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-infovalue {
+      font-size: 15px;
+      color: var(--cream);
+    }
+
+    /* --- Numbered sub-items --- */
+    .case-subs {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+    .case-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--cream);
+    }
+
+    /* --- Definition list (Reflection: term + description rows) --- */
+    .case-deflist {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .case-defrow {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 24px;
+    }
+    .case-defterm {
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-defdesc {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--cream);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1023px) {
+      .case-body,
+      .case-defterm,
+      .case-defdesc,
+      .case-infolabel,
+      .case-infovalue {
+        font-size: 14px;
+      }
+    }
+    @media (max-width: 768px) {
+      .case-inforow { grid-template-columns: 100px 1fr; }
+      .case-defrow { grid-template-columns: 1fr; gap: 8px; }
+    }
+    @media (max-width: 576px) {
+      .case-inforow { grid-template-columns: 88px 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- One continuous 3-column page layout; sidebars persist across the page -->
+    <div class="layout">
+      <!-- Left sidebar — sticky. Figma: project title + tagline + "Go Back". -->
+      <aside class="layout-left layout-left--case">
+        <div class="bio-summary">
+          <h2 class="home-name">Ezam Part</h2>
+          <p class="home-role">Unifying an Auto Parts Manufacturer’s Digital Ecosystem</p>
+        </div>
+        <a class="home-portfolio go-back" href="index.html#works">
+          <!-- Back icon — exact export from Figma node 858:10376 (lets-icons:back-light). -->
+          <svg class="go-back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M3.99997 10.0005L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L3.99997 10.0005ZM20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005H20.5ZM8.64597 15.3545L3.64597 10.3545L4.35397 9.64648L9.35397 14.6465L8.64597 15.3545ZM3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648ZM3.99997 9.50048H14V10.5005H3.99997V9.50048ZM20.5 16.0005V18.0005H19.5V16.0005H20.5ZM14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005H19.5C19.5 14.5418 18.9205 13.1428 17.8891 12.1114C16.8576 11.0799 15.4587 10.5005 14 10.5005V9.50048Z" fill="currentColor"/>
+            <path d="M3.64597 10.3545L3.99997 10.0005L3.64597 9.64648M3.64597 10.3545L8.64597 15.3545L9.35397 14.6465L4.35397 9.64648L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648M20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005M20.5 18.0005H19.5M20.5 18.0005V16.0005M19.5 18.0005V16.0005M14 9.50048H3.99997V10.5005H14M14 9.50048V10.5005M14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005M14 10.5005C15.4587 10.5005 16.8576 11.0799 17.8891 12.1114C18.9205 13.1428 19.5 14.5418 19.5 16.0005M20.5 16.0005H19.5" stroke="currentColor" stroke-width="0.6"/>
+          </svg>
+          Go Back
+        </a>
+      </aside>
+
+      <!-- Middle column — the case study -->
+      <div class="layout-main">
+        <section id="ezam">
+          <div class="home-middle">
+
+            <!-- 1. 1-MINUTE READ -->
+            <div class="mid-block" id="sec-one-minute">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">1-Minute Read</span>
+                <span class="mid-rule"></span>
+              </div>
+              <!-- Cover: laptop + phone showing the ezampart.com site -->
+              <img class="case-hero-img reveal-item"
+                   src="Assets/images/ezam/hero-cover.png"
+                   alt="Ezam Part cover: a laptop and smartphone showing the Persian-language ezampart.com website — a dark navy hero with the Ezam logo and a products section below"
+                   width="492" height="408"
+                   decoding="async" />
+              <div class="case-prose">
+                <p class="case-body reveal-item">Ezam is one of Iran’s largest auto parts manufacturers and distributors. When I joined, their digital presence was the opposite of their market position — disconnected landing pages scattered across the web, no unified brand, no clear product catalogue, and no tools for the agents who sat at the centre of their distribution network.</p>
+                <p class="case-body reveal-item">The brief was to bring it all together. What that actually meant was designing three connected products from scratch: a consumer website, an agent dashboard, and a mobile app for repair shops — all under one shared design system, all working as a single ecosystem.</p>
+                <p class="case-body reveal-item">The hardest part wasn’t the website. It was the agent layer. Repair shops and customers both benefited from the new on-demand parts system, but agents bore the operational cost of holding and dispatching stock. So we designed an incentive into the dashboard itself — a parts exchange feature that let agents trade slow-moving inventory for high-demand items in their region. The system had to work for everyone, or it wouldn’t work at all.</p>
+                <p class="case-body reveal-item">I restructured the entire product catalogue from the ground up, designed a visual “Select Your Car” filter to help non-expert users find parts without knowing technical terminology, and delivered responsive layouts across desktop and mobile — repair shops and end users were almost entirely on mobile.</p>
+                <p class="case-body reveal-item">I left before development completed. But the design system, the strategy, and the full ecosystem were handed off ready to build.</p>
+              </div>
+            </div>
+
+            <!-- 2. INTRODUCTION — metadata -->
+            <div class="mid-block" id="sec-introduction">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Introduction</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-info">
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Role</span><span class="case-infovalue">Sole Product Designer; strategy, design system, UX flows, UI</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Timeline</span><span class="case-infovalue">8 months · November 2022 – June 2023</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Team</span><span class="case-infovalue">1 designer (me), product manager</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Client</span><span class="case-infovalue">Ezam Group (a large auto parts manufacturer and distributor)</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Industry</span><span class="case-infovalue">E-commerce · B2B</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Tools</span><span class="case-infovalue">Figma, Miro</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Status</span><span class="case-infovalue">Live at ezampart.com</span></div>
+              </div>
+            </div>
+
+            <!-- 3. THE PROBLEM -->
+            <div class="mid-block" id="sec-problem">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">The Problem: A Major Manufacturer With a Fragmented Digital Presence</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">Ezam is one of Iran’s largest auto parts manufacturers and distributors. The company sells in bulk to local storage hubs and branches, who then distribute parts to repair shops and end users across the country.</p>
+                <p class="case-body reveal-item">The business was strong, but the digital presence wasn’t matching it. News, blog content, product catalogues, media, and corporate information were scattered across disconnected landing pages with inconsistent branding and no shared structure. Customers couldn’t easily find products. Agents had no centralised tools. Repair shops had no way to interact with the network at all.</p>
+                <p class="case-body reveal-item">The holding company funded a digital agency to fix this, and I was brought in as the sole designer to lead the redesign across three connected products: a unified consumer website, an agent dashboard, and a repairman mobile app.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/ezam/problem-before-after.png"
+                     alt="Before-and-after comparison of the Ezam web presence: on the left, scattered legacy landing pages; on the right, the unified ezampart.com homepage"
+                     width="792" height="640"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Before: scattered legacy landing pages vs. After: unified ezampart.com homepage</figcaption>
+              </figure>
+            </div>
+
+            <!-- 4. MY ROLE -->
+            <div class="mid-block" id="sec-my-role">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">My Role</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">I worked as the only designer in a team of four — alongside the stakeholder, product manager, and product owner. My responsibilities covered the full design scope: strategy, content structure, design system, user flows, and final interfaces across web and mobile, in both consumer and professional contexts.</p>
+                <p class="case-body reveal-item">The platform was designed for RTL (right-to-left) Farsi, intended for launch in Iran. I’m a native Farsi speaker, which made the language layer straightforward.</p>
+              </div>
+            </div>
+
+            <!-- 5. RESEARCH -->
+            <div class="mid-block" id="sec-research">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Research: Three Audiences, Three Different Needs</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">The platform had to serve three very different user groups, and understanding what each one actually needed was the foundation of every design decision.</p>
+                <p class="case-body reveal-item"><span class="case-lead">End consumers browse for parts when something breaks.</span><br />They want to find the right component for their specific car quickly, without needing to know technical part numbers or industry terminology.</p>
+                <p class="case-body reveal-item">Repair shops need parts on demand. Currently, when a customer brings in a broken car, the shop tells them what’s needed, and the customer has to source the part themselves. We wanted to flip that — letting the repairman request the part directly from the nearest agent, who delivers it to the shop quickly. Shops loved this idea immediately because it meant they could hold less inventory.</p>
+                <p class="case-body reveal-item"><span class="case-lead">Agents distribute products regionally.</span><br />They were the most operationally complex group: they manage their own repositories manually, deal with regional demand mismatches (a part that sells well in one city might sit unused in another), and needed a reason to participate in the new fulfilment model.</p>
+                <p class="case-body reveal-item"><span class="case-lead">The agent piece was critical.</span><br />Shops and customers both benefit from the new system, but agents bear the operational cost — they need to hold stock and dispatch parts on demand. So we designed the agent dashboard with a specific incentive: a parts exchange feature, letting agents trade slow-moving stock for items that sell better in their region.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/ezam/research-audience-map.png"
+                     alt="A three-branch audience map diagramming the needs and incentives of vehicle owners, retailers/spare-parts sellers, and fixed and portable car mechanics across the parts-distribution and parts-supply chain"
+                     width="792" height="656"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Three-audience map: consumer / repair shop / agent — needs and incentives</figcaption>
+              </figure>
+            </div>
+
+            <!-- 6. COMPETITOR ANALYSIS -->
+            <div class="mid-block" id="sec-competitor">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Competitor Analysis</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">I studied major international and domestic auto parts platforms — Bosch, Valeo, Crouse, and Iran Khodro — to understand both content structure and selling flows.</p>
+                <p class="case-body reveal-item">The most useful reference was Bosch. Their selling flow was the cleanest example of how to structure a parts catalogue around what the user actually knows (their car, their problem) rather than around how the manufacturer organises its inventory (part categories, SKUs). That insight directly shaped the “Select Your Car” filter, which I’ll come back to below.</p>
+                <p class="case-body reveal-item">The other competitors had cleaner unified websites than Ezam’s existing landing pages — confirming that the first move had to be consolidation. Before designing any new features, the scattered legacy pages needed to be brought under one branded roof.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/ezam/competitor-analysis.png"
+                     alt="A grid of competitor auto-parts website screenshots — Valeo, Crouse, Bosch, and Iran Khodro — each overlaid with its brand logo, alongside a Bosch and Ezam reference panel"
+                     width="792" height="656"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Competitor reference: Bosch, Valeo, Crouse, Iran Khodro — structural patterns</figcaption>
+              </figure>
+            </div>
+
+            <!-- 7. STRATEGY -->
+            <div class="mid-block" id="sec-strategy">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Strategy: Three Connected Products</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">Rather than treating this as a website redesign, we approached it as a connected ecosystem with three products that needed to work together:</p>
+                <p class="case-body reveal-item"><strong>1. The consumer website (ezampart.com)</strong> — unified product catalogue, brand content, agent locator, and direct purchasing.</p>
+                <p class="case-body reveal-item"><strong>2. The agent dashboard</strong> — a unified ERP for agents to manage inventory, fulfil repair shop requests, and exchange stock with other agents in different regions.</p>
+                <p class="case-body reveal-item"><strong>3. The repairman mobile app</strong> — letting repair shops request parts directly from the nearest agent on demand.</p>
+                <p class="case-body reveal-item">I designed a single design system covering all three products to maintain consistency across the ecosystem. Even though only the website launched during my time on the project, the design system was built to scale into the dashboard and app from day one.</p>
+              </div>
+            </div>
+
+            <!-- 8. WHAT SHIPPED AND WHAT DIDN'T -->
+            <div class="mid-block" id="sec-shipped">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">What Shipped and What Didn’t</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">The website launched at ezampart.com and is live today. The agent dashboard and repairman app were designed and ready, but development on those products started after I left the company. I don’t have visibility into whether they were eventually built.</p>
+                <p class="case-body reveal-item">This is something I want to be transparent about: I designed a complete ecosystem, but only one third of it became real during my involvement. The strategic work — the agent incentive model, the parts exchange, the on-demand fulfilment flow — exists as designs and documentation, not as a running product.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/ezam/shipped-screens.png"
+                     alt="The live ezampart.com site: the homepage with its heart-of-Iran's-vehicles hero and product category grid, a products mega-menu, and an agent-locator map of Iran with location pins"
+                     width="792" height="656"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Live: ezampart.com homepage + product detail + agent locator</figcaption>
+              </figure>
+            </div>
+
+            <!-- 9. REFLECTION -->
+            <div class="mid-block" id="sec-reflection">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Reflection</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-deflist">
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I’m confident about</span>
+                  <div class="case-defdesc">
+                    <p>Unifying everything into a single platform was the right call. Before this project, Ezam’s digital presence was scattered across disconnected pages with no shared identity. Bringing it together — and designing the system to scale into agent and repairman tools — gave the business a foundation it didn’t have before. The website is still live three years later, which suggests the structure has held.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I’d do differently</span>
+                  <div class="case-defdesc">
+                    <p>I’d push harder for prototype testing on the smaller flows — even informally. I designed the entire ecosystem based on stakeholder input, competitor research, and strategic logic, but I didn’t have the authority to run usability tests before launch. Looking back, I should have built quick prototypes of key flows (like the Select Your Car filter, or the agent exchange interface) and tested them with even a handful of representative users. The cost would have been minimal and the validation would have been valuable.</p>
+                    <p>This is a lesson that has stayed with me: even when the project structure doesn’t formally include user testing, a designer can and should create informal opportunities to put the work in front of real people. Asking permission isn’t always the right move — sometimes you just need to do it.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I took forward</span>
+                  <div class="case-defdesc">
+                    <p>This project taught me how to design across a connected ecosystem rather than for a single product. Holding three audiences (consumer, professional, B2B), three platforms (web, dashboard, mobile app), and one shared design system in mind simultaneously is a discipline I now apply to every multi-product brief. The work also reinforced that the most strategically important design decisions often live in the products users never see — the agent dashboard mattered more to the business model than the consumer website did, even though the website got all the visibility.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10. FOOTER → CONTACT — single morphing card (same as index.html / onton.html) -->
+            <div class="footer-stage" id="footer-stage">
+              <div class="mid-footer" id="footer-cta">
+                <!-- DEFAULT state -->
+                <div class="footer-default">
+                  <div class="footer-row">
+                    <span class="mid-footer-title">Contact Me</span>
+                    <div class="mid-footer-links">
+                      <a class="footer-link" href="mailto:parichehr.t96@gmail.com">Email</a>
+                      <a class="footer-link" href="https://wa.me/31657248971" target="_blank" rel="noopener">Whatsapp</a>
+                      <a class="footer-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- EXPANDED state -->
+                <div class="footer-expanded" aria-hidden="true">
+                  <div class="contact-groups">
+                    <!-- MOST DIRECT (SUGGESTED) -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Most Direct (Suggested)</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="mailto:parichehr.t96@gmail.com">
+                          <span class="contact-name">Email</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">parichehr.t96@gmail.com</span>
+                        </a>
+                        <a class="contact-row" href="https://wa.me/31657248971" target="_blank" rel="noopener">
+                          <span class="contact-name">Whatsapp</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">+31-657248971</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- SOCIAL MEDIA -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Social Media</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">
+                          <span class="contact-name">Linkedin</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/parichehr-talebzadeh</span>
+                        </a>
+                        <a class="contact-row" href="https://x.com/PariUXD" target="_blank" rel="noopener">
+                          <span class="contact-name">Twitter (X)</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/PariUXD</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- MORE IN DEPTH -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">More In Depth</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://behance.net/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Behance</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://dribbble.com/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Dribbble</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://github.com/Parichehr96" target="_blank" rel="noopener">
+                          <span class="contact-name">GitHub</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/Parichehr96</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-bottom">
+                    <span class="contact-copy">© 2026, Parichehr Talebzadeh</span>
+                    <span class="contact-updated" id="last-updated"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Right sidebar — sticky table of contents -->
+      <aside class="layout-right layout-right--toc">
+        <nav class="toc-nav" aria-label="On this page">
+          <a class="toc-item" href="#sec-one-minute">1-Minute Read</a>
+          <a class="toc-item" href="#sec-introduction">Introduction</a>
+          <a class="toc-item" href="#sec-problem">The Problem</a>
+          <a class="toc-item" href="#sec-my-role">My Role</a>
+          <a class="toc-item" href="#sec-research">Research</a>
+          <a class="toc-item" href="#sec-competitor">Competitor Analysis</a>
+          <a class="toc-item" href="#sec-strategy">Strategy</a>
+          <a class="toc-item" href="#sec-shipped">What Shipped &amp; What Didn’t</a>
+          <a class="toc-item" href="#sec-reflection">Reflection</a>
+        </nav>
+        <nav class="side-links" aria-label="Ezam Part links">
+          <!-- TODO: external destinations not specified in Figma — update href when provided.
+               (Body text references ezampart.com; Introduction status said ezamonline.com.) -->
+          <a class="side-link" href="#" rel="noopener">Company’s Website</a>
+          <a class="side-link" href="#" rel="noopener">Company’s Linkedin</a>
+          <a class="side-link" href="#footer-stage">Contact Me</a>
+        </nav>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Scroll progress bar (case-study pages only) — fills 0→100% with scroll. -->
+  <div class="scroll-progress"></div>
+
+  <script src="onton.js"></script>
+  <script defer src="reveal.js"></script>
+  <script defer src="cursor.js"></script>
+  <script defer src="scroll-progress.js"></script>
+</body>
+</html>

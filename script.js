@@ -29,17 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /**
  * Filter the Works project list by a single service tag. Non-matching projects
- * are removed from layout (hidden), so the rest move up. Also syncs the active
- * state across every chip that targets this filter — the Home service chips and
- * the Works filter chips both use .chip[data-filter], so they stay in lockstep.
+ * are removed from layout (hidden), so the rest move up. Also syncs the selected
+ * state across the Works filter buttons (.btn-primary[data-filter]).
  */
 function filterWorks(filter) {
   if (!filter) return;
 
-  // Active state lives only on the Works filter row; the Home service chips
+  // Selected state lives only on the Works filter row; the Home service buttons
   // stay unselected (they act purely as launchers).
-  document.querySelectorAll(".works-filter .chip[data-filter]").forEach((chip) => {
-    chip.classList.toggle("active", chip.dataset.filter === filter);
+  document.querySelectorAll(".works-filter .btn-primary[data-filter]").forEach((btn) => {
+    btn.classList.toggle("selected", btn.dataset.filter === filter);
   });
 
   document.querySelectorAll(".project").forEach((project) => {
@@ -792,23 +791,23 @@ function initHomeMiddle() {
     });
   });
 
-  // Home service chips → apply the filter on #works and jump there.
-  document.querySelectorAll("#home .chip[data-filter]").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      filterWorks(chip.dataset.filter);
+  // Home service buttons → apply the filter on #works and jump there.
+  document.querySelectorAll("#home .btn-primary[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterWorks(btn.dataset.filter);
       if (works) works.scrollIntoView({ behavior: "smooth" });
     });
   });
 }
 
 /**
- * Works section: the filter chips drive filterWorks(); "Product Design" is the
- * default selection shown on load. Clicking the already-active chip is a no-op
+ * Works section: the filter buttons drive filterWorks(); "Product Design" is the
+ * default selection shown on load. Clicking the already-selected button is a no-op
  * (filterWorks is idempotent) and there is no deselect state.
  */
 function initWorks() {
-  document.querySelectorAll(".works-filter .chip[data-filter]").forEach((chip) => {
-    chip.addEventListener("click", () => filterWorks(chip.dataset.filter));
+  document.querySelectorAll(".works-filter .btn-primary[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => filterWorks(btn.dataset.filter));
   });
 
   // Default filter.

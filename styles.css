@@ -197,32 +197,14 @@ section {
 }
 
 /* CTA — dashed border pill (Figma 822:10192), no icon */
-.splash-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  border: 1px dashed #F9F5EB;
-  border-radius: 160px;
-  background: transparent;
-  color: var(--cream);
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-style 0.3s ease, background 0.3s ease;
-}
-
-/* Hover: dashed border becomes solid */
-.splash-cta:hover {
-  border-style: solid;
-}
-
-/* CTA icon (Figma 662:8557) — 28px down-chevron, cream. Gently bobs to hint
-   scrolling; only the icon moves, not the pill. */
-.splash-cta-icon {
-  display: block;
+/* Splash CTA — a .btn-primary shown in its default (dashed pill) styling via
+   the shared component. The only splash-specific touches: the down-chevron icon
+   is enlarged to its Figma size and gently bobs to hint scrolling (only the icon
+   moves, not the pill). Box, border, hover fill all come from .btn-primary.
+   Positioning (centred, bottom third) is handled by the .splash-info wrapper. */
+.splash-cta .btn-primary-icon {
   width: 24px;
   height: 24px;
-  color: var(--cream);
   animation: splash-cta-bob 1.5s ease-in-out infinite;
 }
 @keyframes splash-cta-bob {
@@ -661,6 +643,11 @@ section {
   font-weight: 600;
 }
 
+/* Scoped overrides (the base .mid-body is shared by the About bio, which stays
+   Regular/1.8). Home Summary body is Light; the How I Work intro line is tighter. */
+.mid-body--light { font-weight: 300; }
+.mid-body--tight { line-height: 1.4; }
+
 /* Summary location line */
 .mid-meta {
   display: flex;
@@ -717,9 +704,9 @@ section {
   transition: all 0.2s ease;
 }
 
-/* Title: dashed underline, 0.5px #EDEAE4, pb 4px */
+/* Title: dashed underline, 0.5px #F9F5EB, pb 4px */
 .work-name {
-  border-bottom: 0.5px dashed var(--cream-dark);
+  border-bottom: 0.5px dashed var(--cream);
   padding-bottom: 4px;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -754,33 +741,117 @@ section {
   color: #FFFFFF;
 }
 
-/* --- Service / filter chips — 4 equal columns filling the row --- */
+/* --- Service / Works-filter button rows — left-aligned, wrapping --- */
+/* Holds .btn-primary buttons (Services = display launchers, Works = filters). */
 .service-chips {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 24px;
 }
 
-.chip {
+/* ---------------------------------------------------------------
+   Primary Button (Figma 662:8615 — Property 1=Primary). Three states:
+     • Default  — dashed cream outline, transparent, cream text (Regular).
+     • Hover    — cream fill floods in radially from centre, outline goes
+                  solid, text + icon turn navy (#111323), Medium weight.
+     • Selected — .selected: translucent cream wash + solid outline,
+                  white text (Medium); no flood.
+   Markup pattern (icon optional, hidden unless .show-icon is added):
+     <button class="btn-primary">
+       <span class="btn-primary-label">Portfolio</span>
+       <span class="btn-primary-icon" aria-hidden="true"><!-- inline SVG --></span>
+     </button>
+   The icon uses currentColor, so it tracks the label colour through every
+   state automatically. NOTE: the Figma component ships with NO icon (label
+   only) — the slot is here for per-use-case icons supplied later.
+   --------------------------------------------------------------- */
+.btn-primary {
+  position: relative;          /* stacking context for the ::before fill */
+  isolation: isolate;
+  overflow: hidden;            /* clips the radial flood to the pill shape */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;                    /* Figma gap between label and icon */
   font-family: inherit;
   font-size: 15px;
+  font-weight: 400;            /* Figtree Regular (Default) */
   line-height: 1.2;
   color: var(--cream);
   background: transparent;
   border: 1px dashed #F9F5EB;
   border-radius: 122px;
-  padding: 12px 16px;
+  padding: 12px 20px;
   text-align: center;
-  /* wrap rather than overflow when a label is too long for its 1fr column */
-  min-width: 0;
   cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  transition: color 0.4s ease, border-color 0.3s ease, font-weight 0s;
 }
 
-/* Active chip: solid 0.2px border + 4% cream fill (Figma) */
-.chip.active {
-  background: rgba(249, 245, 235, 0.04);
-  border: 0.2px solid #F9F5EB;
+/* Radial fill layer — a centred circle that scales up to flood the pill.
+   Sits BELOW the label + icon (z-index 0 vs 1) so the hover animation is
+   never obscured by, and never obscures, the button content. */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 130%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: #F9F5EB;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+
+/* Label + icon ride ABOVE the fill. */
+.btn-primary-label,
+.btn-primary-icon {
+  position: relative;
+  z-index: 1;
+}
+
+/* Icon: HIDDEN by default — revealed only with .show-icon. Inherits the
+   button's (transitioning) text colour via currentColor. */
+.btn-primary-icon {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+.btn-primary-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.btn-primary.show-icon .btn-primary-icon {
+  display: inline-flex;
+}
+
+/* HOVER — flood expands, outline solid, text + icon → navy, Medium. */
+.btn-primary:hover {
+  color: #111323;
+  border-style: solid;
+  font-weight: 500;            /* Figtree Medium */
+}
+.btn-primary:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* SELECTED — persistent translucent wash + solid outline, white text. */
+.btn-primary.selected {
+  background: rgba(249, 245, 235, 0.08);
+  border-style: solid;
+  color: #FFFFFF;
+  font-weight: 500;            /* Figtree Medium */
+}
+/* A selected button is already in its chosen state — it skips the hover flood
+   (the ::before stays collapsed) and keeps its white text. */
+.btn-primary.selected:hover::before {
+  transform: translate(-50%, -50%) scale(0);
 }
 
 /* --- Strengths --- */
@@ -792,7 +863,7 @@ section {
 
 .strength-p {
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.8;
   color: var(--cream);
 }
@@ -835,8 +906,8 @@ section {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 24px 32px;
-  background: rgba(249, 245, 235, 0.03);
+  padding: 8px 24px;
+  background: none;
   border-radius: 16px;
   z-index: 1;
 }
@@ -852,25 +923,18 @@ section {
   gap: 4px;
   white-space: nowrap;
 }
-/* Number prefix (01–04): light weight, dimmed cream, inline before the title */
-.cycle-num {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 300;
-  color: rgba(249, 245, 235, 0.5);
-}
 .cycle-title {
   font-size: 15px;
   line-height: 28px;
-  font-weight: 500;
+  font-weight: 400;
   color: #F9F5EB;
 }
 .cycle-desc {
   font-size: 11px;
-  font-weight: 400;
-  line-height: 1.5;
+  font-weight: 300;
+  line-height: 1.4;
   text-align: center;
-  color: rgba(249, 245, 235, 0.6);
+  color: rgba(249, 245, 235, 0.7);
 }
 
 /* --- What Others Think: testimonial cards (Figma 699:9142) ---
@@ -1061,7 +1125,7 @@ section {
    sibling immediately after the underlined title (no flex `order` needed). */
 
 .lead-name {
-  border-bottom: 0.5px dashed var(--cream-dark);
+  border-bottom: 0.5px dashed var(--cream);
   padding-bottom: 4px;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -1159,29 +1223,34 @@ section {
 .tri-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 32px;
 }
 
 .tri-card {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: rgba(249, 245, 235, 0.04);
+  background: none;
   border-radius: 16px;
-  padding: 24px 16px;
+  padding: 0;
 }
 
-/* Card head: 16px icon + label (gap 8, centered), with a solid low-opacity
-   divider beneath. Title is cream (#F9F5EB) per spec; the icon keeps its Figma
-   colour (#B3BAE1, set on each inline SVG). */
+/* Card head: 16px icon + label (gap 8, centered), with a 1px low-opacity rule
+   filling the space to the RIGHT of the label (Figma 665:9320, same pattern as
+   .mid-header / .mid-rule). Label is white; the icon keeps its Figma colour
+   (#B3BAE1, set on each inline SVG). */
 .tri-card-head {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #F9F5EB;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(249, 245, 235, 0.15);
+  color: #FFFFFF;
+}
+.tri-card-head::after {
+  content: "";
+  flex: 1;
+  height: 0;
+  border-top: 1px solid rgba(249, 245, 235, 0.15);
 }
 
 /* Column-title icon (16×16, inline SVG exported from Figma) */
@@ -1217,7 +1286,7 @@ section {
 }
 
 .tri-item-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--cream);
   opacity: 0.7;
 }
@@ -1601,11 +1670,6 @@ section {
     height: 160px;
   }
 
-  /* Chips → 2×2 */
-  .service-chips {
-    grid-template-columns: 1fr 1fr;
-  }
-
   /* Skill / Favourite cards stay 3-up but tighter */
   .tri-card {
     padding: 16px 12px;
@@ -1754,14 +1818,9 @@ section {
   /* (Project card stacking — title → thumbnail → description → metadata — is
      handled in the ≤768 block above and inherited here.) */
 
-  /* Chips → 2×2, slightly smaller, comfortable tap target */
+  /* Button rows → tighter gap on small screens (buttons wrap automatically) */
   .service-chips {
-    grid-template-columns: 1fr 1fr;
     gap: 12px;
-  }
-  .chip {
-    padding: 10px 12px;
-    min-height: 44px;
   }
 
   /* Skill / Favourite cards stack full width */
@@ -1816,9 +1875,6 @@ section {
   .splash-lead {
     font-size: 20px;
     max-width: 100%;
-  }
-  .splash-cta {
-    padding: 16px 28px;
   }
 }
 
@@ -1888,7 +1944,7 @@ section {
     opacity: var(--op);
   }
   /* CTA icon: no scroll-hint bob. (The spotlight is geometric, so it still works.) */
-  .splash-cta-icon {
+  .splash-cta .btn-primary-icon {
     animation: none !important;
   }
 }

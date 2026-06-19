@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challenquiz — Case Study · Parichehr Talebzadeh</title>
+
+  <!-- Figtree from Google Fonts (300, 400, 500, 600) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Shared design system (CSS variables, layout, nav, footer, mid-* blocks) -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ============================================================
+       Case-study-specific styles. Identical to onton.html — built ON
+       TOP of the shared design system in styles.css: same CSS variables,
+       same .layout / sidebars / footer component / .mid-header section
+       headers. (No floating nav on case-study pages.)
+       ============================================================ -->
+  <style>
+    /* The case study reuses .home-middle (40px padding, 80px block rhythm). */
+
+    /* --- Prose --- */
+    .case-prose {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-body {
+      /* Figma Body/medium — Figtree Regular 14px (line-height opened to 1.7
+         for long-form reading). */
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--cream);
+    }
+    .case-body strong {
+      font-weight: 600;
+    }
+    /* A bolded lead phrase that opens a paragraph */
+    .case-lead {
+      font-weight: 600;
+    }
+
+    /* --- Case-study images (exported from Figma, Assets/images/challenquiz/) --- */
+    .case-figure {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0;
+    }
+    /* Mockup / diagram images, exported from Figma already composited on the
+       page background (#111323) so they sit seamlessly on --bg with no card,
+       border, or radius — none of those exist in the design; the mockups float
+       directly on the dark page. Each <img> carries its natural width/height
+       attributes, so the aspect ratio is reserved up-front (no layout shift)
+       and height:auto scales it to the column. */
+    .case-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .case-caption {
+      font-size: 12px;
+      line-height: 1.5;
+      /* Muted cream — same family as .meta-label text elsewhere on the site. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+
+    /* Hero: the 6-phone screen composition, exported as one strip, sits
+       borderless on the page. */
+    .case-hero-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* --- Introduction metadata (label / value rows) --- */
+    .case-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .case-inforow {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
+      align-items: baseline;
+    }
+    .case-infolabel {
+      font-size: 15px;
+      /* Muted cream (definition-list label), NOT navy — navy is reserved for
+         section-level headers only. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-infovalue {
+      font-size: 15px;
+      color: var(--cream);
+    }
+
+    /* --- Numbered sub-decisions (Key Design Decisions) --- */
+    .case-subs {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+    .case-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .case-subtitle {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--cream);
+    }
+
+    /* --- Data tables (Growth) --- */
+    .case-tablewrap {
+      width: 100%;
+      overflow-x: auto;
+      background: rgba(249, 245, 235, 0.04);
+      border-radius: 16px;
+    }
+    .case-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .case-table th {
+      text-align: left;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 28px;
+      color: var(--cream);
+      padding: 24px;
+      white-space: nowrap;
+    }
+    .case-table td {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--cream);
+      padding: 20px 24px;
+      border-top: 1px solid rgba(249, 245, 235, 0.1);
+      vertical-align: top;
+    }
+    .case-table td:first-child,
+    .case-table th:first-child {
+      color: var(--cream);
+    }
+
+    /* --- Definition list (Reflection: term + description rows) --- */
+    /* Sub-items separated by whitespace only — no divider lines (the section
+       header keeps its own rule). */
+    .case-deflist {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .case-defrow {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 24px;
+    }
+    .case-defterm {
+      font-size: 14px;
+      line-height: 1.5;
+      /* Muted cream label, NOT navy. */
+      color: rgba(249, 245, 235, 0.5);
+    }
+    .case-defdesc {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--cream);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1023px) {
+      .case-body,
+      .case-defterm,
+      .case-defdesc,
+      .case-infolabel,
+      .case-infovalue {
+        font-size: 14px;
+      }
+      .case-table th { font-size: 18px; }
+    }
+    @media (max-width: 768px) {
+      .case-inforow { grid-template-columns: 100px 1fr; }
+      .case-defrow { grid-template-columns: 1fr; gap: 8px; }
+    }
+    @media (max-width: 576px) {
+      .case-inforow { grid-template-columns: 88px 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- One continuous 3-column page layout; sidebars persist across the page -->
+    <div class="layout">
+      <!-- Left sidebar — sticky. Figma: project title + tagline + "Go Back". -->
+      <aside class="layout-left layout-left--case">
+        <div class="bio-summary">
+          <h2 class="home-name">Challenquiz</h2>
+          <p class="home-role">Redesigning a Gamified Quiz App on Telegram</p>
+        </div>
+        <a class="home-portfolio go-back" href="index.html#works">
+          <!-- Back icon — exact export from Figma node 858:10376 (lets-icons:back-light). -->
+          <svg class="go-back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M3.99997 10.0005L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L3.99997 10.0005ZM20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005H20.5ZM8.64597 15.3545L3.64597 10.3545L4.35397 9.64648L9.35397 14.6465L8.64597 15.3545ZM3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648ZM3.99997 9.50048H14V10.5005H3.99997V9.50048ZM20.5 16.0005V18.0005H19.5V16.0005H20.5ZM14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005H19.5C19.5 14.5418 18.9205 13.1428 17.8891 12.1114C16.8576 11.0799 15.4587 10.5005 14 10.5005V9.50048Z" fill="currentColor"/>
+            <path d="M3.64597 10.3545L3.99997 10.0005L3.64597 9.64648M3.64597 10.3545L8.64597 15.3545L9.35397 14.6465L4.35397 9.64648L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648M20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005M20.5 18.0005H19.5M20.5 18.0005V16.0005M19.5 18.0005V16.0005M14 9.50048H3.99997V10.5005H14M14 9.50048V10.5005M14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005M14 10.5005C15.4587 10.5005 16.8576 11.0799 17.8891 12.1114C18.9205 13.1428 19.5 14.5418 19.5 16.0005M20.5 16.0005H19.5" stroke="currentColor" stroke-width="0.6"/>
+          </svg>
+          Go Back
+        </a>
+      </aside>
+
+      <!-- Middle column — the case study -->
+      <div class="layout-main">
+        <section id="challenquiz">
+          <div class="home-middle">
+
+            <!-- 1. 1-MINUTE READ -->
+            <div class="mid-block" id="sec-one-minute">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">1-Minute Read</span>
+                <span class="mid-rule"></span>
+              </div>
+              <!-- 6 app screens, exported from Figma as one composition -->
+              <img class="case-hero-img reveal-item"
+                   src="Assets/images/challenquiz/hero-screens.png"
+                   alt="Six Challenquiz app screens: wallet/balance, an in-game multiple-choice question, answer selection, a challenge detail with player count, the leaderboard, and the today's-challenges browser"
+                   width="579" height="432"
+                   decoding="async" />
+              <div class="case-prose">
+                <p class="case-body reveal-item">Challenquiz is a real-time trivia app built on Telegram where users compete for tokens and climb leaderboards. The concept was compelling. The product was losing users before they ever played a single game.</p>
+                <p class="case-body reveal-item">The problem wasn’t the idea — it was the experience. Users would select a quiz, land on a blank waiting screen with no explanation, assume the app was broken, and leave. The navigation was a buried text list. There was no onboarding, no profile, and no visual feedback during gameplay. Every friction point was invisible, which made it worse.</p>
+                <p class="case-body reveal-item">I redesigned the full experience alongside one other designer over six months: navigation restructure, a fixed game initiation flow with real-time player count, illustrated onboarding, colour-coded in-game feedback, and a profile system that gave users a reason to return.</p>
+                <p class="case-body reveal-item">During the rollout period, game completions nearly tripled and the number of users who finished at least one game grew from 535 to 1,451. The project didn’t survive long-term, but the work here led directly to my next role — the same stakeholder brought me onto ONTON.</p>
+              </div>
+            </div>
+
+            <!-- 2. INTRODUCTION — metadata -->
+            <div class="mid-block" id="sec-introduction">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Introduction</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-info">
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Role</span><span class="case-infovalue">Product Designer — UX flows, UI, information architecture, in-game experience</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Timeline</span><span class="case-infovalue">6 months · December 2023 – May 2024</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Team</span><span class="case-infovalue">2 designers (myself and Niloufar Davoudi)</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Client</span><span class="case-infovalue">Pome group (Finnish studio)</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Industry</span><span class="case-infovalue">Mobile App · Consumer · Gaming</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Tools</span><span class="case-infovalue">Figma, Miro</span></div>
+                <div class="case-inforow reveal-item"><span class="case-infolabel">Status</span><span class="case-infovalue">Redesign partially shipped · Project no longer active</span></div>
+              </div>
+            </div>
+
+            <!-- 3. THE PROBLEM -->
+            <div class="mid-block" id="sec-problem">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">The Problem: Users Couldn’t Figure Out How to Play</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">Challenquiz is a gamified quiz app built on Telegram where users compete in real-time trivia challenges, earn tokens, and climb leaderboards. The concept was engaging — but the existing product was losing users before they ever played a game.</p>
+                <p class="case-body reveal-item">The legacy version had a cluttered layout, no onboarding explanation, and — most critically — a game initiation flow that silently failed users at the moment they were most motivated to play. People would select a quiz, land on a screen with no clear guidance, and quit assuming the app was broken.</p>
+                <p class="case-body reveal-item">My teammate and I were brought on to redesign the entire experience: navigation, onboarding, in-game interface, profiles, and the wallet and leaderboard systems.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/challenquiz/problem-nav-comparison.png"
+                     alt="Side-by-side comparison of the legacy list-based menu (left, light UI) and the redesigned tab-bar navigation (right, dark UI), annotated with the problems and the fixes"
+                     width="792" height="885"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Old system: list-based menu, no visual hierarchy vs. new system: structured tab navigation</figcaption>
+              </figure>
+            </div>
+
+            <!-- 4. RESEARCH -->
+            <div class="mid-block" id="sec-research">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Research: Where Users Were Getting Lost</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">We tested the original app version with eight real users, observing their journeys and noting where they struggled. We also gathered additional insights through a marketing agent who spoke with community members.</p>
+                <p class="case-body reveal-item">The findings were consistent. Three problems stood out:</p>
+                <p class="case-body reveal-item"><span class="case-lead">1. Game initiation was invisible.</span><br />This was the biggest issue. After selecting a quiz, users needed to wait for other participants to join — but nothing on the screen explained this. Once enough players joined, the user then had to tap “Start” to begin — but that wasn’t explained either. Users assumed the app was broken and left. This was the primary drop-off point.</p>
+                <p class="case-body reveal-item"><span class="case-lead">2. Users didn’t understand what happens during or after a game.</span><br />The flow from joining a quiz to seeing results had no visual feedback, no progress indication, and no clear state changes. Users felt lost throughout the experience.</p>
+                <p class="case-body reveal-item"><span class="case-lead">3. Core features were buried.</span><br />The old menu was a simple vertical list (Play, Leaderboard, Transactions, Games, Wallet). Users couldn’t find features like sharing or their game history. There was no sense of what the app offered at a glance.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/challenquiz/research-user-journey.png"
+                     alt="User journey map of the legacy app with drop-off points annotated, alongside three Telegram gameplay screenshots showing the results, in-game question, and waiting/start screens"
+                     width="792" height="656"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">User journey map: drop-off points highlighted at game selection and initiation</figcaption>
+              </figure>
+            </div>
+
+            <!-- 5. COMPETITOR ANALYSIS -->
+            <div class="mid-block" id="sec-competitor">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Competitor Analysis</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">We studied existing quiz and gamification apps — including QuizBot and tap-to-earn games popular in the Telegram ecosystem — to understand navigation patterns and engagement mechanics.</p>
+                <p class="case-body reveal-item">Two key takeaways shaped our direction:</p>
+                <p class="case-body reveal-item">Most successful gamification apps keep all core features visible on a single screen or within a persistent navigation bar — sometimes with as many as seven tabs. Immediate access matters. Users need to see their options without hunting.</p>
+                <p class="case-body reveal-item">Colour coding and high-contrast visual feedback are powerful engagement tools in gamified contexts. The legacy Challenquiz used minimal colour differentiation, which made state changes (correct answer, wrong answer, waiting, completed) feel flat and easy to miss.</p>
+              </div>
+            </div>
+
+            <!-- 6. KEY DESIGN DECISIONS -->
+            <div class="mid-block" id="sec-decisions">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Key Design Decisions</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-subs">
+                <!-- 6.1 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">1. Navigation: From Hidden List to Persistent Tab Bar</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">The old system used a stacked text menu — users tapped into a list to access Play, Leaderboard, Transactions, Games, or Wallet. Nothing was visible at a glance, and features like sharing were effectively invisible.</p>
+                    <p class="case-body reveal-item">We restructured the navigation into a bottom tab bar with four primary sections: Profile, Challenges, Wallet, and Leaderboard. This was driven directly by the competitor analysis: gamification apps succeed when users can see and access their core options immediately.</p>
+                    <p class="case-body reveal-item">We considered a single-page layout that surfaces everything at once — common in apps built around a central character or tamagotchi-style mechanic — but Challenquiz didn’t have that focal point. The tab bar gave us persistent access without overwhelming any single screen.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <img class="case-img"
+                         src="Assets/images/challenquiz/decisions-navigation.png"
+                         alt="Before and after navigation comparison: the legacy vertical list menu on the left versus the redesigned bottom tab bar with grouped features on the right"
+                         width="792" height="640"
+                         loading="lazy" decoding="async" />
+                    <figcaption class="case-caption">Before: vertical list menu → After: bottom tab bar with grouped features</figcaption>
+                  </figure>
+                </div>
+
+                <!-- 6.2 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">2. Fixing the Game Initiation Flow</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">This was the most impactful change. The old flow worked like this: user selects a quiz → lands on a screen → nothing visibly happens → other players join silently → user must tap “Start” without being told to → game begins (or user has already left).</p>
+                    <p class="case-body reveal-item">We redesigned it to make every state visible and every action clear:</p>
+                    <p class="case-body reveal-item">The challenge card now shows how many players have joined out of the required total (e.g., “6/10 players”). Users can see the lobby filling up in real time. The “Join” button is prominent and colour-coded. Once the game begins, the transition is visually distinct — using high-contrast colour blocks for answers and a persistent timer bar so users always know where they are in the quiz.</p>
+                    <p class="case-body reveal-item">The goal was simple: at no point should a user wonder “what’s happening?” or “what do I do next?”</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <img class="case-img"
+                         src="Assets/images/challenquiz/decisions-flow.png"
+                         alt="Before and after game-initiation comparison: the old silent waiting screen on the left versus the new flow showing player count, join state, and an active start prompt on the right"
+                         width="792" height="640"
+                         loading="lazy" decoding="async" />
+                    <figcaption class="case-caption">Game initiation: old silent flow vs. new flow with player count, join state, and active feedback</figcaption>
+                  </figure>
+                </div>
+
+                <!-- 6.3 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">3. In-Game Experience: Colour as Communication</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">We redesigned the entire in-game interface. The quiz gameplay now uses colour-coded answer cards — each player’s selection is visible in real time with distinct colour states for correct, incorrect, and pending answers. A progress bar shows how many questions remain, and a countdown timer keeps the pace visible.</p>
+                    <p class="case-body reveal-item">The old version gave users little to no feedback during gameplay. The new version ensures that every second of the quiz feels active and informative.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <img class="case-img"
+                         src="Assets/images/challenquiz/decisions-ingame.png"
+                         alt="Before and after in-game comparison: the flat legacy question screen on the left versus the redesigned colour-coded answer cards with a progress bar and countdown timer on the right"
+                         width="792" height="640"
+                         loading="lazy" decoding="async" />
+                    <figcaption class="case-caption">In-game experience: colour-coded answer states, a progress bar, and a live countdown timer</figcaption>
+                  </figure>
+                </div>
+
+                <!-- 6.4 -->
+                <div class="case-sub">
+                  <h3 class="case-subtitle reveal-item">4. Profile and Personalisation</h3>
+                  <div class="case-prose">
+                    <p class="case-body reveal-item">The legacy app had no profile section. Users couldn’t track their quiz history, see their performance trends, or set personal goals.</p>
+                    <p class="case-body reveal-item">We introduced a dedicated profile with game history, score tracking, avatar customisation, language preferences, and notification settings. This gave users a reason to return beyond just playing — they could see their own progress and growth.</p>
+                  </div>
+                  <figure class="case-figure reveal-item">
+                    <img class="case-img"
+                         src="Assets/images/challenquiz/decisions-profile.png"
+                         alt="Before and after profile comparison: the legacy app's missing profile (a 'not found' screen) on the left versus the new profile with scoreboard, game history, avatar, and preferences on the right"
+                         width="792" height="640"
+                         loading="lazy" decoding="async" />
+                    <figcaption class="case-caption">Profile section: game history, scoreboard, avatar, preferences</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7. GROWTH -->
+            <div class="mid-block" id="sec-growth">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Growth During the Redesign Period</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">During the period the redesign was being rolled out (March to September 2024), the platform showed significant growth:</p>
+              </div>
+              <div class="case-tablewrap reveal-item">
+                <table class="case-table">
+                  <thead>
+                    <tr><th scope="col">Metric</th><th scope="col">March 2024</th><th scope="col">September 2024</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Total Users</td><td>5,615</td><td>11,444</td></tr>
+                    <tr><td>Connected Wallets</td><td>681</td><td>1,836</td></tr>
+                    <tr><td>Users with 1+ Finished Game</td><td>535</td><td>1,451</td></tr>
+                    <tr><td>Finished Games</td><td>1,835</td><td>5,275</td></tr>
+                    <tr><td>Referrals</td><td>194</td><td>1,268</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">I want to be honest about attribution: these numbers reflect overall platform growth during a period when marketing campaigns were also active. I can’t isolate the design impact from other factors. But the growth in game completions (nearly 3× increase) and the jump in users who finished at least one game (from 535 to 1,451) align with the specific flows we redesigned — particularly the game initiation fix, which directly targeted the drop-off point where users were failing to start games.</p>
+              </div>
+              <figure class="case-figure reveal-item">
+                <img class="case-img"
+                     src="Assets/images/challenquiz/growth-comparison.png"
+                     alt="Two in-app statistics screenshots side by side — March 2024 versus September 2024 — showing growth across wallets, users, finished games, and referrals"
+                     width="792" height="418"
+                     loading="lazy" decoding="async" />
+                <figcaption class="case-caption">Growth data: March vs. September 2024 comparison</figcaption>
+              </figure>
+            </div>
+
+            <!-- 8. WHAT HAPPENED TO THE PROJECT -->
+            <div class="mid-block" id="sec-what-happened">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">What Happened to the Project</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-prose">
+                <p class="case-body reveal-item">The project was not funded long-term and didn’t survive beyond the initial period. The work I did here led directly to my role on ONTON — the same stakeholder brought me on to a larger product based on this collaboration.</p>
+              </div>
+            </div>
+
+            <!-- 9. REFLECTION -->
+            <div class="mid-block" id="sec-reflection">
+              <div class="mid-header reveal-item">
+                <span class="mid-label">Reflection</span>
+                <span class="mid-rule"></span>
+              </div>
+              <div class="case-deflist">
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I’m most confident about</span>
+                  <div class="case-defdesc">
+                    <p>The navigation restructure and the game initiation redesign were the right calls. They addressed the two clearest user problems — not knowing what the app offers, and not being able to start playing — with straightforward, evidence-based solutions. Sometimes the most impactful design work isn’t innovative; it’s making the obvious thing actually work.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I’d do differently</span>
+                  <div class="case-defdesc">
+                    <p>I’d push for a clearer business model from the start. The product had real user engagement but no sustainable revenue path, which is ultimately why it didn’t survive. As a designer, I’ve learned to ask harder questions about business viability early — not because it’s my responsibility alone, but because designing features for a product that can’t sustain itself is time I’d rather spend differently.</p>
+                    <p>I’d also build in more structured measurement. We could see the growth data, but we didn’t have proper before/after metrics on specific flows (like drop-off rates at game initiation) that would have let us quantify the design impact precisely.</p>
+                  </div>
+                </div>
+                <div class="case-defrow reveal-item">
+                  <span class="case-defterm">What I took forward</span>
+                  <div class="case-defdesc">
+                    <p>This project sharpened my ability to diagnose invisible UX failures — problems that don’t look like bugs but silently drive users away. The game initiation issue wasn’t a technical error; it was a communication failure. The app worked correctly; it just never told users what was happening. That distinction — between something being broken and something being unexplained — is one I now look for in every product I touch.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10. FOOTER → CONTACT — single morphing card (same as index.html / onton.html) -->
+            <div class="footer-stage" id="footer-stage">
+              <div class="mid-footer" id="footer-cta">
+                <!-- DEFAULT state -->
+                <div class="footer-default">
+                  <div class="footer-row">
+                    <span class="mid-footer-title">Contact Me</span>
+                    <div class="mid-footer-links">
+                      <a class="footer-link" href="mailto:parichehr.t96@gmail.com">Email</a>
+                      <a class="footer-link" href="https://wa.me/31657248971" target="_blank" rel="noopener">Whatsapp</a>
+                      <a class="footer-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- EXPANDED state -->
+                <div class="footer-expanded" aria-hidden="true">
+                  <div class="contact-groups">
+                    <!-- MOST DIRECT (SUGGESTED) -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Most Direct (Suggested)</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="mailto:parichehr.t96@gmail.com">
+                          <span class="contact-name">Email</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">parichehr.t96@gmail.com</span>
+                        </a>
+                        <a class="contact-row" href="https://wa.me/31657248971" target="_blank" rel="noopener">
+                          <span class="contact-name">Whatsapp</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">+31-657248971</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- SOCIAL MEDIA -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">Social Media</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">
+                          <span class="contact-name">Linkedin</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/parichehr-talebzadeh</span>
+                        </a>
+                        <a class="contact-row" href="https://x.com/PariUXD" target="_blank" rel="noopener">
+                          <span class="contact-name">Twitter (X)</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/PariUXD</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- MORE IN DEPTH -->
+                    <div class="mid-block">
+                      <div class="mid-header">
+                        <span class="mid-label">More In Depth</span>
+                        <span class="mid-rule"></span>
+                      </div>
+                      <div class="contact-list">
+                        <a class="contact-row" href="https://behance.net/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Behance</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://dribbble.com/pariuxd" target="_blank" rel="noopener">
+                          <span class="contact-name">Dribbble</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/pariuxd</span>
+                        </a>
+                        <a class="contact-row" href="https://github.com/Parichehr96" target="_blank" rel="noopener">
+                          <span class="contact-name">GitHub</span>
+                          <span class="contact-leader"></span>
+                          <span class="contact-value">/Parichehr96</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-bottom">
+                    <span class="contact-copy">© 2026, Parichehr Talebzadeh</span>
+                    <span class="contact-updated" id="last-updated"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Right sidebar — sticky table of contents -->
+      <aside class="layout-right layout-right--toc">
+        <!-- Sticky table of contents — tracks the active section on scroll. -->
+        <nav class="toc-nav" aria-label="On this page">
+          <a class="toc-item" href="#sec-one-minute">1-Minute Read</a>
+          <a class="toc-item" href="#sec-introduction">Introduction</a>
+          <a class="toc-item" href="#sec-problem">The Problem</a>
+          <a class="toc-item" href="#sec-research">Research</a>
+          <a class="toc-item" href="#sec-competitor">Competitor Analysis</a>
+          <a class="toc-item" href="#sec-decisions">Key Design Decisions</a>
+          <a class="toc-item" href="#sec-growth">Growth</a>
+          <a class="toc-item" href="#sec-what-happened">What Happened</a>
+          <a class="toc-item" href="#sec-reflection">Reflection</a>
+        </nav>
+        <nav class="side-links" aria-label="Challenquiz links">
+          <!-- TODO: destinations not specified in Figma — update href when provided. -->
+          <a class="side-link" href="#" rel="noopener">Figma File</a>
+          <a class="side-link" href="#" rel="noopener">Telegram Channel</a>
+          <a class="side-link" href="#footer-stage">Contact Me</a>
+        </nav>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Scroll progress bar (case-study pages only) — fills 0→100% with scroll. -->
+  <div class="scroll-progress"></div>
+
+  <script src="onton.js"></script>
+  <script defer src="reveal.js"></script>
+  <script defer src="cursor.js"></script>
+  <script defer src="scroll-progress.js"></script>
+</body>
+</html>
