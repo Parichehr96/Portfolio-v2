@@ -7,12 +7,11 @@ let contactExpanded = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   initSplashStars();
-  initSplashCurtain();
+  initHero();
   initNav();
   initHomeMiddle();
   initWorks();
   initFooterContact();
-  initCycle();
 
   // Contact "Last updated" — derived from the document's last-modified date.
   const lastUpdated = document.getElementById("last-updated");
@@ -48,172 +47,29 @@ function filterWorks(filter) {
 }
 
 /**
- * Splash overlay: #splash is a fixed full-viewport layer (z-index 1000) sitting
- * on top of #home, which is always present at scroll position 0.
- *
- * Dismiss triggers on the FIRST vertical scroll-intent input — wheel (vertical-
- * dominant deltaY, up OR down), a vertical touch swipe, a vertical scroll key
- * (Space / Arrow Up·Down / Page Up·Down / Home / End), or a CTA click. Purely
- * horizontal input (deltaX, horizontal swipes, Arrow Left·Right) is ignored. The
- * triggering event is hijacked (preventDefault) so the document doesn't actually
- * scroll; we then play the 400ms fade+scale exit, reveal the nav, and smooth-
- * scroll to #home. All input listeners are removed on the first dismiss, so
- * normal scrolling resumes immediately.
- *
- * A `sessionStorage` flag ("splashSeen") records the dismissal: within the same
- * browser session a reload skips the splash entirely; a brand-new session shows
- * it again. (sessionStorage access is wrapped in try/catch so private-mode or
- * storage-blocked contexts degrade gracefully to per-load behaviour.)
+ * Hero section (#splash): the first scrollable section of the page — NOT an
+ * overlay. There is no dismiss animation, no sessionStorage gate, and no input
+ * hijacking; the user simply scrolls past it. This init only:
+ *   • lands the page on the hero on (re)load (manual scroll restoration), and
+ *   • wires the CTA to smooth-scroll to the next section (#home / Summary).
+ * The starfield (initSplashStars) and cursor spotlight (cursor.js) are unchanged
+ * and run against this in-flow section directly.
  */
-const SPLASH_SEEN_KEY = "splashSeen";
-
-function splashSeen() {
-  try {
-    return sessionStorage.getItem(SPLASH_SEEN_KEY) === "1";
-  } catch (e) {
-    return false;
-  }
-}
-
-function markSplashSeen() {
-  try {
-    sessionStorage.setItem(SPLASH_SEEN_KEY, "1");
-  } catch (e) {
-    /* storage blocked — fall back to in-memory `dismissing` guard only */
-  }
-}
-
-function initSplashCurtain() {
-  const splash = document.getElementById("splash");
-  if (!splash) return;
-
-  const nav = document.getElementById("nav");
-  const cta = splash.querySelector(".splash-cta");
-  const home = document.getElementById("home");
-
-  // A reload (soft Cmd+R or hard Cmd+Shift+R — the browser can't tell them apart)
-  // should always re-show the splash, so clear the seen flag on reload before the
-  // check below. Within-session navigation (links, returning from a case study)
-  // is NOT a reload, so the flag survives and the splash stays hidden.
-  try {
-    const navEntry = performance.getEntriesByType("navigation")[0];
-    if (navEntry && navEntry.type === "reload") {
-      sessionStorage.removeItem(SPLASH_SEEN_KEY);
-    }
-  } catch (e) {
-    /* Navigation Timing or storage unavailable — keep existing behaviour */
-  }
-
-  // Already dismissed earlier this session → skip the splash entirely.
-  if (splashSeen()) {
-    splash.style.display = "none";
-    if (nav) nav.classList.add("visible");
-    return;
-  }
-
-  let dismissing = false; // first valid input wins; guards re-entry
-
-  // Listeners are tracked so they can all be torn down on the first dismiss.
-  const teardowns = [];
-  const on = (target, type, handler, opts) => {
-    target.addEventListener(type, handler, opts);
-    teardowns.push(() => target.removeEventListener(type, handler, opts));
-  };
-  const removeAllInputs = () => {
-    teardowns.forEach((fn) => fn());
-    teardowns.length = 0;
-  };
-
-  // Play the (unchanged) 400ms fade+scale exit, then jump to #home.
-  const dismiss = () => {
-    if (dismissing) return;
-    dismissing = true;
-    removeAllInputs();
-    markSplashSeen();
-
-    splash.style.transition = "opacity 0.4s ease, transform 0.4s ease";
-    splash.style.opacity = "0";
-    splash.style.transform = "scale(0.95)";
-    if (nav) nav.classList.add("visible");
-
-    window.setTimeout(() => {
-      splash.style.display = "none";
-      // Land on the first section once the splash is gone.
-      window.scrollTo({ top: home ? home.offsetTop : 0, behavior: "smooth" });
-    }, 400);
-  };
-
-  // --- Vertical scroll-intent detectors (horizontal input is ignored) ---
-
-  // Wheel: dismiss when vertical movement dominates (covers up AND down; pure
-  // horizontal trackpad swipes report |deltaX| ≥ |deltaY| and are ignored).
-  on(
-    window,
-    "wheel",
-    (e) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        dismiss();
-      }
-    },
-    { passive: false }
-  );
-
-  // Touch: compare the swipe's vertical vs horizontal travel from its start.
-  let touchStartX = null;
-  let touchStartY = null;
-  on(
-    window,
-    "touchstart",
-    (e) => {
-      const t = e.touches && e.touches[0];
-      touchStartX = t ? t.clientX : null;
-      touchStartY = t ? t.clientY : null;
-    },
-    { passive: true }
-  );
-  on(
-    window,
-    "touchmove",
-    (e) => {
-      if (touchStartY == null) return;
-      const t = e.touches && e.touches[0];
-      if (!t) return;
-      const dx = t.clientX - touchStartX;
-      const dy = t.clientY - touchStartY;
-      // Vertical-dominant swipe (up or down) beyond a small intent threshold.
-      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 4) {
-        e.preventDefault();
-        dismiss();
-      }
-    },
-    { passive: false }
-  );
-
-  // Keyboard: only vertical scroll keys (Left/Right arrows are NOT included).
-  const VERTICAL_KEYS = new Set([
-    " ",
-    "Spacebar", // legacy key name for Space
-    "ArrowDown",
-    "ArrowUp",
-    "PageDown",
-    "PageUp",
-    "Home",
-    "End",
-  ]);
-  on(window, "keydown", (e) => {
-    if (VERTICAL_KEYS.has(e.key)) {
-      e.preventDefault();
-      dismiss();
-    }
-  });
-
-  // CTA click (preserved).
-  if (cta) on(cta, "click", () => dismiss());
-
-  // Open on the splash, pinned to the top, on (re)load.
+function initHero() {
+  // Always land on the hero on load/reload (don't restore a prior scroll spot).
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   window.scrollTo(0, 0);
+
+  // CTA → smooth-scroll to Summary. The href="#home" is the no-JS fallback;
+  // this handler upgrades the jump to a smooth scroll.
+  const cta = document.querySelector(".splash-cta");
+  const home = document.getElementById("home");
+  if (cta && home) {
+    cta.addEventListener("click", (e) => {
+      e.preventDefault();
+      home.scrollIntoView({ behavior: "smooth" });
+    });
+  }
 }
 
 /**
@@ -241,12 +97,13 @@ function initSplashStars() {
   const splash = document.getElementById("splash");
   if (!splash) return;
 
-  let layer = splash.querySelector(".splash-stars");
+  // Fixed full-viewport layer pinned behind the whole page (see .splash-stars).
+  let layer = document.querySelector(".splash-stars");
   if (!layer) {
     layer = document.createElement("div");
     layer.className = "splash-stars";
     layer.setAttribute("aria-hidden", "true");
-    splash.insertBefore(layer, splash.firstChild);
+    document.body.insertBefore(layer, document.body.firstChild);
   }
 
   const TOTAL = 180; // ~60% distant / ~30% mid / ~10% near
@@ -295,13 +152,21 @@ function initSplashStars() {
     el.style.background = color;
 
     if (depth === 3) {
+      // Layer 3 (near) — active breathing twinkle (±0.3), 2–5s.
       el.classList.add("splash-star--near");
       el.style.setProperty("--op", op.toFixed(3));
-      el.style.animationDuration = rand(3, 7).toFixed(2) + "s";
-      el.style.animationDelay = (-rand(0, 7)).toFixed(2) + "s"; // desync the loops
+      el.style.animationDuration = rand(2, 5).toFixed(2) + "s";
+      el.style.animationDelay = (-rand(0, 5)).toFixed(2) + "s"; // desync the loops
       el.dataset.base = op.toFixed(3);
       nearStars.push(el);
+    } else if (depth === 2) {
+      // Layer 2 (mid) — subtle breathing twinkle (±0.15), 4–8s.
+      el.classList.add("splash-star--mid");
+      el.style.setProperty("--op", op.toFixed(3));
+      el.style.animationDuration = rand(4, 8).toFixed(2) + "s";
+      el.style.animationDelay = (-rand(0, 8)).toFixed(2) + "s"; // desync the loops
     } else {
+      // Layer 1 (distant) — static.
       el.style.opacity = op.toFixed(3);
     }
     return el;
@@ -339,21 +204,21 @@ function initSplashStars() {
         star.animate(
           [
             { opacity: base, transform: "scale(1)", easing: "ease-out" },
-            { opacity: 1, transform: "scale(1.5)", offset: 0.5, easing: "ease-in" },
+            { opacity: 1, transform: "scale(2)", offset: 0.5, easing: "ease-in" },
             { opacity: base, transform: "scale(1)" },
           ],
           { duration: 600 }
         );
       }
     }
-    accentTimer = window.setTimeout(accent, rand(10000, 15000));
+    accentTimer = window.setTimeout(accent, rand(6000, 10000));
   };
 
   generate();
   // Accent pulse is motion; honour the user's reduced-motion preference.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduceMotion) {
-    accentTimer = window.setTimeout(accent, rand(10000, 15000));
+    accentTimer = window.setTimeout(accent, rand(6000, 10000));
   }
 
   let resizeTimer = null;
@@ -463,11 +328,16 @@ function initFooterContact() {
   // the works content that is now only ED px behind it. z 149 = under the
   // card (150), over the page content; width matches the column so the left
   // sidebar stays visible.
+  // IMPORTANT: append it inside <main> (not <body>). <main> is a z-index:1
+  // stacking context (it sits above the fixed starfield), so the card's
+  // z-index:150 is scoped to <main>. A body-level backdrop at z-index:149 would
+  // then paint ABOVE the card (149 > main's 1) and hide the expanded contact.
+  // Keeping the backdrop in the same context preserves backdrop(149) < card(150).
   const backdrop = document.createElement("div");
   backdrop.className = "footer-backdrop";
   backdrop.style.cssText =
     "position:fixed;background:var(--bg);z-index:149;pointer-events:none;display:none;";
-  document.body.appendChild(backdrop);
+  (document.querySelector("main") || document.body).appendChild(backdrop);
 
   const ED = 200;          // scroll distance (px) that drives a full expansion
   const SNAP_MS = 300;     // snap / click animation duration
@@ -781,9 +651,13 @@ function initFooterContact() {
 function initHomeMiddle() {
   const works = document.getElementById("works");
 
-  // Works list → scroll to that project (or #works if it's filtered out).
+  // Works list: rows that link to a case-study page (e.g. onton.html) navigate
+  // normally in the same tab. Rows that link in-page (#works, e.g. projects with
+  // no case study yet) keep the smooth-scroll-to-that-project fallback.
   document.querySelectorAll(".work-row").forEach((row) => {
     row.addEventListener("click", (e) => {
+      const href = row.getAttribute("href") || "";
+      if (!href.startsWith("#")) return; // real page link — let the browser follow it
       e.preventDefault();
       const project = document.getElementById("project-" + row.dataset.project);
       const target = project && !project.hidden ? project : works;
@@ -814,37 +688,3 @@ function initWorks() {
   filterWorks("product-design");
 }
 
-/**
- * How I Work cycle diagram: the .cycle box is authored at the exact Figma size
- * (792×421, cards at fixed px). Since the middle column is narrower and fluid,
- * scale the whole box uniformly to fit its wrapper — this keeps every position,
- * size and the connector arrows pixel-proportional to the design. Below 768px
- * the CSS switches .cycle to a vertical stack, so we clear the inline transform.
- */
-function initCycle() {
-  const cycles = Array.from(document.querySelectorAll(".cycle"));
-  if (!cycles.length) return;
-
-  const DESIGN_W = 792;
-  const DESIGN_H = 421;
-  const stacked = window.matchMedia("(max-width: 768px)");
-
-  const fit = () => {
-    cycles.forEach((cycle) => {
-      const wrap = cycle.parentElement;
-      if (stacked.matches) {
-        cycle.style.transform = "";
-        wrap.style.height = "";
-        return;
-      }
-      const scale = Math.min(1, wrap.clientWidth / DESIGN_W);
-      cycle.style.transform = "scale(" + scale + ")";
-      // Reserve the scaled height so the box doesn't overlap the next section.
-      wrap.style.height = DESIGN_H * scale + "px";
-    });
-  };
-
-  fit();
-  window.addEventListener("resize", fit);
-  window.addEventListener("load", fit); // re-fit once fonts settle
-}

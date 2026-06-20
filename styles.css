@@ -64,8 +64,10 @@ video {
 /* ===== Layout ===== */
 main {
   width: 100%;
-  /* No curtain offset: #home sits at scroll position 0, always present behind
-     the fixed splash overlay. The splash fades away on scroll to reveal it. */
+  /* Sit ABOVE the fixed starfield (z-index 0) so content covers it; the
+     transparent hero then reveals the stars behind it. */
+  position: relative;
+  z-index: 1;
 }
 
 section {
@@ -73,31 +75,36 @@ section {
   min-height: 100vh;
 }
 
-/* ===== #splash — full-viewport intro overlay ===== */
+/* ===== #splash — hero section (first scrollable section, not an overlay) =====
+   A full-viewport-tall hero in normal document flow: it fills the screen on load
+   but the user scrolls past it naturally into the page. position: relative makes
+   it the containing block for the absolutely-positioned starfield layer. */
 #splash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  position: relative;
   width: 100%;
   height: 100vh;
-  background-color: var(--bg);
+  /* Transparent so the fixed starfield behind the page shows through the hero. */
+  background-color: transparent;
   /* Figma 662:8524 — column, horizontally centered, 120px padding all sides. */
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 120px;
-  /* Exit (opacity 1→0, scale 1→0.95) is driven on scroll in JS; scales from its
-     center so all content shrinks as one unit. */
-  transform-origin: center center;
-  will-change: opacity, transform;
 }
 
-/* Star field — full-bleed layer behind the splash content (z-index 0). Stars are
-   generated programmatically in initSplashStars(). */
+/* Star field — a FIXED full-viewport layer pinned behind the whole page
+   (z-index -1, above the body's bg canvas but below all content). Generated
+   programmatically in initSplashStars() and appended to <body>. The hero is
+   transparent so stars show there; .layout is opaque so it covers them below. */
 .splash-stars {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* z-index 0 keeps the layer ABOVE the body's opaque bg (a z-index of -1 would
+     fall BEHIND it, since <body> creates no stacking context). Page content
+     (main, z-index 1) sits above this. */
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
@@ -109,8 +116,8 @@ section {
   border-radius: 50%;
 }
 
-/* Near (Layer 3) stars breathe: a gentle opacity pulse of ±0.2 around their base
-   (--op). Duration/delay are randomised per star inline (3–7s). transform-origin
+/* Near (Layer 3) stars breathe: an opacity pulse of ±0.4 around their base
+   (--op). Duration/delay are randomised per star inline (2–5s). transform-origin
    stays centred so the accent-pulse scale grows from the star's middle. */
 .splash-star--near {
   transform-origin: center;
@@ -120,9 +127,24 @@ section {
 
 @keyframes splash-breathe {
   0%, 100% { opacity: var(--op); }
-  25%      { opacity: calc(var(--op) + 0.2); }
+  25%      { opacity: calc(var(--op) + 0.4); }
   50%      { opacity: var(--op); }
-  75%      { opacity: calc(var(--op) - 0.2); }
+  75%      { opacity: calc(var(--op) - 0.4); }
+}
+
+/* Mid (Layer 2) stars breathe more subtly: ±0.15 around their base, slower
+   (4–8s, set inline). Adds depth — mid stars gently pulse while near stars blink
+   more actively. */
+.splash-star--mid {
+  will-change: opacity;
+  animation: splash-breathe-mid 6s ease-in-out infinite;
+}
+
+@keyframes splash-breathe-mid {
+  0%, 100% { opacity: var(--op); }
+  25%      { opacity: calc(var(--op) + 0.15); }
+  50%      { opacity: var(--op); }
+  75%      { opacity: calc(var(--op) - 0.15); }
 }
 
 /* Bio container (Figma 662:8525) — fills the padded area; 3 equal rows, 40px gap.
@@ -162,8 +184,9 @@ section {
   white-space: nowrap;
   text-align: center;
 }
-.splash-name-lg { font-size: 32px; }
-.splash-name-sm { font-size: 20px; }
+/* Name renders at a uniform size + weight (no large/small split). */
+.splash-name-lg,
+.splash-name-sm { font-size: 20px; font-weight: 400; }
 
 /* Middle third stacks the visible lead sentence and the hidden tagline in the
    same spot (tagline absolutely centred) so the spotlight can swap them. */
@@ -299,6 +322,9 @@ section {
 }
 
 /* ===== Floating navigation ===== */
+/* Floating nav (Figma 920:10606). Solid Navy-Darker container, fully rounded;
+   2px inner padding, 4px between items. The active section expands into a cream
+   pill showing its icon + label; inactive items are faint icon-only circles. */
 .floating-nav {
   position: fixed;
   bottom: 40px;
@@ -306,34 +332,28 @@ section {
   transform: translateX(-50%);
   z-index: 200;
   display: flex;
-  gap: 16px;
-  padding: 4px;
-  background: var(--nav-bg);
-  border: 0.2px solid #F9F5EB;
-  border-radius: 122px;
-  /* Hidden until the splash curtain begins lifting */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  background: #111323;
+  border-radius: 400px;
+  /* Visible on load — the hero is a normal section, not a blocking overlay. */
 }
 
-.floating-nav.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
+/* Item — icon-only circle by default with a faint cream wash (Figma 0.08).
+   Inactive icon/label tint is cream @ 0.32 (driven via currentColor). */
 .nav-item {
   position: relative;
-  width: 44px;
-  height: 44px;
-  padding: 12px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 4px;                      /* icon → label (label only shows when active) */
+  padding: 16px;
+  border-radius: 40px;           /* clamps to a circle / pill */
   cursor: pointer;
-  background: transparent;
-  transition: background 0.4s ease;
+  text-decoration: none;
+  background: rgba(249, 245, 235, 0.08);
+  color: rgba(249, 245, 235, 0.32);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Tooltip bubble — page name (from aria-label), centered 4px above the icon.
@@ -382,37 +402,50 @@ section {
   opacity: 1;
 }
 
-/* Recolor the Figma icons to cream via their CSS-variable fallbacks */
-.nav-item .icon {
-  --fill-0: #F9F5EB;
-  --stroke-0: #F9F5EB;
-  width: 20px;   /* 44 - 2 * 12 padding */
-  height: 20px;
+/* Undecided placeholder: no section, no tooltip (it carries no aria-label). */
+.nav-item--placeholder::after,
+.nav-item--placeholder::before {
+  content: none;
+}
+
+/* Icon — 24px, recolored via currentColor so it tracks the item's color. */
+.nav-item .nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+.nav-item .nav-icon svg {
   display: block;
-  transition: filter 0.2s ease, transform 0.2s ease;
+  width: 100%;
+  height: 100%;
 }
 
-/* Outline by default, filled when active */
-.nav-item .icon-filled {
+/* Section label — hidden until the item is active. Figtree Regular 16px/24. */
+.nav-label {
   display: none;
+  font-size: 16px;
+  line-height: 24px;
+  white-space: nowrap;
 }
 
+/* Active — cream pill, near-black icon + label (Figma #030308). */
 .nav-item.active {
-  background: rgba(249, 245, 235, 0.12);
+  background: #F9F5EB;
+  color: #030308;
 }
-
-.nav-item.active .icon-outline {
-  display: none;
-}
-
-.nav-item.active .icon-filled {
+.nav-item.active .nav-label {
   display: block;
 }
 
-/* Hover on inactive items: most icons are fill-based so stroke width can't be
-   changed uniformly — use the brightness/scale fallback for a subtle emphasis. */
-.nav-item:not(.active):hover .icon {
-  filter: brightness(1.15);
+/* Hover on inactive items: brighten the icon tint + a subtle scale. */
+.nav-item:not(.active):hover {
+  color: rgba(249, 245, 235, 0.6);
+}
+.nav-item:not(.active):hover .nav-icon {
   transform: scale(1.08);
 }
 
@@ -424,6 +457,10 @@ section {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  /* Semi-transparent page bg (92%) so the fixed starfield stays faintly visible
+     behind every content section — dimmed enough to keep text readable, while
+     the fully transparent hero shows the stars at full strength. */
+  background: rgba(17, 19, 35, 0.92);
 }
 
 /* Proportional sidebars: 360 / 1512 = 23.81% (360px each at the 1512 design
@@ -493,6 +530,21 @@ section {
   gap: 16px;
 }
 
+/* TOC group — the "On this page:" label + the section nav, 8px apart
+   (Figma 919:10672). The aside's 40px gap then separates this group from the
+   project links below. */
+.toc-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* Static label above the section nav (Figma 919:10671). Not part of the
+   scroll-tracking active state. Figtree Regular 15px, cream at 70%. */
+.toc-title {
+  font-size: 15px;
+  color: rgba(249, 245, 235, 0.7);
+}
+
 /* Sticky table of contents (Figma 864:10768). A 0.6px Gray-Navy rail runs the
    full height; the active item gets a brighter 1px Cream-Dark left stroke. */
 .toc-nav {
@@ -525,6 +577,9 @@ section {
 /* Right-sidebar links — Tertiary Button (Figma 662:8615): dashed cream
    underline, pb 4px; hover → solid + Medium. Matches .home-portfolio/.footer-link. */
 .side-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                    /* text → arrow icon (Figma Button gap 4px) */
   font-size: 15px;
   color: var(--cream);
   text-decoration: none;
@@ -534,6 +589,15 @@ section {
 .side-link:hover {
   border-bottom-style: solid;
   font-weight: 500;
+}
+/* External-link arrow (Figma vuesax/outline/send, mirrored → ↗). 14px, sits
+   inline after the link text on external links only (not the internal
+   "Contact Me"). Uses currentColor so it tracks the link colour on hover. */
+.side-link-icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  display: block;
 }
 
 /* Middle column — every section's content stacks here */
@@ -546,7 +610,7 @@ section {
   width: 100%;
 }
 
-/* #home is always present behind the fixed splash overlay — no reveal needed. */
+/* #home (Summary) follows the hero in normal flow — no reveal gating needed. */
 
 /* Left sidebar */
 .home-name {
@@ -647,6 +711,24 @@ section {
    Regular/1.8). Home Summary body is Light; the How I Work intro line is tighter. */
 .mid-body--light { font-weight: 300; }
 .mid-body--tight { line-height: 1.4; }
+
+/* Tertiary button (Figma 662:8617) — dashed cream underline; hover → solid +
+   Medium. Used by the Summary "Download My Resume" link. Hugs its content. */
+.resume-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--cream);
+  padding-bottom: 4px;
+}
+.resume-link:hover {
+  border-bottom-style: solid;
+  font-weight: 500;
+}
 
 /* Summary location line */
 .mid-meta {
@@ -767,9 +849,10 @@ section {
    only) — the slot is here for per-use-case icons supplied later.
    --------------------------------------------------------------- */
 .btn-primary {
-  position: relative;          /* stacking context for the ::before fill */
-  isolation: isolate;
+  position: relative;          /* anchor for the .radial-fill layer */
+  isolation: isolate;          /* contain the fill's stacking context */
   overflow: hidden;            /* clips the radial flood to the pill shape */
+  --radial-fill-color: rgba(249, 245, 235, 0.16);  /* 16% cream flood (shared radial-fill) */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -788,22 +871,11 @@ section {
   transition: color 0.4s ease, border-color 0.3s ease, font-weight 0s;
 }
 
-/* Radial fill layer — a centred circle that scales up to flood the pill.
-   Sits BELOW the label + icon (z-index 0 vs 1) so the hover animation is
-   never obscured by, and never obscures, the button content. */
-.btn-primary::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 130%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%) scale(0);
-  border-radius: 50%;
-  background: #F9F5EB;
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 0;
-}
+/* Radial fill layer — the SHARED .radial-fill span (a direct child of the
+   button) powered by radial-fill.js: a subtle 16% cream circle that grows from
+   the cursor entry point on mouseenter (0.5s ease-out) and shrinks to the exit
+   point on mouseleave (0.25s ease-in) — identical to the large item cards.
+   It rides BELOW the label + icon (z-index 0 vs 1). */
 
 /* Label + icon ride ABOVE the fill. */
 .btn-primary-label,
@@ -831,27 +903,21 @@ section {
   display: inline-flex;
 }
 
-/* HOVER — flood expands, outline solid, text + icon → navy, Medium. */
+/* HOVER — subtle 16% cream flood (via .radial-fill) expands from the cursor;
+   outline goes solid, weight → Medium. Text + icon STAY cream (no dark flip). */
 .btn-primary:hover {
-  color: #111323;
   border-style: solid;
   font-weight: 500;            /* Figtree Medium */
-}
-.btn-primary:hover::before {
-  transform: translate(-50%, -50%) scale(1);
 }
 
-/* SELECTED — persistent translucent wash + solid outline, white text. */
+/* SELECTED — solid cream fill + solid outline, navy text (matches Figma).
+   Already solid cream, so the 16% cream flood (cream-over-cream) stays invisible
+   on hover — no visible animation, exactly as before. Unchanged. */
 .btn-primary.selected {
-  background: rgba(249, 245, 235, 0.08);
+  background: #F9F5EB;
   border-style: solid;
-  color: #FFFFFF;
+  color: #111323;
   font-weight: 500;            /* Figtree Medium */
-}
-/* A selected button is already in its chosen state — it skips the hover flood
-   (the ::before stays collapsed) and keeps its white text. */
-.btn-primary.selected:hover::before {
-  transform: translate(-50%, -50%) scale(0);
 }
 
 /* --- Strengths --- */
@@ -872,99 +938,62 @@ section {
   font-weight: 600;
 }
 
-/* --- How I Work: cycle diagram (Figma 662:8015) ---
-   The .cycle box reproduces the exact 792×421 Figma layout (cards at fixed px);
-   initCycle() in script.js scales it (transform-origin top-left) to fit the
-   column width. Below 768px it falls back to a vertical stack. */
-.cycle-wrap {
-  width: 100%;
+/* How I Work (Figma 662:8015). Intro group (title + lead) sits 8px apart; the
+   block puts 48px between that group and the flowchart. */
+.hiw-block {
+  gap: 48px;
 }
-
-.cycle {
-  position: relative;
-  width: 792px;
-  height: 421px;
-  transform-origin: top left;
-}
-
-.cycle-lines {
-  position: absolute;
-  inset: 0;
-  width: 792px;
-  height: 421px;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Step card — very subtle 3% cream bg, centered content, 24/32 padding (Figma) */
-.cycle-card {
-  position: absolute;
-  width: 320px;
+.hiw-intro {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 8px 24px;
-  background: none;
-  border-radius: 16px;
-  z-index: 1;
+  gap: 8px;
 }
-.cycle-card[data-pos="define"]   { left: 236px; top: 0; }
-.cycle-card[data-pos="validate"] { left: 0;    top: 154px; }
-.cycle-card[data-pos="research"] { left: 472px; top: 154px; }
-.cycle-card[data-pos="design"]   { left: 236px; top: 308px; }
 
-.cycle-head {
+/* Node-flow flowchart — authored at the Figma size (580×118.268) and scaled
+   fluidly via the SVG viewBox. Centered in the column; 4 connected node circles
+   with white forward arrows + faint return arrows (drawn inline in the SVG). */
+.hiw-flow-wrap {
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 4px;
-  white-space: nowrap;
 }
-.cycle-title {
-  font-size: 15px;
-  line-height: 28px;
-  font-weight: 400;
-  color: #F9F5EB;
+.hiw-flow {
+  width: 100%;
+  max-width: 580px;
+  height: auto;
 }
-.cycle-desc {
-  font-size: 11px;
-  font-weight: 300;
-  line-height: 1.4;
-  text-align: center;
-  color: rgba(249, 245, 235, 0.7);
+/* Node labels — Figtree Medium 12.151px (SVG <text> inherits the page font). */
+.hiw-label text {
+  font-family: "Figtree", sans-serif;
+  font-weight: 500;
+  font-size: 12.151px;
 }
 
 /* --- What Others Think: testimonial cards (Figma 699:9142) ---
-   Horizontal scroll-snap row: ~2 cards plus a peek of the third are visible,
-   and the rest scroll into view. Scrollbar hidden but scrolling stays
-   functional. */
+   Two equal cards side by side (flex-1), split by a vertical divider; fixed
+   233px height with the quote clipped (Figma overflow-clip). */
 .testi-row {
   display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: 0;          /* row starts at the column's content edge */
-  scrollbar-width: none;           /* Firefox */
-}
-.testi-row::-webkit-scrollbar {    /* WebKit — hide but keep functional */
-  display: none;
+  align-items: stretch;
+  gap: 27px;
+  height: 233px;
 }
 .testi-card {
-  flex: 0 0 auto;
-  /* ~2 cards + a peek of the third at desktop column width */
-  width: calc((100% - 24px) / 2.2);
-  height: 280px;
-  scroll-snap-align: start;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 24px;
-  background: rgba(249, 245, 235, 0.03);
   border-radius: 16px;
   overflow: hidden;
+}
+/* Vertical divider between the two cards (Figma Line 26). */
+.testi-divider {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 0;
+  border-left: 1px solid rgba(249, 245, 235, 0.15);
 }
 .testi-top {
   display: flex;
@@ -977,6 +1006,7 @@ section {
   height: 60px;
   border-radius: 50%;
   background: #ffffff;
+  object-fit: cover;   /* circular crop for the <img>, no stretch */
 }
 .testi-id {
   display: flex;
@@ -1007,11 +1037,11 @@ section {
 .testi-quote {
   flex: 1;
   min-height: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 1.4;
   color: var(--cream);
-  opacity: 0.7;
+  opacity: 0.9;
   overflow: hidden;
 }
 /* Tertiary Button (Figma 662:8615) instance — see .home-portfolio. */
@@ -1297,15 +1327,19 @@ section {
   gap: 40px;
 }
 
-/* Large/Desktop item (clickable link). Default: no border/bg, 8px vertical
-   padding, 8px gap between header and body. A 1px dashed TRANSPARENT border is
-   reserved so the hover border doesn't shift layout (border-box). */
+/* Large/Desktop item (clickable link). Default (Large/Desktop/Default): a
+   VISIBLE 1px dashed #F9F5EB border, transparent bg, 8px 16px padding, 16px gap
+   between header and body. */
 .project {
+  position: relative;          /* anchor for the radial-fill layer */
+  isolation: isolate;          /* contain the fill's stacking context */
+  overflow: hidden;            /* clip the fill to the 16px rounded corners */
+  --radial-fill-color: rgba(249, 245, 235, 0.16);  /* 16% cream flood on hover */
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px 0;
-  border: 1px dashed transparent;
+  gap: 16px;
+  padding: 8px 16px;
+  border: 1px dashed #F9F5EB;
   border-radius: 16px;
   text-decoration: none;
   color: inherit;
@@ -1313,12 +1347,17 @@ section {
   transition: all 0.2s ease;
 }
 
-/* Hover (Large/Desktop/Hover): 1px dashed #F9F5EB border, 16px horizontal
-   padding, header↔body gap grows 8 → 16. */
+/* Hover (Large/Desktop/Hover): a subtle 16% cream tint grows radially from the
+   cursor (see .radial-fill + radial-fill.js). The dashed border is removed; all
+   content STAYS cream (it reads fine against the subtle tint). */
 .project:hover {
-  border-color: #F9F5EB;
-  padding: 8px 16px;
-  gap: 16px;
+  border-color: transparent;
+}
+
+.project-head,
+.project-body {
+  position: relative;
+  z-index: 1;                  /* card content rides ABOVE the fill */
 }
 
 /* Filtered-out projects collapse out of the layout */
@@ -1326,51 +1365,39 @@ section {
   display: none;
 }
 
-/* Header row — gap 16 (default) / 8 (hover) */
+/* Header row — title (left) + flex spacer + chevron (right), 8px gap. */
 .project-head {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.project:hover .project-head {
   gap: 8px;
 }
 
-/* Title: Figtree Regular 15px / 28, uppercase. #B3BAE1 → #F9F5EB on hover. */
+/* Title: Figtree Regular 15px / 28, uppercase. Stays cream in both states —
+   it rides above the subtle radial fill. */
 .project-title {
   font-size: 15px;
   line-height: 28px;
   text-transform: uppercase;
-  color: var(--navy-light);
+  color: var(--cream);
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
-.project:hover .project-title {
-  color: #F9F5EB;
-}
-
-/* Header line — 0.6px SOLID #5A5D70. Stays flex-1 always; on hover the stroke
-   goes transparent (line disappears) and the chevron takes the far right. */
+/* Invisible flex spacer — pushes the chevron to the far right (Figma has no
+   divider line in either state). */
 .project-rule {
   flex: 1;
   height: 0;
-  border-top: 0.6px solid var(--gray-navy);
-  transition: all 0.2s ease;
-}
-
-.project:hover .project-rule {
-  border-top-color: transparent;
+  border-top: none;
 }
 
 /* Right chevron (vuesax arrow-down chevron rotated -90°). 16px, far right,
-   hover only — sits after the (transparent) rule so it lands at the row end. */
+   visible in BOTH states. Cream by default → navy on hover. */
 .project-arrow {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  display: none;
+  display: block;
 }
 
 .project-arrow svg {
@@ -1380,8 +1407,8 @@ section {
   transform: rotate(-90deg);
 }
 
-.project:hover .project-arrow {
-  display: block;
+.project-arrow svg path {
+  transition: fill 0.2s ease;
 }
 
 .project-body {
@@ -1404,6 +1431,7 @@ section {
   font-size: 14px;
   line-height: 1.4;
   color: var(--cream);
+  transition: color 0.2s ease;
 }
 
 .project-meta {
@@ -1423,26 +1451,57 @@ section {
   font-size: 11px;
   color: var(--cream);
   opacity: 0.7;
+  transition: color 0.2s ease;
 }
 
 .meta-value {
   font-size: 13px;
   color: var(--cream);
+  transition: color 0.2s ease;
 }
 
-/* Thumbnail — fixed 343 × 240, on the LEFT. rgba(255,255,255,0.08) →
-   0.16 on hover. */
+/* Thumbnail — fixed 343 × 212, on the LEFT. Brightens on hover
+   (rgba(255,255,255,0.16) → 0.24), layered above the radial fill. */
 .project-media {
   flex: 0 0 343px;
   width: 343px;
-  height: 240px;
-  background: rgba(255, 255, 255, 0.08);
+  height: 212px;
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 16px;
   transition: all 0.2s ease;
 }
 
 .project:hover .project-media {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+/* ===== Radial fill hover (shared) — powered by radial-fill.js ==============
+   Any .radial-fill-hover element with a direct .radial-fill child gets a fill
+   layer that grows from the cursor entry point on mouseenter (0.5s ease-out) and
+   shrinks back to the exit point on mouseleave (0.25s ease-in). JS sets the
+   clip-path + transition inline per pointer position; CSS supplies the resting
+   state, the fill colour (--radial-fill-color, set per host), and the
+   reduced-motion fallback. The fill sits at z-index 0, behind card content
+   (z-index 1). Consumers: the large item cards (.project) and the Primary
+   Button (.btn-primary) — both flood a 16% cream tint from the cursor, identically. */
+.radial-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;      /* match the host's rounded corners */
+  pointer-events: none;        /* never intercept clicks/navigation */
+  background: var(--radial-fill-color, rgba(249, 245, 235, 0.04));
+  clip-path: circle(0% at 50% 50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No radial growth — show the tint instantly on hover (JS no-ops too). */
+  .radial-fill {
+    transition: none !important;
+  }
+  .radial-fill-hover:hover > .radial-fill {
+    clip-path: circle(150% at 50% 50%);
+  }
 }
 
 /* ===== Footer → Contact: ONE element, two states =====
@@ -1694,36 +1753,23 @@ section {
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
-    /* Stretch the (now stacked) columns to the viewport width. Without this the
-       base `align-items: flex-start` lets .layout-main size to its content's
-       min/max-content — and the horizontal scroll row (.testi-row) has a large
-       min-content, which would otherwise widen .layout-main past the viewport
-       and clip every full-width child (the cycle, etc.) under `overflow-x: clip`. */
+    /* Stretch the (now stacked) columns to the viewport width so .layout-main
+       doesn't shrink to its content's min/max-content. */
     align-items: stretch;
   }
 
-  /* How I Work cycle → vertical stack (initCycle() leaves transform/height
-     cleared at this width). Cards read in cycle order; arrows hidden. */
-  .cycle {
-    position: static;
-    width: 100% !important;
-    height: auto !important;
-    transform: none !important;
-    display: flex;
+  /* Testimonials → stack the two cards vertically; hide the (vertical) divider. */
+  .testi-row {
     flex-direction: column;
-    gap: 12px;
+    height: auto;
   }
-  .cycle-card {
-    position: static;
-    width: 100%;
-  }
-  .cycle-lines {
-    display: none;
-  }
-
-  /* Testimonials → full-width cards, one per view in the horizontal scroll row */
   .testi-card {
     width: 100%;
+    height: auto;
+    max-height: 233px;
+  }
+  .testi-divider {
+    display: none;
   }
   /* Left sidebar → static, full-width header row at the top of the page */
   .layout-left {
@@ -1755,7 +1801,7 @@ section {
     flex: none;
     width: 100%;
     height: auto;
-    aspect-ratio: 343 / 240;
+    aspect-ratio: 343 / 212;
     border-radius: 12px;
   }
 
@@ -1857,20 +1903,23 @@ section {
   }
 
   /* Floating nav — smaller icons + padding (stays centered, fixed bottom) */
-  .floating-nav {
-    gap: 8px;
-  }
   .nav-item {
-    width: 36px;
-    height: 36px;
-    padding: 8px;
+    padding: 10px;
+  }
+  .nav-item .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .nav-label {
+    font-size: 14px;
+    line-height: 20px;
   }
 
   /* Splash — compact padding, smaller title / lead / CTA */
   #splash {
     padding: 40px 24px 80px;
   }
-  .splash-name-lg { font-size: 22px; }
+  .splash-name-lg,
   .splash-name-sm { font-size: 15px; }
   .splash-lead {
     font-size: 20px;
@@ -1939,7 +1988,8 @@ section {
     transition: none !important;
   }
   /* Stars hold their base opacity — no breathing (accent pulse is skipped in JS). */
-  .splash-star--near {
+  .splash-star--near,
+  .splash-star--mid {
     animation: none !important;
     opacity: var(--op);
   }

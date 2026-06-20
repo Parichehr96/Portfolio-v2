@@ -38,13 +38,14 @@
 
         <!-- CTA pill — bottom third (Figma 822:10192). Icon-only down chevron. -->
         <div class="splash-info">
-          <button class="btn-primary splash-cta show-icon" type="button" aria-label="Scroll to start exploring">
+          <a class="btn-primary splash-cta show-icon radial-fill-hover" href="#home" aria-label="Scroll to start exploring">
+            <span class="radial-fill" aria-hidden="true"></span>
             <span class="btn-primary-icon" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 28 28" fill="none" focusable="false">
                 <path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>
               </svg>
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -71,7 +72,9 @@
             <span class="mid-label">Summary</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body mid-body--light reveal-item">Currently based in the Netherlands, I’ve shipped digital product for +5 years across various industries, usually as the sole designer. My work has helped teams build, iterate, and ship faster, grown products 17×, reduced friction, and turned messy multi-audience problems into systems that actually solve the problem.</p>
+          <p class="mid-body mid-body--light reveal-item">I design complex products that real people actually use. Over five years I’ve shipped end-to-end across consumer apps, B2B platforms, and Web3; building design systems, structuring user flows, and turning messy multi-audience problems into products that hold together at scale. Currently based in Amsterdam, looking for a team that ships with intention.</p>
+          <!-- Tertiary button (Figma 921:10618) — dashed cream underline. -->
+          <a class="resume-link reveal-item" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf" download="Parichehr_Talebzadeh_Resume.pdf" target="_blank" rel="noopener">Download My Resume</a>
         </div>
 
         <!-- 2. SERVICES (Figma: Services sits above Works) -->
@@ -81,10 +84,10 @@
             <span class="mid-rule"></span>
           </div>
           <div class="service-chips reveal-item">
-            <button class="btn-primary" type="button" data-filter="product-design"><span class="btn-primary-label">Product Design</span></button>
-            <button class="btn-primary" type="button" data-filter="mobile-design"><span class="btn-primary-label">Mobile Design</span></button>
-            <button class="btn-primary" type="button" data-filter="web-design"><span class="btn-primary-label">Web Design</span></button>
-            <button class="btn-primary" type="button" data-filter="interaction-design"><span class="btn-primary-label">Interaction Design</span></button>
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="product-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Product Design</span></button>
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="mobile-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Mobile Design</span></button>
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="web-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Web Design</span></button>
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="interaction-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Interaction Design</span></button>
           </div>
         </div>
 
@@ -95,17 +98,17 @@
             <span class="mid-rule"></span>
           </div>
           <div class="work-list">
-            <a class="work-row reveal-item" href="#works" data-project="onton">
+            <a class="work-row reveal-item" href="onton.html" data-project="onton">
               <span class="work-name">ONTON</span>
               <span class="work-dots"></span>
               <span class="work-year">2024-2025</span>
             </a>
-            <a class="work-row reveal-item" href="#works" data-project="challenquiz">
+            <a class="work-row reveal-item" href="challenquiz.html" data-project="challenquiz">
               <span class="work-name">Challenquiz</span>
               <span class="work-dots"></span>
               <span class="work-year">2023-2024</span>
             </a>
-            <a class="work-row reveal-item" href="#works" data-project="ezam-part">
+            <a class="work-row reveal-item" href="ezam.html" data-project="ezam-part">
               <span class="work-name">Ezam Part</span>
               <span class="work-dots"></span>
               <span class="work-year">2022-2023</span>
@@ -132,100 +135,94 @@
           </div>
         </div>
 
-        <!-- 5. HOW I WORK — cycle diagram (Figma 662:8015) -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">How I Work</span>
-            <span class="mid-rule"></span>
-          </div>
-          <p class="mid-body mid-body--tight reveal-item">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
-          <!-- 4-card cycle (Define → Research → Design → Validate). The .cycle box
-               is the exact 792×421 Figma layout; initCycle() in script.js scales
-               it to fit the column. Below 768px it stacks vertically. -->
-          <div class="cycle-wrap">
-            <div class="cycle">
-              <!-- Cycle connectors: 4 L-shaped rounded arrows, one between each
-                 adjacent pair (Define→Research→Design→Validate→Define). viewBox
-                 matches the 792×421 container; preserveAspectRatio="none" so the
-                 lines scale with the layout. Sits behind the cards (z-index 0). -->
-              <svg class="cycle-lines" viewBox="0 0 792 421" width="100%" height="100%" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <defs>
-                  <marker id="arrow" viewBox="0 0 10 10" markerWidth="6" markerHeight="6" refX="8" refY="5" orient="auto">
-                    <path d="M0 0 L10 5 L0 10 Z" fill="rgba(249, 245, 235, 0.7)"/>
-                  </marker>
-                </defs>
-                <g stroke="rgba(249, 245, 235, 0.7)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <!-- 01 Define → 02 Research (top-right) -->
-                  <path d="M556 88 H608 Q636 88 636 116 V154" marker-end="url(#arrow)"/>
-                  <!-- 02 Research → 03 Design (bottom-right) -->
-                  <path d="M636 267 V305 Q636 333 608 333 H556" marker-end="url(#arrow)"/>
-                  <!-- 03 Design → 04 Validate (bottom-left) -->
-                  <path d="M236 333 H184 Q156 333 156 305 V267" marker-end="url(#arrow)"/>
-                  <!-- 04 Validate → 01 Define (top-left) -->
-                  <path d="M156 154 V116 Q156 88 184 88 H236" marker-end="url(#arrow)"/>
-                </g>
-              </svg>
-              <div class="cycle-card reveal-item" data-pos="define">
-                <div class="cycle-head"><span class="cycle-title">Define</span></div>
-                <p class="cycle-desc">Clarify the problem space, set success metrics, and align on scope before a single pixel gets designed.</p>
-              </div>
-              <div class="cycle-card reveal-item" data-pos="research">
-                <div class="cycle-head"><span class="cycle-title">Research</span></div>
-                <p class="cycle-desc">Desk research, user interviews, and field observation to answer the right questions.</p>
-              </div>
-              <div class="cycle-card reveal-item" data-pos="design">
-                <div class="cycle-head"><span class="cycle-title">Design</span></div>
-                <p class="cycle-desc">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
-              </div>
-              <div class="cycle-card reveal-item" data-pos="validate">
-                <div class="cycle-head"><span class="cycle-title">Validate</span></div>
-                <p class="cycle-desc">Usability testing, real feedback, honest iteration. Ship what works, cut what doesn't.</p>
-              </div>
+        <!-- 5. HOW I WORK — cycle flowchart (Figma 662:8015): 4 connected node
+             circles + curved arrows, no per-step descriptions. -->
+        <div class="mid-block hiw-block">
+          <div class="hiw-intro reveal-item">
+            <div class="mid-header">
+              <span class="mid-label">How I Work</span>
+              <span class="mid-rule"></span>
             </div>
+            <p class="mid-body mid-body--tight">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
+          </div>
+          <!-- Node-flow flowchart, authored at the Figma size (580×118.268) and
+               scaled fluidly via the SVG viewBox. Dark connector blob (#01041B)
+               merges the 4 circles; white curved arrows ride above, faint return
+               arrows below. -->
+          <div class="hiw-flow-wrap reveal-item">
+            <svg class="hiw-flow" viewBox="0 0 580 118.268" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="My process cycle: Define, Research, Design, Validate">
+              <!-- Connector bar (Figma Rectangle 1) -->
+              <rect x="42.123" y="33.212" width="494.944" height="51.844" fill="#01041B"/>
+              <!-- Metaball neck fillets (dark) smoothing bar↔circle joins, 3 gaps -->
+              <g fill="#01041B">
+                <!-- gap 1 -->
+                <g transform="translate(105.307 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+                <g transform="translate(105.307 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+                <!-- gap 2 -->
+                <g transform="translate(259.217 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+                <g transform="translate(259.217 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+                <!-- gap 3 -->
+                <g transform="translate(413.127 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+                <g transform="translate(413.127 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
+              </g>
+              <!-- Node circles: dark outer + faint cream inner -->
+              <g>
+                <circle cx="59.134" cy="59.134" r="59.134" fill="#01041B"/>
+                <circle cx="213.044" cy="59.134" r="59.134" fill="#01041B"/>
+                <circle cx="366.955" cy="59.134" r="59.134" fill="#01041B"/>
+                <circle cx="520.866" cy="59.134" r="59.134" fill="#01041B"/>
+                <circle cx="59.134" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
+                <circle cx="213.044" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
+                <circle cx="366.955" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
+                <circle cx="520.866" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
+              </g>
+              <!-- Labels (Figtree Medium 12.151) -->
+              <g class="hiw-label" fill="#F9F5EB" text-anchor="middle">
+                <text x="59.134" y="59.134" dy="0.36em">Define</text>
+                <text x="213.044" y="59.134" dy="0.36em">Research</text>
+                <text x="366.955" y="59.134" dy="0.36em">Design</text>
+                <text x="520.866" y="59.134" dy="0.36em">Validate</text>
+              </g>
+              <!-- Curved arrows (Figma Flowchart Item): white forward (top) + faint return (bottom) -->
+              <g transform="translate(106.927 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
+              <g transform="translate(260.838 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
+              <g transform="translate(414.748 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
+            </svg>
           </div>
         </div>
 
-        <!-- 6. WHAT OTHERS THINK (Figma 699:9142) -->
-        <!-- TEMPORARILY HIDDEN — re-enable when testimonial content is ready (remove .hidden-section) -->
-        <div class="mid-block hidden-section">
+        <!-- 6. WHAT OTHERS THINK (Figma 699:9142) — 2 testimonial cards, flex-1,
+             split by a vertical divider. Avatars are white-circle placeholders
+             (Figma shows real photos — TODO add). LinkedIn hrefs are placeholders. -->
+        <div class="mid-block">
           <div class="mid-header reveal-item">
             <span class="mid-label">What Others Think</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body reveal-item">Now let the people I've built with describe me.</p>
-          <div class="testi-row">
-            <div class="testi-card reveal-item">
+          <p class="mid-body reveal-item">Let the people I've built with, describe me.</p>
+          <div class="testi-row reveal-item">
+            <div class="testi-card">
               <div class="testi-top">
-                <span class="testi-avatar" aria-hidden="true"></span>
+                <img class="testi-avatar" src="Assets/images/Amir_Tavakoli.jpeg" alt="Amir Tavakoli" width="60" height="60">
                 <div class="testi-id">
                   <p class="testi-name">Amir Tavakoli</p>
                   <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
                 </div>
               </div>
-              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague.</p>
-              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Full version on Linkedin</a>
+              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague. With a solid academic background in Industrial Design, Parichehr brings a rare combination of creative sensibility and systems thinking to her work. She has a remarkable ability to turn complex, often ambiguous problems into intuitive, structured, and aesthetically thoughtful design solutions. Her work consistently impressed both our internal teams and external stakeholders. One of her standout strengths is her meticulous attention to detail and her strong grasp of information architecture. She's highly skilled at extracting structure from complexity and transforming it into clean, user-centered experiences. Her command of design systems is especially strong—not just in execution, but in strategic thinking around consistency, reusability, and scale.</p>
+              <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
             </div>
-            <div class="testi-card reveal-item">
+            <span class="testi-divider" aria-hidden="true"></span>
+            <div class="testi-card">
               <div class="testi-top">
-                <span class="testi-avatar" aria-hidden="true"></span>
+                <img class="testi-avatar" src="Assets/images/Kirsten_Oliemans.jpeg" alt="Kirsten Oliemans" width="60" height="60">
                 <div class="testi-id">
-                  <p class="testi-name">Kirsten</p>
-                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                  <p class="testi-name">Kirsten Oliemans</p>
+                  <p class="testi-role">Sales &amp; UX/UI Design at Webpaste</p>
                 </div>
               </div>
-              <p class="testi-quote">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
-              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
-            </div>
-            <div class="testi-card reveal-item">
-              <div class="testi-top">
-                <span class="testi-avatar" aria-hidden="true"></span>
-                <div class="testi-id">
-                  <p class="testi-name">Kirsten</p>
-                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
-                </div>
-              </div>
-              <p class="testi-quote">Sketches to wireframes to high-fidelity. Fast iteration, tight execution.</p>
-              <a class="testi-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+              <p class="testi-quote">It was an absolute pleasure to work with Pari during a 10-week Mobility Design Project. Her design skills and ability to explore and refine ideas were a huge asset to our team. She has a strong eye for translating concepts into thoughtful, user-focused solutions and often helped guide us toward the right design direction when we felt stuck. Beyond her design expertise, Pari played an important role in keeping the team moving forward. She was great at stepping up when decisions needed to be made, helping organize work, and ensuring we stayed on track despite tight deadlines. What stood out most to me was her collaborative approach. Pari is a great listener who genuinely values different perspectives, and when she has a different opinion, she explains it thoughtfully and with clear reasoning. This made discussions productive, balanced, and enjoyable. I'd be really happy to work with her again!</p>
+              <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
             </div>
           </div>
         </div>
@@ -546,14 +543,15 @@
         </div>
         <!-- Filter chips (Product Design active by default) -->
         <div class="service-chips works-filter reveal-item">
-          <button class="btn-primary selected" type="button" data-filter="product-design"><span class="btn-primary-label">Product Design</span></button>
-          <button class="btn-primary" type="button" data-filter="mobile-design"><span class="btn-primary-label">Mobile Design</span></button>
-          <button class="btn-primary" type="button" data-filter="web-design"><span class="btn-primary-label">Web Design</span></button>
-          <button class="btn-primary" type="button" data-filter="interaction-design"><span class="btn-primary-label">Interaction Design</span></button>
+          <button class="btn-primary selected radial-fill-hover" type="button" data-filter="product-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Product Design</span></button>
+          <button class="btn-primary radial-fill-hover" type="button" data-filter="mobile-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Mobile Design</span></button>
+          <button class="btn-primary radial-fill-hover" type="button" data-filter="web-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Web Design</span></button>
+          <button class="btn-primary radial-fill-hover" type="button" data-filter="interaction-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Interaction Design</span></button>
         </div>
 
         <!-- 1. ONTON -->
-        <a class="project reveal-item" id="project-onton" href="onton.html" data-tags="product-design mobile-design">
+        <a class="project reveal-item radial-fill-hover" id="project-onton" href="onton.html" data-tags="product-design mobile-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">ONTON</span>
             <span class="project-rule"></span>
@@ -579,7 +577,8 @@
         </a>
 
         <!-- 2. CHALLENQUIZ -->
-        <a class="project reveal-item" id="project-challenquiz" href="challenquiz.html" data-tags="product-design mobile-design">
+        <a class="project reveal-item radial-fill-hover" id="project-challenquiz" href="challenquiz.html" data-tags="product-design mobile-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">Challenquiz</span>
             <span class="project-rule"></span>
@@ -605,7 +604,8 @@
         </a>
 
         <!-- 3. EZAM PART -->
-        <a class="project reveal-item" id="project-ezam-part" href="ezam.html" data-tags="product-design web-design">
+        <a class="project reveal-item radial-fill-hover" id="project-ezam-part" href="ezam.html" data-tags="product-design web-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">Ezam Part</span>
             <span class="project-rule"></span>
@@ -631,7 +631,8 @@
         </a>
 
         <!-- 4. WOW GLOBAL SOLUTION -->
-        <a class="project reveal-item" id="project-wow-global-solution" href="#" data-tags="product-design web-design">
+        <a class="project reveal-item radial-fill-hover" id="project-wow-global-solution" href="#" data-tags="product-design web-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">WOW Global Solution</span>
             <span class="project-rule"></span>
@@ -657,7 +658,8 @@
         </a>
 
         <!-- 5. VIAVIA -->
-        <a class="project reveal-item" id="project-viavia" href="#" data-tags="mobile-design interaction-design">
+        <a class="project reveal-item radial-fill-hover" id="project-viavia" href="#" data-tags="mobile-design interaction-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">ViaVia</span>
             <span class="project-rule"></span>
@@ -683,7 +685,8 @@
         </a>
 
         <!-- 6. MINDFUL MEET -->
-        <a class="project reveal-item" id="project-mindful-meet" href="#" data-tags="interaction-design web-design">
+        <a class="project reveal-item radial-fill-hover" id="project-mindful-meet" href="#" data-tags="interaction-design web-design">
+          <span class="radial-fill" aria-hidden="true"></span>
           <div class="project-head">
             <span class="project-title">Mindful Meet</span>
             <span class="project-rule"></span>
@@ -818,55 +821,60 @@
   <!-- Floating navigation -->
   <nav class="floating-nav" id="nav" aria-label="Section navigation">
     <a class="nav-item" href="#home" data-section="home" aria-label="Home">
-      <svg class="icon icon-outline" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M20.755 26.5417H7.245C4.04833 26.5417 1.45833 23.94 1.45833 20.7433V12.0983C1.45833 10.5117 2.43833 8.51667 3.69833 7.53667L9.98667 2.63667C11.8767 1.16667 14.8983 1.09667 16.8583 2.47333L24.0683 7.525C25.4567 8.49333 26.5417 10.57 26.5417 12.2617V20.755C26.5417 23.94 23.9517 26.5417 20.755 26.5417ZM11.06 4.01333L4.77167 8.91333C3.94333 9.56667 3.20833 11.0483 3.20833 12.0983V20.7433C3.20833 22.9717 5.01667 24.7917 7.245 24.7917H20.755C22.9833 24.7917 24.7917 22.9833 24.7917 20.755V12.2617C24.7917 11.1417 23.9867 9.59 23.065 8.96L15.855 3.90833C14.525 2.975 12.3317 3.02167 11.06 4.01333Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M14 21.875C13.5217 21.875 13.125 21.4783 13.125 21V17.5C13.125 17.0217 13.5217 16.625 14 16.625C14.4783 16.625 14.875 17.0217 14.875 17.5V21C14.875 21.4783 14.4783 21.875 14 21.875Z" fill="var(--fill-0, #F9F5EB)"/>
-      </svg>
-      <svg class="icon icon-filled" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M23.38 7.95667L16.66 3.255C14.8283 1.97167 12.0167 2.04167 10.255 3.40667L4.41 7.96833C3.24333 8.87833 2.32167 10.745 2.32167 12.215V20.265C2.32167 23.24 4.73667 25.6667 7.71167 25.6667H20.2883C23.2633 25.6667 25.6783 23.2517 25.6783 20.2767V12.3667C25.6783 10.7917 24.6633 8.855 23.38 7.95667ZM14.875 21C14.875 21.4783 14.4783 21.875 14 21.875C13.5217 21.875 13.125 21.4783 13.125 21V17.5C13.125 17.0217 13.5217 16.625 14 16.625C14.4783 16.625 14.875 17.0217 14.875 17.5V21Z" fill="var(--fill-0, #F9F5EB)"/>
-      </svg>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M2.52 7.823C2 8.77 2 9.915 2 12.203V13.725C2 17.625 2 19.576 3.172 20.788C4.344 22 6.229 22 10 22H14C17.771 22 19.657 22 20.828 20.788C21.999 19.576 22 17.626 22 13.725V12.204C22 9.915 22 8.771 21.48 7.823C20.962 6.874 20.013 6.286 18.116 5.108L16.116 3.867C14.111 2.622 13.108 2 12 2C10.892 2 9.89 2.622 7.884 3.867L5.884 5.108C3.987 6.286 3.039 6.874 2.52 7.823ZM11.25 18C11.25 18.1989 11.329 18.3897 11.4697 18.5303C11.6103 18.671 11.8011 18.75 12 18.75C12.1989 18.75 12.3897 18.671 12.5303 18.5303C12.671 18.3897 12.75 18.1989 12.75 18V15C12.75 14.8011 12.671 14.6103 12.5303 14.4697C12.3897 14.329 12.1989 14.25 12 14.25C11.8011 14.25 11.6103 14.329 11.4697 14.4697C11.329 14.6103 11.25 14.8011 11.25 15V18Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="nav-label">Home</span>
     </a>
 
     <a class="nav-item" href="#about" data-section="about" aria-label="About">
-      <svg class="icon icon-outline" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M10.1333 9.05833C10.05 9.05 9.95 9.05 9.85833 9.05833C7.875 8.99167 6.3 7.36667 6.3 5.36667C6.3 3.325 7.95 1.66667 10 1.66667C12.0417 1.66667 13.7 3.325 13.7 5.36667C13.6917 7.36667 12.1167 8.99167 10.1333 9.05833Z" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M5.96667 12.1333C3.95 13.4833 3.95 15.6833 5.96667 17.025C8.25833 18.5583 12.0167 18.5583 14.3083 17.025C16.325 15.675 16.325 13.475 14.3083 12.1333C12.025 10.6083 8.26667 10.6083 5.96667 12.1333Z" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <svg class="icon icon-filled" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M10 1.66667C7.81667 1.66667 6.04167 3.44167 6.04167 5.625C6.04167 7.76667 7.71667 9.5 9.9 9.575C9.96667 9.56667 10.0333 9.56667 10.0833 9.575C10.1 9.575 10.1083 9.575 10.125 9.575C10.1333 9.575 10.1333 9.575 10.1417 9.575C12.275 9.5 13.95 7.76667 13.9583 5.625C13.9583 3.44167 12.1833 1.66667 10 1.66667Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M14.2333 11.7917C11.9083 10.2417 8.11667 10.2417 5.775 11.7917C4.71667 12.5 4.13333 13.4583 4.13333 14.4833C4.13333 15.5083 4.71667 16.4583 5.76667 17.1583C6.93333 17.9417 8.46667 18.3333 10 18.3333C11.5333 18.3333 13.0667 17.9417 14.2333 17.1583C15.2833 16.45 15.8667 15.5 15.8667 14.4667C15.8583 13.4417 15.2833 12.4917 14.2333 11.7917Z" fill="var(--fill-0, #F9F5EB)"/>
-      </svg>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="currentColor"/>
+          <path d="M17.12 13.395C14.33 11.535 9.78 11.535 6.97 13.395C5.7 14.245 5 15.395 5 16.625C5 17.855 5.7 18.995 6.96 19.835C8.36 20.775 10.2 21.245 12.04 21.245C13.88 21.245 15.72 20.775 17.12 19.835C18.38 18.985 19.08 17.845 19.08 16.605C19.07 15.375 18.38 14.235 17.12 13.395Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="nav-label">About</span>
     </a>
 
     <a class="nav-item" href="#works" data-section="works" aria-label="Works">
-      <svg class="icon icon-outline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="13.5" y="2" width="8.5" height="8.5" rx="2.2" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5"/>
-        <rect x="13.5" y="13.5" width="8.5" height="8.5" rx="2.2" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5"/>
-        <rect x="2" y="2" width="8.5" height="8.5" rx="2.2" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5"/>
-        <rect x="2" y="13.5" width="8.5" height="8.5" rx="2.2" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5"/>
-      </svg>
-      <svg class="icon icon-filled" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M22 8.52V3.98C22 2.57 21.36 2 19.77 2H15.73C14.14 2 13.5 2.57 13.5 3.98V8.51C13.5 9.93 14.14 10.49 15.73 10.49H19.77C21.36 10.5 22 9.93 22 8.52Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M22 19.77V15.73C22 14.14 21.36 13.5 19.77 13.5H15.73C14.14 13.5 13.5 14.14 13.5 15.73V19.77C13.5 21.36 14.14 22 15.73 22H19.77C21.36 22 22 21.36 22 19.77Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M10.5 8.52V3.98C10.5 2.57 9.86 2 8.27 2H4.23C2.64 2 2 2.57 2 3.98V8.51C2 9.93 2.64 10.49 4.23 10.49H8.27C9.86 10.5 10.5 9.93 10.5 8.52Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M10.5 19.77V15.73C10.5 14.14 9.86 13.5 8.27 13.5H4.23C2.64 13.5 2 14.14 2 15.73V19.77C2 21.36 2.64 22 4.23 22H8.27C9.86 22 10.5 21.36 10.5 19.77Z" fill="var(--fill-0, #F9F5EB)"/>
-      </svg>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 18.5684 18.5684" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.450477 4.16831C0.450477 2.78234 0.450477 2.08936 0.762768 1.57998C0.937363 1.29468 1.17676 1.05529 1.46205 0.880696C1.97054 0.568405 2.66442 0.568405 4.05038 0.568405C5.43634 0.568405 6.12932 0.568405 6.63871 0.880696C6.924 1.05529 7.16339 1.29468 7.33799 1.57998C7.65028 2.08846 7.65028 2.78234 7.65028 4.16831C7.65028 5.55427 7.65028 6.24725 7.33799 6.75664C7.16339 7.04193 6.924 7.28132 6.63871 7.45592C6.13022 7.76821 5.43634 7.76821 4.05038 7.76821C2.66442 7.76821 1.97144 7.76821 1.46205 7.45592C1.17697 7.28136 0.937324 7.04172 0.762768 6.75664C0.450477 6.24815 0.450477 5.55427 0.450477 4.16831ZM1.60425 12.0719C2.54652 11.1296 3.01721 10.6589 3.57519 10.5239C3.88754 10.4489 4.21322 10.4489 4.52557 10.5239C5.08355 10.6589 5.55424 11.1296 6.49651 12.0719C7.43879 13.0142 7.90947 13.4849 8.04447 14.0428C8.11818 14.3553 8.11818 14.6807 8.04447 14.9932C7.90947 15.5512 7.43879 16.0228 6.49651 16.9642C5.55424 17.9055 5.08355 18.3771 4.52557 18.5121C4.21322 18.5872 3.88754 18.5872 3.57519 18.5121C3.01721 18.3771 2.54652 17.9064 1.60425 16.9642C0.661971 16.0219 0.191284 15.5512 0.0562874 14.9932C-0.0187625 14.6809 -0.0187625 14.3552 0.0562874 14.0428C0.191284 13.4849 0.661971 13.0133 1.60425 12.0719ZM10.8002 14.968C10.8002 13.5821 10.8002 12.8891 11.1125 12.3797C11.2871 12.0944 11.5265 11.855 11.8118 11.6804C12.3203 11.3681 13.0141 11.3681 14.4001 11.3681C15.7861 11.3681 16.479 11.3681 16.9893 11.6804C17.2737 11.855 17.5131 12.0944 17.6877 12.3797C18 12.8882 18 13.5821 18 14.968C18 16.354 18 17.047 17.6877 17.5572C17.513 17.8417 17.2738 18.0809 16.9893 18.2556C16.479 18.5679 15.7861 18.5679 14.4001 18.5679C13.0141 18.5679 12.3212 18.5679 11.8118 18.2556C11.5268 18.0813 11.2872 17.842 11.1125 17.5572C10.8002 17.047 10.8002 16.354 10.8002 14.968Z" fill="currentColor"/>
+          <path d="M14.4001 0.568405V7.76821M18 4.16831H10.8002" stroke="currentColor" stroke-width="1.13681" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="nav-label">Works</span>
+    </a>
+
+    <!-- PLACEHOLDER ICON — awaiting final decision -->
+    <!-- Undecided slot (Figma "ai"); no section yet, so it is inert and excluded
+         from scroll tracking + a11y. To finalise: give it href/data-section/
+         aria-label and swap the inline <svg> below. -->
+    <a class="nav-item nav-item--placeholder" aria-hidden="true">
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.1744 9.63937C20.8209 9.27 20.4553 8.88937 20.3175 8.55469C20.19 8.24813 20.1825 7.74 20.175 7.24781C20.1609 6.33281 20.1459 5.29594 19.425 4.575C18.7041 3.85406 17.6672 3.83906 16.7522 3.825C16.26 3.8175 15.7519 3.81 15.4453 3.6825C15.1116 3.54469 14.73 3.17906 14.3606 2.82562C13.7137 2.20406 12.9787 1.5 12 1.5C11.0213 1.5 10.2872 2.20406 9.63937 2.82562C9.27 3.17906 8.88937 3.54469 8.55469 3.6825C8.25 3.81 7.74 3.8175 7.24781 3.825C6.33281 3.83906 5.29594 3.85406 4.575 4.575C3.85406 5.29594 3.84375 6.33281 3.825 7.24781C3.8175 7.74 3.81 8.24813 3.6825 8.55469C3.54469 8.88844 3.17906 9.27 2.82562 9.63937C2.20406 10.2862 1.5 11.0213 1.5 12C1.5 12.9787 2.20406 13.7128 2.82562 14.3606C3.17906 14.73 3.54469 15.1106 3.6825 15.4453C3.81 15.7519 3.8175 16.26 3.825 16.7522C3.83906 17.6672 3.85406 18.7041 4.575 19.425C5.29594 20.1459 6.33281 20.1609 7.24781 20.175C7.74 20.1825 8.24813 20.19 8.55469 20.3175C8.88844 20.4553 9.27 20.8209 9.63937 21.1744C10.2862 21.7959 11.0213 22.5 12 22.5C12.9787 22.5 13.7128 21.7959 14.3606 21.1744C14.73 20.8209 15.1106 20.4553 15.4453 20.3175C15.7519 20.19 16.26 20.1825 16.7522 20.175C17.6672 20.1609 18.7041 20.1459 19.425 19.425C20.1459 18.7041 20.1609 17.6672 20.175 16.7522C20.1825 16.26 20.19 15.7519 20.3175 15.4453C20.4553 15.1116 20.8209 14.73 21.1744 14.3606C21.7959 13.7137 22.5 12.9787 22.5 12C22.5 11.0213 21.7959 10.2872 21.1744 9.63937ZM12 18C11.7775 18 11.56 17.934 11.375 17.8104C11.19 17.6868 11.0458 17.5111 10.9606 17.3055C10.8755 17.1 10.8532 16.8738 10.8966 16.6555C10.94 16.4373 11.0472 16.2368 11.2045 16.0795C11.3618 15.9222 11.5623 15.815 11.7805 15.7716C11.9988 15.7282 12.225 15.7505 12.4305 15.8356C12.6361 15.9208 12.8118 16.065 12.9354 16.25C13.059 16.435 13.125 16.6525 13.125 16.875C13.125 17.1734 13.0065 17.4595 12.7955 17.6705C12.5845 17.8815 12.2984 18 12 18ZM12.75 13.4325V13.5C12.75 13.6989 12.671 13.8897 12.5303 14.0303C12.3897 14.171 12.1989 14.25 12 14.25C11.8011 14.25 11.6103 14.171 11.4697 14.0303C11.329 13.8897 11.25 13.6989 11.25 13.5V12.75C11.25 12.5511 11.329 12.3603 11.4697 12.2197C11.6103 12.079 11.8011 12 12 12C13.2403 12 14.25 11.1562 14.25 10.125C14.25 9.09375 13.2403 8.25 12 8.25C10.7597 8.25 9.75 9.09375 9.75 10.125V10.5C9.75 10.6989 9.67098 10.8897 9.53033 11.0303C9.38968 11.171 9.19891 11.25 9 11.25C8.80109 11.25 8.61032 11.171 8.46967 11.0303C8.32902 10.8897 8.25 10.6989 8.25 10.5V10.125C8.25 8.26406 9.93188 6.75 12 6.75C14.0681 6.75 15.75 8.26406 15.75 10.125C15.75 11.7544 14.46 13.1184 12.75 13.4325Z" fill="currentColor"/>
+        </svg>
+      </span>
     </a>
 
     <a class="nav-item" href="#contact" data-section="contact" aria-label="Contact">
-      <svg class="icon icon-outline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M22 6.25V11.35C22 12.62 21.58 13.69 20.83 14.43C20.09 15.18 19.02 15.6 17.75 15.6V17.41C17.75 18.09 16.99 18.5 16.43 18.12L15.46 17.48C15.55 17.17 15.59 16.83 15.59 16.47V12.4C15.59 10.36 14.23 9 12.19 9H5.39999C5.25999 9 5.13 9.01002 5 9.02002V6.25C5 3.7 6.7 2 9.25 2H17.75C20.3 2 22 3.7 22 6.25Z" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M15.59 12.4V16.47C15.59 16.83 15.55 17.17 15.46 17.48C15.09 18.95 13.87 19.87 12.19 19.87H9.47L6.45 21.88C6 22.19 5.39999 21.86 5.39999 21.32V19.87C4.37999 19.87 3.53 19.53 2.94 18.94C2.34 18.34 2 17.49 2 16.47V12.4C2 10.5 3.18 9.19002 5 9.02002C5.13 9.01002 5.25999 9 5.39999 9H12.19C14.23 9 15.59 10.36 15.59 12.4Z" stroke="var(--stroke-0, #F9F5EB)" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <svg class="icon icon-filled" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M15.59 12.4V16.47C15.59 16.83 15.55 17.17 15.46 17.48C15.09 18.95 13.87 19.87 12.19 19.87H9.47L6.45 21.88C6 22.19 5.4 21.86 5.4 21.32V19.87C4.38 19.87 3.53 19.53 2.94 18.94C2.34 18.34 2 17.49 2 16.47V12.4C2 10.5 3.18 9.19 5 9.02C5.13 9.01 5.26 9 5.4 9H12.19C14.23 9 15.59 10.36 15.59 12.4Z" fill="var(--fill-0, #F9F5EB)"/>
-        <path d="M17.75 15.6C19.02 15.6 20.09 15.18 20.83 14.43C21.58 13.69 22 12.62 22 11.35V6.25C22 3.9 20.1 2 17.75 2H9.25C6.9 2 5 3.9 5 6.25V7C5 7.28 5.22 7.5 5.5 7.5H12.19C14.9 7.5 17.09 9.69 17.09 12.4V15.1C17.09 15.38 17.31 15.6 17.59 15.6H17.75V15.6Z" fill="var(--fill-0, #F9F5EB)"/>
-      </svg>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15.59 12.4V16.47C15.59 16.83 15.55 17.17 15.46 17.48C15.09 18.95 13.87 19.87 12.19 19.87H9.47L6.45 21.88C6 22.19 5.4 21.86 5.4 21.32V19.87C4.38 19.87 3.53 19.53 2.94 18.94C2.34 18.34 2 17.49 2 16.47V12.4C2 10.5 3.18 9.19 5 9.02C5.13 9.01 5.26 9 5.4 9H12.19C14.23 9 15.59 10.36 15.59 12.4Z" fill="currentColor"/>
+          <path d="M17.75 15.6C19.02 15.6 20.09 15.18 20.83 14.43C21.58 13.69 22 12.62 22 11.35V6.25C22 3.9 20.1 2 17.75 2H9.25C6.9 2 5 3.9 5 6.25V7C5 7.28 5.22 7.5 5.5 7.5H12.19C14.9 7.5 17.09 9.69 17.09 12.4V15.1C17.09 15.38 17.31 15.6 17.59 15.6H17.75V15.6Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="nav-label">Contact</span>
     </a>
   </nav>
 
   <script src="script.js"></script>
   <script defer src="reveal.js"></script>
   <script defer src="cursor.js"></script>
+  <script defer src="radial-fill.js"></script>
 </body>
 </html>

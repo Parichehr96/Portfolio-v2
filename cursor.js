@@ -125,8 +125,12 @@ function initCustomCursor() {
       "translate(" + curX + "px, " + curY + "px) translate(-50%, -50%)";
 
     // Spotlight active when the pointer is over the middle text block (visible
-    // lead sentence ∪ hidden tagline), while the splash is still showing.
+    // lead sentence ∪ hidden tagline), while the splash is still showing. Gated
+    // on `shown` so it never fires at the default (centre) position before the
+    // user has actually moved the cursor — otherwise the lead would load with a
+    // hole punched in it and the hidden tagline bleeding through.
     const over =
+      shown &&
       !!zoneRect &&
       !splashGone() &&
       mouseX >= zoneRect.left && mouseX <= zoneRect.right &&
