@@ -8,9 +8,8 @@ let contactExpanded = false;
 document.addEventListener("DOMContentLoaded", () => {
   initSplashStars();
   initHero();
-  initNav();
   initHomeMiddle();
-  initWorks();
+  initTimeline();
   initFooterContact();
 
   // Contact "Last updated" — derived from the document's last-modified date.
@@ -27,22 +26,126 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Filter the Works project list by a single service tag. Non-matching projects
- * are removed from layout (hidden), so the rest move up. Also syncs the selected
- * state across the Works filter buttons (.btn-primary[data-filter]).
+ * All About Me — viewport-locked scroll timeline (Figma 166:13319).
+ *
+ * The section is a tall scroll runway (.tl-runway, count × 60vh) wrapping a
+ * sticky 100vh viewport (.tl-sticky). While the runway scrolls past, the sticky
+ * stays pinned and scroll progress through it drives the active milestone:
+ * each milestone owns an equal 1/count band of the locked scroll distance
+ * (runwayHeight − viewportHeight). Once the runway is exhausted, the sticky
+ * releases and Skills scrolls in normally.
+ *
+ * The vertical line is a SEGMENT, not a continuous line: it spans only from the
+ * active year to the next year (a dot sits at its top by the active year), and
+ * both the segment and the dot glide to the new active year as the active
+ * milestone changes (CSS transitions on top/height). The last milestone has no
+ * next year, so the segment trails off below and fades out. The content + image
+ * are translated to the active year's vertical position so they sit beside the
+ * segment. Year rows are fixed-height, so growing/shrinking the active label
+ * never reflows the column — segment math stays accurate.
+ *
+ * Clicking a year scrolls to the centre of that milestone's band (scroll then
+ * drives the activation, so click and scroll share one source of truth).
+ *
+ * prefers-reduced-motion: no lock, no segment, no crossfade — every milestone is
+ * shown stacked (CSS), and this function just marks them all active and bails.
  */
-function filterWorks(filter) {
-  if (!filter) return;
+function initTimeline() {
+  const runway = document.getElementById("tl-runway");
+  const tl = document.getElementById("timeline");
+  if (!runway || !tl) return;
+  const years = Array.from(tl.querySelectorAll(".tl-year"));
+  const panels = Array.from(tl.querySelectorAll(".tl-panel"));
+  const line = tl.querySelector(".tl-line");
+  const detail = tl.querySelector(".tl-detail");
+  const count = panels.length;
+  if (!count) return;
 
-  // Selected state lives only on the Works filter row; the Home service buttons
-  // stay unselected (they act purely as launchers).
-  document.querySelectorAll(".works-filter .btn-primary[data-filter]").forEach((btn) => {
-    btn.classList.toggle("selected", btn.dataset.filter === filter);
-  });
+  // Reduced motion: static stacked list — show every milestone, no scroll lock.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    panels.forEach((p) => p.classList.add("is-active"));
+    years.forEach((y) => y.classList.remove("is-active"));
+    return;
+  }
 
-  document.querySelectorAll(".project").forEach((project) => {
-    const tags = (project.dataset.tags || "").split(/\s+/);
-    project.hidden = !tags.includes(filter);
+  // Position the line segment (active → next year) and slide the detail to the
+  // active year's vertical level. Fixed-height rows keep offsetTop stable while
+  // the active label animates its size.
+  const layout = (idx) => {
+    const y = years[idx];
+    const next = years[idx + 1];
+    if (next) {
+      // A clean connector that sits in the gap BETWEEN the active year label and
+      // the next one — inset a few px into each row so it never overlaps the
+      // text and never extends beyond the two labels.
+      const top = y.offsetTop + y.offsetHeight - 4;
+      const bottom = next.offsetTop + 4;
+      line.style.top = top + "px";
+      line.style.height = bottom - top + "px";
+      line.classList.remove("tl-line--last");
+    } else {
+      // Last milestone: no next year — a short fading trail below it.
+      line.style.top = y.offsetTop + y.offsetHeight - 4 + "px";
+      line.style.height = "24px";
+      line.classList.add("tl-line--last");
+    }
+    detail.style.transform = "translateY(" + y.offsetTop + "px)";
+  };
+
+  // Size the timeline box so the sticky centres a stable block (the header never
+  // jumps) even though the content translates down for later milestones.
+  const sizeBox = () => {
+    const last = years[count - 1];
+    const panelH = panels[0].offsetHeight || 301;
+    tl.style.minHeight = last.offsetTop + panelH + "px";
+  };
+
+  let active = -1;
+  const setActive = (raw) => {
+    const idx = Math.max(0, Math.min(count - 1, raw));
+    if (idx === active) return;
+    active = idx;
+    years.forEach((y) => {
+      const on = Number(y.dataset.index) === idx;
+      y.classList.toggle("is-active", on);
+      y.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    panels.forEach((p) => p.classList.toggle("is-active", Number(p.dataset.index) === idx));
+    layout(idx);
+  };
+
+  // Map scroll progress through the runway → milestone index (equal bands).
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const rect = runway.getBoundingClientRect();
+    const total = rect.height - window.innerHeight; // locked scroll distance
+    if (total <= 0) { setActive(0); return; }
+    const scrolled = Math.min(Math.max(-rect.top, 0), total);
+    setActive(Math.floor((scrolled / total) * count));
+  };
+  const onScroll = () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", () => { sizeBox(); layout(active < 0 ? 0 : active); onScroll(); }, { passive: true });
+
+  sizeBox();
+  update();
+
+  // Click a year → scroll to the centre of that milestone's band. Document top
+  // of the runway is derived from the viewport rect (offsetTop is relative to
+  // the positioned <main>, not the document).
+  years.forEach((y) => {
+    y.addEventListener("click", () => {
+      const i = Number(y.dataset.index);
+      const runwayTop = runway.getBoundingClientRect().top + window.scrollY;
+      const total = runway.offsetHeight - window.innerHeight;
+      window.scrollTo({
+        top: runwayTop + ((i + 0.5) / count) * total,
+        behavior: "smooth",
+      });
+    });
   });
 }
 
@@ -241,49 +344,9 @@ function setNavActive(id) {
   });
 }
 
-function initNav() {
-  const nav = document.getElementById("nav");
-  if (!nav) return;
-
-  const items = Array.from(nav.querySelectorAll(".nav-item"));
-
-  // Observe only the in-flow sections. The Contact state is driven by the
-  // footer expansion (initFooterContact), not this observer.
-  const sections = ["home", "about", "works"]
-    .map((id) => document.getElementById(id))
-    .filter(Boolean);
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // While the footer is expanded it owns the Contact highlight — don't let
-      // the (still-intersecting) Works section steal it back.
-      if (contactExpanded) return;
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) setNavActive(entry.target.id);
-      });
-    },
-    { rootMargin: "-50% 0px -50% 0px", threshold: 0 }
-  );
-
-  sections.forEach((section) => observer.observe(section));
-
-  items.forEach((item) => {
-    item.addEventListener("click", (e) => {
-      e.preventDefault();
-      const id = item.dataset.section;
-      // Contact lives at the very bottom: scrolling to the bottom drives the
-      // footer's scroll-proportional expansion all the way open.
-      if (id === "contact") {
-        const maxScroll =
-          document.documentElement.scrollHeight - window.innerHeight;
-        window.scrollTo({ top: maxScroll, behavior: "smooth" });
-        return;
-      }
-      const target = document.getElementById(id);
-      if (target) window.scrollTo({ top: target.offsetTop, behavior: "smooth" });
-    });
-  });
-}
+// (The floating nav was removed in the redesign. setNavActive() above is kept
+// as a harmless no-op — it still runs from initFooterContact but matches no
+// .nav-item elements now.)
 
 /**
  * Footer → Contact: ONE element (#footer-cta) that morphs between its default
@@ -642,49 +705,37 @@ function initFooterContact() {
 }
 
 /**
- * Home middle column: the Works list and Service chips both jump to #works.
- * Works rows carry a data-project; service chips carry a data-filter and toggle
- * an active state (single selection). The chosen project/filter is stashed on
- * #works (data-project / data-active-filter) so the Works section can pick it
- * up when it's built.
+ * Home Projects section: the filter chips (.proj-filters) filter the project
+ * list (#project-list) by data-tags. "Featured projects" is active on load.
+ *   • all        → every project
+ *   • featured   → main case studies (data-tags includes "featured")
+ *   • playground → side projects / experiments (data-tags includes "playground")
+ * Rows that point to a case-study page navigate normally; rows without an href
+ * (no case study yet) are inert.
  */
 function initHomeMiddle() {
-  const works = document.getElementById("works");
+  const filters = document.getElementById("project-filters");
+  const list = document.getElementById("project-list");
+  if (!filters || !list) return;
 
-  // Works list: rows that link to a case-study page (e.g. onton.html) navigate
-  // normally in the same tab. Rows that link in-page (#works, e.g. projects with
-  // no case study yet) keep the smooth-scroll-to-that-project fallback.
-  document.querySelectorAll(".work-row").forEach((row) => {
-    row.addEventListener("click", (e) => {
-      const href = row.getAttribute("href") || "";
-      if (!href.startsWith("#")) return; // real page link — let the browser follow it
-      e.preventDefault();
-      const project = document.getElementById("project-" + row.dataset.project);
-      const target = project && !project.hidden ? project : works;
-      if (target) target.scrollIntoView({ behavior: "smooth" });
+  const chips = Array.from(filters.querySelectorAll(".btn-primary[data-filter]"));
+  const rows = Array.from(list.querySelectorAll(".work-row"));
+
+  const apply = (filter) => {
+    rows.forEach((row) => {
+      const tags = (row.dataset.tags || "").split(/\s+/);
+      row.hidden = filter !== "all" && !tags.includes(filter);
     });
+    chips.forEach((c) => c.classList.toggle("selected", c.dataset.filter === filter));
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => apply(chip.dataset.filter));
   });
 
-  // Home service buttons → apply the filter on #works and jump there.
-  document.querySelectorAll("#home .btn-primary[data-filter]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterWorks(btn.dataset.filter);
-      if (works) works.scrollIntoView({ behavior: "smooth" });
-    });
-  });
+  // Default state on load: "Featured projects" (matches the Figma selection).
+  const initial = filters.querySelector(".btn-primary.selected") || chips[0];
+  if (initial) apply(initial.dataset.filter);
 }
 
-/**
- * Works section: the filter buttons drive filterWorks(); "Product Design" is the
- * default selection shown on load. Clicking the already-selected button is a no-op
- * (filterWorks is idempotent) and there is no deselect state.
- */
-function initWorks() {
-  document.querySelectorAll(".works-filter .btn-primary[data-filter]").forEach((btn) => {
-    btn.addEventListener("click", () => filterWorks(btn.dataset.filter));
-  });
-
-  // Default filter.
-  filterWorks("product-design");
-}
 

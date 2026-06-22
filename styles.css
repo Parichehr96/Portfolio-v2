@@ -321,134 +321,6 @@ section {
   will-change: width;
 }
 
-/* ===== Floating navigation ===== */
-/* Floating nav (Figma 920:10606). Solid Navy-Darker container, fully rounded;
-   2px inner padding, 4px between items. The active section expands into a cream
-   pill showing its icon + label; inactive items are faint icon-only circles. */
-.floating-nav {
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px;
-  background: #111323;
-  border-radius: 400px;
-  /* Visible on load — the hero is a normal section, not a blocking overlay. */
-}
-
-/* Item — icon-only circle by default with a faint cream wash (Figma 0.08).
-   Inactive icon/label tint is cream @ 0.32 (driven via currentColor). */
-.nav-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;                      /* icon → label (label only shows when active) */
-  padding: 16px;
-  border-radius: 40px;           /* clamps to a circle / pill */
-  cursor: pointer;
-  text-decoration: none;
-  background: rgba(249, 245, 235, 0.08);
-  color: rgba(249, 245, 235, 0.32);
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* Tooltip bubble — page name (from aria-label), centered 4px above the icon.
-   Only revealed for UNSELECTED items on hover. */
-.nav-item::after {
-  content: attr(aria-label);
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  padding: 12px 24px;
-  background: #000000;
-  color: #F9F5EB;
-  font-family: "Figtree", sans-serif;
-  font-size: 12px;
-  line-height: 1;
-  white-space: nowrap;
-  border-radius: 8px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-
-/* Small triangle pointing down from the tooltip toward the icon, bridging the
-   4px gap (base meets the bubble, apex at the icon top). */
-.nav-item::before {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #000000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-
-.nav-item:not(.active):hover::after,
-.nav-item:not(.active):hover::before {
-  opacity: 1;
-}
-
-/* Undecided placeholder: no section, no tooltip (it carries no aria-label). */
-.nav-item--placeholder::after,
-.nav-item--placeholder::before {
-  content: none;
-}
-
-/* Icon — 24px, recolored via currentColor so it tracks the item's color. */
-.nav-item .nav-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  color: inherit;
-  transition: transform 0.2s ease;
-}
-.nav-item .nav-icon svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* Section label — hidden until the item is active. Figtree Regular 16px/24. */
-.nav-label {
-  display: none;
-  font-size: 16px;
-  line-height: 24px;
-  white-space: nowrap;
-}
-
-/* Active — cream pill, near-black icon + label (Figma #030308). */
-.nav-item.active {
-  background: #F9F5EB;
-  color: #030308;
-}
-.nav-item.active .nav-label {
-  display: block;
-}
-
-/* Hover on inactive items: brighten the icon tint + a subtle scale. */
-.nav-item:not(.active):hover {
-  color: rgba(249, 245, 235, 0.6);
-}
-.nav-item:not(.active):hover .nav-icon {
-  transform: scale(1.08);
-}
-
 /* ===== Continuous 3-column page layout =====
    One layout wraps every section. The two sidebars are sticky siblings of the
    long middle column, so they persist (never reset/repeat) across #home →
@@ -529,6 +401,140 @@ section {
   align-items: flex-start;
   gap: 16px;
 }
+
+/* ===== Live in Amsterdam widget (home right sidebar; Figma 140:4256) =====
+   All text Figtree Regular (inherited). The widget is sticky via .layout-right.
+   Muted sub-texts use opacity 0.4 (Figma). */
+.live-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;                 /* status group ↔ best-time group (Figma 161:5091) */
+  width: 100%;
+}
+.lw-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                  /* time ↔ status row (Figma 161:4985) */
+}
+.lw-time-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lw-time {
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: 1px;       /* Figma 147:4152 */
+  color: var(--cream);
+}
+.lw-time-ams {                /* "HH:MM in Amsterdam" — only when zones differ */
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.4;
+}
+.lw-status-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;                 /* dot ↔ text (Figma 149:4179) */
+}
+/* Status indicator — the L-bracket connector from Figma ("Line 31"): a vertical
+   arm linking up to the time + a horizontal arm pointing right to the status
+   text, ending in a dot. The bracket line is static navy-light @0.7 (Figma has
+   no per-state variant); the end dot recolours by state to keep the live cue. */
+.lw-dot {
+  flex-shrink: 0;
+  width: 20px;
+  height: 10px;
+  margin-top: 2px;           /* align the bracket's dot with the first status line */
+  color: #6b6f86;            /* end-dot colour (overridden per state below) */
+}
+.lw-bracket {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.lw-bracket-dot {
+  fill: currentColor;
+  transition: fill 0.3s ease;
+}
+.lw-dot--active { color: #5fbf8e; }
+.lw-dot--active .lw-bracket-dot { filter: drop-shadow(0 0 3px rgba(95, 191, 142, 0.85)); }
+.lw-dot--away   { color: #e0a458; }
+.lw-dot--sleep  { color: #6b6f86; }
+.lw-status-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.lw-status-head {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cream);
+}
+.lw-status-sub {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.4;
+}
+.lw-reach {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;                 /* text block ↔ CTA (Figma 174:13489) */
+}
+.lw-reach-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;                  /* label ↔ time block (Figma 161:4964) */
+}
+.lw-label {
+  font-size: 13px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--navy-light);  /* #B3BAE1 */
+}
+.lw-reach-time {
+  display: flex;
+  flex-direction: column;
+}
+.lw-range {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--cream);
+}
+.lw-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.4;
+}
+.lw-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                  /* icon ↔ text (Figma 161:5014) */
+  align-self: flex-start;
+  text-decoration: none;
+}
+.lw-cta-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  opacity: 0.4;              /* Figma 161:5065 */
+}
+.lw-cta-icon svg { display: block; width: 100%; height: 100%; }
+.lw-cta-text {
+  font-size: 14px;
+  line-height: normal;
+  color: #ffffff;
+  white-space: nowrap;
+  border-bottom: 0.5px dashed #ffffff;
+  padding-bottom: 2px;
+}
+.lw-cta:hover .lw-cta-text { border-bottom-style: solid; }
 
 /* TOC group — the "On this page:" label + the section nav, 8px apart
    (Figma 919:10672). The aside's 40px gap then separates this group from the
@@ -712,24 +718,6 @@ section {
 .mid-body--light { font-weight: 300; }
 .mid-body--tight { line-height: 1.4; }
 
-/* Tertiary button (Figma 662:8617) — dashed cream underline; hover → solid +
-   Medium. Used by the Summary "Download My Resume" link. Hugs its content. */
-.resume-link {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 15px;
-  color: var(--cream);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
-}
-.resume-link:hover {
-  border-bottom-style: solid;
-  font-weight: 500;
-}
-
 /* Summary location line */
 .mid-meta {
   display: flex;
@@ -822,14 +810,18 @@ section {
 .work-row:hover .work-year {
   color: #FFFFFF;
 }
+/* Hidden when filtered out (overrides the flex display). */
+.work-row[hidden] {
+  display: none;
+}
 
-/* --- Service / Works-filter button rows — left-aligned, wrapping --- */
-/* Holds .btn-primary buttons (Services = display launchers, Works = filters). */
-.service-chips {
+/* Projects filter chips (Figma 161:5392) — three equal-width .btn-primary pills. */
+.proj-filters {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
   gap: 24px;
+}
+.proj-filters .btn-primary {
+  flex: 1 1 0;
 }
 
 /* ---------------------------------------------------------------
@@ -920,58 +912,91 @@ section {
   font-weight: 500;            /* Figtree Medium */
 }
 
-/* --- Strengths --- */
-.strengths {
+/* --- How I Think: "Not this / This" comparison table (Figma 140:3505) ---
+   A 40px number column (LEFT) + two dashed-bordered columns. Cells form a
+   blueprint grid (0.4px dashed, white @0.2) with "+" marks straddling every
+   corner; the left column is struck through + muted, the right column is bright;
+   rows numbered 01–05 on the left. */
+.think-table {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
-
-.strength-p {
+.think-head {
+  display: flex;
+  gap: 40px;
+  height: 40px;
+  align-items: flex-start;
+}
+.think-num-spacer {
+  flex: 0 0 40px;
+}
+.think-col {
+  flex: 1 1 0;
+  min-width: 0;
   font-size: 15px;
-  font-weight: 300;
-  line-height: 1.8;
+  font-weight: 600;            /* Figtree SemiBold */
+  line-height: 1.4;
   color: var(--cream);
 }
-
-.strength-p strong {
-  font-weight: 600;
-}
-
-/* How I Work (Figma 662:8015). Intro group (title + lead) sits 8px apart; the
-   block puts 48px between that group and the flowchart. */
-.hiw-block {
-  gap: 48px;
-}
-.hiw-intro {
+.think-row {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 40px;
+  align-items: center;
 }
-
-/* Node-flow flowchart — authored at the Figma size (580×118.268) and scaled
-   fluidly via the SVG viewBox. Centered in the column; 4 connected node circles
-   with white forward arrows + faint return arrows (drawn inline in the SVG). */
-.hiw-flow-wrap {
-  width: 100%;
+/* Number on the LEFT — Figtree Regular 28px, cream @0.2, right-aligned. */
+.think-num {
+  flex: 0 0 40px;
+  text-align: right;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--cream);
+  opacity: 0.2;
+}
+.think-cell {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 72px;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--cream);
+  border: 0.4px dashed rgba(255, 255, 255, 0.2);
+  border-bottom: none;
 }
-.hiw-flow {
-  width: 100%;
-  max-width: 580px;
-  height: auto;
+/* "+" marks (Figma Frame 2131328091 — 10×8 white cross) straddling the corners.
+   The pseudo is inset by half the cross so each cross centres on a corner. Each
+   cell draws its TOP two corners; the last row adds its bottom two — giving one
+   "+" at every grid intersection with no double-drawing. */
+.think-cell::before {
+  content: "";
+  position: absolute;
+  inset: -4px -5px;
+  pointer-events: none;
+  --cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath d='M0 4h10M5 0v8' stroke='%23ffffff' stroke-opacity='0.45' stroke-width='0.8'/%3E%3C/svg%3E");
+  background-image: var(--cross), var(--cross);
+  background-position: left top, right top;
+  background-repeat: no-repeat;
 }
-/* Node labels — Figtree Medium 12.151px (SVG <text> inherits the page font). */
-.hiw-label text {
-  font-family: "Figtree", sans-serif;
-  font-weight: 500;
-  font-size: 12.151px;
+.think-row:last-child .think-cell {
+  border-bottom: 0.4px dashed rgba(255, 255, 255, 0.2);
+}
+.think-row:last-child .think-cell::before {
+  background-image: var(--cross), var(--cross), var(--cross), var(--cross);
+  background-position: left top, right top, left bottom, right bottom;
+}
+.think-cell--not span {
+  text-decoration: line-through;
+  opacity: 0.7;
 }
 
-/* --- What Others Think: testimonial cards (Figma 699:9142) ---
-   Two equal cards side by side (flex-1), split by a vertical divider; fixed
-   233px height with the quote clipped (Figma overflow-clip). */
+/* --- What Others Think: testimonial cards (Figma 140:3517) ---
+   Two equal cards (flex-1) split by a vertical divider; fixed 233px height with
+   the quote clipped (overflow-clip). Quote on top, name/role/link below — no
+   avatars (per the new design). */
 .testi-row {
   display: flex;
   align-items: stretch;
@@ -984,8 +1009,8 @@ section {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border-radius: 16px;
+  gap: 24px;
+  border-radius: 0;
   overflow: hidden;
 }
 /* Vertical divider between the two cards (Figma Line 26). */
@@ -994,45 +1019,6 @@ section {
   align-self: stretch;
   width: 0;
   border-left: 1px solid rgba(249, 245, 235, 0.15);
-}
-.testi-top {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-.testi-avatar {
-  flex-shrink: 0;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #ffffff;
-  object-fit: cover;   /* circular crop for the <img>, no stretch */
-}
-.testi-id {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  min-width: 0;
-}
-.testi-name {
-  font-size: 15px;
-  line-height: 20px;
-  color: var(--cream);
-  white-space: nowrap;
-}
-/* Role/subtitle — clamps to exactly 2 lines, ellipsis at the END only. */
-.testi-role {
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 1.4;
-  color: var(--cream);
-  opacity: 0.7;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .testi-quote {
   flex: 1;
@@ -1044,9 +1030,37 @@ section {
   opacity: 0.9;
   overflow: hidden;
 }
-/* Tertiary Button (Figma 662:8615) instance — see .home-portfolio. */
-.testi-link {
+.testi-details {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.testi-id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.testi-name {
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--cream);
+  white-space: nowrap;
+}
+/* Role/subtitle — single line, ellipsis at the end. */
+.testi-role {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--cream);
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Tertiary Button (dashed underline). */
+.testi-link {
   align-self: flex-start;
   font-size: 15px;
   color: var(--cream);
@@ -1130,349 +1144,288 @@ section {
   opacity: 0.7;
 }
 
-/* --- Lead rows (Academia / Contribution / Certificate) --- */
-.lead-list {
+/* ===== All About Me — viewport-locked scroll timeline (Figma 166:13319) =====
+   .tl-runway (count × 60vh) is the scroll runway; the sticky .tl-sticky (100vh)
+   pins while JS maps scroll progress to the active milestone. A short line
+   SEGMENT spans the active year → next year and MOVES as you scroll (it is NOT a
+   continuous full-height line); a dot sits at its top by the active year. The
+   active milestone's text + 301×301 image track the active year's vertical
+   position. Reduced-motion fallback (static stacked list) is below. */
+.tl-runway {
+  position: relative;
+  height: calc(var(--tl-count, 7) * 60vh);
+}
+.tl-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.tl-inner {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
-
-/* Small item, EXTERNAL variant (About: Academia / Contribution / Certificate).
-   Matches Figma Item/Small + Small/Hover. Default: dashed-underlined title + org
-   (70%) + leader (present) + year (100%). Hover: title/year → white, org →
-   #EDEAE4, and the vuesax send (↗) icon appears between org and leader. */
-.lead-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 15px;
-  color: var(--cream);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-/* DOM order is now [title] [arrow] [org] [leader] [year] — the arrow is a real
-   sibling immediately after the underlined title (no flex `order` needed). */
-
-.lead-name {
-  border-bottom: 0.5px dashed var(--cream);
-  padding-bottom: 4px;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.lead-org {
-  font-size: 14px;
-  color: var(--cream);
-  opacity: 0.7;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-/* ↗ link arrow (clean diagonal). 14px, hover only. Sits AFTER the label/org:
-   [title] [label] [arrow] … leader … [year]. Reserves NO space when hidden:
-   width 0 + overflow hidden, and a -12px left margin cancels the row's 12px gap
-   so the label sits flush against the leader. On hover it expands to 14px
-   (margin → 0), appearing between the label and the leader. */
-.lead-arrow {
-  flex-shrink: 0;
-  width: 0;
-  height: 14px;
-  margin-left: -12px;
-  overflow: hidden;
-  opacity: 0;
-  /* The icon is its own element (a sibling of the underlined title), so it is
-     never inside the underline and carries NO line beneath it. */
-  border-bottom: none;
-  transition: all 0.2s ease;
-}
-
-.lead-arrow svg {
-  width: 14px;
-  height: 14px;
-  display: block;
-}
-
-.lead-row:hover .lead-arrow {
-  width: 14px;
-  margin-left: 0;
-  opacity: 1;
-}
-
-/* Leader line — present in BOTH states: 0.5px, #EDEAE4 @40%, dash 2px / gap 4px */
-.lead-dots {
-  flex: 1;
-  height: 0.5px;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(237, 234, 228, 0.4) 0,
-    rgba(237, 234, 228, 0.4) 2px,
-    transparent 2px,
-    transparent 6px
-  );
-}
-
-.lead-year {
-  white-space: nowrap;
-  font-size: 14px;
-  color: var(--cream);
-  transition: all 0.2s ease;
-}
-
-.lead-row:hover .lead-name {
-  color: #FFFFFF;
-}
-
-.lead-row:hover .lead-org {
-  color: var(--cream-dark);
-  opacity: 1;
-}
-
-.lead-row:hover .lead-year {
-  color: #FFFFFF;
-}
-
-/* ===== List hover dimming =====
-   Dimming triggers ONLY when a specific item is hovered (via :has) — NOT when
-   the cursor is merely in the empty space between items. Non-hovered siblings
-   drop to 40%; the hovered item stays full. The dim rule precedes the highlight
-   rule so the hovered item (equal specificity) wins. */
-.work-list:has(.work-row:hover) .work-row:not(:hover),
-.lead-list:has(.lead-row:hover) .lead-row:not(:hover),
-.contact-list:has(.contact-row:hover) .contact-row:not(:hover) {
-  opacity: 0.4;
-}
-
-/* contact-row lacks its own transition; add one so dimming animates smoothly
-   (work-row and lead-row already transition: all 0.2s ease). */
-.contact-row {
-  transition: opacity 0.2s ease;
-}
-
-/* --- Tri cards (Skill / All Time Favorite) --- */
-.tri-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-}
-
-.tri-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: none;
-  border-radius: 16px;
-  padding: 0;
-}
-
-/* Card head: 16px icon + label (gap 8, centered), with a 1px low-opacity rule
-   filling the space to the RIGHT of the label (Figma 665:9320, same pattern as
-   .mid-header / .mid-rule). Label is white; the icon keeps its Figma colour
-   (#B3BAE1, set on each inline SVG). */
-.tri-card-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #FFFFFF;
-}
-.tri-card-head::after {
-  content: "";
-  flex: 1;
-  height: 0;
-  border-top: 1px solid rgba(249, 245, 235, 0.15);
-}
-
-/* Column-title icon (16×16, inline SVG exported from Figma) */
-.tri-card-icon {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  display: block;
+.timeline {
   position: relative;
-}
-
-.tri-card-icon svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.tri-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.tri-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.tri-item-name {
-  font-size: 14px;
-  color: var(--cream);
-}
-
-.tri-item-sub {
-  font-size: 11px;
-  color: var(--cream);
-  opacity: 0.7;
-}
-
-/* --- Works projects --- */
-/* Projects sit 40px apart (Figma), tighter than the 80px section rhythm. */
-#works .home-middle {
-  gap: 40px;
-}
-
-/* Large/Desktop item (clickable link). Default (Large/Desktop/Default): a
-   VISIBLE 1px dashed #F9F5EB border, transparent bg, 8px 16px padding, 16px gap
-   between header and body. */
-.project {
-  position: relative;          /* anchor for the radial-fill layer */
-  isolation: isolate;          /* contain the fill's stacking context */
-  overflow: hidden;            /* clip the fill to the 16px rounded corners */
-  --radial-fill-color: rgba(249, 245, 235, 0.16);  /* 16% cream flood on hover */
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 8px 16px;
-  border: 1px dashed #F9F5EB;
-  border-radius: 16px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Hover (Large/Desktop/Hover): a subtle 16% cream tint grows radially from the
-   cursor (see .radial-fill + radial-fill.js). The dashed border is removed; all
-   content STAYS cream (it reads fine against the subtle tint). */
-.project:hover {
-  border-color: transparent;
-}
-
-.project-head,
-.project-body {
-  position: relative;
-  z-index: 1;                  /* card content rides ABOVE the fill */
-}
-
-/* Filtered-out projects collapse out of the layout */
-.project[hidden] {
-  display: none;
-}
-
-/* Header row — title (left) + flex spacer + chevron (right), 8px gap. */
-.project-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Title: Figtree Regular 15px / 28, uppercase. Stays cream in both states —
-   it rides above the subtle radial fill. */
-.project-title {
-  font-size: 15px;
-  line-height: 28px;
-  text-transform: uppercase;
-  color: var(--cream);
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-/* Invisible flex spacer — pushes the chevron to the far right (Figma has no
-   divider line in either state). */
-.project-rule {
-  flex: 1;
-  height: 0;
-  border-top: none;
-}
-
-/* Right chevron (vuesax arrow-down chevron rotated -90°). 16px, far right,
-   visible in BOTH states. Cream by default → navy on hover. */
-.project-arrow {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  display: block;
-}
-
-.project-arrow svg {
-  width: 16px;
-  height: 16px;
-  display: block;
-  transform: rotate(-90deg);
-}
-
-.project-arrow svg path {
-  transition: fill 0.2s ease;
-}
-
-.project-body {
   display: flex;
   gap: 16px;
   align-items: flex-start;
 }
-
-/* Info column — Figtree Light (300), gap 16, leading 1.4, #F9F5EB */
-.project-info {
-  flex: 1;
+/* Year axis — fixed-height rows so the active year can grow without reflowing
+   the column (keeps the segment + dot positions stable). Right-aligned toward
+   the line on the right edge. */
+.tl-years {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 22px;
+}
+.tl-year {
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 20px;            /* inactive — smaller */
+  font-weight: 400;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+.tl-year:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+.tl-year.is-active {
+  font-size: 24px;           /* active — larger, bold, full opacity */
+  font-weight: 600;
+  color: #ffffff;
+}
+/* The moving line SEGMENT (active → next year). top + height are set by JS and
+   both transition, so the segment glides to the new active year on scroll. */
+.tl-line {
+  position: absolute;
+  right: 10px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: top 0.3s ease, height 0.3s ease;
+}
+.tl-line--last {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0));
+}
+.tl-panel-year {
+  display: none;
+}
+/* Detail — the active milestone's text + image, translated to the active year's
+   vertical position (rule 5: sits to the right of the segment). */
+.tl-detail {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  transition: transform 0.3s ease;
+}
+.tl-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
+}
+.tl-panel.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 300ms ease;
+}
+.tl-text {
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  font-weight: 300;
+  gap: 4px;
 }
-
-.project-desc {
+.tl-loc {
   font-size: 14px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.7;
+}
+.tl-title {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--cream);
+}
+.tl-body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.7;
+}
+.tl-image {
+  flex: 0 0 301px;
+  width: 301px;
+  height: 301px;
+  border-radius: 16px;
+  background: rgba(249, 245, 235, 0.04);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+}
+.tl-image-label {
+  font-size: 12px;
   line-height: 1.4;
   color: var(--cream);
-  transition: color 0.2s ease;
+  opacity: 0.4;
+}
+/* Reduced motion: no lock, no segment, no crossfade — stacked static list. */
+@media (prefers-reduced-motion: reduce) {
+  .tl-runway { height: auto; }
+  .tl-sticky { position: static; height: auto; justify-content: flex-start; }
+  .timeline { min-height: 0 !important; }
+  .tl-years { display: none; }
+  .tl-detail { transform: none !important; display: flex; flex-direction: column; gap: 48px; }
+  .tl-panel {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    align-items: flex-start;
+    transition: none;
+  }
+  .tl-panel-year {
+    display: block;
+    flex: 0 0 72px;
+    text-align: right;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #ffffff;
+  }
 }
 
-.project-meta {
+/* ===== Skills (Figma 184:13739) — per category: a 104px header (left) + a list
+   of skill rows. Each row: name + description (left) and a question (right),
+   divided by 0.6px lines. 3 categories, 48px apart. ===== */
+.skills {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+.skill-cat {
+  display: flex;
+  align-items: flex-start;
+}
+.skill-cat-name {
+  flex: 0 0 104px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.skill-list {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.skill-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.skill-info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.skill-name {
+  font-size: 14px;
+  color: var(--cream);
+}
+.skill-sub {
+  font-size: 11px;
+  color: var(--cream);
+  opacity: 0.7;
+}
+.skill-q {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--cream);
+  opacity: 0.7;
+  text-align: right;
+}
+.skill-divider {
+  height: 0;
+  border-top: 0.6px solid rgba(249, 245, 235, 0.12);
+}
+
+/* ===== All Time Favourites (Figma 156:11490) — 3 categories, 3 items each === */
+.favs {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.fav-cat {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
-.meta-row {
+.fav-cat-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--cream);
+}
+.fav-row {
   display: flex;
-  align-items: center;
+  gap: 16px;
+}
+.fav-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
   gap: 8px;
+  align-items: stretch;
 }
-
-.meta-label {
-  flex: 0 0 44px;
-  font-size: 11px;
-  color: var(--cream);
-  opacity: 0.7;
-  transition: color 0.2s ease;
+.fav-img {
+  flex: 0 0 60px;
+  width: 60px;
+  height: 80px;
+  border-radius: 8px;
+  background: rgba(249, 245, 235, 0.04);
 }
-
-.meta-value {
-  font-size: 13px;
-  color: var(--cream);
-  transition: color 0.2s ease;
+.fav-info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
-
-/* Thumbnail — fixed 343 × 212, on the LEFT. Brightens on hover
-   (rgba(255,255,255,0.16) → 0.24), layered above the radial fill. */
-.project-media {
-  flex: 0 0 343px;
-  width: 343px;
-  height: 212px;
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 16px;
-  transition: all 0.2s ease;
+.fav-name {
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
 }
-
-.project:hover .project-media {
-  background: rgba(255, 255, 255, 0.24);
+.fav-sub {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(249, 245, 235, 0.5);
 }
 
 /* ===== Radial fill hover (shared) — powered by radial-fill.js ==============
@@ -1482,8 +1435,8 @@ section {
    clip-path + transition inline per pointer position; CSS supplies the resting
    state, the fill colour (--radial-fill-color, set per host), and the
    reduced-motion fallback. The fill sits at z-index 0, behind card content
-   (z-index 1). Consumers: the large item cards (.project) and the Primary
-   Button (.btn-primary) — both flood a 16% cream tint from the cursor, identically. */
+   (z-index 1). Consumer: the Primary Button (.btn-primary) — floods a 16% cream
+   tint from the cursor. */
 .radial-fill {
   position: absolute;
   inset: 0;
@@ -1713,28 +1666,11 @@ section {
   /* Body / header / list text scales down slightly */
   .mid-label,
   .mid-body,
-  .strength-p,
   .footer-link,
   .work-row,
   .work-year,
-  .lead-row,
   .contact-row {
     font-size: 14px;
-  }
-
-  /* Works thumbnail shrinks but stays beside the info */
-  .project-media {
-    flex: 0 0 240px;
-    width: 240px;
-    height: 160px;
-  }
-
-  /* Skill / Favourite cards stay 3-up but tighter */
-  .tri-card {
-    padding: 16px 12px;
-  }
-  .tri-grid {
-    gap: 8px;
   }
 
   /* Footer links closer together */
@@ -1756,6 +1692,22 @@ section {
     /* Stretch the (now stacked) columns to the viewport width so .layout-main
        doesn't shrink to its content's min/max-content. */
     align-items: stretch;
+  }
+
+  /* Skills → stack the category header above its list, and each row stacks the
+     name/description above its question (no horizontal room for a nowrap line). */
+  .skill-cat {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .skill-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .skill-q {
+    text-align: left;
+    white-space: normal;
   }
 
   /* Testimonials → stack the two cards vertically; hide the (vertical) divider. */
@@ -1787,22 +1739,6 @@ section {
   /* The shared left header stands in for the per-section identity here */
   .section-identity {
     display: none;
-  }
-
-  /* Works project cards stack: title → thumbnail → description → metadata.
-     DOM order is media-first then info(desc, meta), so a plain column produces
-     exactly that order. Thumbnail goes full width between title and description.
-     Applies in both default and hover states (flex-direction is unaffected by
-     hover). */
-  .project-body {
-    flex-direction: column;
-  }
-  .project-media {
-    flex: none;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 343 / 212;
-    border-radius: 12px;
   }
 
   /* Default footer → "Default/mobile" variant (Figma 800:15079): the card
@@ -1856,22 +1792,8 @@ section {
   .mid-label {
     font-size: 13px;
   }
-  .mid-body,
-  .strength-p {
+  .mid-body {
     font-size: 14px;
-  }
-
-  /* (Project card stacking — title → thumbnail → description → metadata — is
-     handled in the ≤768 block above and inherited here.) */
-
-  /* Button rows → tighter gap on small screens (buttons wrap automatically) */
-  .service-chips {
-    gap: 12px;
-  }
-
-  /* Skill / Favourite cards stack full width */
-  .tri-grid {
-    grid-template-columns: 1fr;
   }
 
   /* Default footer mobile variant (column + single row of links) is handled in
@@ -1900,19 +1822,6 @@ section {
   .contact-bottom {
     flex-wrap: wrap;
     gap: 8px;
-  }
-
-  /* Floating nav — smaller icons + padding (stays centered, fixed bottom) */
-  .nav-item {
-    padding: 10px;
-  }
-  .nav-item .nav-icon {
-    width: 20px;
-    height: 20px;
-  }
-  .nav-label {
-    font-size: 14px;
-    line-height: 20px;
   }
 
   /* Splash — compact padding, smaller title / lead / CTA */
@@ -1952,22 +1861,10 @@ section {
 /* The base `.reveal-item` rule replaces these elements' own `transition`, so we
    re-declare their hover/dim transitions alongside the reveal ones. */
 
-/* Project card: keep the 0.2s hover morph (border / padding / gap). It never
-   animates opacity on hover, so there's no clash with the reveal opacity. */
-.project.reveal-item {
-  transition:
-    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.2s ease,
-    padding 0.2s ease,
-    gap 0.2s ease;
-}
-
 /* List rows dim siblings via opacity on hover. While the dim state is active,
    restore the snappy 0.2s opacity transition (more specific than the reveal
    base, so it wins only during the hover-dim). */
-.work-list:has(.work-row:hover) .work-row.reveal-item:not(:hover),
-.lead-list:has(.lead-row:hover) .lead-row.reveal-item:not(:hover) {
+.work-list:has(.work-row:hover) .work-row.reveal-item:not(:hover) {
   transition: opacity 0.2s ease;
 }
 

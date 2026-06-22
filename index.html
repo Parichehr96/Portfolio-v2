@@ -73,127 +73,74 @@
             <span class="mid-rule"></span>
           </div>
           <p class="mid-body mid-body--light reveal-item">I design complex products that real people actually use. Over five years I’ve shipped end-to-end across consumer apps, B2B platforms, and Web3; building design systems, structuring user flows, and turning messy multi-audience problems into products that hold together at scale. Currently based in Amsterdam, looking for a team that ships with intention.</p>
-          <!-- Tertiary button (Figma 921:10618) — dashed cream underline. -->
-          <a class="resume-link reveal-item" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf" download="Parichehr_Talebzadeh_Resume.pdf" target="_blank" rel="noopener">Download My Resume</a>
         </div>
 
-        <!-- 2. SERVICES (Figma: Services sits above Works) -->
+        <!-- 2. PROJECTS (Figma 140:3498) — filter chips + project list.
+             Replaces the old Services + Works + Strengths sections. -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
-            <span class="mid-label">Services</span>
+            <span class="mid-label">Projects</span>
             <span class="mid-rule"></span>
           </div>
-          <div class="service-chips reveal-item">
-            <button class="btn-primary radial-fill-hover" type="button" data-filter="product-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Product Design</span></button>
-            <button class="btn-primary radial-fill-hover" type="button" data-filter="mobile-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Mobile Design</span></button>
-            <button class="btn-primary radial-fill-hover" type="button" data-filter="web-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Web Design</span></button>
-            <button class="btn-primary radial-fill-hover" type="button" data-filter="interaction-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Interaction Design</span></button>
+          <div class="proj-filters reveal-item" id="project-filters">
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="all"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">All projects</span></button>
+            <button class="btn-primary radial-fill-hover selected" type="button" data-filter="featured"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Featured projects</span></button>
+            <button class="btn-primary radial-fill-hover" type="button" data-filter="playground"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Playground</span></button>
+          </div>
+          <div class="work-list reveal-item" id="project-list">
+            <!-- featured = case studies; playground = side projects/experiments -->
+            <a class="work-row" data-tags="playground"><span class="work-name">ViaVia</span><span class="work-dots"></span><span class="work-year">2026</span></a>
+            <a class="work-row" data-tags="playground"><span class="work-name">Mindful Meet</span><span class="work-dots"></span><span class="work-year">2025</span></a>
+            <a class="work-row" href="onton.html" data-tags="featured"><span class="work-name">ONTON</span><span class="work-dots"></span><span class="work-year">2024-2025</span></a>
+            <a class="work-row" href="challenquiz.html" data-tags="featured"><span class="work-name">Challenquiz</span><span class="work-dots"></span><span class="work-year">2023-2024</span></a>
+            <a class="work-row" href="ezam.html" data-tags="featured"><span class="work-name">Ezam Part</span><span class="work-dots"></span><span class="work-year">2022-2023</span></a>
+            <a class="work-row" data-tags="featured"><span class="work-name">WOW Global Solution</span><span class="work-dots"></span><span class="work-year">2021-2022</span></a>
           </div>
         </div>
 
-        <!-- 3. WORKS -->
+        <!-- 3. HOW I THINK (Figma 140:3505) — "Not this / This" comparison table.
+             Replaces the old How I Work cycle. -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
-            <span class="mid-label">Works</span>
+            <span class="mid-label">How I Think</span>
             <span class="mid-rule"></span>
           </div>
-          <div class="work-list">
-            <a class="work-row reveal-item" href="onton.html" data-project="onton">
-              <span class="work-name">ONTON</span>
-              <span class="work-dots"></span>
-              <span class="work-year">2024-2025</span>
-            </a>
-            <a class="work-row reveal-item" href="challenquiz.html" data-project="challenquiz">
-              <span class="work-name">Challenquiz</span>
-              <span class="work-dots"></span>
-              <span class="work-year">2023-2024</span>
-            </a>
-            <a class="work-row reveal-item" href="ezam.html" data-project="ezam-part">
-              <span class="work-name">Ezam Part</span>
-              <span class="work-dots"></span>
-              <span class="work-year">2022-2023</span>
-            </a>
-            <a class="work-row reveal-item" href="#works" data-project="wow-global-solution">
-              <span class="work-name">WOW Global Solution</span>
-              <span class="work-dots"></span>
-              <span class="work-year">2021-2022</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- 4. STRENGTHS -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Strengths</span>
-            <span class="mid-rule"></span>
-          </div>
-          <p class="mid-body reveal-item">I specialise in three things:</p>
-          <div class="strengths">
-            <p class="strength-p reveal-item"><strong>End-to-end product design:</strong> I go from the first user interview to the final handoff spec. Research, testing, wireframes, high-fidelity prototypes — I cover the full process so nothing gets lost between thinking and building.</p>
-            <p class="strength-p reveal-item"><strong>Systems thinking:</strong> I don’t design only screens, I design systems. Every flow, every component, every decision connects back to the bigger picture; the business model, the different audiences, the product that needs to hold together at scale.</p>
-            <p class="strength-p reveal-item"><strong>Designing under constraint:</strong> Tight timelines, shifting requirements, no design team to lean on. I’ve built products solo from scratch, iterated fast, and still shipped scalable work I’m proud of. Pressure doesn’t slow me down, it sharpens my focus.</p>
-          </div>
-        </div>
-
-        <!-- 5. HOW I WORK — cycle flowchart (Figma 662:8015): 4 connected node
-             circles + curved arrows, no per-step descriptions. -->
-        <div class="mid-block hiw-block">
-          <div class="hiw-intro reveal-item">
-            <div class="mid-header">
-              <span class="mid-label">How I Work</span>
-              <span class="mid-rule"></span>
+          <div class="think-table reveal-item">
+            <div class="think-head">
+              <span class="think-num-spacer" aria-hidden="true"></span>
+              <span class="think-col">Not this</span>
+              <span class="think-col">This</span>
             </div>
-            <p class="mid-body mid-body--tight">Design is not a straight line. It's a <strong>cycle</strong>. Every answer is just a better question.</p>
-          </div>
-          <!-- Node-flow flowchart, authored at the Figma size (580×118.268) and
-               scaled fluidly via the SVG viewBox. Dark connector blob (#01041B)
-               merges the 4 circles; white curved arrows ride above, faint return
-               arrows below. -->
-          <div class="hiw-flow-wrap reveal-item">
-            <svg class="hiw-flow" viewBox="0 0 580 118.268" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="My process cycle: Define, Research, Design, Validate">
-              <!-- Connector bar (Figma Rectangle 1) -->
-              <rect x="42.123" y="33.212" width="494.944" height="51.844" fill="#01041B"/>
-              <!-- Metaball neck fillets (dark) smoothing bar↔circle joins, 3 gaps -->
-              <g fill="#01041B">
-                <!-- gap 1 -->
-                <g transform="translate(105.307 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-                <g transform="translate(105.307 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-                <!-- gap 2 -->
-                <g transform="translate(259.217 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-                <g transform="translate(259.217 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-                <!-- gap 3 -->
-                <g transform="translate(413.127 24.07)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-                <g transform="translate(413.127 94.198) scale(1 -1)"><path d="M56.3527 9.59884L62.0231 1.49827L60.403 0.0562442C55.7462 4.92861 47.4807 9.59884 31.646 9.59884H56.3527Z"/><path d="M5.72424 9.82598L0.0538466 1.72541L1.67396 0.28338C6.33079 5.15575 14.5963 9.82598 30.4309 9.82598H5.72424Z"/></g>
-              </g>
-              <!-- Node circles: dark outer + faint cream inner -->
-              <g>
-                <circle cx="59.134" cy="59.134" r="59.134" fill="#01041B"/>
-                <circle cx="213.044" cy="59.134" r="59.134" fill="#01041B"/>
-                <circle cx="366.955" cy="59.134" r="59.134" fill="#01041B"/>
-                <circle cx="520.866" cy="59.134" r="59.134" fill="#01041B"/>
-                <circle cx="59.134" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
-                <circle cx="213.044" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
-                <circle cx="366.955" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
-                <circle cx="520.866" cy="59.134" r="55.894" fill="rgba(254,251,245,0.12)"/>
-              </g>
-              <!-- Labels (Figtree Medium 12.151) -->
-              <g class="hiw-label" fill="#F9F5EB" text-anchor="middle">
-                <text x="59.134" y="59.134" dy="0.36em">Define</text>
-                <text x="213.044" y="59.134" dy="0.36em">Research</text>
-                <text x="366.955" y="59.134" dy="0.36em">Design</text>
-                <text x="520.866" y="59.134" dy="0.36em">Validate</text>
-              </g>
-              <!-- Curved arrows (Figma Flowchart Item): white forward (top) + faint return (bottom) -->
-              <g transform="translate(106.927 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
-              <g transform="translate(260.838 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
-              <g transform="translate(414.748 12.151) scale(0.96589 1)"><path d="M40.151 15.4148C39.9327 15.366 39.7161 15.5033 39.6673 15.7216C39.6184 15.9399 39.7558 16.1565 39.9741 16.2053L40.0625 15.8101L40.151 15.4148ZM59.8059 3.62651L56.2753 6.69366L60.6968 8.21773L59.8059 3.62651ZM40.0625 15.8101L39.9741 16.2053L40.3693 16.2938L40.4578 15.8985L40.5462 15.5033L40.151 15.4148L40.0625 15.8101ZM40.4578 15.8985L40.3693 16.2938C48.0739 18.0179 55.7249 14.0846 58.9834 7.24777L58.6178 7.07351L58.2521 6.89925C55.1527 13.4025 47.874 17.1431 40.5462 15.5033L40.4578 15.8985Z" fill="#FFFFFF"/><path d="M1.18005 89.5252L4.50926 86.2404L0 84.9996L1.18005 89.5252ZM20.9131 76.9242C20.6948 76.8754 20.4782 77.0127 20.4294 77.231C20.3805 77.4493 20.5179 77.6659 20.7362 77.7147L20.8246 77.3195L20.9131 76.9242ZM20.5385 77.6705C20.7568 77.7194 20.9734 77.582 21.0222 77.3637C21.0711 77.1454 20.9337 76.9289 20.7154 76.88L20.627 77.2753L20.5385 77.6705ZM19.0109 76.5793C18.7889 76.5518 18.5866 76.7095 18.5592 76.9315C18.5317 77.1535 18.6894 77.3558 18.9114 77.3832L18.9611 76.9813L19.0109 76.5793ZM15.8157 77.3066C16.0388 77.29 16.2062 77.0958 16.1896 76.8727C16.1731 76.6496 15.9788 76.4822 15.7558 76.4987L15.7857 76.9026L15.8157 77.3066ZM12.5482 77.0589C12.3328 77.1189 12.2067 77.3422 12.2667 77.5577C12.3267 77.7732 12.5501 77.8992 12.7655 77.8392L12.6569 77.4491L12.5482 77.0589ZM9.8778 78.9584C10.0775 78.8576 10.1576 78.614 10.0568 78.4143C9.95593 78.2146 9.71232 78.1345 9.51265 78.2353L9.69522 78.5969L9.8778 78.9584ZM6.76362 79.979C6.58729 80.1166 6.55595 80.3711 6.6936 80.5475C6.83125 80.7238 7.08578 80.7551 7.2621 80.6175L7.01286 80.2982L6.76362 79.979ZM5.01886 82.7528C5.16499 82.5834 5.14615 82.3276 4.97679 82.1815C4.80743 82.0354 4.55167 82.0542 4.40554 82.2236L4.7122 82.4882L5.01886 82.7528ZM2.5317 84.8864C2.42165 85.0812 2.49032 85.3282 2.68507 85.4383C2.87982 85.5483 3.1269 85.4797 3.23695 85.2849L2.88432 85.0857L2.5317 84.8864ZM1.98684 88.118C2.05661 87.9055 1.94087 87.6766 1.72834 87.6069C1.5158 87.5371 1.28696 87.6528 1.21719 87.8654L1.60202 87.9917L1.98684 88.118ZM20.9234 77.3416L21.0119 76.9464L20.9131 76.9242L20.8246 77.3195L20.7362 77.7147L20.835 77.7369L20.9234 77.3416ZM20.627 77.2753L20.7154 76.88L20.6166 76.8579L20.5282 77.2532L20.4397 77.6484L20.5385 77.6705L20.627 77.2753ZM20.5282 77.2532L20.6166 76.8579C20.0808 76.738 19.545 76.6454 19.0109 76.5793L18.9611 76.9813L18.9114 77.3832C19.4195 77.4461 19.9295 77.5342 20.4397 77.6484L20.5282 77.2532ZM15.7857 76.9026L15.7558 76.4987C14.6612 76.5799 13.5875 76.7695 12.5482 77.0589L12.6569 77.4491L12.7655 77.8392C13.7539 77.564 14.7749 77.3837 15.8157 77.3066L15.7857 76.9026ZM9.69522 78.5969L9.51265 78.2353C8.5419 78.7255 7.62083 79.3097 6.76362 79.979L7.01286 80.2982L7.2621 80.6175C8.07772 79.9807 8.95414 79.4248 9.8778 78.9584L9.69522 78.5969ZM4.7122 82.4882L4.40554 82.2236C3.70083 83.0403 3.07168 83.9308 2.5317 84.8864L2.88432 85.0857L3.23695 85.2849C3.75036 84.3763 4.34861 83.5296 5.01886 82.7528L4.7122 82.4882Z" fill="#FFFFFF" fill-opacity="0.4"/></g>
-            </svg>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">01</span>
+              <div class="think-cell think-cell--not"><span>Adding features to solve problems</span></div>
+              <div class="think-cell think-cell--this"><span>Reducing system complexity</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">02</span>
+              <div class="think-cell think-cell--not"><span>Designing screens</span></div>
+              <div class="think-cell think-cell--this"><span>Identifying decision points</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">03</span>
+              <div class="think-cell think-cell--not"><span>Visual design first</span></div>
+              <div class="think-cell think-cell--this"><span>Structure before pixels</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">04</span>
+              <div class="think-cell think-cell--not"><span>Designing in isolation</span></div>
+              <div class="think-cell think-cell--this"><span>Aligning constraints with team early</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">05</span>
+              <div class="think-cell think-cell--not"><span>Measuring output volume</span></div>
+              <div class="think-cell think-cell--this"><span>Evaluating success through clarity</span></div>
+            </div>
           </div>
         </div>
 
-        <!-- 6. WHAT OTHERS THINK (Figma 699:9142) — 2 testimonial cards, flex-1,
-             split by a vertical divider. Avatars are white-circle placeholders
-             (Figma shows real photos — TODO add). LinkedIn hrefs are placeholders. -->
+        <!-- 4. WHAT OTHERS THINK (Figma 140:3517) — 2 cards: quote on top,
+             name/role/link below, NO avatars; split by a vertical divider. -->
         <div class="mid-block">
           <div class="mid-header reveal-item">
             <span class="mid-label">What Others Think</span>
@@ -202,39 +149,25 @@
           <p class="mid-body reveal-item">Let the people I've built with, describe me.</p>
           <div class="testi-row reveal-item">
             <div class="testi-card">
-              <div class="testi-top">
-                <img class="testi-avatar" src="Assets/images/Amir_Tavakoli.jpeg" alt="Amir Tavakoli" width="60" height="60">
+              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague. With a solid academic background in Industrial Design, Parichehr brings a rare combination of creative sensibility and systems thinking to her work. She has a remarkable ability to turn complex, often ambiguous problems into intuitive, structured, and aesthetically thoughtful design solutions. Her work consistently impressed both our internal teams and external stakeholders. One of her standout strengths is her meticulous attention to detail and her strong grasp of information architecture. She's highly skilled at extracting structure from complexity and transforming it into clean, user-centered experiences. Her command of design systems is especially strong—not just in execution, but in strategic thinking around consistency, reusability, and scale.</p>
+              <div class="testi-details">
                 <div class="testi-id">
                   <p class="testi-name">Amir Tavakoli</p>
                   <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
                 </div>
+                <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
               </div>
-              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague. With a solid academic background in Industrial Design, Parichehr brings a rare combination of creative sensibility and systems thinking to her work. She has a remarkable ability to turn complex, often ambiguous problems into intuitive, structured, and aesthetically thoughtful design solutions. Her work consistently impressed both our internal teams and external stakeholders. One of her standout strengths is her meticulous attention to detail and her strong grasp of information architecture. She's highly skilled at extracting structure from complexity and transforming it into clean, user-centered experiences. Her command of design systems is especially strong—not just in execution, but in strategic thinking around consistency, reusability, and scale.</p>
-              <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
             </div>
             <span class="testi-divider" aria-hidden="true"></span>
             <div class="testi-card">
-              <div class="testi-top">
-                <img class="testi-avatar" src="Assets/images/Kirsten_Oliemans.jpeg" alt="Kirsten Oliemans" width="60" height="60">
+              <p class="testi-quote">It was an absolute pleasure to work with Pari during a 10-week Mobility Design Project. Her design skills and ability to explore and refine ideas were a huge asset to our team. She has a strong eye for translating concepts into thoughtful, user-focused solutions and often helped guide us toward the right design direction when we felt stuck. Beyond her design expertise, Pari played an important role in keeping the team moving forward. She was great at stepping up when decisions needed to be made, helping organize work, and ensuring we stayed on track despite tight deadlines. What stood out most to me was her collaborative approach. Pari is a great listener who genuinely values different perspectives, and when she has a different opinion, she explains it thoughtfully and with clear reasoning. This made discussions productive, balanced, and enjoyable. I'd be really happy to work with her again!</p>
+              <div class="testi-details">
                 <div class="testi-id">
                   <p class="testi-name">Kirsten Oliemans</p>
                   <p class="testi-role">Sales &amp; UX/UI Design at Webpaste</p>
                 </div>
+                <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
               </div>
-              <p class="testi-quote">It was an absolute pleasure to work with Pari during a 10-week Mobility Design Project. Her design skills and ability to explore and refine ideas were a huge asset to our team. She has a strong eye for translating concepts into thoughtful, user-focused solutions and often helped guide us toward the right design direction when we felt stuck. Beyond her design expertise, Pari played an important role in keeping the team moving forward. She was great at stepping up when decisions needed to be made, helping organize work, and ensuring we stayed on track despite tight deadlines. What stood out most to me was her collaborative approach. Pari is a great listener who genuinely values different perspectives, and when she has a different opinion, she explains it thoughtfully and with clear reasoning. This made discussions productive, balanced, and enjoyable. I'd be really happy to work with her again!</p>
-              <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 7. FOOTER COMPONENT -->
-        <div class="mid-footer">
-          <div class="footer-row">
-            <span class="mid-footer-title">Contact Me</span>
-            <div class="mid-footer-links">
-              <a class="footer-link" href="mailto:parichehr.t96@gmail.com">Email</a>
-              <a class="footer-link" href="https://wa.me/31657248971" target="_blank" rel="noopener">Whatsapp</a>
-              <a class="footer-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
             </div>
           </div>
         </div>
@@ -248,286 +181,225 @@
           <h2 class="home-name">Parichehr Talebzadeh</h2>
           <p class="home-role">Product Designer</p>
         </div>
-        <!-- CALL ME PARI -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Call Me Pari</span>
-            <span class="mid-rule"></span>
-          </div>
-          <p class="mid-body reveal-item">I moved to the Netherlands because of the way people here think. Not just about design, about problems. The instinct to improve things together, incrementally, without ego. That's the culture I want to work in.</p>
-          <p class="mid-body reveal-item">Professionally, I think in systems. It's not something I learned, it's just how my brain works. Conflicts surface early for me. Gaps between user journeys, broken handoffs, trust issues buried three flows deep, I catch them before they ship. Five years of being the only designer in the room will sharpen that instinct fast, and the most complex thing I've built, a full ERP for the oil and gas industry, taught me that holding the whole picture in your head is a skill not everyone has. I do, and I don't take it for granted.</p>
-          <p class="mid-body reveal-item">I'm also just genuinely curious about people. High empathy isn't a soft skill for me — it's how I move through a user journey and feel where it breaks. I'm looking for a team building something complex, in a place where design actually matters.</p>
-        </div>
-
-        <!-- ACADEMIA -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Academia</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="lead-list">
-            <a class="lead-row reveal-item" href="https://www.amsterdamuas.com/study/master-digital-design" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Master Interaction Design</span>
-              <span class="lead-org">HVA</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2025-2026</span>
-            </a>
-            <a class="lead-row reveal-item" href="https://www.aui.ac.ir/" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Bachelor Industrial Design</span>
-              <span class="lead-org">AUI</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2017-2022</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- SKILL -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Skill</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="tri-grid">
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4.66667 5.83333H2.66667C1.65333 5.83333 0.833333 5.01333 0.833333 4V2.66667C0.833333 1.65333 1.65333 0.833333 2.66667 0.833333H4.66667C5.68 0.833333 6.5 1.65333 6.5 2.66667V4C6.5 5.01333 5.68 5.83333 4.66667 5.83333ZM2.66667 1.83333C2.20667 1.83333 1.83333 2.20667 1.83333 2.66667V4C1.83333 4.46 2.20667 4.83333 2.66667 4.83333H4.66667C5.12667 4.83333 5.5 4.46 5.5 4V2.66667C5.5 2.20667 5.12667 1.83333 4.66667 1.83333H2.66667Z" fill="#B3BAE1"/>
-                    <path d="M13.8667 5.16667H11.4667C10.7467 5.16667 10.1667 4.57999 10.1667 3.86666V2.80001C10.1667 2.08001 10.7533 1.5 11.4667 1.5H13.8667C14.5867 1.5 15.1667 2.08667 15.1667 2.80001V3.86666C15.1667 4.58666 14.5867 5.16667 13.8667 5.16667ZM11.4667 2.5C11.3067 2.5 11.1667 2.64001 11.1667 2.80001V3.86666C11.1667 4.02666 11.3067 4.16667 11.4667 4.16667H13.8667C14.0267 4.16667 14.1667 4.02666 14.1667 3.86666V2.80001C14.1667 2.64001 14.0267 2.5 13.8667 2.5H11.4667Z" fill="#B3BAE1"/>
-                    <path d="M13.8667 10.1667H11.4667C10.7467 10.1667 10.1667 9.57999 10.1667 8.86666V7.80001C10.1667 7.08001 10.7533 6.5 11.4667 6.5H13.8667C14.5867 6.5 15.1667 7.08667 15.1667 7.80001V8.86666C15.1667 9.58666 14.5867 10.1667 13.8667 10.1667ZM11.4667 7.5C11.3067 7.5 11.1667 7.64001 11.1667 7.80001V8.86666C11.1667 9.02666 11.3067 9.16667 11.4667 9.16667H13.8667C14.0267 9.16667 14.1667 9.02666 14.1667 8.86666V7.80001C14.1667 7.64001 14.0267 7.5 13.8667 7.5H11.4667Z" fill="#B3BAE1"/>
-                    <path d="M10.6667 3.83333H6C5.72667 3.83333 5.5 3.60667 5.5 3.33333C5.5 3.06 5.72667 2.83333 6 2.83333H10.6667C10.94 2.83333 11.1667 3.06 11.1667 3.33333C11.1667 3.60667 10.94 3.83333 10.6667 3.83333Z" fill="#B3BAE1"/>
-                    <path d="M10.6667 13.8333H9.66667C8.65333 13.8333 7.83333 13.0133 7.83333 12V3.33333C7.83333 3.06 8.06 2.83333 8.33333 2.83333C8.60667 2.83333 8.83333 3.06 8.83333 3.33333V12C8.83333 12.46 9.20667 12.8333 9.66667 12.8333H10.6667C10.94 12.8333 11.1667 13.06 11.1667 13.3333C11.1667 13.6067 10.94 13.8333 10.6667 13.8333Z" fill="#B3BAE1"/>
-                    <path d="M10.6667 8.83333H8.33333C8.06 8.83333 7.83333 8.60667 7.83333 8.33333C7.83333 8.06 8.06 7.83333 8.33333 7.83333H10.6667C10.94 7.83333 11.1667 8.06 11.1667 8.33333C11.1667 8.60667 10.94 8.83333 10.6667 8.83333Z" fill="#B3BAE1"/>
-                    <path d="M13.8667 15.1667H11.4667C10.7467 15.1667 10.1667 14.58 10.1667 13.8667V12.8C10.1667 12.08 10.7533 11.5 11.4667 11.5H13.8667C14.5867 11.5 15.1667 12.0867 15.1667 12.8V13.8667C15.1667 14.5867 14.5867 15.1667 13.8667 15.1667ZM11.4667 12.5C11.3067 12.5 11.1667 12.64 11.1667 12.8V13.8667C11.1667 14.0267 11.3067 14.1667 11.4667 14.1667H13.8667C14.0267 14.1667 14.1667 14.0267 14.1667 13.8667V12.8C14.1667 12.64 14.0267 12.5 13.8667 12.5H11.4667Z" fill="#B3BAE1"/>
-                  </svg>
-                </span>
-                Methods
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">User research</span><span class="tri-item-sub">Where everything lives</span></div>
-                <div class="tri-item"><span class="tri-item-name">Usability testing</span><span class="tri-item-sub">Evidence over opinions</span></div>
-                <div class="tri-item"><span class="tri-item-name">Wireframing</span><span class="tri-item-sub">Structure for everything</span></div>
-                <div class="tri-item"><span class="tri-item-name">Prototyping</span><span class="tri-item-sub">Staying close to the build</span></div>
-                <div class="tri-item"><span class="tri-item-name">Design systems</span><span class="tri-item-sub">Part of my daily workflow</span></div>
+        <!-- ALL ABOUT ME — viewport-locked scroll timeline (Figma 166:13319).
+             .tl-runway (count × 60vh) is the scroll runway; the sticky .tl-sticky
+             (100vh) pins while JS maps scroll progress to the active milestone.
+             Years (left, right-aligned toward a vertical line with a dot on the
+             active year) + the active milestone's text & 301×301 image (right).
+             Reduced-motion fallback (static stacked list) lives in styles.css. -->
+        <div class="tl-runway" id="tl-runway" style="--tl-count: 7;">
+          <div class="tl-sticky">
+            <div class="tl-inner">
+              <div class="mid-header">
+                <span class="mid-label">All About Me</span>
+                <span class="mid-rule"></span>
               </div>
-            </div>
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.3133 15.1667H9.64667C8.03333 15.1667 7.14667 14.28 7.14667 12.6667V3.33333C7.14667 1.72 8.03333 0.833333 9.64667 0.833333H12.3133C13.9267 0.833333 14.8133 1.72 14.8133 3.33333V12.6667C14.8133 14.28 13.92 15.1667 12.3133 15.1667ZM9.64667 1.83333C8.59333 1.83333 8.14667 2.28 8.14667 3.33333V12.6667C8.14667 13.72 8.59333 14.1667 9.64667 14.1667H12.3133C13.3667 14.1667 13.8133 13.72 13.8133 12.6667V3.33333C13.8133 2.28 13.3667 1.83333 12.3133 1.83333H9.64667Z" fill="#B3BAE1"/>
-                    <path d="M10.98 4.5H7.64667C7.37333 4.5 7.14667 4.27333 7.14667 4C7.14667 3.72667 7.37333 3.5 7.64667 3.5H10.98C11.2533 3.5 11.48 3.72667 11.48 4C11.48 4.27333 11.2533 4.5 10.98 4.5Z" fill="#B3BAE1"/>
-                    <path d="M10.3133 12.5H7.64667C7.37333 12.5 7.14667 12.2733 7.14667 12C7.14667 11.7267 7.37333 11.5 7.64667 11.5H10.3133C10.5867 11.5 10.8133 11.7267 10.8133 12C10.8133 12.2733 10.5867 12.5 10.3133 12.5Z" fill="#B3BAE1"/>
-                    <path d="M10.98 9.83333C10.9733 9.83333 10.9733 9.83333 10.98 9.83333L7.64 9.8C7.36667 9.8 7.14 9.57333 7.14667 9.29333C7.14667 9.02 7.37333 8.8 7.64667 8.8C7.64667 8.8 7.64667 8.8 7.65333 8.8L10.9867 8.83333C11.26 8.83333 11.4867 9.06 11.48 9.34C11.4733 9.61333 11.2533 9.83333 10.98 9.83333Z" fill="#B3BAE1"/>
-                    <path d="M9.64667 7.16667H7.64667C7.37333 7.16667 7.14667 6.94 7.14667 6.66667C7.14667 6.39333 7.37333 6.16667 7.64667 6.16667H9.64667C9.92 6.16667 10.1467 6.39333 10.1467 6.66667C10.1467 6.94 9.92 7.16667 9.64667 7.16667Z" fill="#B3BAE1"/>
-                    <path d="M3.66 15.1467C3.05333 15.1467 2.48 14.7733 2.08667 14.12L1.54 13.2133C1.34 12.88 1.18667 12.3333 1.18667 11.9467V3.3C1.18667 1.94 2.29333 0.833333 3.65333 0.833333C5.01333 0.833333 6.12 1.94 6.12 3.3V11.94C6.12 12.3267 5.96667 12.8733 5.76667 13.2067L5.22 14.1133C4.84 14.7733 4.26667 15.1467 3.66 15.1467ZM3.66 1.83333C2.85333 1.83333 2.19333 2.49333 2.19333 3.3V11.94C2.19333 12.1467 2.29333 12.5133 2.4 12.6933L2.94667 13.6C3.15333 13.9467 3.41333 14.14 3.66 14.14C3.90667 14.14 4.16667 13.94 4.37333 13.6L4.92 12.6933C5.02667 12.5133 5.12667 12.1467 5.12667 11.94V3.3C5.12667 2.49333 4.46667 1.83333 3.66 1.83333Z" fill="#B3BAE1"/>
-                    <path d="M5.62667 5.16667H1.68667C1.41333 5.16667 1.18667 4.94 1.18667 4.66667C1.18667 4.39333 1.41333 4.16667 1.68667 4.16667H5.62667C5.9 4.16667 6.12667 4.39333 6.12667 4.66667C6.12667 4.94 5.9 5.16667 5.62667 5.16667Z" fill="#B3BAE1"/>
-                  </svg>
-                </span>
-                Tools
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">Figma</span><span class="tri-item-sub">Where everything lives</span></div>
-                <div class="tri-item"><span class="tri-item-name">Maze</span><span class="tri-item-sub">Evidence over opinions</span></div>
-                <div class="tri-item"><span class="tri-item-name">Notion</span><span class="tri-item-sub">Structure for everything</span></div>
-                <div class="tri-item"><span class="tri-item-name">Jira</span><span class="tri-item-sub">Staying close to the build</span></div>
-                <div class="tri-item"><span class="tri-item-name">AI tools</span><span class="tri-item-sub">Part of my daily workflow</span></div>
-              </div>
-            </div>
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.10667 7.24667C8.04 7.24 7.96 7.24 7.88667 7.24667C6.3 7.19333 5.04 5.89333 5.04 4.29333C5.04 2.66 6.36 1.33333 8 1.33333C9.63333 1.33333 10.96 2.66 10.96 4.29333C10.9533 5.89333 9.69333 7.19333 8.10667 7.24667Z" stroke="#B3BAE1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M4.77333 9.70667C3.16 10.7867 3.16 12.5467 4.77333 13.62C6.60667 14.8467 9.61333 14.8467 11.4467 13.62C13.06 12.54 13.06 10.78 11.4467 9.70667C9.62 8.48667 6.61333 8.48667 4.77333 9.70667Z" stroke="#B3BAE1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                Soft
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">Systems thinking</span><span class="tri-item-sub">See the whole, design the parts</span></div>
-                <div class="tri-item"><span class="tri-item-name">Ownership</span><span class="tri-item-sub">No one else is doing it</span></div>
-                <div class="tri-item"><span class="tri-item-name">Fast iteration</span><span class="tri-item-sub">Done beats perfect, mostly</span></div>
-                <div class="tri-item"><span class="tri-item-name">Stakeholder management</span><span class="tri-item-sub">Design needs a translator</span></div>
-                <div class="tri-item"><span class="tri-item-name">Clear communication</span><span class="tri-item-sub">The work explains itself</span></div>
+              <div class="timeline" id="timeline">
+                <div class="tl-years" role="tablist" aria-label="Career timeline">
+                  <span class="tl-line" aria-hidden="true"></span>
+                  <button class="tl-year is-active" type="button" role="tab" data-index="0" aria-selected="true">2017</button>
+                  <button class="tl-year" type="button" role="tab" data-index="1" aria-selected="false">2021</button>
+                  <button class="tl-year" type="button" role="tab" data-index="2" aria-selected="false">2022</button>
+                  <button class="tl-year" type="button" role="tab" data-index="3" aria-selected="false">2023</button>
+                  <button class="tl-year" type="button" role="tab" data-index="4" aria-selected="false">2025</button>
+                  <button class="tl-year" type="button" role="tab" data-index="5" aria-selected="false">2025</button>
+                  <button class="tl-year" type="button" role="tab" data-index="6" aria-selected="false">2026</button>
+                </div>
+                <div class="tl-detail">
+                <div class="tl-panel is-active" data-index="0">
+                  <span class="tl-panel-year" aria-hidden="true">2017</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Isfahan, Iran</p>
+                    <p class="tl-title">Bachelor's in Industrial Design</p>
+                    <p class="tl-body">Art University of Isfahan. A foundation in creative sensibility and systems thinking — learning to break big problems into designable parts.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Bachelor's in Industrial Design — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="1">
+                  <span class="tl-panel-year" aria-hidden="true">2021</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Remote, Canada</p>
+                    <p class="tl-title">Enterprise ERP for oil and gas</p>
+                    <p class="tl-body">One of the most challenging products I've worked on. Understanding interconnected systems, stakeholder needs, and product complexity wasn't optional — it was essential. Often the only designer in the room, working closely with product managers and engineers.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Enterprise ERP for oil and gas — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="2">
+                  <span class="tl-panel-year" aria-hidden="true">2022</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Tehran</p>
+                    <p class="tl-title">B2B ecosystem for auto parts</p>
+                    <p class="tl-body">Designed a connected three-product system — consumer site, agent dashboard, repairman app — with a shared design system. Learned to hold multiple audiences and platforms in mind simultaneously.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">B2B ecosystem for auto parts — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="3">
+                  <span class="tl-panel-year" aria-hidden="true">2023</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Remote, Finland</p>
+                    <p class="tl-title">Web3 consumer products on Telegram</p>
+                    <p class="tl-body">Sole designer on ONTON for 13 months. Grew the product from 87 to 1,500 daily active users. I naturally notice broken handoffs, conflicting requirements, and gaps between what a product promises and what users actually experience.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Web3 consumer products on Telegram — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="4">
+                  <span class="tl-panel-year" aria-hidden="true">2025</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Netherlands</p>
+                    <p class="tl-title">Moved to the Netherlands</p>
+                    <p class="tl-body">Because of the way people here approach problems. Not just in design, but in how they collaborate — incrementally, openly, and without ego. That's the kind of culture I want to contribute to.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Moved to the Netherlands — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="5">
+                  <span class="tl-panel-year" aria-hidden="true">2025</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Amsterdam</p>
+                    <p class="tl-title">Master's in Interaction Design</p>
+                    <p class="tl-body">Amsterdam University of Applied Sciences. Deepened my understanding of human-centered design, emerging technologies, and interactive systems. Whether designing a consumer app or an enterprise platform, I enjoy untangling complexity until it feels effortless.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Master's in Interaction Design — image placeholder</span></div>
+                </div>
+                <div class="tl-panel" data-index="6">
+                  <span class="tl-panel-year" aria-hidden="true">2026</span>
+                  <div class="tl-text">
+                    <p class="tl-loc">Amsterdam</p>
+                    <p class="tl-title">Looking for a team</p>
+                    <p class="tl-body">I'm looking for a team building ambitious products where design has a meaningful influence on product decisions, not just interfaces.</p>
+                  </div>
+                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Looking for a team — image placeholder</span></div>
+                </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- CONTRIBUTION -->
+        <!-- SKILLS (Figma 184:13739) — per category: a 104px header (left) + a
+             list of skill rows (name + description on the left, a question on the
+             right), divided by 0.6px lines. No section label in Figma. -->
         <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Contribution</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="lead-list">
-            <a class="lead-row reveal-item" href="https://www.linkedin.com/posts/parichehr-talebzadeh_humandecisionmaking-plugin-uxdesign-activity-7347249113219891201-wsOG?utm_source=share&utm_medium=member_desktop&rcm=ACoAACKkVPMB721-sEnhQ5_kdObUH-rRUuuAlNY" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Human Decision Making</span>
-              <span class="lead-org">Poytek</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2025</span>
-            </a>
-            <a class="lead-row reveal-item" href="https://www.linkedin.com/posts/parichehr-talebzadeh_portfoliodesign-personalbranding-storytelling-activity-7274693957870120960-eBGn?utm_source=share&utm_medium=member_desktop&rcm=ACoAACKkVPMB721-sEnhQ5_kdObUH-rRUuuAlNY" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Portfolio Design</span>
-              <span class="lead-org">Poytek</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2024</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- CERTIFICATE -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">Certificate</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="lead-list">
-            <a class="lead-row reveal-item" href="https://app.uxcel.com/certificates/5AKU06K2NRCJ" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Typography</span>
-              <span class="lead-org">Uxcel</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2025</span>
-            </a>
-            <a class="lead-row reveal-item" href="https://www.coursera.org/account/accomplishments/professional-cert/SLTKQ66UJJFG?utm_source=link&utm_medium=certificate&utm_content=cert_image&utm_campaign=sharing_cta&utm_product=prof" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Google UX Design</span>
-              <span class="lead-org">Coursera</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2024</span>
-            </a>
-            <a class="lead-row reveal-item" href="https://www.coursera.org/account/accomplishments/certificate/LJGFKFZA52AL" target="_blank" rel="noopener noreferrer">
-              <span class="lead-name">Agile Project</span>
-              <span class="lead-org">Coursera</span>
-              <span class="lead-arrow" aria-hidden="true">
-                <!-- Clean diagonal ↗ link arrow (no base bar / no line under it) -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M9 7H17V15" stroke="#F9F5EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="lead-dots"></span>
-              <span class="lead-year">2022</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- ALL TIME FAVORITE -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">All Time Favorite</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="tri-grid">
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 15.1667H6C2.38 15.1667 0.833333 13.62 0.833333 10V6C0.833333 2.38 2.38 0.833333 6 0.833333H10C13.62 0.833333 15.1667 2.38 15.1667 6V10C15.1667 13.62 13.62 15.1667 10 15.1667ZM6 1.83333C2.92667 1.83333 1.83333 2.92667 1.83333 6V10C1.83333 13.0733 2.92667 14.1667 6 14.1667H10C13.0733 14.1667 14.1667 13.0733 14.1667 10V6C14.1667 2.92667 13.0733 1.83333 10 1.83333H6Z" fill="#B3BAE1"/>
-                    <path d="M14.32 11.9067H1.68C1.40667 11.9067 1.18 11.68 1.18 11.4067C1.18 11.1333 1.40667 10.9067 1.68 10.9067H14.32C14.5933 10.9067 14.82 11.1333 14.82 11.4067C14.82 11.68 14.6 11.9067 14.32 11.9067Z" fill="#B3BAE1"/>
-                    <path d="M14.32 5.24H1.68C1.40667 5.24 1.18 5.01333 1.18 4.74C1.18 4.46667 1.4 4.24 1.68 4.24H14.32C14.5933 4.24 14.82 4.46667 14.82 4.74C14.82 5.01333 14.6 5.24 14.32 5.24Z" fill="#B3BAE1"/>
-                    <path d="M4.64667 14.8067C4.37333 14.8067 4.14667 14.58 4.14667 14.3067V11.4067C4.14667 11.1333 4.37333 10.9067 4.64667 10.9067C4.92 10.9067 5.14667 11.1333 5.14667 11.4067V14.3067C5.14667 14.5867 4.92 14.8067 4.64667 14.8067Z" fill="#B3BAE1"/>
-                    <path d="M8 15.1467C7.72667 15.1467 7.5 14.92 7.5 14.6467V11.4067C7.5 11.1333 7.72667 10.9067 8 10.9067C8.27333 10.9067 8.5 11.1333 8.5 11.4067V14.6467C8.5 14.92 8.27333 15.1467 8 15.1467Z" fill="#B3BAE1"/>
-                    <path d="M11.3133 14.8467C11.04 14.8467 10.8133 14.62 10.8133 14.3467V11.4067C10.8133 11.1333 11.04 10.9067 11.3133 10.9067C11.5867 10.9067 11.8133 11.1333 11.8133 11.4067V14.3467C11.8133 14.6267 11.5867 14.8467 11.3133 14.8467Z" fill="#B3BAE1"/>
-                    <path d="M4.64667 4.80667C4.37333 4.80667 4.14667 4.58 4.14667 4.30667V1.40667C4.14667 1.13333 4.37333 0.906667 4.64667 0.906667C4.92 0.906667 5.14667 1.13333 5.14667 1.40667V4.30667C5.14667 4.58667 4.92 4.80667 4.64667 4.80667Z" fill="#B3BAE1"/>
-                    <path d="M8 5.14667C7.72667 5.14667 7.5 4.92 7.5 4.64667V1.40667C7.5 1.13333 7.72667 0.906667 8 0.906667C8.27333 0.906667 8.5 1.13333 8.5 1.40667V4.64667C8.5 4.92 8.27333 5.14667 8 5.14667Z" fill="#B3BAE1"/>
-                    <path d="M8 12.52C7.72667 12.52 7.5 12.2933 7.5 12.02V4.68667C7.5 4.41333 7.72667 4.18667 8 4.18667C8.27333 4.18667 8.5 4.41333 8.5 4.68667V12.02C8.5 12.2933 8.27333 12.52 8 12.52Z" fill="#B3BAE1"/>
-                    <path d="M11.3133 4.84667C11.04 4.84667 10.8133 4.62 10.8133 4.34667V1.40667C10.8133 1.13333 11.04 0.906667 11.3133 0.906667C11.5867 0.906667 11.8133 1.13333 11.8133 1.40667V4.34667C11.8133 4.62667 11.5867 4.84667 11.3133 4.84667Z" fill="#B3BAE1"/>
-                  </svg>
-                </span>
-                Film
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">Her</span><span class="tri-item-sub">Design as emotion</span></div>
-                <div class="tri-item"><span class="tri-item-name">Arrival</span><span class="tri-item-sub">Language shapes thought</span></div>
-                <div class="tri-item"><span class="tri-item-name">Parasite</span><span class="tri-item-sub">Systems within systems</span></div>
+          <div class="skills">
+            <div class="skill-cat reveal-item">
+              <span class="skill-cat-name">Methods</span>
+              <div class="skill-list">
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">User research</span><span class="skill-sub">Where everything lives</span></div>
+                <span class="skill-q">When do I stop researching and start designing?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Usability testing</span><span class="skill-sub">Evidence over opinions</span></div>
+                <span class="skill-q">What do I do when tests contradict assumptions?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Wireframing</span><span class="skill-sub">Structure for everything</span></div>
+                <span class="skill-q">Why I wireframe before anyone asks me to.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Prototyping</span><span class="skill-sub">Staying close to the build</span></div>
+                <span class="skill-q">How close to real does a prototype need to be?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Design systems</span><span class="skill-sub">Part of my daily workflow</span></div>
+                <span class="skill-q">When is a design system too early, and too late?</span>
+              </div>
               </div>
             </div>
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(0.834 1.278)"><path d="M7.16667 13.441C6.96667 13.441 6.76667 13.3944 6.6 13.301C5.35333 12.621 3.16 11.901 1.78667 11.721L1.59333 11.6944C0.72 11.5877 0 10.7677 0 9.88103V1.8277C0 1.30103 0.206667 0.821034 0.586667 0.474367C0.966667 0.127701 1.46 -0.0389662 1.98 0.00770043C3.44667 0.121034 5.66 0.854367 6.91333 1.64103L7.07333 1.73437C7.12 1.76103 7.22 1.76103 7.26 1.74103L7.36667 1.67437C8.62 0.8877 10.8333 0.141034 12.3067 0.0143672C12.32 0.0143672 12.3733 0.0143672 12.3867 0.0143672C12.8733 -0.0322995 13.3733 0.141034 13.7467 0.487701C14.1267 0.834367 14.3333 1.31437 14.3333 1.84103V9.8877C14.3333 10.781 13.6133 11.5944 12.7333 11.701L12.5133 11.7277C11.14 11.9077 8.94 12.6344 7.72 13.3077C7.56 13.401 7.36667 13.441 7.16667 13.441ZM1.82 1.00103C1.60667 1.00103 1.41333 1.07437 1.26 1.21437C1.09333 1.3677 1 1.5877 1 1.8277V9.88103C1 10.2744 1.34 10.6544 1.72 10.7077L1.92 10.7344C3.42 10.9344 5.72 11.6877 7.05333 12.4144C7.11333 12.441 7.2 12.4477 7.23333 12.4344C8.56667 11.6944 10.88 10.9344 12.3867 10.7344L12.6133 10.7077C12.9933 10.661 13.3333 10.2744 13.3333 9.88103V1.83437C13.3333 1.5877 13.24 1.37437 13.0733 1.21437C12.9 1.06103 12.68 0.9877 12.4333 1.00103C12.42 1.00103 12.3667 1.00103 12.3533 1.00103C11.08 1.11437 9.02667 1.80103 7.90667 2.50103L7.8 2.57437C7.43333 2.80103 6.91333 2.80103 6.56 2.58103L6.4 2.4877C5.26 1.7877 3.20667 1.1077 1.9 1.00103C1.87333 1.00103 1.84667 1.00103 1.82 1.00103Z" fill="#B3BAE1"/></g>
-                    <g transform="translate(7.501 3.16)"><path d="M0.5 11C0.226667 11 0 10.7733 0 10.5V0.5C0 0.226667 0.226667 0 0.5 0C0.773333 0 1 0.226667 1 0.5V10.5C1 10.78 0.773333 11 0.5 11Z" fill="#B3BAE1"/></g>
-                    <g transform="translate(3.166 5.16)"><path d="M2 1H0.5C0.226667 1 0 0.773333 0 0.5C0 0.226667 0.226667 0 0.5 0H2C2.27333 0 2.5 0.226667 2.5 0.5C2.5 0.773333 2.27333 1 2 1Z" fill="#B3BAE1"/></g>
-                    <g transform="translate(3.166 7.16)"><path d="M2.5 1H0.5C0.226667 1 0 0.773333 0 0.5C0 0.226667 0.226667 0 0.5 0H2.5C2.77333 0 3 0.226667 3 0.5C3 0.773333 2.77333 1 2.5 1Z" fill="#B3BAE1"/></g>
-                  </svg>
-                </span>
-                Book
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">Design of Everyday Things</span><span class="tri-item-sub">Why I became a designer</span></div>
-                <div class="tri-item"><span class="tri-item-name">Atomic Habits</span><span class="tri-item-sub">Behaviour over intent</span></div>
-                <div class="tri-item"><span class="tri-item-name">Thinking, Fast &amp; Slow</span><span class="tri-item-sub">Every UX decision ever</span></div>
+            <div class="skill-cat reveal-item">
+              <span class="skill-cat-name">Tools</span>
+              <div class="skill-list">
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Figma</span><span class="skill-sub">Where everything lives</span></div>
+                <span class="skill-q">What does my Figma file structure look like?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Maze</span><span class="skill-sub">Evidence over opinions</span></div>
+                <span class="skill-q">How do I turn test data into design decisions?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Notion</span><span class="skill-sub">Structure for everything</span></div>
+                <span class="skill-q">How I make sure decisions survive after I leave.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Jira</span><span class="skill-sub">Staying close to the build</span></div>
+                <span class="skill-q">How I stay close to engineering without slowing them down.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">AI tools</span><span class="skill-sub">Part of my daily workflow</span></div>
+                <span class="skill-q">Where AI helps my process, and where it doesn't.</span>
+              </div>
               </div>
             </div>
-            <div class="tri-card reveal-item">
-              <span class="tri-card-head">
-                <span class="tri-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6.95333 12.2467C6.85333 12.2467 6.76 12.22 6.67333 12.16C6.53333 12.0667 6.45333 11.9133 6.45333 11.7467C6.45333 11.6467 6.44667 11.54 6.43333 11.4333C6.37333 10.96 6.16 10.5467 5.8 10.1867C5.44 9.82667 4.99333 9.6 4.51333 9.54C4.43333 9.53333 4.32 9.52667 4.21333 9.53333C4.04 9.54667 3.88 9.47333 3.78 9.33333C3.68 9.2 3.65333 9.02 3.70667 8.86C3.80667 8.58667 3.95333 8.34 4.12667 8.14L5.15333 6.84667C6.92 4.64 10.5 1.98667 13.12 0.933333C13.68 0.72 14.2667 0.846667 14.6733 1.24667C15.0933 1.66667 15.22 2.26667 15 2.81333C13.9467 5.44 11.3 9.01333 9.09333 10.78L7.78 11.8333C7.53333 12.0133 7.33333 12.1267 7.13333 12.2067C7.08 12.2333 7.01333 12.2467 6.95333 12.2467ZM5.02667 8.62667C5.58667 8.77333 6.08667 9.06667 6.50667 9.48667C6.92667 9.9 7.20667 10.38 7.34667 10.9133L8.47333 10.0067C10.5667 8.33333 13.08 4.94 14.0733 2.44667C14.1733 2.2 14.0333 2.02667 13.9667 1.96667C13.92 1.92 13.7467 1.77333 13.48 1.87333C11 2.87333 7.60667 5.38667 5.92667 7.48L5.02667 8.62667Z" fill="#B3BAE1"/>
-                    <path d="M2.72 15.1667C2.22 15.1667 1.74 14.9667 1.38 14.6067C0.966667 14.1933 0.766667 13.62 0.833333 13.0333L1.01333 11.3933C1.18667 9.76667 2.52 8.56 4.17333 8.52667C4.3 8.52 4.46667 8.52667 4.62 8.54C5.34667 8.63333 5.99333 8.96 6.51333 9.48C7.02667 9.99333 7.33333 10.6067 7.42667 11.2933C7.44667 11.44 7.46 11.6 7.46 11.74C7.46 12.62 7.12 13.44 6.50667 14.06C5.99333 14.5667 5.33333 14.88 4.58667 14.9733L2.94 15.1533C2.86667 15.16 2.79333 15.1667 2.72 15.1667ZM4.3 9.53333C4.27333 9.53333 4.24 9.53333 4.21333 9.53333C3.20667 9.55333 2.14 10.24 2.00667 11.5067L1.82667 13.1467C1.79333 13.4267 1.89333 13.7 2.08667 13.9C2.28 14.0933 2.55333 14.1933 2.82667 14.16L4.46667 13.98C4.98 13.9133 5.44 13.7 5.78667 13.3533C6.21333 12.9267 6.45333 12.3533 6.45333 11.74C6.45333 11.64 6.44667 11.5333 6.43333 11.4267C6.37333 10.9533 6.16 10.54 5.8 10.18C5.44 9.82 4.99333 9.59333 4.51333 9.53333C4.46 9.53333 4.38 9.53333 4.3 9.53333Z" fill="#B3BAE1"/>
-                    <path d="M9.49333 10.1467C9.22 10.1467 8.99333 9.92 8.99333 9.64667C8.99333 8.18 7.8 6.99333 6.34 6.99333C6.06667 6.99333 5.84 6.76667 5.84 6.49333C5.84 6.22 6.06 5.99333 6.33333 5.99333C8.34667 5.99333 9.98667 7.63333 9.98667 9.64667C9.99333 9.92667 9.76667 10.1467 9.49333 10.1467Z" fill="#B3BAE1"/>
-                    <path d="M10.4533 15.1533C9.83333 15.1533 9.21333 14.86 8.62 14.2667C8.42667 14.0733 8.42667 13.7533 8.62 13.56C8.81333 13.3667 9.13333 13.3667 9.32667 13.56C10.1133 14.3467 10.7867 14.3467 11.5733 13.56L13.5467 11.5867C14.34 10.7933 14.34 10.12 13.5467 9.33333L13.0533 8.84667C12.86 8.65333 12.8533 8.33333 13.0467 8.14C13.24 7.94 13.56 7.94 13.7533 8.13333L14.2467 8.62C15.4333 9.80667 15.4333 11.1067 14.2467 12.2933L12.2733 14.2667C11.6933 14.8533 11.0733 15.1533 10.4533 15.1533Z" fill="#B3BAE1"/>
-                    <path d="M2.07333 7.50667C1.94667 7.50667 1.81333 7.46 1.72 7.36C0.546667 6.18 0.546667 4.87333 1.72 3.69333L3.69333 1.72C4.86667 0.546667 6.18667 0.546667 7.36 1.72L7.85333 2.21333C8.04667 2.40667 8.04667 2.72667 7.85333 2.92C7.66 3.11333 7.34 3.11333 7.14667 2.92L6.64667 2.42667C5.86 1.64 5.18 1.64 4.4 2.42667L2.42667 4.4C1.64 5.19333 1.64 5.86667 2.42667 6.66C2.62 6.85333 2.62 7.17333 2.42667 7.36667C2.32667 7.46 2.2 7.50667 2.07333 7.50667Z" fill="#B3BAE1"/>
-                    <path d="M5.03333 5.53333C4.90667 5.53333 4.78 5.48667 4.68 5.38667C4.48667 5.19333 4.48667 4.87333 4.68 4.68L7.14667 2.21333C7.34 2.02 7.66 2.02 7.85333 2.21333C8.04667 2.40667 8.04667 2.72667 7.85333 2.92L5.38667 5.38667C5.28667 5.48667 5.16 5.53333 5.03333 5.53333Z" fill="#B3BAE1"/>
-                    <path d="M11.44 10.9533C11.3133 10.9533 11.1867 10.9067 11.0867 10.8067C10.8933 10.6133 10.8933 10.2933 11.0867 10.1L13.06 8.12667C13.2533 7.93333 13.5733 7.93333 13.7667 8.12667C13.96 8.32 13.96 8.64 13.7667 8.83333L11.7933 10.8067C11.7 10.9067 11.5733 10.9533 11.44 10.9533Z" fill="#B3BAE1"/>
-                  </svg>
-                </span>
-                Designer
-              </span>
-              <div class="tri-list">
-                <div class="tri-item"><span class="tri-item-name">Don Norman</span><span class="tri-item-sub">Blame the design, not the user</span></div>
-                <div class="tri-item"><span class="tri-item-name">Dieter Rams</span><span class="tri-item-sub">Less, but better. Still the standard.</span></div>
-                <div class="tri-item"><span class="tri-item-name">Mike Monteiro</span><span class="tri-item-sub">Not everything's worth shipping.</span></div>
+            <div class="skill-cat reveal-item">
+              <span class="skill-cat-name">Soft skills</span>
+              <div class="skill-list">
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Systems thinking</span><span class="skill-sub">See the whole, design the parts</span></div>
+                <span class="skill-q">How do I hold the whole product in my head?</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Fast iteration</span><span class="skill-sub">Done beats perfect, mostly</span></div>
+                <span class="skill-q">How I ship without cutting the wrong corners.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Clear communication</span><span class="skill-sub">The work explains itself</span></div>
+                <span class="skill-q">How I explain design decisions to non-designers.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Ownership</span><span class="skill-sub">No one else is doing it</span></div>
+                <span class="skill-q">What I do when no one owns the problem.</span>
+              </div>
+              <span class="skill-divider" aria-hidden="true"></span>
+              <div class="skill-row">
+                <div class="skill-info"><span class="skill-name">Stakeholder management</span><span class="skill-sub">Design needs a translator</span></div>
+                <span class="skill-q">How I align people who want different things.</span>
+              </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- FOOTER -->
-        <div class="mid-footer">
-          <div class="footer-row">
-            <span class="mid-footer-title">Contact Me</span>
-            <div class="mid-footer-links">
-              <a class="footer-link" href="mailto:parichehr.t96@gmail.com">Email</a>
-              <a class="footer-link" href="https://wa.me/31657248971" target="_blank" rel="noopener">Whatsapp</a>
-              <a class="footer-link" href="https://linkedin.com/in/parichehr-talebzadeh" target="_blank" rel="noopener">Linkedin</a>
+        <!-- ALL TIME FAVOURITES (Figma 156:11490) — 3 categories, 3 items each. -->
+        <div class="mid-block">
+          <div class="mid-header reveal-item">
+            <span class="mid-label">All Time Favourites</span>
+            <span class="mid-rule"></span>
+          </div>
+          <div class="favs">
+            <div class="fav-cat reveal-item">
+              <p class="fav-cat-name">Movies</p>
+              <div class="fav-row">
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Her</span><span class="fav-sub">Design as emotion</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Parasite</span><span class="fav-sub">Systems within systems</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Arrival</span><span class="fav-sub">Language shapes thought</span></span></div>
+              </div>
+            </div>
+            <div class="fav-cat reveal-item">
+              <p class="fav-cat-name">Books</p>
+              <div class="fav-row">
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Design of everyday things</span><span class="fav-sub">Why I became a designer</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Atomic habits</span><span class="fav-sub">Behaviour over intent</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Thinking, fast & slow</span><span class="fav-sub">Every UX decision ever</span></span></div>
+              </div>
+            </div>
+            <div class="fav-cat reveal-item">
+              <p class="fav-cat-name">Designers</p>
+              <div class="fav-row">
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Don Norman</span><span class="fav-sub">Blame the design, not the user</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Dieter Rams</span><span class="fav-sub">Less, but better. Still the standard.</span></span></div>
+                <div class="fav-item"><span class="fav-img" aria-hidden="true"></span><span class="fav-info"><span class="fav-name">Mike Monteiro</span><span class="fav-sub">Not everything's worth shipping.</span></span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -536,181 +408,6 @@
 
         <section id="works">
           <div class="home-middle">
-        <!-- Mobile-only identity header (shared left sidebar is hidden < 768px) -->
-        <div class="section-identity">
-          <h2 class="home-name">Parichehr Talebzadeh</h2>
-          <p class="home-role">Product Designer</p>
-        </div>
-        <!-- Filter chips (Product Design active by default) -->
-        <div class="service-chips works-filter reveal-item">
-          <button class="btn-primary selected radial-fill-hover" type="button" data-filter="product-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Product Design</span></button>
-          <button class="btn-primary radial-fill-hover" type="button" data-filter="mobile-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Mobile Design</span></button>
-          <button class="btn-primary radial-fill-hover" type="button" data-filter="web-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Web Design</span></button>
-          <button class="btn-primary radial-fill-hover" type="button" data-filter="interaction-design"><span class="radial-fill" aria-hidden="true"></span><span class="btn-primary-label">Interaction Design</span></button>
-        </div>
-
-        <!-- 1. ONTON -->
-        <a class="project reveal-item radial-fill-hover" id="project-onton" href="onton.html" data-tags="product-design mobile-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">ONTON</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A Telegram App connecting crypto communities to on-chain event verification, letting organisers issue, and participants collect proof-of-attendance badges in-app.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Founding Product / UX Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">13 months · May 2024 – June 2025</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">Mobile App · Consumer · Web3</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">Shipped product · No longer active</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 2. CHALLENQUIZ -->
-        <a class="project reveal-item radial-fill-hover" id="project-challenquiz" href="challenquiz.html" data-tags="product-design mobile-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">Challenquiz</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A redesigned Telegram quiz app where users compete in real-time trivia challenges, earn tokens, and climb leaderboards.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Product / UX Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">6 months · December 2023 – May 2024</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">Mobile App · Consumer · Gaming</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">Partially shipped · No longer active</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 3. EZAM PART -->
-        <a class="project reveal-item radial-fill-hover" id="project-ezam-part" href="ezam.html" data-tags="product-design web-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">Ezam Part</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A unified digital ecosystem (consumer site redesign, agent dashboard, repairman app) for a large auto parts manufacturer.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Sole Product Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">8 months · November 2022 – June 2023</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">E-commerce · B2B</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">Live at ezamonline.com</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 4. WOW GLOBAL SOLUTION -->
-        <a class="project reveal-item radial-fill-hover" id="project-wow-global-solution" href="#" data-tags="product-design web-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">WOW Global Solution</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A comprehensive ERP platform centralising HR, scheduling, documents, profiles, and inter-company connections for North American oil and gas companies.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Product / UX Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">17 months · May 2021 – September 2022</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">ERP · Enterprise SaaS · B2B</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">—</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 5. VIAVIA -->
-        <a class="project reveal-item radial-fill-hover" id="project-viavia" href="#" data-tags="mobile-design interaction-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">ViaVia</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A community-based ridesharing app for rural Zeeland, connecting senior passengers with volunteer drivers through a local credit economy redeemable in village businesses.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Interaction Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">10 weeks · Feb 2026 – Apr 2026</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">Mobile App · Mobility · Community Service</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">—</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 6. MINDFUL MEET -->
-        <a class="project reveal-item radial-fill-hover" id="project-mindful-meet" href="#" data-tags="interaction-design web-design">
-          <span class="radial-fill" aria-hidden="true"></span>
-          <div class="project-head">
-            <span class="project-title">Mindful Meet</span>
-            <span class="project-rule"></span>
-            <span class="project-arrow" aria-hidden="true">
-              <!-- Right chevron — vuesax arrow-down chevron, rotated -90° via CSS -->
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 21.25C11.81 21.25 11.62 21.18 11.47 21.03L5.4 14.96C5.11 14.67 5.11 14.19 5.4 13.9C5.69 13.61 6.17 13.61 6.46 13.9L12 19.44L17.54 13.9C17.83 13.61 18.31 13.61 18.6 13.9C18.89 14.19 18.89 14.67 18.6 14.96L12.53 21.03C12.38 21.18 12.19 21.25 12 21.25Z" fill="#F9F5EB"/>
-              </svg>
-            </span>
-          </div>
-          <div class="project-body">
-            <div class="project-media" aria-hidden="true"></div>
-            <div class="project-info">
-              <p class="project-desc">A Calendar integration that makes the digital carbon cost and mental load of online meetings visible by integrating a daily meeting budget.</p>
-              <div class="project-meta">
-                <div class="meta-row"><span class="meta-label">Role</span><span class="meta-value">Interaction Designer</span></div>
-                <div class="meta-row"><span class="meta-label">Timeline</span><span class="meta-value">8 weeks · Oct 2025 – Dec 2025</span></div>
-                <div class="meta-row"><span class="meta-label">Industry</span><span class="meta-value">SaaS · Productivity Tool · Sustainability</span></div>
-                <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">Hi-fi prototype · Exhibited at TH/NGS Con</span></div>
-              </div>
-            </div>
-          </div>
-        </a>
-
         <!-- FOOTER → CONTACT: ONE element with two states.
              .footer-stage is a fixed-height scroll runway so the card can expand
              without reflowing the document; #footer-cta is the single card that
@@ -813,68 +510,57 @@
         </section>
       </div>
 
-      <!-- Right sidebar — sticky, intentionally empty -->
-      <aside class="layout-right"></aside>
+      <!-- Right sidebar — Live in Amsterdam widget (home only), Figma 140:4256.
+           Populated by Assets/js/amsterdam-widget.js. Sticky via .layout-right. -->
+      <aside class="layout-right">
+        <div class="live-widget" id="live-widget">
+          <div class="lw-status">
+            <div class="lw-time-block">
+              <p class="lw-time" id="lw-visitor-time" aria-live="polite">--:--</p>
+              <p class="lw-time-ams" id="lw-ams-time" hidden></p>
+            </div>
+            <div class="lw-status-row">
+              <span class="lw-dot lw-dot--sleep" id="lw-dot" aria-hidden="true">
+                <svg class="lw-bracket" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 0.5V9H16.4" stroke="#B3BAE1" stroke-opacity="0.7" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle class="lw-bracket-dot" cx="18.3" cy="9" r="1.6"/>
+                </svg>
+              </span>
+              <div class="lw-status-text">
+                <p class="lw-status-head" id="lw-status-head"></p>
+                <p class="lw-status-sub" id="lw-status-sub"></p>
+              </div>
+            </div>
+          </div>
+          <div class="lw-reach">
+            <div class="lw-reach-text">
+              <p class="lw-label">Best time to reach me</p>
+              <div class="lw-reach-time">
+                <p class="lw-range" id="lw-range">09:00 – 17:00</p>
+                <p class="lw-note">I usually reply within a few hours.</p>
+              </div>
+            </div>
+            <a class="lw-cta" href="https://calendar.app.google/9cZ7WsXM7LsT4E49A" target="_blank" rel="noopener noreferrer">
+              <span class="lw-cta-icon" aria-hidden="true">
+                <svg viewBox="0 0 17.6103 17.2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0.600001 8.39487C0.600001 5.30072 0.6 3.75323 1.56164 2.79241C2.52328 1.83159 4.06995 1.83077 7.1641 1.83077H10.4462C13.5403 1.83077 15.0878 1.83077 16.0486 2.79241C17.0094 3.75405 17.0103 5.30072 17.0103 8.39487V10.0359C17.0103 13.1301 17.0103 14.6775 16.0486 15.6384C15.087 16.5992 13.5403 16.6 10.4462 16.6H7.1641C4.06995 16.6 2.52246 16.6 1.56164 15.6384C0.600821 14.6767 0.600001 13.1301 0.600001 10.0359V8.39487Z" stroke="currentColor" stroke-width="1.2"/>
+                  <path d="M4.70289 1.83077V0.6M12.908 1.83077V0.6M1.01058 5.93333H16.6003" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M13.7284 12.4978C13.7284 12.7154 13.6419 12.9241 13.488 13.0779C13.3342 13.2318 13.1255 13.3183 12.9079 13.3183C12.6902 13.3183 12.4815 13.2318 12.3277 13.0779C12.1738 12.9241 12.0873 12.7154 12.0873 12.4978C12.0873 12.2801 12.1738 12.0714 12.3277 11.9176C12.4815 11.7637 12.6902 11.6772 12.9079 11.6772C13.1255 11.6772 13.3342 11.7637 13.488 11.9176C13.6419 12.0714 13.7284 12.2801 13.7284 12.4978ZM13.7284 9.21571C13.7284 9.43332 13.6419 9.64202 13.488 9.7959C13.3342 9.94977 13.1255 10.0362 12.9079 10.0362C12.6902 10.0362 12.4815 9.94977 12.3277 9.7959C12.1738 9.64202 12.0873 9.43332 12.0873 9.21571C12.0873 8.99809 12.1738 8.78939 12.3277 8.63552C12.4815 8.48164 12.6902 8.39519 12.9079 8.39519C13.1255 8.39519 13.3342 8.48164 13.488 8.63552C13.6419 8.78939 13.7284 8.99809 13.7284 9.21571ZM9.6258 12.4978C9.6258 12.7154 9.53936 12.9241 9.38548 13.0779C9.2316 13.2318 9.0229 13.3183 8.80529 13.3183C8.58768 13.3183 8.37898 13.2318 8.2251 13.0779C8.07122 12.9241 7.98478 12.7154 7.98478 12.4978C7.98478 12.2801 8.07122 12.0714 8.2251 11.9176C8.37898 11.7637 8.58768 11.6772 8.80529 11.6772C9.0229 11.6772 9.2316 11.7637 9.38548 11.9176C9.53936 12.0714 9.6258 12.2801 9.6258 12.4978ZM9.6258 9.21571C9.6258 9.43332 9.53936 9.64202 9.38548 9.7959C9.2316 9.94977 9.0229 10.0362 8.80529 10.0362C8.58768 10.0362 8.37898 9.94977 8.2251 9.7959C8.07122 9.64202 7.98478 9.43332 7.98478 9.21571C7.98478 8.99809 8.07122 8.78939 8.2251 8.63552C8.37898 8.48164 8.58768 8.39519 8.80529 8.39519C9.0229 8.39519 9.2316 8.48164 9.38548 8.63552C9.53936 8.78939 9.6258 8.99809 9.6258 9.21571ZM5.52324 12.4978C5.52324 12.7154 5.43679 12.9241 5.28291 13.0779C5.12904 13.2318 4.92034 13.3183 4.70272 13.3183C4.48511 13.3183 4.27641 13.2318 4.12253 13.0779C3.96866 12.9241 3.88221 12.7154 3.88221 12.4978C3.88221 12.2801 3.96866 12.0714 4.12253 11.9176C4.27641 11.7637 4.48511 11.6772 4.70272 11.6772C4.92034 11.6772 5.12904 11.7637 5.28291 11.9176C5.43679 12.0714 5.52324 12.2801 5.52324 12.4978ZM5.52324 9.21571C5.52324 9.43332 5.43679 9.64202 5.28291 9.7959C5.12904 9.94977 4.92034 10.0362 4.70272 10.0362C4.48511 10.0362 4.27641 9.94977 4.12253 9.7959C3.96866 9.64202 3.88221 9.43332 3.88221 9.21571C3.88221 8.99809 3.96866 8.78939 4.12253 8.63552C4.27641 8.48164 4.48511 8.39519 4.70272 8.39519C4.92034 8.39519 5.12904 8.48164 5.28291 8.63552C5.43679 8.78939 5.52324 8.99809 5.52324 9.21571Z" fill="currentColor"/>
+                </svg>
+              </span>
+              <span class="lw-cta-text">Speak with me</span>
+            </a>
+          </div>
+        </div>
+      </aside>
     </div>
   </main>
 
-  <!-- Floating navigation -->
-  <nav class="floating-nav" id="nav" aria-label="Section navigation">
-    <a class="nav-item" href="#home" data-section="home" aria-label="Home">
-      <span class="nav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M2.52 7.823C2 8.77 2 9.915 2 12.203V13.725C2 17.625 2 19.576 3.172 20.788C4.344 22 6.229 22 10 22H14C17.771 22 19.657 22 20.828 20.788C21.999 19.576 22 17.626 22 13.725V12.204C22 9.915 22 8.771 21.48 7.823C20.962 6.874 20.013 6.286 18.116 5.108L16.116 3.867C14.111 2.622 13.108 2 12 2C10.892 2 9.89 2.622 7.884 3.867L5.884 5.108C3.987 6.286 3.039 6.874 2.52 7.823ZM11.25 18C11.25 18.1989 11.329 18.3897 11.4697 18.5303C11.6103 18.671 11.8011 18.75 12 18.75C12.1989 18.75 12.3897 18.671 12.5303 18.5303C12.671 18.3897 12.75 18.1989 12.75 18V15C12.75 14.8011 12.671 14.6103 12.5303 14.4697C12.3897 14.329 12.1989 14.25 12 14.25C11.8011 14.25 11.6103 14.329 11.4697 14.4697C11.329 14.6103 11.25 14.8011 11.25 15V18Z" fill="currentColor"/>
-        </svg>
-      </span>
-      <span class="nav-label">Home</span>
-    </a>
-
-    <a class="nav-item" href="#about" data-section="about" aria-label="About">
-      <span class="nav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C9.38 2 7.25 4.13 7.25 6.75C7.25 9.32 9.26 11.4 11.88 11.49C11.96 11.48 12.04 11.48 12.1 11.49C12.12 11.49 12.13 11.49 12.15 11.49C12.16 11.49 12.16 11.49 12.17 11.49C14.73 11.4 16.74 9.32 16.75 6.75C16.75 4.13 14.62 2 12 2Z" fill="currentColor"/>
-          <path d="M17.12 13.395C14.33 11.535 9.78 11.535 6.97 13.395C5.7 14.245 5 15.395 5 16.625C5 17.855 5.7 18.995 6.96 19.835C8.36 20.775 10.2 21.245 12.04 21.245C13.88 21.245 15.72 20.775 17.12 19.835C18.38 18.985 19.08 17.845 19.08 16.605C19.07 15.375 18.38 14.235 17.12 13.395Z" fill="currentColor"/>
-        </svg>
-      </span>
-      <span class="nav-label">About</span>
-    </a>
-
-    <a class="nav-item" href="#works" data-section="works" aria-label="Works">
-      <span class="nav-icon" aria-hidden="true">
-        <svg viewBox="0 0 18.5684 18.5684" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.450477 4.16831C0.450477 2.78234 0.450477 2.08936 0.762768 1.57998C0.937363 1.29468 1.17676 1.05529 1.46205 0.880696C1.97054 0.568405 2.66442 0.568405 4.05038 0.568405C5.43634 0.568405 6.12932 0.568405 6.63871 0.880696C6.924 1.05529 7.16339 1.29468 7.33799 1.57998C7.65028 2.08846 7.65028 2.78234 7.65028 4.16831C7.65028 5.55427 7.65028 6.24725 7.33799 6.75664C7.16339 7.04193 6.924 7.28132 6.63871 7.45592C6.13022 7.76821 5.43634 7.76821 4.05038 7.76821C2.66442 7.76821 1.97144 7.76821 1.46205 7.45592C1.17697 7.28136 0.937324 7.04172 0.762768 6.75664C0.450477 6.24815 0.450477 5.55427 0.450477 4.16831ZM1.60425 12.0719C2.54652 11.1296 3.01721 10.6589 3.57519 10.5239C3.88754 10.4489 4.21322 10.4489 4.52557 10.5239C5.08355 10.6589 5.55424 11.1296 6.49651 12.0719C7.43879 13.0142 7.90947 13.4849 8.04447 14.0428C8.11818 14.3553 8.11818 14.6807 8.04447 14.9932C7.90947 15.5512 7.43879 16.0228 6.49651 16.9642C5.55424 17.9055 5.08355 18.3771 4.52557 18.5121C4.21322 18.5872 3.88754 18.5872 3.57519 18.5121C3.01721 18.3771 2.54652 17.9064 1.60425 16.9642C0.661971 16.0219 0.191284 15.5512 0.0562874 14.9932C-0.0187625 14.6809 -0.0187625 14.3552 0.0562874 14.0428C0.191284 13.4849 0.661971 13.0133 1.60425 12.0719ZM10.8002 14.968C10.8002 13.5821 10.8002 12.8891 11.1125 12.3797C11.2871 12.0944 11.5265 11.855 11.8118 11.6804C12.3203 11.3681 13.0141 11.3681 14.4001 11.3681C15.7861 11.3681 16.479 11.3681 16.9893 11.6804C17.2737 11.855 17.5131 12.0944 17.6877 12.3797C18 12.8882 18 13.5821 18 14.968C18 16.354 18 17.047 17.6877 17.5572C17.513 17.8417 17.2738 18.0809 16.9893 18.2556C16.479 18.5679 15.7861 18.5679 14.4001 18.5679C13.0141 18.5679 12.3212 18.5679 11.8118 18.2556C11.5268 18.0813 11.2872 17.842 11.1125 17.5572C10.8002 17.047 10.8002 16.354 10.8002 14.968Z" fill="currentColor"/>
-          <path d="M14.4001 0.568405V7.76821M18 4.16831H10.8002" stroke="currentColor" stroke-width="1.13681" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      <span class="nav-label">Works</span>
-    </a>
-
-    <!-- PLACEHOLDER ICON — awaiting final decision -->
-    <!-- Undecided slot (Figma "ai"); no section yet, so it is inert and excluded
-         from scroll tracking + a11y. To finalise: give it href/data-section/
-         aria-label and swap the inline <svg> below. -->
-    <a class="nav-item nav-item--placeholder" aria-hidden="true">
-      <span class="nav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21.1744 9.63937C20.8209 9.27 20.4553 8.88937 20.3175 8.55469C20.19 8.24813 20.1825 7.74 20.175 7.24781C20.1609 6.33281 20.1459 5.29594 19.425 4.575C18.7041 3.85406 17.6672 3.83906 16.7522 3.825C16.26 3.8175 15.7519 3.81 15.4453 3.6825C15.1116 3.54469 14.73 3.17906 14.3606 2.82562C13.7137 2.20406 12.9787 1.5 12 1.5C11.0213 1.5 10.2872 2.20406 9.63937 2.82562C9.27 3.17906 8.88937 3.54469 8.55469 3.6825C8.25 3.81 7.74 3.8175 7.24781 3.825C6.33281 3.83906 5.29594 3.85406 4.575 4.575C3.85406 5.29594 3.84375 6.33281 3.825 7.24781C3.8175 7.74 3.81 8.24813 3.6825 8.55469C3.54469 8.88844 3.17906 9.27 2.82562 9.63937C2.20406 10.2862 1.5 11.0213 1.5 12C1.5 12.9787 2.20406 13.7128 2.82562 14.3606C3.17906 14.73 3.54469 15.1106 3.6825 15.4453C3.81 15.7519 3.8175 16.26 3.825 16.7522C3.83906 17.6672 3.85406 18.7041 4.575 19.425C5.29594 20.1459 6.33281 20.1609 7.24781 20.175C7.74 20.1825 8.24813 20.19 8.55469 20.3175C8.88844 20.4553 9.27 20.8209 9.63937 21.1744C10.2862 21.7959 11.0213 22.5 12 22.5C12.9787 22.5 13.7128 21.7959 14.3606 21.1744C14.73 20.8209 15.1106 20.4553 15.4453 20.3175C15.7519 20.19 16.26 20.1825 16.7522 20.175C17.6672 20.1609 18.7041 20.1459 19.425 19.425C20.1459 18.7041 20.1609 17.6672 20.175 16.7522C20.1825 16.26 20.19 15.7519 20.3175 15.4453C20.4553 15.1116 20.8209 14.73 21.1744 14.3606C21.7959 13.7137 22.5 12.9787 22.5 12C22.5 11.0213 21.7959 10.2872 21.1744 9.63937ZM12 18C11.7775 18 11.56 17.934 11.375 17.8104C11.19 17.6868 11.0458 17.5111 10.9606 17.3055C10.8755 17.1 10.8532 16.8738 10.8966 16.6555C10.94 16.4373 11.0472 16.2368 11.2045 16.0795C11.3618 15.9222 11.5623 15.815 11.7805 15.7716C11.9988 15.7282 12.225 15.7505 12.4305 15.8356C12.6361 15.9208 12.8118 16.065 12.9354 16.25C13.059 16.435 13.125 16.6525 13.125 16.875C13.125 17.1734 13.0065 17.4595 12.7955 17.6705C12.5845 17.8815 12.2984 18 12 18ZM12.75 13.4325V13.5C12.75 13.6989 12.671 13.8897 12.5303 14.0303C12.3897 14.171 12.1989 14.25 12 14.25C11.8011 14.25 11.6103 14.171 11.4697 14.0303C11.329 13.8897 11.25 13.6989 11.25 13.5V12.75C11.25 12.5511 11.329 12.3603 11.4697 12.2197C11.6103 12.079 11.8011 12 12 12C13.2403 12 14.25 11.1562 14.25 10.125C14.25 9.09375 13.2403 8.25 12 8.25C10.7597 8.25 9.75 9.09375 9.75 10.125V10.5C9.75 10.6989 9.67098 10.8897 9.53033 11.0303C9.38968 11.171 9.19891 11.25 9 11.25C8.80109 11.25 8.61032 11.171 8.46967 11.0303C8.32902 10.8897 8.25 10.6989 8.25 10.5V10.125C8.25 8.26406 9.93188 6.75 12 6.75C14.0681 6.75 15.75 8.26406 15.75 10.125C15.75 11.7544 14.46 13.1184 12.75 13.4325Z" fill="currentColor"/>
-        </svg>
-      </span>
-    </a>
-
-    <a class="nav-item" href="#contact" data-section="contact" aria-label="Contact">
-      <span class="nav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15.59 12.4V16.47C15.59 16.83 15.55 17.17 15.46 17.48C15.09 18.95 13.87 19.87 12.19 19.87H9.47L6.45 21.88C6 22.19 5.4 21.86 5.4 21.32V19.87C4.38 19.87 3.53 19.53 2.94 18.94C2.34 18.34 2 17.49 2 16.47V12.4C2 10.5 3.18 9.19 5 9.02C5.13 9.01 5.26 9 5.4 9H12.19C14.23 9 15.59 10.36 15.59 12.4Z" fill="currentColor"/>
-          <path d="M17.75 15.6C19.02 15.6 20.09 15.18 20.83 14.43C21.58 13.69 22 12.62 22 11.35V6.25C22 3.9 20.1 2 17.75 2H9.25C6.9 2 5 3.9 5 6.25V7C5 7.28 5.22 7.5 5.5 7.5H12.19C14.9 7.5 17.09 9.69 17.09 12.4V15.1C17.09 15.38 17.31 15.6 17.59 15.6H17.75V15.6Z" fill="currentColor"/>
-        </svg>
-      </span>
-      <span class="nav-label">Contact</span>
-    </a>
-  </nav>
 
   <script src="script.js"></script>
   <script defer src="reveal.js"></script>
   <script defer src="cursor.js"></script>
   <script defer src="radial-fill.js"></script>
+  <script defer src="Assets/js/amsterdam-widget.js"></script>
 </body>
 </html>
