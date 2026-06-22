@@ -191,28 +191,29 @@ function initFooterContact() {
 
   // Expand grows the height over EXPAND_MS while content cascades in; collapse
   // fades content out first (COLLAPSE_FADE_MS) then shrinks (COLLAPSE_MS) — snappier.
-  const EXPAND_MS = 600;
-  const COLLAPSE_MS = 400;
-  const COLLAPSE_FADE_MS = 200;
+  const EXPAND_MS = 700;   // height grow — soft-landing, fluid
+  const COLLAPSE_MS = 400; // height shrink — snappier than the expand
+  const COLLAPSE_FADE_MS = 200; // content fades out first, then the card shrinks
 
   let contentOpen = false;
   let collapseTimer = 0;
+  let settleTimer = 0;
 
-  // Per-element transition-delays for the staggered open cascade.
+  // Per-element transition-delays for the staggered open cascade: the three
+  // groups start at 200 / 350 / 500ms (rows micro-cascade ~25ms within each
+  // group), and the copyright row lands last at 600ms.
+  const GROUP_DELAYS = [200, 350, 500];
   const setStagger = () => {
-    let last = 200;
     exp.querySelectorAll(".contact-groups > .mid-block").forEach((g, gi) => {
-      const gd = 200 + gi * 80; // groups ~80ms apart, starting 200ms in
+      const gd = GROUP_DELAYS[gi] != null ? GROUP_DELAYS[gi] : 500;
       const header = g.querySelector(".mid-header");
       if (header) header.style.transitionDelay = gd + "ms";
       g.querySelectorAll(".contact-row").forEach((row, ri) => {
-        const d = gd + (ri + 1) * 40; // items ~40ms apart within a group
-        row.style.transitionDelay = d + "ms";
-        if (d > last) last = d;
+        row.style.transitionDelay = gd + (ri + 1) * 25 + "ms";
       });
     });
     const bottom = exp.querySelector(".contact-bottom");
-    if (bottom) bottom.style.transitionDelay = last + 60 + "ms";
+    if (bottom) bottom.style.transitionDelay = "600ms";
   };
   const clearStagger = () => {
     exp.querySelectorAll(".mid-header, .contact-row, .contact-bottom").forEach(
@@ -226,10 +227,17 @@ function initFooterContact() {
     setStagger();
     card.classList.add("contact-open");
     exp.setAttribute("aria-hidden", "false");
+    // Once the entrance cascade has played, mark the card "settled" so the
+    // sibling-dim hover transitions cleanly (CSS swaps to opacity 200ms with no
+    // leftover stagger delay). Cleared on collapse so the next open re-cascades.
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => card.classList.add("contact-settled"), 1100);
   };
   const closeContent = (fast) => {
     if (!contentOpen) return;
     contentOpen = false;
+    clearTimeout(settleTimer);
+    card.classList.remove("contact-settled");
     clearStagger();
     card.classList.remove("contact-open");
     if (fast) card.classList.add("contact-closing");

@@ -57,47 +57,45 @@ function initTimeline() {
   const years = Array.from(tl.querySelectorAll(".tl-year"));
   const panels = Array.from(tl.querySelectorAll(".tl-panel"));
   const line = tl.querySelector(".tl-line");
-  const detail = tl.querySelector(".tl-detail");
   const count = panels.length;
   if (!count) return;
+
+  // Geometry from Figma 163:5464 (stage is 456px tall).
+  var PITCH = 60;        // normal gap between adjacent year labels (44px + 16px)
+  var EXTRA = 48;        // extra gap opened below the active year for the line
+  var LINE_OFFSET = 56;  // line top = activeYearTop + 56
+  var STAGE = 456;       // year column / detail stage height
+  var IMG = 301;         // image (and clamp) height
+  var CONTENT_OFFSET = 16; // content/image track activeYearTop + 16
 
   // Reduced motion: static stacked list — show every milestone, no scroll lock.
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     panels.forEach((p) => p.classList.add("is-active"));
-    years.forEach((y) => y.classList.remove("is-active"));
+    years.forEach((y) => y.classList.remove("is-on"));
     return;
   }
 
-  // Position the line segment (active → next year) and slide the detail to the
-  // active year's vertical level. Fixed-height rows keep offsetTop stable while
-  // the active label animates its size.
-  const layout = (idx) => {
-    const y = years[idx];
-    const next = years[idx + 1];
-    if (next) {
-      // A clean connector that sits in the gap BETWEEN the active year label and
-      // the next one — inset a few px into each row so it never overlaps the
-      // text and never extends beyond the two labels.
-      const top = y.offsetTop + y.offsetHeight - 4;
-      const bottom = next.offsetTop + 4;
-      line.style.top = top + "px";
-      line.style.height = bottom - top + "px";
-      line.classList.remove("tl-line--last");
-    } else {
-      // Last milestone: no next year — a short fading trail below it.
-      line.style.top = y.offsetTop + y.offsetHeight - 4 + "px";
-      line.style.height = "24px";
-      line.classList.add("tl-line--last");
-    }
-    detail.style.transform = "translateY(" + y.offsetTop + "px)";
-  };
+  // Reflow the years (active→next gap expands to hold the line), place the line
+  // between the active year and the next (or trailing off below the last), and
+  // slide the active panel to track the active year (clamped to the stage).
+  const yearTop = (i, active) => i * PITCH + (i > active ? EXTRA : 0);
 
-  // Size the timeline box so the sticky centres a stable block (the header never
-  // jumps) even though the content translates down for later milestones.
-  const sizeBox = () => {
-    const last = years[count - 1];
-    const panelH = panels[0].offsetHeight || 301;
-    tl.style.minHeight = last.offsetTop + panelH + "px";
+  const layout = (active) => {
+    years.forEach((y, i) => {
+      y.style.top = yearTop(i, active) + "px";
+      // The active year AND the next year (the line's endpoints) are bold.
+      y.classList.toggle("is-on", i === active || i === active + 1);
+      y.setAttribute("aria-selected", i === active ? "true" : "false");
+    });
+    const aTop = active * PITCH; // active year top (i === active ⇒ no EXTRA)
+    line.style.top = aTop + LINE_OFFSET + "px";
+    line.classList.toggle("tl-line--last", active === count - 1);
+    const panelTop = Math.max(0, Math.min(aTop + CONTENT_OFFSET, STAGE - IMG));
+    panels.forEach((p) => {
+      const on = Number(p.dataset.index) === active;
+      p.classList.toggle("is-active", on);
+      if (on) p.style.top = panelTop + "px";
+    });
   };
 
   let active = -1;
@@ -105,12 +103,6 @@ function initTimeline() {
     const idx = Math.max(0, Math.min(count - 1, raw));
     if (idx === active) return;
     active = idx;
-    years.forEach((y) => {
-      const on = Number(y.dataset.index) === idx;
-      y.classList.toggle("is-active", on);
-      y.setAttribute("aria-selected", on ? "true" : "false");
-    });
-    panels.forEach((p) => p.classList.toggle("is-active", Number(p.dataset.index) === idx));
     layout(idx);
   };
 
@@ -128,14 +120,12 @@ function initTimeline() {
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
   };
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", () => { sizeBox(); layout(active < 0 ? 0 : active); onScroll(); }, { passive: true });
-
-  sizeBox();
+  window.addEventListener("resize", onScroll, { passive: true });
   update();
 
-  // Click a year → scroll to the centre of that milestone's band. Document top
-  // of the runway is derived from the viewport rect (offsetTop is relative to
-  // the positioned <main>, not the document).
+  // Click a year → scroll to the centre of that milestone's band (scroll then
+  // drives activation). Runway document top is derived from the viewport rect
+  // (offsetTop is relative to the positioned <main>, not the document).
   years.forEach((y) => {
     y.addEventListener("click", () => {
       const i = Number(y.dataset.index);
@@ -464,28 +454,29 @@ function initFooterContact() {
 
   // Expand grows the height over EXPAND_MS while content cascades in; collapse
   // fades content out first (COLLAPSE_FADE_MS) then shrinks (COLLAPSE_MS) — snappier.
-  const EXPAND_MS = 600;
-  const COLLAPSE_MS = 400;
-  const COLLAPSE_FADE_MS = 200;
+  const EXPAND_MS = 700;   // height grow — soft-landing, fluid
+  const COLLAPSE_MS = 400; // height shrink — snappier than the expand
+  const COLLAPSE_FADE_MS = 200; // content fades out first, then the card shrinks
 
   let contentOpen = false;
   let collapseTimer = 0;
+  let settleTimer = 0;
 
-  // Per-element transition-delays for the staggered open cascade.
+  // Per-element transition-delays for the staggered open cascade: the three
+  // groups start at 200 / 350 / 500ms (rows micro-cascade ~25ms within each
+  // group), and the copyright row lands last at 600ms.
+  const GROUP_DELAYS = [200, 350, 500];
   const setStagger = () => {
-    let last = 200;
     exp.querySelectorAll(".contact-groups > .mid-block").forEach((g, gi) => {
-      const gd = 200 + gi * 80; // groups ~80ms apart, starting 200ms in
+      const gd = GROUP_DELAYS[gi] != null ? GROUP_DELAYS[gi] : 500;
       const header = g.querySelector(".mid-header");
       if (header) header.style.transitionDelay = gd + "ms";
       g.querySelectorAll(".contact-row").forEach((row, ri) => {
-        const d = gd + (ri + 1) * 40; // items ~40ms apart within a group
-        row.style.transitionDelay = d + "ms";
-        if (d > last) last = d;
+        row.style.transitionDelay = gd + (ri + 1) * 25 + "ms";
       });
     });
     const bottom = exp.querySelector(".contact-bottom");
-    if (bottom) bottom.style.transitionDelay = last + 60 + "ms";
+    if (bottom) bottom.style.transitionDelay = "600ms";
   };
   const clearStagger = () => {
     exp.querySelectorAll(".mid-header, .contact-row, .contact-bottom").forEach(
@@ -499,10 +490,17 @@ function initFooterContact() {
     setStagger();
     card.classList.add("contact-open");
     exp.setAttribute("aria-hidden", "false");
+    // Once the entrance cascade has played, mark the card "settled" so the
+    // sibling-dim hover transitions cleanly (CSS swaps to opacity 200ms with no
+    // leftover stagger delay). Cleared on collapse so the next open re-cascades.
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => card.classList.add("contact-settled"), 1100);
   };
   const closeContent = (fast) => {
     if (!contentOpen) return;
     contentOpen = false;
+    clearTimeout(settleTimer);
+    card.classList.remove("contact-settled");
     clearStagger();
     card.classList.remove("contact-open");
     if (fast) card.classList.add("contact-closing");

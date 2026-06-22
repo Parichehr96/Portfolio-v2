@@ -184,9 +184,9 @@ section {
   white-space: nowrap;
   text-align: center;
 }
-/* Name renders at a uniform size + weight (no large/small split). */
+/* Name renders at a uniform size + weight (Figma 140:3867 — Figtree Light 24px). */
 .splash-name-lg,
-.splash-name-sm { font-size: 20px; font-weight: 400; }
+.splash-name-sm { font-size: 24px; font-weight: 300; }
 
 /* Middle third stacks the visible lead sentence and the hidden tagline in the
    same spot (tagline absolutely centred) so the spotlight can swap them. */
@@ -194,17 +194,18 @@ section {
   position: relative;
 }
 
-/* Visible lead sentence (Figma 875:10797) — Figtree Light 40px, #D9D9D9. */
+/* Visible lead sentence (Figma 166:13361) — Figtree SemiBold 48px. The opening
+   "I solve problems" is full white; the remainder is white @20% (a teaser whose
+   muted half hints there's more — the spotlight then swaps in the hidden line). */
 .splash-lead {
-  max-width: 792px;
-  font-weight: 300;
-  font-size: 40px;
-  line-height: 1.8;
-  color: #d9d9d9;
+  max-width: 1006px;
+  font-weight: 600;
+  font-size: 48px;
+  line-height: 1.5;
+  color: #ffffff;
   text-align: center;
 }
-.splash-lead .lead-strong { font-weight: 400; }
-.splash-lead .lead-em { font-style: italic; }
+.splash-lead .lead-muted { color: rgba(255, 255, 255, 0.2); }
 
 /* Inverse spotlight mask: the visible title + lead are hidden INSIDE the cursor
    circle — a transparent hole punched in an otherwise-opaque mask. cursor.js sets
@@ -225,9 +226,19 @@ section {
    is enlarged to its Figma size and gently bobs to hint scrolling (only the icon
    moves, not the pill). Box, border, hover fill all come from .btn-primary.
    Positioning (centred, bottom third) is handled by the .splash-info wrapper. */
+/* Square padding → a 56×56 circle (Figma 140:3873: p-20 + 16px icon). */
+.btn-primary.splash-cta {
+  padding: 20px;
+}
+/* Override the shared chip dash (rx 21) with a circular dash for this round CTA:
+   rx/ry 50% of a square element = a perfect circle. Same 0.5px / 6-4 dash. The
+   dash lives on ::after now (::before is the radial fill). */
+.btn-primary.splash-cta::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' fill='none'%3E%3Crect width='100%25' height='100%25' rx='50%25' ry='50%25' stroke='%23F9F5EB' stroke-width='0.5' stroke-linecap='butt' stroke-dasharray='6%2C4'/%3E%3C/svg%3E");
+}
 .splash-cta .btn-primary-icon {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   animation: splash-cta-bob 1.5s ease-in-out infinite;
 }
 @keyframes splash-cta-bob {
@@ -247,9 +258,9 @@ section {
   font-size: 32px;
   font-weight: 500;
   letter-spacing: 0.5px;
-  line-height: 1.8;        /* Figma 822:10189 — 2-line block, leading 1.8 */
-  text-align: center;      /* each line centred (Figma text-center) */
-  white-space: nowrap;
+  line-height: 1.8;        /* Figma 140:3870 — leading 1.8 */
+  text-align: center;      /* centred (Figma text-center) */
+  max-width: 896px;        /* Figma 140:3870 — w-896 */
   /* Fully transparent — NOT var(--bg). It sits on top of the visible light lead
      sentence, so bg-coloured (dark) glyphs would show through over the lead.
      Transparent paints nothing, so it's invisible over both the dark page and
@@ -632,6 +643,85 @@ section {
   color: #F9F5EB;
   opacity: 0.7;
 }
+.home-location {
+  font-size: 15px;
+  font-weight: 400;
+  color: #F9F5EB;
+  opacity: 0.7;
+}
+.ls-flag {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Index left-sidebar groups. Two top-level blocks (bio + contacts) separated by
+   40px; gaps inside each block per the Figma Bio Summary (140:4246) hierarchy. */
+.layout-left--home {
+  gap: 40px;                   /* bio block ↔ contact links (download → email) */
+}
+.ls-bio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;                   /* identity ↔ download resume (location → download) */
+}
+.ls-id {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;                    /* name → role → location */
+}
+.ls-contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;                   /* between contact links */
+}
+
+/* Sidebar link (Tertiary Button): inline SVG icon + dashed-underline text. */
+.ls-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                    /* icon → text */
+  text-decoration: none;
+  color: #F9F5EB;              /* text + icon both inherit this (currentColor) */
+}
+.ls-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: #F9F5EB;              /* icon colour = text colour */
+}
+.ls-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ls-link-text {
+  font-size: 14px;
+  line-height: normal;
+  padding-bottom: 4px;
+  /* Dashed underline on the text only: 6px dash / 4px gap, 0.5px, cream @40%
+     (same treatment as the primary button border — CSS `dashed` can't size
+     dashes, so a repeating gradient draws it). */
+  background-image: linear-gradient(
+    to right,
+    rgba(249, 245, 235, 0.4) 0,
+    rgba(249, 245, 235, 0.4) 6px,
+    transparent 6px,
+    transparent 10px
+  );
+  background-repeat: repeat-x;
+  background-size: 10px 0.5px;
+  background-position: left bottom;
+}
+.ls-link:hover .ls-link-text {
+  /* underline goes solid on hover */
+  background-image: linear-gradient(
+    rgba(249, 245, 235, 0.4),
+    rgba(249, 245, 235, 0.4)
+  );
+}
 
 /* Tertiary Button (Figma 662:8615) — dashed cream underline, pb 4px. */
 .home-portfolio {
@@ -840,11 +930,10 @@ section {
    state automatically. NOTE: the Figma component ships with NO icon (label
    only) — the slot is here for per-use-case icons supplied later.
    --------------------------------------------------------------- */
+/* Default (Figma 140:4113): transparent, dashed 0.5px cream @40% outline,
+   Regular cream text, fully-rounded pill. */
 .btn-primary {
-  position: relative;          /* anchor for the .radial-fill layer */
-  isolation: isolate;          /* contain the fill's stacking context */
-  overflow: hidden;            /* clips the radial flood to the pill shape */
-  --radial-fill-color: rgba(249, 245, 235, 0.16);  /* 16% cream flood (shared radial-fill) */
+  position: relative;          /* anchor the fill (::before) + dashed outline (::after) */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -855,31 +944,70 @@ section {
   line-height: 1.2;
   color: var(--cream);
   background: transparent;
-  border: 1px dashed #F9F5EB;
+  /* Two hover layers behind the text: ::before = radial fill, ::after = dashed
+     outline (a CSS border can't control dash size). Label/icon sit above both. */
   border-radius: 122px;
   padding: 12px 20px;
   text-align: center;
   cursor: pointer;
-  transition: color 0.4s ease, border-color 0.3s ease, font-weight 0s;
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+/* ::before = RADIAL FILL (z 0, behind the dashed border + text). A cream-16%
+   flood clipped to a circle centred on the cursor (--mx/--my, set by
+   button-fill.js): it grows to cover the pill on :hover (0.5s ease-out) and
+   retracts to the cursor's exit point on leave (0.25s ease-in). The pill
+   border-radius keeps the flood inside the rounded shape. */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 122px;
+  pointer-events: none;
+  background: rgba(249, 245, 235, 0.16);   /* cream @ 16% */
+  clip-path: circle(0% at var(--mx, 50%) var(--my, 50%));
+  -webkit-clip-path: circle(0% at var(--mx, 50%) var(--my, 50%));
+  transition: clip-path 0.25s ease-in, -webkit-clip-path 0.25s ease-in; /* shrink */
+}
+.btn-primary:hover::before {
+  clip-path: circle(150% at var(--mx, 50%) var(--my, 50%));
+  -webkit-clip-path: circle(150% at var(--mx, 50%) var(--my, 50%));
+  transition: clip-path 0.5s ease-out, -webkit-clip-path 0.5s ease-out;  /* expand */
 }
 
-/* Radial fill layer — the SHARED .radial-fill span (a direct child of the
-   button) powered by radial-fill.js: a subtle 16% cream circle that grows from
-   the cursor entry point on mouseenter (0.5s ease-out) and shrinks to the exit
-   point on mouseleave (0.25s ease-in) — identical to the large item cards.
-   It rides BELOW the label + icon (z-index 0 vs 1). */
-
-/* Label + icon ride ABOVE the fill. */
-.btn-primary-label,
-.btn-primary-icon {
-  position: relative;
+/* ::after = DASHED PILL OUTLINE (z 1, above the fill, below the text). Exact 6px
+   dash / 4px gap SVG (CSS `dashed` can't size dashes); 0.5px cream stroke, butt
+   caps, shown at 40% and brightening to 100% on hover. rx 21 = the pill corner
+   radius (SVG rx clamps to width/2, so a literal 122 would over-round into a
+   lens, not a pill). */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  border-radius: 122px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.25s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' fill='none'%3E%3Crect width='100%25' height='100%25' rx='21' ry='21' stroke='%23F9F5EB' stroke-width='0.5' stroke-linecap='butt' stroke-dasharray='6%2C4'/%3E%3C/svg%3E");
 }
+.btn-primary:hover::after { opacity: 1; }            /* dash brightens on hover */
+.btn-primary.selected::before,
+.btn-primary.selected::after { display: none; }      /* selected: no fill, no dash (solid) */
 
+/* Label + icon sit ABOVE both pseudo layers (fill z0, dash z1) so the cream
+   flood and dashed outline render behind the text, never over it. */
+.btn-primary-label {
+  position: relative;
+  z-index: 2;
+}
 /* Icon: HIDDEN by default — revealed only with .show-icon. Inherits the
    button's (transitioning) text colour via currentColor. */
 .btn-primary-icon {
   display: none;
+  position: relative;
+  z-index: 2;
   align-items: center;
   justify-content: center;
   width: 16px;
@@ -895,19 +1023,15 @@ section {
   display: inline-flex;
 }
 
-/* HOVER — subtle 16% cream flood (via .radial-fill) expands from the cursor;
-   outline goes solid, weight → Medium. Text + icon STAY cream (no dark flip). */
-.btn-primary:hover {
-  border-style: solid;
-  font-weight: 500;            /* Figtree Medium */
-}
+/* HOVER: the radial fill (::before) is the hover effect — it expands from the
+   cursor while the dashed outline (::after) brightens. The text stays cream and
+   unchanged (no colour/weight shift), so only the fill animates. */
 
-/* SELECTED — solid cream fill + solid outline, navy text (matches Figma).
-   Already solid cream, so the 16% cream flood (cream-over-cream) stays invisible
-   on hover — no visible animation, exactly as before. Unchanged. */
+/* SELECTED — solid cream fill, navy Medium text (Figma 140:4119). Border pinned
+   to its prior value so the default-state change above doesn't affect it. */
 .btn-primary.selected {
   background: #F9F5EB;
-  border-style: solid;
+  border: 1px solid #F9F5EB;
   color: #111323;
   font-weight: 500;            /* Figtree Medium */
 }
@@ -1144,13 +1268,14 @@ section {
   opacity: 0.7;
 }
 
-/* ===== All About Me — viewport-locked scroll timeline (Figma 166:13319) =====
+/* ===== All About Me — viewport-locked scroll timeline (Figma 163:5464) =======
    .tl-runway (count × 60vh) is the scroll runway; the sticky .tl-sticky (100vh)
-   pins while JS maps scroll progress to the active milestone. A short line
-   SEGMENT spans the active year → next year and MOVES as you scroll (it is NOT a
-   continuous full-height line); a dot sits at its top by the active year. The
-   active milestone's text + 301×301 image track the active year's vertical
-   position. Reduced-motion fallback (static stacked list) is below. */
+   pins while JS maps scroll progress to the active milestone. The years REFLOW:
+   the gap between the active year and the next expands from 60px to 108px to hold
+   a 40px line (active + next both bold). Each year is absolutely positioned at a
+   JS-computed top and transitions when the active changes. The active milestone's
+   text + 301×301 image track the active year's level (clamped to the stage) and
+   crossfade. Reduced-motion fallback (static stacked list) is below. */
 .tl-runway {
   position: relative;
   height: calc(var(--tl-count, 7) * 60vh);
@@ -1171,77 +1296,75 @@ section {
 .timeline {
   position: relative;
   display: flex;
-  gap: 16px;
+  gap: 40px;
   align-items: flex-start;
 }
-/* Year axis — fixed-height rows so the active year can grow without reflowing
-   the column (keeps the segment + dot positions stable). Right-aligned toward
-   the line on the right edge. */
+/* Year axis — a fixed 60px-wide × 456px-tall stage; each year is absolutely
+   positioned (top set by JS) so the column can reflow without affecting flow. */
 .tl-years {
   position: relative;
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-right: 22px;
+  flex: 0 0 60px;
+  height: 456px;
 }
 .tl-year {
-  height: 40px;
+  position: absolute;
+  left: 0;
+  width: 60px;
+  height: 44px;
   margin: 0;
   padding: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   background: none;
   border: none;
   font: inherit;
-  font-size: 20px;            /* inactive — smaller */
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 400;                 /* inactive — Regular */
   line-height: 1;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.4);  /* inactive — muted */
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.3s ease, font-size 0.3s ease;
+  transition: top 0.3s ease, color 0.3s ease, font-weight 0.3s ease;
 }
 .tl-year:hover {
   color: rgba(255, 255, 255, 0.7);
 }
-.tl-year.is-active {
-  font-size: 24px;           /* active — larger, bold, full opacity */
-  font-weight: 600;
+/* The active year AND the next year (the line's two endpoints) are bold white. */
+.tl-year.is-on {
+  font-weight: 600;                 /* Figtree SemiBold */
   color: #ffffff;
 }
-/* The moving line SEGMENT (active → next year). top + height are set by JS and
-   both transition, so the segment glides to the new active year on scroll. */
+/* The line segment between the active year and the next (top set by JS). */
 .tl-line {
   position: absolute;
-  right: 10px;
+  left: 30px;
   width: 1px;
-  background: rgba(255, 255, 255, 0.25);
-  transition: top 0.3s ease, height 0.3s ease;
+  height: 40px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  transition: top 0.3s ease;
 }
+/* Last milestone: no next year — the line trails off below 2026 and fades out. */
 .tl-line--last {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0));
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
 }
-.tl-panel-year {
-  display: none;
-}
-/* Detail — the active milestone's text + image, translated to the active year's
-   vertical position (rule 5: sits to the right of the segment). */
+/* Detail stage — same height as the year column; the active panel is absolutely
+   positioned (top set by JS to track the active year) and crossfades. */
 .tl-detail {
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  transition: transform 0.3s ease;
+  height: 456px;
 }
 .tl-panel {
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
+  top: 0;
   display: flex;
   gap: 24px;
-  align-items: center;
+  align-items: flex-start;
   opacity: 0;
   visibility: hidden;
   transition: opacity 200ms ease, visibility 0s linear 200ms;
@@ -1265,8 +1388,8 @@ section {
   opacity: 0.7;
 }
 .tl-title {
-  font-size: 32px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 500;                 /* Figtree Medium */
   line-height: 1.2;
   color: var(--cream);
 }
@@ -1292,13 +1415,22 @@ section {
   color: var(--cream);
   opacity: 0.4;
 }
-/* Reduced motion: no lock, no segment, no crossfade — stacked static list. */
+.tl-panel-year {
+  display: none;
+}
+/* Reduced motion: no lock, no reflow, no crossfade — every milestone stacked as
+   a static [year · text · image] list, scrolled normally. */
 @media (prefers-reduced-motion: reduce) {
   .tl-runway { height: auto; }
   .tl-sticky { position: static; height: auto; justify-content: flex-start; }
-  .timeline { min-height: 0 !important; }
   .tl-years { display: none; }
-  .tl-detail { transform: none !important; display: flex; flex-direction: column; gap: 48px; }
+  .tl-line { display: none; }
+  .tl-detail {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
   .tl-panel {
     position: static;
     opacity: 1;
@@ -1308,11 +1440,11 @@ section {
   }
   .tl-panel-year {
     display: block;
-    flex: 0 0 72px;
-    text-align: right;
-    font-size: 24px;
+    flex: 0 0 60px;
+    text-align: center;
+    font-size: 20px;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1;
     color: #ffffff;
   }
 }
@@ -1374,6 +1506,35 @@ section {
   height: 0;
   border-top: 0.6px solid rgba(249, 245, 235, 0.12);
 }
+/* Pointer devices: hide each question (right column) and reveal it — sliding in
+   from the left + fading — when the cursor is anywhere over its row. The text
+   keeps its layout space (opacity/transform only, never display:none), so rows
+   don't resize on hover. Touch devices (no hover) skip this entirely and keep
+   the questions visible at their normal 0.7 opacity. */
+@media (hover: hover) {
+  .skill-q {
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 250ms ease-out, transform 250ms ease-out;
+  }
+  .skill-row:hover {
+    background: rgba(249, 245, 235, 0.03);
+  }
+  .skill-row:hover .skill-q {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+/* Reduced motion: no slide — just toggle opacity instantly. */
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+  .skill-q {
+    transform: none;
+    transition: none;
+  }
+  .skill-row:hover .skill-q {
+    transform: none;
+  }
+}
 
 /* ===== All Time Favourites (Figma 156:11490) — 3 categories, 3 items each === */
 .favs {
@@ -1408,7 +1569,9 @@ section {
   width: 60px;
   height: 80px;
   border-radius: 8px;
-  background: rgba(249, 245, 235, 0.04);
+  background: rgba(249, 245, 235, 0.04); /* tint shown while the image lazy-loads */
+  object-fit: cover;                     /* fill the 60×80 box, no distortion */
+  display: block;
 }
 .fav-info {
   flex: 1 1 0;
@@ -1428,34 +1591,6 @@ section {
   color: rgba(249, 245, 235, 0.5);
 }
 
-/* ===== Radial fill hover (shared) — powered by radial-fill.js ==============
-   Any .radial-fill-hover element with a direct .radial-fill child gets a fill
-   layer that grows from the cursor entry point on mouseenter (0.5s ease-out) and
-   shrinks back to the exit point on mouseleave (0.25s ease-in). JS sets the
-   clip-path + transition inline per pointer position; CSS supplies the resting
-   state, the fill colour (--radial-fill-color, set per host), and the
-   reduced-motion fallback. The fill sits at z-index 0, behind card content
-   (z-index 1). Consumer: the Primary Button (.btn-primary) — floods a 16% cream
-   tint from the cursor. */
-.radial-fill {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;      /* match the host's rounded corners */
-  pointer-events: none;        /* never intercept clicks/navigation */
-  background: var(--radial-fill-color, rgba(249, 245, 235, 0.04));
-  clip-path: circle(0% at 50% 50%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* No radial growth — show the tint instantly on hover (JS no-ops too). */
-  .radial-fill {
-    transition: none !important;
-  }
-  .radial-fill-hover:hover > .radial-fill {
-    clip-path: circle(150% at 50% 50%);
-  }
-}
 
 /* ===== Footer → Contact: ONE element, two states =====
    #footer-cta is the single morphing card. .footer-stage is a fixed-height
@@ -1499,10 +1634,10 @@ section {
 .footer-expanded {
   position: absolute;
   inset: 0;
-  padding: 40px; /* 40px all sides (Figma 662:8696) */
+  padding: 40px;               /* 40px all sides (Figma 140:4183) */
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 40px;                   /* groups ↔ copyright (Figma card gap-40) */
   overflow-y: auto;
   text-align: left;
   /* Content is interactive only once the card opens (class-driven below). */
@@ -1587,6 +1722,18 @@ section {
   line-height: 16px;
   color: var(--cream-dark); /* #EDEAE4 */
   opacity: 0.7;
+}
+
+/* --- Sibling dimming: hovering any contact item dims every OTHER item to 50%
+   (across all three groups). Group headers and the copyright row never dim.
+   Once the entrance cascade has settled (JS adds .contact-settled), the rows
+   transition opacity at a clean 200ms with no leftover stagger delay. --- */
+.contact-settled .footer-expanded .contact-row {
+  transition: opacity 200ms ease-out;
+  transition-delay: 0s !important;   /* cancel the entrance stagger delay */
+}
+.contact-groups:has(.contact-row:hover) .contact-row:not(:hover) {
+  opacity: 0.5;
 }
 
 /* ---- Expand animation: staggered content entrance ----
@@ -1733,6 +1880,11 @@ section {
     gap: 8px 16px;
     padding: 24px;
   }
+  /* Index sidebar reverts to the shared header-row gap here (overrides the
+     desktop 40px bio↔contacts gap). */
+  .layout-left--home {
+    gap: 8px 16px;
+  }
   .layout-right {
     display: none;
   }
@@ -1829,9 +1981,13 @@ section {
     padding: 40px 24px 80px;
   }
   .splash-name-lg,
-  .splash-name-sm { font-size: 15px; }
+  .splash-name-sm { font-size: 16px; }
   .splash-lead {
-    font-size: 20px;
+    font-size: 26px;
+    max-width: 100%;
+  }
+  .invisible-text {
+    font-size: 22px;
     max-width: 100%;
   }
 }
