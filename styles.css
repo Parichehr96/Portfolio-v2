@@ -1144,14 +1144,13 @@ section {
 }
 
 /* --- What Others Think: testimonial cards (Figma 140:3517) ---
-   Two equal cards (flex-1) split by a vertical divider; fixed 233px height with
-   the quote clipped (overflow-clip). Quote on top, name/role/link below — no
-   avatars (per the new design). */
+   Two equal cards (flex-1) split by a vertical divider; content-sized (equal
+   height via align-items:stretch). Quote on top (clamped to 8 lines), then
+   name / role (clamped to 2 lines) / link below — no avatars. */
 .testi-row {
   display: flex;
   align-items: stretch;
   gap: 27px;
-  height: 233px;
 }
 .testi-card {
   flex: 1 1 0;
@@ -1178,6 +1177,13 @@ section {
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.9;
+  /* Show a substantial excerpt of the quote: clamp to 8 lines with an ellipsis
+     (the card is content-sized now, so 8 lines actually fit). flex:1 keeps the
+     name/role/link block pinned to the bottom when a card is stretched taller. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+  line-clamp: 8;
   overflow: hidden;
 }
 .testi-details {
@@ -1198,14 +1204,18 @@ section {
   color: var(--cream);
   white-space: nowrap;
 }
-/* Role/subtitle — single line, ellipsis at the end. */
+/* Role/subtitle — clamp to 2 lines with an ellipsis (it's the long line that
+   should truncate, not the quote). */
 .testi-role {
   font-size: 12px;
   font-weight: 300;
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.7;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -2044,7 +2054,7 @@ section {
   }
   .testi-card {
     flex: 0 0 85vw;
-    height: 233px;
+    height: auto;
     scroll-snap-align: start;
   }
   .testi-divider {
