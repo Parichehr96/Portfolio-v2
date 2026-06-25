@@ -226,15 +226,11 @@ section {
    is enlarged to its Figma size and gently bobs to hint scrolling (only the icon
    moves, not the pill). Box, border, hover fill all come from .btn-primary.
    Positioning (centred, bottom third) is handled by the .splash-info wrapper. */
-/* Square padding → a 56×56 circle (Figma 140:3873: p-20 + 16px icon). */
+/* Square padding → a 56×56 circle (Figma 140:3873: p-20 + 16px icon). The plain
+   CSS border on .btn-primary rounds to a full circle here because border-radius
+   122px clamps to 50% on this square box. */
 .btn-primary.splash-cta {
   padding: 20px;
-}
-/* Override the shared chip dash (rx 21) with a circular dash for this round CTA:
-   rx/ry 50% of a square element = a perfect circle. Same 0.5px / 6-4 dash. The
-   dash lives on ::after now (::before is the radial fill). */
-.btn-primary.splash-cta::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' fill='none'%3E%3Crect width='100%25' height='100%25' rx='50%25' ry='50%25' stroke='%23F9F5EB' stroke-width='0.5' stroke-linecap='butt' stroke-dasharray='6%2C4'/%3E%3C/svg%3E");
 }
 .splash-cta .btn-primary-icon {
   width: 16px;
@@ -533,19 +529,15 @@ section {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  color: #ffffff;
+  color: var(--cream);       /* inherit the link's cream colour (was white) */
   opacity: 0.4;              /* Figma 161:5065 */
 }
 .lw-cta-icon svg { display: block; width: 100%; height: 100%; }
+/* Layout only — dashed-underline treatment comes from the shared tertiary rule. */
 .lw-cta-text {
-  font-size: 14px;
   line-height: normal;
-  color: #ffffff;
   white-space: nowrap;
-  border-bottom: 0.5px dashed #ffffff;
-  padding-bottom: 2px;
 }
-.lw-cta:hover .lw-cta-text { border-bottom-style: solid; }
 
 /* TOC group — the "On this page:" label + the section nav, 8px apart
    (Figma 919:10672). The aside's 40px gap then separates this group from the
@@ -593,19 +585,12 @@ section {
 }
 /* Right-sidebar links — Tertiary Button (Figma 662:8615): dashed cream
    underline, pb 4px; hover → solid + Medium. Matches .home-portfolio/.footer-link. */
+/* Layout only — the dashed-underline treatment comes from the shared tertiary
+   rule. */
 .side-link {
   display: inline-flex;
   align-items: center;
   gap: 4px;                    /* text → arrow icon (Figma Button gap 4px) */
-  font-size: 15px;
-  color: var(--cream);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
-}
-.side-link:hover {
-  border-bottom-style: solid;
-  font-weight: 500;
 }
 /* External-link arrow (Figma vuesax/outline/send, mirrored → ↗). 14px, sits
    inline after the link text on external links only (not the internal
@@ -697,48 +682,66 @@ section {
   width: 100%;
   height: 100%;
 }
-.ls-link-text {
-  font-size: 14px;
-  line-height: normal;
+/* ===== Tertiary Button — ONE shared dashed-underline link (Figma 662:8615) =====
+   The single source of truth for every tertiary link on the site: 15px cream
+   text, a 6px-dash / 4px-gap cream underline (1px, full opacity) drawn as a
+   repeating gradient (CSS `dashed` can't size dashes), pb 4px. On hover the
+   underline goes solid and the text steps Regular→Medium. Per-element rules
+   elsewhere add ONLY layout (icon gap, alignment, transition) — never the
+   underline — so the treatment can't drift between instances again.
+   Applies to EVERY tertiary link on the site: left sidebar (.ls-link-text),
+   testimonials (.testi-link), default footer (.footer-link), Go Back
+   (.home-portfolio), case-study sidebar (.side-link), the live widget's "Speak
+   with me" (.lw-cta-text), the expanded-footer contact items (.contact-name),
+   and the project list titles (.work-name). */
+.ls-link-text,
+.testi-link,
+.footer-link,
+.home-portfolio,
+.side-link,
+.lw-cta-text,
+.contact-name,
+.work-name {
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
   padding-bottom: 4px;
-  /* Dashed underline on the text only: 6px dash / 4px gap, 0.5px, cream @40%
-     (same treatment as the primary button border — CSS `dashed` can't size
-     dashes, so a repeating gradient draws it). */
   background-image: linear-gradient(
     to right,
-    rgba(249, 245, 235, 0.4) 0,
-    rgba(249, 245, 235, 0.4) 6px,
+    var(--cream) 0,
+    var(--cream) 6px,
     transparent 6px,
     transparent 10px
   );
   background-repeat: repeat-x;
-  background-size: 10px 0.5px;
+  background-size: 10px 1px;
   background-position: left bottom;
 }
-.ls-link:hover .ls-link-text {
-  /* underline goes solid on hover */
-  background-image: linear-gradient(
-    rgba(249, 245, 235, 0.4),
-    rgba(249, 245, 235, 0.4)
-  );
+.testi-link:hover,
+.footer-link:hover,
+.home-portfolio:hover,
+.side-link:hover,
+.ls-link:hover .ls-link-text,
+.lw-cta:hover .lw-cta-text,
+.contact-row:hover .contact-name,
+.work-row:hover .work-name {
+  background-image: linear-gradient(var(--cream), var(--cream));
+  font-weight: 500;
 }
 
-/* Tertiary Button (Figma 662:8615) — dashed cream underline, pb 4px. */
+/* Mobile-only "Download resume" link, placed in the page content. The desktop
+   sidebar shows the resume in its bio block; on mobile that link is dropped from
+   the sticky bar (no room) and this in-content copy is revealed instead (≤768). */
+.resume-mobile {
+  display: none;
+}
+
+/* Layout only — dashed-underline treatment comes from the shared tertiary rule.
+   Figma Go Back is a Tertiary Button with a 14px back-arrow icon, 4px gap. */
 .home-portfolio {
-  font-size: 15px;
-  color: #F9F5EB;
-  text-decoration: none;
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
-  /* Figma Go Back is a Tertiary Button with a 14px back-arrow icon, 4px gap. */
   display: inline-flex;
   align-items: center;
   gap: 4px;
-}
-/* Tertiary Button hover: underline dashed→solid, weight Regular→Medium. */
-.home-portfolio:hover {
-  border-bottom-style: solid;
-  font-weight: 500;
 }
 /* Back-arrow icon before "Go Back" — 14px, inherits the link's cream colour. */
 .go-back-icon {
@@ -864,10 +867,13 @@ section {
   transition: all 0.2s ease;
 }
 
-/* Title: dashed underline, 0.5px #F9F5EB, pb 4px */
+/* Title: dashed underline, 0.5px #F9F5EB, pb 4px. The underline is a repeating
+   gradient (6px dash / 4px gap) — CSS `dashed` can't size dashes. Hover only
+   brightens the text to white; the cream underline is unchanged. */
+/* Layout only — the dashed→solid underline treatment comes from the shared
+   tertiary rule. The transition drives the text-colour change on row hover; the
+   row-hover white text below stacks on top of the shared underline + weight. */
 .work-name {
-  border-bottom: 0.5px dashed var(--cream);
-  padding-bottom: 4px;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
@@ -930,10 +936,14 @@ section {
    state automatically. NOTE: the Figma component ships with NO icon (label
    only) — the slot is here for per-use-case icons supplied later.
    --------------------------------------------------------------- */
-/* Default (Figma 140:4113): transparent, dashed 0.5px cream @40% outline,
-   Regular cream text, fully-rounded pill. */
+/* Default (Figma 140:4113): transparent, a plain 0.5px dashed cream @40% CSS
+   border, Regular cream text, fully-rounded pill. No pseudo-elements, no SVG
+   border, no shadow/outline/filter — just a clean border. (The radial hover fill
+   is added back in a follow-up task via ::before; the label already reserves
+   z-index 1 so it will sit above that layer.) */
 .btn-primary {
-  position: relative;          /* anchor the fill (::before) + dashed outline (::after) */
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -943,61 +953,81 @@ section {
   font-weight: 400;            /* Figtree Regular (Default) */
   line-height: 1.2;
   color: var(--cream);
-  background: transparent;
-  /* Two hover layers behind the text: ::before = radial fill, ::after = dashed
-     outline (a CSS border can't control dash size). Label/icon sit above both. */
+  /* No CSS border: `border-style: dashed` can't honour the Figma 6/4 dash. The
+     dashed pill is a real SVG <rect stroke-dasharray="6 4"> injected per button
+     by button-fill.js (.btn-border-svg) — see below. */
+  border: none;
   border-radius: 122px;
+  background: transparent;
   padding: 12px 20px;
   text-align: center;
   cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  filter: none;
+  -webkit-appearance: none;
   transition: color 0.25s ease, background-color 0.25s ease;
 }
-/* ::before = RADIAL FILL (z 0, behind the dashed border + text). A cream-16%
-   flood clipped to a circle centred on the cursor (--mx/--my, set by
-   button-fill.js): it grows to cover the pill on :hover (0.5s ease-out) and
-   retracts to the cursor's exit point on leave (0.25s ease-in). The pill
-   border-radius keeps the flood inside the rounded shape. */
+
+/* RADIAL HOVER FILL (::before, z 0 — behind the dashed border + the label).
+   A cream-16% flood clipped to a circle centred on the cursor entry point
+   (--mx/--my, set by button-fill.js). It grows to cover the pill on :hover
+   (0.5s ease-out, smooth open) and retracts toward the cursor's exit point on
+   leave (0.25s ease-in, snappy close). The border stays visible on top. */
 .btn-primary::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
   border-radius: 122px;
-  pointer-events: none;
   background: rgba(249, 245, 235, 0.16);   /* cream @ 16% */
+  pointer-events: none;
+  z-index: 0;
   clip-path: circle(0% at var(--mx, 50%) var(--my, 50%));
-  -webkit-clip-path: circle(0% at var(--mx, 50%) var(--my, 50%));
-  transition: clip-path 0.25s ease-in, -webkit-clip-path 0.25s ease-in; /* shrink */
+  transition: clip-path 0.25s ease-in;     /* collapse */
 }
 .btn-primary:hover::before {
   clip-path: circle(150% at var(--mx, 50%) var(--my, 50%));
-  -webkit-clip-path: circle(150% at var(--mx, 50%) var(--my, 50%));
-  transition: clip-path 0.5s ease-out, -webkit-clip-path 0.5s ease-out;  /* expand */
+  transition: clip-path 0.5s ease-out;     /* expand */
+}
+/* Selected buttons are already solid-filled — no flood. */
+.btn-primary.selected::before {
+  display: none;
+}
+/* Reduced motion: keep the fill (instant) but drop the animation. */
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::before { transition: none; }
 }
 
-/* ::after = DASHED PILL OUTLINE (z 1, above the fill, below the text). Exact 6px
-   dash / 4px gap SVG (CSS `dashed` can't size dashes); 0.5px cream stroke, butt
-   caps, shown at 40% and brightening to 100% on hover. rx 21 = the pill corner
-   radius (SVG rx clamps to width/2, so a literal 122 would over-round into a
-   lens, not a pill). */
-.btn-primary::after {
-  content: "";
+/* DASHED PILL BORDER (z 1 — above the radial fill, below the label). A real SVG
+   <rect> injected per button by button-fill.js, because CSS `border: dashed`
+   uses browser-default dash sizing and can't produce the Figma 6px-dash / 4px-gap
+   pattern. The rect scales to the button (width/height 100%), 0.5px cream stroke
+   at 40%, rx/ry 122 (clamps to a circle on the square splash CTA). */
+.btn-border-svg {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  border-radius: 122px;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  opacity: 0.4;
-  transition: opacity 0.25s ease;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' fill='none'%3E%3Crect width='100%25' height='100%25' rx='21' ry='21' stroke='%23F9F5EB' stroke-width='0.5' stroke-linecap='butt' stroke-dasharray='6%2C4'/%3E%3C/svg%3E");
+  z-index: 1;
+  overflow: visible;
 }
-.btn-primary:hover::after { opacity: 1; }            /* dash brightens on hover */
-.btn-primary.selected::before,
-.btn-primary.selected::after { display: none; }      /* selected: no fill, no dash (solid) */
+/* The rect's x/y/width/height/rx/ry are set in pixels by button-fill.js from the
+   button's measured size — rx = min(122, h/2, w/2) caps the corner like CSS does,
+   so it's a pill, never an ellipse. (No CSS width/height here: a CSS geometry
+   value would override the JS-set attributes.) */
+/* Selected buttons are a solid cream fill — no dashed outline. */
+.btn-primary.selected .btn-border-svg {
+  display: none;
+}
 
-/* Label + icon sit ABOVE both pseudo layers (fill z0, dash z1) so the cream
-   flood and dashed outline render behind the text, never over it. */
+/* Keyboard focus ring (a11y) — the only place outline is reintroduced. */
+.btn-primary:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+}
+
+/* Label + icon sit above both the radial fill (z0) and the dashed border (z1). */
 .btn-primary-label {
   position: relative;
   z-index: 2;
@@ -1023,15 +1053,11 @@ section {
   display: inline-flex;
 }
 
-/* HOVER: the radial fill (::before) is the hover effect — it expands from the
-   cursor while the dashed outline (::after) brightens. The text stays cream and
-   unchanged (no colour/weight shift), so only the fill animates. */
-
-/* SELECTED — solid cream fill, navy Medium text (Figma 140:4119). Border pinned
-   to its prior value so the default-state change above doesn't affect it. */
+/* SELECTED — solid cream fill, navy Medium text (Figma 140:4119). Dashed border
+   collapses to transparent so the pill reads as a solid filled shape. */
 .btn-primary.selected {
   background: #F9F5EB;
-  border: 1px solid #F9F5EB;
+  border-color: transparent;
   color: #111323;
   font-weight: 500;            /* Figtree Medium */
 }
@@ -1183,18 +1209,9 @@ section {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Tertiary Button (dashed underline). */
+/* Layout only — dashed-underline treatment comes from the shared tertiary rule. */
 .testi-link {
   align-self: flex-start;
-  font-size: 15px;
-  color: var(--cream);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
-}
-.testi-link:hover {
-  border-bottom-style: solid;
-  font-weight: 500;
 }
 
 /* --- Footer component --- */
@@ -1222,24 +1239,17 @@ section {
   align-items: center;
 }
 
-/* Tertiary Button (Figma 662:8615) instance — see .home-portfolio. */
+/* Layout only — dashed-underline treatment comes from the shared tertiary rule.
+   The opacity transition supports the sibling-dimming hover below. */
 .footer-link {
-  font-size: 15px;
-  color: var(--cream);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
-  transition: opacity 0.2s ease;
-}
-.footer-link:hover {
-  border-bottom-style: solid;
-  font-weight: 500;
+  transition: opacity 200ms ease-out;
 }
 
-/* Hover dimming: hovering one footer link dims the others to 40% (only when a
-   specific link is hovered, not the empty space between them). */
+/* Sibling dimming: hovering one footer link dims the others to 50% (only when a
+   specific link is hovered, not the empty space between them). Shared pattern —
+   matches the expanded-footer contact rows and the project list. */
 .mid-footer-links:has(.footer-link:hover) .footer-link:not(:hover) {
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 /* Default footer layout (Figma 662:8687): the card is a flex row — title hugs
@@ -1287,6 +1297,19 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+/* Skip state (desktop): when the cursor is over a sidebar, script.js adds
+   .timeline-skip — the runway collapses to the sticky container's natural height
+   and the container unpins, so the whole "All About Me" section scrolls past at
+   normal speed instead of locking through every milestone. Toggled by cursor
+   zone; the scroll position is compensated in JS so nothing jumps. */
+.tl-runway.timeline-skip {
+  height: auto;
+}
+.tl-runway.timeline-skip .tl-sticky {
+  position: static;
+  height: auto;
+  justify-content: flex-start;
 }
 .tl-inner {
   display: flex;
@@ -1685,10 +1708,10 @@ section {
   color: var(--cream);
 }
 
-/* Platform name — Tertiary Button: dashed CREAM underline (Figma 662:8704). */
+/* Platform name (Figma 662:8704). Layout only — the dashed-underline treatment
+   comes from the shared tertiary rule; hover (→ solid + Medium) is shared too,
+   and the sibling-dimming below stacks on top of it. */
 .contact-name {
-  border-bottom: 1px dashed var(--cream);
-  padding-bottom: 4px;
   white-space: nowrap;
 }
 
@@ -1832,20 +1855,255 @@ section {
   }
 }
 
-/* ---------- Tablet (≤768px) — left sidebar becomes a full-width header ---------- */
+/* ============================================================================
+   MOBILE (≤768px) — the single primary breakpoint. The 3-column layout collapses
+   to one full-width column; the left sidebar becomes a sticky top bar (identity +
+   icon-only contacts); the right sidebar is hidden; every section reflows to a
+   phone-friendly layout. ≤576px below only fine-tunes type for the narrowest
+   phones. Desktop (≥769px) is untouched.
+   ============================================================================ */
 @media (max-width: 768px) {
+  /* ---- Single-column collapse ---- */
   .layout {
     flex-direction: column;
-    /* Stretch the (now stacked) columns to the viewport width so .layout-main
-       doesn't shrink to its content's min/max-content. */
     align-items: stretch;
+    /* Solid (not 92%) so the sticky bar + content fully cover the starfield. */
+    background: var(--bg);
   }
 
-  /* Skills → stack the category header above its list, and each row stacks the
-     name/description above its question (no horizontal room for a nowrap line). */
+  /* ---- LEFT SIDEBAR → STICKY TOP BAR ----
+     A compact bar pinned to the viewport top: identity on the left, a row of
+     icon-only contact buttons on the right. Shared by the home page and the
+     case-study pages (which put project name + Go Back here instead). */
+  .layout-left {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--bg);
+    border-bottom: 0.5px solid rgba(249, 245, 235, 0.12);
+  }
+  /* Override the desktop group gaps (40px) with the compact bar gap. */
+  .layout-left--home,
+  .layout-left--case {
+    gap: 16px;
+  }
+
+  /* Identity block (home): name over role, tight. Resume + location are dropped
+     from the bar (resume relocates into the page content as .resume-mobile). */
+  .ls-bio {
+    gap: 0;
+    min-width: 0;
+  }
+  .ls-id {
+    gap: 2px;
+    min-width: 0;
+  }
+  .home-name {
+    font-size: 15px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .home-role {
+    font-size: 12px;
+  }
+  .home-location {
+    display: none;
+  }
+  .ls-link--resume {
+    display: none;
+  }
+
+  /* Identity block (case study): project name only; the tagline is too long for
+     the bar, and Go Back sits opposite it. */
+  .bio-summary {
+    gap: 2px;
+    min-width: 0;
+  }
+  .layout-left--case .home-role {
+    display: none;
+  }
+  .home-portfolio.go-back {
+    flex-shrink: 0;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  /* Contacts → a row of icon-only buttons on the right of the bar. */
+  .ls-contacts {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .ls-contacts .ls-link-text {
+    display: none;
+  }
+  .ls-contacts .ls-link {
+    padding: 6px;
+  }
+  .ls-contacts .ls-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ---- RIGHT SIDEBAR — hidden on mobile (live widget / TOC are desktop-only) */
+  .layout-right {
+    display: none;
+  }
+
+  /* The sticky bar carries identity now, so the per-section mobile identity
+     headers stay hidden. */
+  .section-identity {
+    display: none;
+  }
+
+  /* Resume link relocated into the page content (after Summary). */
+  .resume-mobile {
+    display: inline-flex;
+  }
+
+  /* ---- Content: full width, ~20px side padding ---- */
+  .home-middle {
+    padding: 32px 20px;
+    gap: 56px;
+  }
+  .mid-body {
+    font-size: 14px;
+  }
+
+  /* ---- HERO — still 100vh; scale type down so it never overflows ---- */
+  #splash {
+    padding: 80px 24px;
+  }
+  .splash-content {
+    gap: 16px;
+  }
+  .splash-info {
+    padding: 16px 0;
+  }
+  .splash-name-lg,
+  .splash-name-sm {
+    font-size: 18px;
+  }
+  .splash-lead {
+    font-size: 28px;
+    line-height: 1.4;
+    max-width: 100%;
+  }
+  .invisible-text {
+    font-size: 22px;
+    max-width: 100%;
+  }
+
+  /* ---- PROJECTS — filter chips wrap to 2 rows, slightly smaller ---- */
+  .proj-filters {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .proj-filters .btn-primary {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  /* ---- HOW I THINK — drop the 01–05 numbers; tighten the two columns ---- */
+  .think-num,
+  .think-num-spacer {
+    display: none;
+  }
+  .think-head {
+    gap: 12px;
+  }
+  .think-row {
+    gap: 12px;
+  }
+  .think-cell {
+    padding: 10px;
+    min-height: 56px;
+    font-size: 13px;
+  }
+
+  /* ---- TESTIMONIALS — horizontal scroll, one card ~85vw with a peek ---- */
+  .testi-row {
+    height: auto;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Bleed to the screen edges so the next card peeks past the 20px padding. */
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+  .testi-card {
+    flex: 0 0 85vw;
+    height: 233px;
+    scroll-snap-align: start;
+  }
+  .testi-divider {
+    display: none;
+  }
+
+  /* ---- TIMELINE — static stacked list (the scroll-lock JS bails ≤768) ----
+     Mirrors the reduced-motion fallback: no runway, no sticky pin, years hidden,
+     each milestone a [year · text · image] block stacked top-to-bottom. */
+  .tl-runway {
+    height: auto;
+  }
+  .tl-sticky {
+    position: static;
+    height: auto;
+    justify-content: flex-start;
+  }
+  .tl-years,
+  .tl-line {
+    display: none;
+  }
+  .tl-detail {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .tl-panel {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: none;
+  }
+  .tl-panel-year {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+    color: #ffffff;
+  }
+  .tl-title {
+    font-size: 22px;
+  }
+  .tl-image {
+    flex: none;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* ---- SKILLS — single column; questions visible (no hover-gate on mobile) ---- */
   .skill-cat {
     flex-direction: column;
     gap: 16px;
+  }
+  .skill-cat-name {
+    flex: none;
   }
   .skill-row {
     flex-direction: column;
@@ -1855,114 +2113,45 @@ section {
   .skill-q {
     text-align: left;
     white-space: normal;
+    opacity: 0.7;          /* keep visible even on hover-capable narrow windows */
+    transform: none;
   }
 
-  /* Testimonials → stack the two cards vertically; hide the (vertical) divider. */
-  .testi-row {
+  /* ---- ALL TIME FAVOURITES — 3 per row, thumbnail on top, text below ---- */
+  .fav-row {
+    gap: 10px;
+  }
+  .fav-item {
     flex-direction: column;
-    height: auto;
+    gap: 8px;
   }
-  .testi-card {
+  .fav-img {
+    flex: none;
     width: 100%;
     height: auto;
-    max-height: 233px;
+    aspect-ratio: 60 / 80;
   }
-  .testi-divider {
-    display: none;
+  .fav-info {
+    justify-content: flex-start;
   }
-  /* Left sidebar → static, full-width header row at the top of the page */
-  .layout-left {
-    width: 100%;
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 16px;
-    padding: 24px;
-  }
-  /* Index sidebar reverts to the shared header-row gap here (overrides the
-     desktop 40px bio↔contacts gap). */
-  .layout-left--home {
-    gap: 8px 16px;
-  }
-  .layout-right {
-    display: none;
-  }
-  /* The shared left header stands in for the per-section identity here */
-  .section-identity {
-    display: none;
+  .fav-name,
+  .fav-sub {
+    font-size: 12px;
+    line-height: 1.3;
   }
 
-  /* Default footer → "Default/mobile" variant (Figma 800:15079): the card
-     becomes a centered column — "CONTACT ME" on top, then the three links on a
-     single row of equal, centered thirds spread across the full width. It flips
-     here (not at 576) so it switches together with the single-column layout —
-     no desktop-row-in-mobile-layout intermediate state. The base .mid-footer
-     keeps its 24px/40px padding and 16px radius; .footer-row just stacks
-     (gap 24px title→links) and .mid-footer-links spans full width so the
-     repeat(3,1fr) thirds spread evenly. Applies to the plain footer (#home /
-     #about) and the collapsed morph footer (#footer-cta) shared by onton.html. */
+  /* ---- FOOTER — default card stacks; expanded contact is single column ---- */
   .footer-row {
     flex-direction: column;
     gap: 24px;
   }
   .mid-footer-links {
     width: 100%;
-    /* Figma's 80px artboard gap reduced so 3 links never overflow a phone;
-       the 1fr thirds + justify-items:center keep the even spread. */
     gap: 16px;
-  }
-}
-
-/* ---------- Mobile (≤576px) — sidebars gone, content full width ---------- */
-@media (max-width: 576px) {
-  /* Hide the header sidebar. The bio (name + role) renders ONCE, at the top of
-     #home only — not repeated above #about / #works. Each section still carries
-     its own .section-identity in the markup (base rule keeps them display:none);
-     we reveal only #home's here so the bio doesn't reappear per section. */
-  .layout-left {
-    display: none;
-  }
-  #home .section-identity {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  /* Content full width with 24px padding */
-  .home-middle {
-    padding: 24px;
-    gap: 40px;
-  }
-  #works .home-middle {
-    gap: 24px;
-  }
-
-  /* Typography */
-  .mid-label {
-    font-size: 13px;
-  }
-  .mid-body {
-    font-size: 14px;
-  }
-
-  /* Default footer mobile variant (column + single row of links) is handled in
-     the ≤768 block above, so it flips with the single-column layout. Here we
-     only tighten the collapsed morph card's padding for the narrowest phones. */
-  .footer-default {
-    padding: 24px 40px;
-  }
-
-  /* Contact (expanded) — compact padding, groups stack with 32px gap */
-  .footer-expanded {
-    padding: 24px;
   }
   .contact-groups {
     gap: 32px;
   }
-  /* Long handles wrap instead of forcing horizontal overflow */
   .contact-value {
     white-space: normal;
     word-break: break-word;
@@ -1975,20 +2164,52 @@ section {
     flex-wrap: wrap;
     gap: 8px;
   }
+}
 
-  /* Splash — compact padding, smaller title / lead / CTA */
+/* ---------- Narrow phones (≤576px) — type + padding fine-tuning only.
+   The mobile LAYOUT (sticky bar, single column, etc.) is fully handled by the
+   ≤768px block above and cascades down here; this block just tightens sizes. -- */
+@media (max-width: 576px) {
+  /* Sticky bar identity a touch smaller */
+  .home-name {
+    font-size: 14px;
+  }
+
+  /* Content padding + rhythm tighter */
+  .home-middle {
+    padding: 28px 16px;
+    gap: 48px;
+  }
+  .mid-label {
+    font-size: 13px;
+  }
+
+  /* Hero — smaller still so it never overflows the shortest phones */
   #splash {
-    padding: 40px 24px 80px;
+    padding: 60px 20px;
   }
   .splash-name-lg,
-  .splash-name-sm { font-size: 16px; }
+  .splash-name-sm {
+    font-size: 16px;
+  }
   .splash-lead {
-    font-size: 26px;
-    max-width: 100%;
+    font-size: 24px;
   }
   .invisible-text {
-    font-size: 22px;
-    max-width: 100%;
+    font-size: 20px;
+  }
+
+  /* Testimonials — let the single card fill a little more of the screen */
+  .testi-card {
+    flex-basis: 88vw;
+  }
+
+  /* Footer padding tighter for the narrowest phones */
+  .footer-default {
+    padding: 24px 20px;
+  }
+  .footer-expanded {
+    padding: 24px;
   }
 }
 
@@ -2017,11 +2238,17 @@ section {
 /* The base `.reveal-item` rule replaces these elements' own `transition`, so we
    re-declare their hover/dim transitions alongside the reveal ones. */
 
-/* List rows dim siblings via opacity on hover. While the dim state is active,
-   restore the snappy 0.2s opacity transition (more specific than the reveal
-   base, so it wins only during the hover-dim). */
-.work-list:has(.work-row:hover) .work-row.reveal-item:not(:hover) {
-  transition: opacity 0.2s ease;
+/* Sibling dimming: hovering one project row dims the others to 50% (shared
+   pattern — matches the default + expanded footers). The rows are .reveal-item
+   (550ms reveal transition), so while the list is hovered a snappy 200ms opacity
+   transition is restored on EVERY row (dim-down + un-dim both feel responsive);
+   the slower reveal transition returns only once the cursor leaves the list.
+   The 0.5 opacity wins over .reveal-item.revealed on specificity. */
+.work-list:has(.work-row:hover) .work-row {
+  transition: opacity 200ms ease-out;
+}
+.work-list:has(.work-row:hover) .work-row:not(:hover) {
+  opacity: 0.5;
 }
 
 /* --- Reduced motion: no animation, final state immediately. !important beats

@@ -68,8 +68,15 @@ function initTimeline() {
   var IMG = 301;         // image (and clamp) height
   var CONTENT_OFFSET = 16; // content/image track activeYearTop + 16
 
-  // Reduced motion: static stacked list — show every milestone, no scroll lock.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  // Static stacked list — every milestone shown, no scroll lock — when the user
+  // prefers reduced motion OR on mobile (≤768px), where the viewport-locked
+  // timeline is replaced by a plain vertical list (matching CSS). No scroll/resize
+  // listeners are wired in this mode, so resizing a desktop window narrow keeps
+  // the (already correct) static CSS without stale inline positioning.
+  if (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia("(max-width: 768px)").matches
+  ) {
     panels.forEach((p) => p.classList.add("is-active"));
     years.forEach((y) => y.classList.remove("is-on"));
     return;
@@ -99,6 +106,9 @@ function initTimeline() {
   };
 
   let active = -1;
+  // True while the cursor is over a sidebar: the runway is collapsed (skip mode),
+  // so scroll→milestone mapping is frozen and the current milestone is held.
+  let skipActive = false;
   const setActive = (raw) => {
     const idx = Math.max(0, Math.min(count - 1, raw));
     if (idx === active) return;
@@ -110,6 +120,7 @@ function initTimeline() {
   let ticking = false;
   const update = () => {
     ticking = false;
+    if (skipActive) return; // runway collapsed — hold the current milestone
     const rect = runway.getBoundingClientRect();
     const total = rect.height - window.innerHeight; // locked scroll distance
     if (total <= 0) { setActive(0); return; }
@@ -137,6 +148,73 @@ function initTimeline() {
       });
     });
   });
+
+  // --- Skip-on-sidebar (desktop fine-pointer devices only) -------------------
+  // When the cursor is over the LEFT or RIGHT sidebar, collapse the runway and
+  // unpin the sticky container (.timeline-skip) so the whole section scrolls past
+  // at normal speed. Over the MIDDLE column, the sticky timeline behaves exactly
+  // as before. Zone changes are debounced 50ms to avoid flicker at the column
+  // boundaries; every toggle compensates scrollY so surrounding content never
+  // jumps. Touch / coarse pointers (no cursor) never wire this up and keep the
+  // default sticky behaviour.
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const main = document.querySelector(".layout-main");
+    if (main) {
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+      // Toggle skip and keep the viewport stable: compensate scrollY by exactly
+      // the part of the runway's height change that lies ABOVE the current scroll
+      // position (so content at/above the viewport top doesn't shift).
+      const setSkip = (on) => {
+        if (on === skipActive) return;
+        const runwayTop = runway.getBoundingClientRect().top + window.scrollY;
+        const before = runway.offsetHeight;
+        skipActive = on;
+        runway.classList.toggle("timeline-skip", on);
+        const after = runway.offsetHeight;
+        const small = Math.min(before, after); // collapsed height in both cases
+        const overlapAbove = clamp(
+          window.scrollY - (runwayTop + small),
+          0,
+          Math.abs(after - before)
+        );
+        if (overlapAbove > 0) {
+          window.scrollTo(
+            0,
+            window.scrollY + (after < before ? -overlapAbove : overlapAbove)
+          );
+        }
+        // Re-engaging over the middle column → snap to the nearest milestone for
+        // the (restored) scroll position.
+        if (!on) update();
+      };
+
+      // Debounce the zone → skip decision so brushing across a boundary doesn't
+      // flip state. Cancel a pending toggle if the cursor returns to its origin.
+      let debTimer = null;
+      let debTarget = null;
+      const onMouseMove = (e) => {
+        const r = main.getBoundingClientRect();
+        const overMiddle = e.clientX >= r.left && e.clientX <= r.right;
+        const target = !overMiddle; // over a sidebar → skip
+        if (target === skipActive) {
+          if (debTimer) {
+            clearTimeout(debTimer);
+            debTimer = null;
+          }
+          return;
+        }
+        if (debTimer && debTarget === target) return; // already scheduled
+        if (debTimer) clearTimeout(debTimer);
+        debTarget = target;
+        debTimer = setTimeout(() => {
+          debTimer = null;
+          setSkip(target);
+        }, 50);
+      };
+      document.addEventListener("mousemove", onMouseMove, { passive: true });
+    }
+  }
 }
 
 /**
