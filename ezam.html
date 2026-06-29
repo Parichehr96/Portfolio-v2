@@ -163,17 +163,24 @@
       <!-- Left sidebar — sticky. Figma: project title + tagline + "Go Back". -->
       <aside class="layout-left layout-left--case">
         <div class="bio-summary">
-          <h2 class="home-name">Ezam Part</h2>
-          <p class="home-role">Unifying an Auto Parts Manufacturer’s Digital Ecosystem</p>
-        </div>
-        <a class="home-portfolio go-back" href="index.html">
+          <div class="cs-head">
+            <h2 class="home-name">Ezam Part</h2>
+            <a class="home-portfolio go-back" href="index.html">
           <!-- Back icon — exact export from Figma node 858:10376 (lets-icons:back-light). -->
           <svg class="go-back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
             <path d="M3.99997 10.0005L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L3.99997 10.0005ZM20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005H20.5ZM8.64597 15.3545L3.64597 10.3545L4.35397 9.64648L9.35397 14.6465L8.64597 15.3545ZM3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648ZM3.99997 9.50048H14V10.5005H3.99997V9.50048ZM20.5 16.0005V18.0005H19.5V16.0005H20.5ZM14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005H19.5C19.5 14.5418 18.9205 13.1428 17.8891 12.1114C16.8576 11.0799 15.4587 10.5005 14 10.5005V9.50048Z" fill="currentColor"/>
             <path d="M3.64597 10.3545L3.99997 10.0005L3.64597 9.64648M3.64597 10.3545L8.64597 15.3545L9.35397 14.6465L4.35397 9.64648L3.64597 10.3545L3.29297 10.0005L3.64597 9.64648L8.64597 4.64648L9.35397 5.35448L4.35397 10.3545L3.64597 9.64648M20.5 18.0005C20.5 18.1331 20.4473 18.2603 20.3535 18.354C20.2598 18.4478 20.1326 18.5005 20 18.5005C19.8674 18.5005 19.7402 18.4478 19.6464 18.354C19.5526 18.2603 19.5 18.1331 19.5 18.0005M20.5 18.0005H19.5M20.5 18.0005V16.0005M19.5 18.0005V16.0005M14 9.50048H3.99997V10.5005H14M14 9.50048V10.5005M14 9.50048C15.7239 9.50048 17.3772 10.1853 18.5962 11.4043C19.8151 12.6233 20.5 14.2766 20.5 16.0005M14 10.5005C15.4587 10.5005 16.8576 11.0799 17.8891 12.1114C18.9205 13.1428 19.5 14.5418 19.5 16.0005M20.5 16.0005H19.5" stroke="currentColor" stroke-width="0.6"/>
           </svg>
           Back
-        </a>
+            </a>
+          </div>
+          <p class="home-role">Unifying an Auto Parts Manufacturer’s Digital Ecosystem</p>
+        </div>
+        <nav class="cs-links" aria-label="Ezam Part links">
+          <!-- TODO: destinations not specified in Figma — update href when provided. -->
+          <a class="side-link" href="#" rel="noopener">Company’s Website</a>
+          <a class="side-link" href="#" rel="noopener">Company’s Linkedin</a>
+        </nav>
       </aside>
 
       <!-- Middle column — the case study -->
@@ -473,11 +480,7 @@
             <a class="toc-item" href="#sec-reflection">Reflection</a>
           </nav>
         </div>
-        <nav class="side-links" aria-label="Ezam Part links">
-          <!-- TODO: external destinations not specified in Figma — update href when provided.
-               (Body text references ezampart.com; Introduction status said ezamonline.com.) -->
-          <a class="side-link" href="#" rel="noopener">Company’s Website<svg class="side-link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><g transform="translate(24 0) scale(-1 1)" fill="currentColor"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z"/></g></svg></a>
-          <a class="side-link" href="#" rel="noopener">Company’s Linkedin<svg class="side-link-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><g transform="translate(24 0) scale(-1 1)" fill="currentColor"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z"/></g></svg></a>
+        <nav class="side-links" aria-label="Contact">
           <a class="side-link" href="#footer-stage">Contact Me</a>
         </nav>
       </aside>

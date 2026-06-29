@@ -405,21 +405,36 @@ section {
    vs the 8px name→role gap inside the group. Index.html keeps the base 8px gap
    (it has no .layout-left--case modifier). Mobile (≤768px) overrides this back to
    the shared row layout further down. */
-/* Figma 227:12633: the project name and the "Back" link share the top row
-   (space-between); the project description sits under the name. */
+/* Figma 227:12633: a column — the title block (name + Back on one row, then the
+   description) and, 40px below, the project links section. */
 .layout-left--case {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 40px;                   /* title block ↔ links section (Figma 227:12633) */
 }
 .bio-summary {
-  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;                    /* project name → description (Figma 227:12635) */
+  gap: 4px;                    /* name row → description (Figma 227:12635) */
+}
+/* Name + Back share the top row (Figma Project Section 227:12951): name left,
+   Back pinned right via space-between. */
+.cs-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+/* Moved project links (Figma Links Section 227:12642): plain tertiary links
+   (dashed underline, no icon), 16px apart. */
+.cs-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 /* Right sidebar — mirrors the left: 48px top inset, 40px sides/bottom; sticky
@@ -485,8 +500,8 @@ section {
    no per-state variant); the end dot recolours by state to keep the live cue. */
 .lw-dot {
   flex-shrink: 0;
-  width: 20px;
-  height: 10px;
+  width: 22px;               /* matches the exported bracket viewBox (22×12) */
+  height: 12px;
   margin-top: 2px;           /* align the bracket's dot with the first status line */
   color: #6b6f86;            /* end-dot colour (overridden per state below) */
 }
@@ -559,13 +574,7 @@ section {
   align-self: flex-start;
   text-decoration: none;
 }
-.lw-cta-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  color: var(--cream);       /* inherit the link's cream colour (was white) */
-  opacity: 0.4;              /* Figma 161:5065 */
-}
+/* Sizing/colour for .lw-cta-icon comes from the shared sidebar-icon rule. */
 .lw-cta-icon svg { display: block; width: 100%; height: 100%; }
 /* Layout only — dashed-underline treatment comes from the shared tertiary rule. */
 .lw-cta-text {
@@ -573,13 +582,13 @@ section {
   white-space: nowrap;
 }
 
-/* TOC group — the "On this page:" label + the section nav, 8px apart
-   (Figma 919:10672). The aside's 40px gap then separates this group from the
-   project links below. */
+/* TOC group — the "On this page:" label + the section nav, 40px apart (Figma
+   227:12960 root gap-[40px]). The aside's 40px gap then separates this group from
+   the Contact Me link below, giving a consistent 40px rhythm down the panel. */
 .toc-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 40px;
 }
 /* Static label above the section nav (Figma 919:10671). Not part of the
    scroll-tracking active state. Figtree Regular 15px, cream at 70%. */
@@ -717,15 +726,16 @@ section {
 .ls-link--resume {
   gap: 2px;
 }
-.ls-icon {
+/* ===== Sidebar icons — ONE rule for all 5 label icons (left contacts +
+   widget "Speak with me"). Exported from Figma, inlined with currentColor:
+   uniform 20px, cream #F9F5EB at 40% opacity, stroke-width 1.5 (set in the SVGs).
+   The status bracket is excluded — it stays navy-light, styled separately. */
+.ls-icon,
+.lw-cta-icon {
   flex-shrink: 0;
-  width: 20px;                 /* Figma icons are 20px (161:4806 etc.) */
+  width: 20px;
   height: 20px;
-  color: #F9F5EB;              /* icon colour = text colour */
-}
-/* Contact icons (email / text / linkedin) sit at 40% opacity; the resume icon
-   stays full-opacity (Figma 152:4765 / 152:4766 / 155:2 all opacity-40). */
-.ls-contacts .ls-link:not(.ls-link--resume) .ls-icon {
+  color: #F9F5EB;              /* SVGs use currentColor */
   opacity: 0.4;
 }
 .ls-icon svg {
@@ -2036,12 +2046,17 @@ section {
   }
 
   /* Identity block (case study): project name only; the tagline is too long for
-     the bar, and Go Back sits opposite it. */
+     the bar, and Back sits opposite it (the name row fills the bar). */
   .bio-summary {
+    flex: 1;                   /* fill the bar so the name row's Back pins right */
     gap: 2px;
     min-width: 0;
   }
   .layout-left--case .home-role {
+    display: none;
+  }
+  /* Project links are a desktop-only left-panel group — never in the top bar. */
+  .cs-links {
     display: none;
   }
   .home-portfolio.go-back {
