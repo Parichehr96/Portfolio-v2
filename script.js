@@ -6,6 +6,9 @@
 let contactExpanded = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Before initHero() forces the page to the top, so the scrollY>0 guard can read
+  // the genuine landing position.
+  initSplashAutoScroll();
   initSplashStars();
   initHero();
   initHomeMiddle();
@@ -68,19 +71,65 @@ function initTimeline() {
   var IMG = 301;         // image (and clamp) height
   var CONTENT_OFFSET = 16; // content/image track activeYearTop + 16
 
-  // Static stacked list — every milestone shown, no scroll lock — when the user
-  // prefers reduced motion OR on mobile (≤768px), where the viewport-locked
-  // timeline is replaced by a plain vertical list (matching CSS). No scroll/resize
-  // listeners are wired in this mode, so resizing a desktop window narrow keeps
-  // the (already correct) static CSS without stale inline positioning.
-  if (
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-    window.matchMedia("(max-width: 768px)").matches
-  ) {
+  // Mode model: reduced-motion ALWAYS gets the plain static stacked list (no
+  // scroll-hijack, no animation). Mobile (≤768px) and desktop BOTH run the sticky
+  // scroll machinery below — they differ only in CSS (full-width slide-up vs the
+  // side-by-side crossfade). So `isStatic` is reduced-motion only.
+  const isReduced = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+  const isStatic = () => isReduced();
+
+  if (isStatic()) {
+    // Reduced motion: show every milestone stacked and wire none of the sticky
+    // machinery. Clear any inline year/line positions a prior desktop layout left.
     panels.forEach((p) => p.classList.add("is-active"));
-    years.forEach((y) => y.classList.remove("is-on"));
+    years.forEach((y) => { y.classList.remove("is-on"); y.style.top = ""; });
+    if (line) line.style.top = "";
+    // If the user turns reduced-motion off later, upgrade to the live timeline.
+    if (!initTimeline._resizeBound) {
+      initTimeline._resizeBound = true;
+      window.addEventListener(
+        "resize",
+        () => { if (!isStatic()) initTimeline(); },
+        { passive: true }
+      );
+    }
     return;
   }
+  if (initTimeline._wired) return; // machinery already wired once
+  initTimeline._wired = true;
+
+  // The mobile sticky frame must sit BELOW the sticky identity top bar. Measure
+  // the bar and expose it as --tl-bar-h (CSS uses it for the frame's top + height);
+  // kept in sync on resize since the bar height is breakpoint-dependent.
+  const syncBarHeight = () => {
+    const bar = document.querySelector(".layout-left");
+    if (bar && isMobile()) {
+      runway.style.setProperty(
+        "--tl-bar-h",
+        Math.round(bar.getBoundingClientRect().height) + "px"
+      );
+    } else {
+      runway.style.removeProperty("--tl-bar-h");
+    }
+  };
+  syncBarHeight();
+
+  // Wrap each panel's text + image content in a sliding inner wrapper, so the
+  // .tl-text / .tl-image containers can stay fixed (and clip) while only the
+  // inner content cross-slides on a milestone change (see the CSS .tl-*-inner).
+  const wrapContent = (box, cls) => {
+    if (!box || box.querySelector("." + cls)) return;
+    const inner = document.createElement("div");
+    inner.className = cls;
+    while (box.firstChild) inner.appendChild(box.firstChild);
+    box.appendChild(inner);
+  };
+  panels.forEach((p) => {
+    wrapContent(p.querySelector(".tl-text"), "tl-text-inner");
+    wrapContent(p.querySelector(".tl-image"), "tl-image-inner");
+  });
 
   // Reflow the years (active→next gap expands to hold the line), place the line
   // between the active year and the next (or trailing off below the last), and
@@ -88,6 +137,9 @@ function initTimeline() {
   const yearTop = (i, active) => i * PITCH + (i > active ? EXTRA : 0);
 
   const layout = (active) => {
+    // Mobile: the year axis + connector line are hidden and the whole panel slides
+    // (handled by showPanel), so there's nothing to position here.
+    if (isMobile()) return;
     years.forEach((y, i) => {
       y.style.top = yearTop(i, active) + "px";
       // The active year AND the next year (the line's endpoints) are bold.
@@ -97,29 +149,79 @@ function initTimeline() {
     const aTop = active * PITCH; // active year top (i === active ⇒ no EXTRA)
     line.style.top = aTop + LINE_OFFSET + "px";
     line.classList.toggle("tl-line--last", active === count - 1);
-    const panelTop = Math.max(0, Math.min(aTop + CONTENT_OFFSET, STAGE - IMG));
-    panels.forEach((p) => {
-      const on = Number(p.dataset.index) === active;
-      p.classList.toggle("is-active", on);
-      if (on) p.style.top = panelTop + "px";
-    });
+    // Panel content is handled by showPanel() — all panels share one FIXED
+    // position (CSS top:0) so the text/image containers never move; only their
+    // inner content cross-slides.
   };
 
   let active = -1;
   // True while the cursor is over a sidebar: the runway is collapsed (skip mode),
   // so scroll→milestone mapping is frozen and the current milestone is held.
   let skipActive = false;
+  // Latches once the timeline is torn down for a resize into static (mobile /
+  // reduced-motion) so the cleanup runs a single time per transition.
+  let staticDone = false;
+
+  // Content transition controller. Slides the new milestone's text + image in and
+  // the outgoing one out (CSS .is-active / .is-exiting, 450ms). Only ONE runs at a
+  // time: a request that arrives mid-transition is remembered and applied when the
+  // current one finishes — never interrupting it, never overlapping. `displayed`
+  // is the panel actually on screen (may briefly lag `active` during fast scroll).
+  let displayed = -1;
+  let transitioning = false;
+  let queued = null;
+  const showPanel = (idx) => {
+    if (transitioning) { queued = idx; return; }
+    if (idx === displayed) return;
+    transitioning = true;
+    const prev = displayed >= 0 ? panels[displayed] : null;
+    const next = panels[idx];
+    displayed = idx;
+    if (prev) {
+      prev.classList.remove("is-active");
+      prev.classList.add("is-exiting");   // slides up & fades out
+    }
+    next.classList.remove("is-active", "is-exiting"); // reset to "below" resting state
+    void next.offsetWidth;                            // commit it before sliding up
+    next.classList.add("is-active");                  // slides up from below & fades in
+    window.setTimeout(() => {
+      if (prev) prev.classList.remove("is-exiting");
+      transitioning = false;
+      if (queued !== null && queued !== displayed) {
+        const q = queued;
+        queued = null;
+        showPanel(q);
+      } else {
+        queued = null;
+      }
+    }, 450);
+  };
+
   const setActive = (raw) => {
     const idx = Math.max(0, Math.min(count - 1, raw));
     if (idx === active) return;
     active = idx;
-    layout(idx);
+    layout(idx);     // years + line update immediately
+    showPanel(idx);  // content cross-slides (locked, one at a time)
   };
 
   // Map scroll progress through the runway → milestone index (equal bands).
   let ticking = false;
   const update = () => {
     ticking = false;
+    if (isStatic()) {
+      // Resized into mobile / reduced-motion after the desktop timeline was
+      // wired: stop driving the active milestone, halt autoplay, and strip the
+      // inline styles desktop set so the CSS static list takes over cleanly.
+      if (!staticDone) {
+        staticDone = true;
+        apPause();
+        years.forEach((y) => { y.style.top = ""; y.classList.remove("is-on"); });
+        if (line) line.style.top = "";
+      }
+      return;
+    }
+    staticDone = false;
     if (skipActive) return; // runway collapsed — hold the current milestone
     const rect = runway.getBoundingClientRect();
     const total = rect.height - window.innerHeight; // locked scroll distance
@@ -131,7 +233,27 @@ function initTimeline() {
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
   };
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
+  // Resize handler: keep the bar-height var fresh, and on a 768px crossing tear
+  // the prior mode's state down so nothing leaks — going → mobile, drop the
+  // desktop year/line inline positions + halt autoplay; going → desktop, force a
+  // year-axis relayout — then recompute the active milestone for the new viewport.
+  let wasMobile = isMobile();
+  const onResize = () => {
+    syncBarHeight();
+    const nowMobile = isMobile();
+    if (nowMobile !== wasMobile) {
+      wasMobile = nowMobile;
+      if (nowMobile) {
+        apPause();
+        years.forEach((y) => { y.style.top = ""; y.classList.remove("is-on"); });
+        if (line) { line.style.top = ""; line.classList.remove("tl-line--last"); }
+      } else {
+        active = -1; // force layout() to re-position the year axis on next update
+      }
+    }
+    onScroll();
+  };
+  window.addEventListener("resize", onResize, { passive: true });
   update();
 
   // Click a year → scroll to the centre of that milestone's band (scroll then
@@ -148,6 +270,68 @@ function initTimeline() {
       });
     });
   });
+
+  // --- Autoplay (desktop animated timeline only) -----------------------------
+  // Reuses setActive() to advance one milestone every 4s and loop. It NEVER
+  // starts on load: an IntersectionObserver starts it the first time the timeline
+  // enters the viewport (once per visit). Any interaction — clicking a year,
+  // scrolling, hovering the content, or keyboard focus/keys — pauses it; it
+  // resumes from the CURRENT milestone after 8s of inactivity (never rewinds).
+  // Desktop-with-motion only: reduced-motion returned earlier, and apSchedule()
+  // no-ops on mobile (touch scroll drives the milestones there instead).
+  let apTimer = null;     // the 4s tick
+  let apResume = null;    // the 8s idle-resume countdown
+  let apInit = false;     // started once, when first in view
+  function apSchedule() {
+    if (isMobile()) return; // no autoplay on mobile — the gesture drives the slide
+    window.clearTimeout(apTimer);
+    apTimer = window.setTimeout(apAdvance, 4000);
+  }
+  function apAdvance() {
+    setActive((active + 1) % count); // loop seamlessly after the last item
+    apSchedule();
+  }
+  const apStart = () => { window.clearTimeout(apResume); apResume = null; apSchedule(); };
+  const apPause = () => { window.clearTimeout(apTimer); apTimer = null; };
+  // Discrete interactions: pause now, resume from the current item after 8s idle.
+  const apInteract = () => {
+    if (!apInit) return;
+    apPause();
+    window.clearTimeout(apResume);
+    apResume = window.setTimeout(apStart, 8000);
+  };
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (let i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting && !apInit) {
+          apInit = true;
+          io.disconnect();
+          apSchedule(); // wait 4s, then advance to the next milestone
+        }
+      }
+    }, { threshold: 0 });
+    io.observe(tl);
+  }
+
+  // Pause triggers (the existing scroll/click handlers still drive the active
+  // milestone; these only govern autoplay).
+  window.addEventListener("scroll", apInteract, { passive: true });
+  years.forEach((y) => y.addEventListener("click", apInteract));
+  tl.addEventListener("keydown", apInteract);
+  tl.addEventListener("focusin", apInteract);
+  // Hover the content area: hold the pause while the cursor is over it; start the
+  // 8s idle countdown only once it leaves.
+  const detail = tl.querySelector(".tl-detail");
+  if (detail) {
+    detail.addEventListener("mouseenter", () => {
+      if (!apInit) return;
+      apPause();
+      window.clearTimeout(apResume);
+      apResume = null;
+    });
+    detail.addEventListener("mouseleave", apInteract);
+  }
 
   // --- Skip-on-sidebar (desktop fine-pointer devices only) -------------------
   // When the cursor is over the LEFT or RIGHT sidebar, collapse the runway and
@@ -231,16 +415,207 @@ function initHero() {
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   window.scrollTo(0, 0);
 
-  // CTA → smooth-scroll to Summary. The href="#home" is the no-JS fallback;
-  // this handler upgrades the jump to a smooth scroll.
   const cta = document.querySelector(".splash-cta");
   const home = document.getElementById("home");
+
+  // The ONE smooth-scroll action, reused by the CTA click AND the landing
+  // sequence's automatic scroll (Stage 6) — identical easing, timing, and
+  // destination, with no duplicated implementation.
+  const scrollToHome = () => {
+    if (home) home.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // CTA → smooth-scroll to Summary. The href="#home" is the no-JS fallback;
+  // this handler upgrades the jump to a smooth scroll.
   if (cta && home) {
     cta.addEventListener("click", (e) => {
       e.preventDefault();
-      home.scrollIntoView({ behavior: "smooth" });
+      scrollToHome();
     });
   }
+
+  initHeroIntro(scrollToHome);
+}
+
+/**
+ * Splash → Summary auto-advance (index.html only). 4s after load the page smoothly
+ * scrolls so the Summary section's top meets the viewport top — using the browser's
+ * native smooth scroll (no custom tween). It NEVER fires if, before the 4s elapses,
+ * the user interacts (wheel / touchstart / keydown / click / any scroll away from
+ * the top); once cancelled it does not re-arm. Skipped entirely when reduced motion
+ * is on, when the page didn't land at the very top, or while the first-visit
+ * choreographed hero intro is playing (that sequence owns the scroll on its single
+ * session-first load, so we never interrupt the typewriter or double-scroll). No
+ * storage — it re-arms on every qualifying load. All listeners + the timer are torn
+ * down on cancel and right before the scroll fires, leaving nothing lingering.
+ */
+function initSplashAutoScroll() {
+  const home = document.getElementById("home");
+  if (!home) return;                                                      // index.html only
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.scrollY > 0) return;                                         // landed mid-page → skip
+  if (document.documentElement.classList.contains("hero-intro")) return;  // intro owns the scroll
+
+  let timer = 0;
+  const teardown = () => {
+    window.removeEventListener("wheel", cancel);
+    window.removeEventListener("touchstart", cancel);
+    window.removeEventListener("keydown", cancel);
+    window.removeEventListener("click", cancel);
+    window.removeEventListener("scroll", onScroll);
+  };
+  function cancel() {
+    if (!timer) return;
+    window.clearTimeout(timer);
+    timer = 0;
+    teardown();
+  }
+  function onScroll() {
+    if (window.scrollY > 0) cancel(); // scrollY changed from 0 for any reason
+  }
+  const fire = () => {
+    timer = 0;
+    teardown();                       // drop listeners BEFORE our own smooth scroll runs
+    // offsetParent is positioned (main is position:relative), so compute the
+    // document-absolute top live, at the moment of the scroll.
+    const top = Math.round(home.getBoundingClientRect().top + window.scrollY);
+    window.scrollTo({ top: top, behavior: "smooth" });
+  };
+
+  // {once:true} where possible; the shared cancel() also tears down the rest.
+  window.addEventListener("wheel", cancel, { passive: true, once: true });
+  window.addEventListener("touchstart", cancel, { passive: true, once: true });
+  window.addEventListener("keydown", cancel, { once: true });
+  window.addEventListener("click", cancel, { once: true });
+  window.addEventListener("scroll", onScroll, { passive: true });
+  timer = window.setTimeout(fire, 4000);
+}
+
+/**
+ * Hero landing sequence — a single, calm choreographed intro that plays ONCE per
+ * browser session on the first visit. It's gated by the `.hero-intro` class the
+ * <head> adds before first paint (only when motion is allowed AND it hasn't
+ * played this session), so the name/headline/CTA start hidden with no flash and
+ * no layout shift. If the class is absent (repeat visit or reduced motion) this
+ * returns immediately and the hero is fully static.
+ *
+ * Stages: (2) name fades in over 0.5s · (3) ~400ms orient pause · (4) headline
+ * types in over 4s, one character at a time · (5) CTA fades in, ~500ms read pause
+ * · (6) the CTA's own smooth-scroll runs (passed in as scrollToHome).
+ *
+ * The typewriter wraps every headline character in a hidden inline <span>, so the
+ * full text is laid out up-front (final wrap reserved) and revealing is just a
+ * visibility flip per char (repaint, never reflow). One time-based rAF loop
+ * advances the reveal at a constant rate — no per-frame DOM churn, no cursor.
+ *
+ * Any scroll / click / key / tap during the intro cancels the rest: everything is
+ * revealed instantly and the automatic scroll is skipped (user keeps control).
+ */
+function initHeroIntro(scrollToHome) {
+  const root = document.documentElement;
+  if (!root.classList.contains("hero-intro")) return; // not playing this load
+
+  const name = document.querySelector(".splash-name");
+  const lead = document.querySelector(".splash-lead");
+  const cta = document.querySelector(".splash-cta");
+  if (!lead) { root.classList.remove("hero-intro"); return; }
+
+  // Mark played up-front: a refresh mid-intro renders the hero immediately.
+  try { sessionStorage.setItem("heroIntroPlayed", "1"); } catch (e) {}
+
+  // Wrap every character of the headline (including inside .lead-muted, so its
+  // colour is preserved) in a hidden inline span. Done once, before any reveal.
+  const chars = [];
+  const wrapTextNode = (textNode) => {
+    const frag = document.createDocumentFragment();
+    const text = textNode.nodeValue;
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement("span");
+      span.className = "tw-char";
+      span.textContent = text[i];
+      span.style.visibility = "hidden";
+      chars.push(span);
+      frag.appendChild(span);
+    }
+    textNode.parentNode.replaceChild(frag, textNode);
+  };
+  const wrapEl = (parent) => {
+    const nodes = Array.prototype.slice.call(parent.childNodes);
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      if (node.nodeType === 3) wrapTextNode(node);          // text → char spans
+      else if (node.nodeType === 1) wrapEl(node);           // recurse (.lead-muted)
+    }
+  };
+  wrapEl(lead);
+
+  let done = false;
+  let rafId = 0;
+  const timers = [];
+  const INTERRUPTS = ["wheel", "touchstart", "pointerdown", "keydown", "click", "scroll"];
+  const wait = (ms) => new Promise((res) => timers.push(window.setTimeout(res, ms)));
+
+  const onInterrupt = () => finish(false);
+  const teardown = () => {
+    timers.forEach(window.clearTimeout);
+    if (rafId) window.cancelAnimationFrame(rafId);
+    INTERRUPTS.forEach((t) => window.removeEventListener(t, onInterrupt, true));
+  };
+  // Reveal everything and stop. autoScroll is true ONLY on natural completion;
+  // an interruption passes false so the user is never force-scrolled.
+  const finish = (autoScroll) => {
+    if (done) return;
+    done = true;
+    teardown();
+    for (let i = 0; i < chars.length; i++) chars[i].style.visibility = "visible";
+    if (name) name.style.opacity = "1";
+    lead.style.opacity = "1";
+    if (cta) cta.style.opacity = "1";
+    root.classList.remove("hero-intro");
+    if (autoScroll) scrollToHome();
+  };
+
+  // Listeners removed before the auto-scroll runs, so its scroll doesn't self-cancel.
+  INTERRUPTS.forEach((t) => window.addEventListener(t, onInterrupt, true));
+
+  // Constant-rate reveal driven by elapsed time (one rAF loop; reveals batched).
+  const typewriter = () => new Promise((resolve) => {
+    const N = chars.length;
+    if (!N) { resolve(); return; }
+    const DURATION = 4000;
+    let start = 0;
+    let revealed = 0;
+    const step = (now) => {
+      if (done) return;
+      if (!start) start = now;
+      const t = Math.min((now - start) / DURATION, 1);
+      const target = Math.floor(t * N);
+      for (; revealed < target; revealed++) chars[revealed].style.visibility = "visible";
+      if (t < 1) {
+        rafId = window.requestAnimationFrame(step);
+      } else {
+        for (; revealed < N; revealed++) chars[revealed].style.visibility = "visible";
+        resolve();
+      }
+    };
+    rafId = window.requestAnimationFrame(step);
+  });
+
+  // Orchestrate. Each await re-checks `done` so an interrupt short-circuits.
+  (async () => {
+    if (name) name.style.opacity = "1"; // Stage 2 — name fade (0.5s CSS transition)
+    await wait(500);
+    if (done) return;
+    await wait(400);                    // Stage 3 — orient pause
+    if (done) return;
+    lead.style.opacity = "1";           // Stage 4 — headline types in (chars hidden)
+    await typewriter();
+    if (done) return;
+    if (cta) cta.style.opacity = "1";   // Stage 5 — CTA fades in, then a read beat
+    await wait(500);
+    if (done) return;
+    finish(true);                       // Stage 6 — the CTA's own smooth-scroll
+  })();
 }
 
 /**

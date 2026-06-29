@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Netherlands">
+  <clipPath id="flag-nl-clip">
+    <rect width="16" height="16" rx="4" fill="white"/>
+  </clipPath>
+  <g clip-path="url(#flag-nl-clip)">
+    <rect width="16" height="16" fill="#21468B"/>
+    <rect width="16" height="10.6667" fill="#F9F5EB"/>
+    <rect width="16" height="5.3333" fill="#AE1C28"/>
+  </g>
+</svg>

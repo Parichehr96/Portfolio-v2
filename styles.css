@@ -242,6 +242,34 @@ section {
   50%      { transform: translateY(-4px); }
 }
 
+/* ===== Hero landing sequence (first session visit, motion allowed) =====
+   The <head> gate adds .hero-intro to <html> before first paint, so the name,
+   headline and CTA START hidden — opacity keeps their reserved space, so there's
+   NO layout shift when each reveals. script.js (initHeroIntro) fades the name in,
+   types the headline by flipping per-character spans from hidden→visible
+   (visibility never reflows), reveals the CTA, then reuses the CTA's own
+   smooth-scroll. Any scroll/click/key/tap cancels it and reveals everything.
+   Repeat visits and reduced motion never get this class → the hero is static. */
+.hero-intro .splash-name,
+.hero-intro .splash-lead,
+.hero-intro .splash-cta {
+  opacity: 0;
+}
+.hero-intro .splash-name,
+.hero-intro .splash-cta {
+  transition: opacity 0.5s ease;
+}
+.hero-intro .splash-lead {
+  /* Container fades in fast; the per-character reveal does the visible work. */
+  transition: opacity 0.15s ease;
+}
+/* Typewriter characters — each wrapped char starts hidden; JS flips visibility to
+   visible one at a time (no fade, no slide, no reflow). Plain inline so the text
+   wraps exactly as the un-wrapped headline. */
+.tw-char {
+  visibility: hidden;
+}
+
 /* Hidden tagline (Figma 822:10189) — Figtree Medium 32px, coloured like the page
    bg so it reads as invisible, while staying in the DOM and selectable. The
    custom cursor's cream circle is what makes it legible (see .cursor-reveal). */
@@ -377,15 +405,21 @@ section {
    vs the 8px name→role gap inside the group. Index.html keeps the base 8px gap
    (it has no .layout-left--case modifier). Mobile (≤768px) overrides this back to
    the shared row layout further down. */
+/* Figma 227:12633: the project name and the "Back" link share the top row
+   (space-between); the project description sits under the name. */
 .layout-left--case {
-  gap: 40px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
 }
 .bio-summary {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 4px;                    /* project name → description (Figma 227:12635) */
 }
 
 /* Right sidebar — mirrors the left: 48px top inset, 40px sides/bottom; sticky
@@ -508,7 +542,7 @@ section {
   flex-direction: column;
 }
 .lw-range {
-  font-size: 15px;
+  font-size: 14px;             /* Figma 161:4944 */
   line-height: 1.5;
   color: var(--cream);
 }
@@ -550,7 +584,7 @@ section {
 /* Static label above the section nav (Figma 919:10671). Not part of the
    scroll-tracking active state. Figtree Regular 15px, cream at 70%. */
 .toc-title {
-  font-size: 15px;
+  font-size: 14px;             /* Figma 227:12992 */
   color: rgba(249, 245, 235, 0.7);
 }
 
@@ -566,11 +600,11 @@ section {
   box-sizing: border-box;
   /* Pull each item's left edge onto the rail so the active stroke covers it. */
   margin-left: -0.6px;
-  border-left: 1px solid transparent;
+  border-left: 1.2px solid transparent; /* matches the active stroke width — no text shift */
   padding: 4px 0 4px 12px; /* 12px = stroke→text offset */
   font-size: 14px;
   line-height: normal;
-  color: rgba(249, 245, 235, 0.7); /* inactive: cream 70% */
+  color: rgba(249, 245, 235, 0.25); /* inactive: cream ~25% (Figma nested 50%×50%) */
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -579,8 +613,9 @@ section {
   color: var(--cream);
 }
 .toc-item.is-active {
-  border-left-color: var(--cream-dark); /* active stroke */
+  border-left-color: var(--cream-dark); /* active stroke, 1.2px (Figma 227:12994) */
   font-size: 15px;
+  font-weight: 500;            /* Figtree Medium (Figma 227:12995) */
   color: var(--cream); /* 100% */
 }
 /* Right-sidebar links — Tertiary Button (Figma 662:8615): dashed cream
@@ -629,14 +664,21 @@ section {
   opacity: 0.7;
 }
 .home-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                    /* text → flag (Figma Location 174:13450) */
   font-size: 15px;
   font-weight: 400;
-  color: #F9F5EB;
-  opacity: 0.7;
+  /* 70% via colour alpha (not layer opacity) so the flag stays full-opacity. */
+  color: rgba(249, 245, 235, 0.7);
 }
+/* NL flag (Figma 174:13451) — 16px square, 4px corners. SVG: Assets/images/flag-nl.svg. */
 .ls-flag {
-  font-size: 14px;
-  line-height: 1;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: block;
 }
 
 /* Index left-sidebar groups. Two top-level blocks (bio + contacts) separated by
@@ -667,15 +709,24 @@ section {
 .ls-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;                    /* icon → text */
+  gap: 4px;                    /* icon → text (Figma 166:12846) */
   text-decoration: none;
   color: #F9F5EB;              /* text + icon both inherit this (currentColor) */
 }
+/* Download resume row: tighter 2px icon gap, full-opacity icon (Figma 161:4805). */
+.ls-link--resume {
+  gap: 2px;
+}
 .ls-icon {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: 20px;                 /* Figma icons are 20px (161:4806 etc.) */
+  height: 20px;
   color: #F9F5EB;              /* icon colour = text colour */
+}
+/* Contact icons (email / text / linkedin) sit at 40% opacity; the resume icon
+   stays full-opacity (Figma 152:4765 / 152:4766 / 155:2 all opacity-40). */
+.ls-contacts .ls-link:not(.ls-link--resume) .ls-icon {
+  opacity: 0.4;
 }
 .ls-icon svg {
   display: block;
@@ -742,6 +793,7 @@ section {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;              /* keep "Back" intact at the top-right of the case row */
 }
 /* Back-arrow icon before "Go Back" — 14px, inherits the link's cream colour. */
 .go-back-icon {
@@ -1204,18 +1256,16 @@ section {
   color: var(--cream);
   white-space: nowrap;
 }
-/* Role/subtitle — clamp to 2 lines with an ellipsis (it's the long line that
-   should truncate, not the quote). */
+/* Role/subtitle — truncate to a SINGLE line with an ellipsis (desktop + mobile)
+   so both cards have an equal-height detail block. Full text stays in the DOM and
+   is exposed via the title attribute on hover. */
 .testi-role {
   font-size: 12px;
   font-weight: 300;
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.7;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -1298,7 +1348,7 @@ section {
    crossfade. Reduced-motion fallback (static stacked list) is below. */
 .tl-runway {
   position: relative;
-  height: calc(var(--tl-count, 7) * 60vh);
+  height: calc(var(--tl-count, 6) * 60vh);
 }
 .tl-sticky {
   position: sticky;
@@ -1398,14 +1448,13 @@ section {
   display: flex;
   gap: 24px;
   align-items: flex-start;
-  opacity: 0;
+  /* Inactive panels are not rendered; the active panel AND the just-exited one
+     are visible together (same fixed position) so their content cross-slides. */
   visibility: hidden;
-  transition: opacity 200ms ease, visibility 0s linear 200ms;
 }
-.tl-panel.is-active {
-  opacity: 1;
+.tl-panel.is-active,
+.tl-panel.is-exiting {
   visibility: visible;
-  transition: opacity 300ms ease;
 }
 .tl-text {
   flex: 1 1 0;
@@ -1413,6 +1462,36 @@ section {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* Fixed clip box — the inner content slides INSIDE it; the box never moves. */
+  overflow: hidden;
+}
+/* Sliding content wrappers (added per panel by JS on the animated timeline). The
+   text container (.tl-text) and image frame (.tl-image) stay perfectly still and
+   clip; only these inners move: old content slides up & fades out, new content
+   slides up from below & fades in. transform + opacity only, 450ms ease-out — no
+   scale, blur or bounce. (Absent on mobile / reduced-motion → those paths render
+   the content statically, unchanged.) */
+.tl-text-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tl-text-inner,
+.tl-image-inner {
+  transform: translateY(24px);   /* resting "below" state (inactive / incoming) */
+  opacity: 0;
+  transition: transform 450ms ease-out, opacity 450ms ease-out;
+  will-change: transform, opacity;
+}
+.tl-panel.is-active .tl-text-inner,
+.tl-panel.is-active .tl-image-inner {
+  transform: translateY(0);
+  opacity: 1;
+}
+.tl-panel.is-exiting .tl-text-inner,
+.tl-panel.is-exiting .tl-image-inner {
+  transform: translateY(-24px);  /* slide up & out */
+  opacity: 0;
 }
 .tl-loc {
   font-size: 14px;
@@ -1441,12 +1520,28 @@ section {
   display: flex;
   align-items: flex-end;
   padding: 16px;
+  /* Fixed frame — clips the sliding inner to the 16px-rounded box; never moves. */
+  overflow: hidden;
 }
 .tl-image-label {
   font-size: 12px;
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.4;
+}
+/* Real milestone photo. It lives inside the JS-injected .tl-image-inner crossfade
+   wrapper, so that wrapper fills the slot and the image covers it. Container
+   styles (size, 16px padding, rounding, overflow) are untouched. */
+.tl-image-inner {
+  width: 100%;
+  height: 100%;
+}
+.tl-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 .tl-panel-year {
   display: none;
@@ -1469,6 +1564,14 @@ section {
     opacity: 1;
     visibility: visible;
     align-items: flex-start;
+    transition: none;
+  }
+  /* Crossfade wrappers neutralised so all content shows statically (parity with
+     the mobile fallback). */
+  .tl-text-inner,
+  .tl-image-inner {
+    transform: none;
+    opacity: 1;
     transition: none;
   }
   .tl-panel-year {
@@ -1963,6 +2066,11 @@ section {
     width: 20px;
     height: 20px;
   }
+  /* In the compact bar the icons are the only affordance (labels hidden), so
+     restore full opacity (desktop dims contact icons to 40% per Figma). */
+  .ls-contacts .ls-link:not(.ls-link--resume) .ls-icon {
+    opacity: 1;
+  }
 
   /* ---- RIGHT SIDEBAR — hidden on mobile (live widget / TOC are desktop-only) */
   .layout-right {
@@ -2041,70 +2149,141 @@ section {
     font-size: 13px;
   }
 
-  /* ---- TESTIMONIALS — horizontal scroll, one card ~85vw with a peek ---- */
+  /* ---- TESTIMONIALS — stack vertically (1 column), lighter, 3-line quote ----
+     Desktop keeps its 2-column row; on mobile the cards stack full-width for a
+     vertical-scroll read, with tighter internal spacing and the quote clamped to
+     3 lines so each card stays compact and scannable. */
   .testi-row {
-    height: auto;
-    gap: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    /* Bleed to the screen edges so the next card peeks past the 20px padding. */
-    margin: 0 -20px;
-    padding: 0 20px;
+    flex-direction: column;
+    gap: 32px;                 /* ≥32px separation between the stacked cards */
   }
   .testi-card {
-    flex: 0 0 85vw;
-    height: auto;
-    scroll-snap-align: start;
+    flex: none;
+    width: 100%;
+    gap: 12px;                 /* tighter quote ↔ name/role (was 24px) */
   }
+  .testi-quote {
+    /* Override the desktop 8-line excerpt: exactly 3 lines on mobile. The
+       -webkit-box / box-orient / overflow:hidden come from the base rule, so the
+       ellipsis works the same way (incl. Safari iOS). */
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+  /* The desktop VERTICAL divider becomes a full-width HORIZONTAL rule between the
+     stacked cards (sits between the two cards in the DOM, so the column gap spaces
+     it evenly above and below). */
   .testi-divider {
-    display: none;
+    align-self: stretch;
+    width: auto;
+    height: 0;
+    border-left: 0;
+    border-top: 1px solid rgba(249, 245, 235, 0.12);
   }
 
-  /* ---- TIMELINE — static stacked list (the scroll-lock JS bails ≤768) ----
-     Mirrors the reduced-motion fallback: no runway, no sticky pin, years hidden,
-     each milestone a [year · text · image] block stacked top-to-bottom. */
+  /* ---- TIMELINE — sticky scroll on mobile (full-width slide-up) -------------
+     Same mechanic as desktop (script.js drives the active milestone off scroll
+     position through a 6×60dvh runway) but laid out full-width: one milestone
+     fills a frame pinned BELOW the sticky identity top bar (--tl-bar-h, measured
+     in JS). Each milestone slides up into the constant frame. The desktop year
+     axis + connector line are hidden; the whole panel slides (not the inner
+     crossfade wrappers, which are neutralised here). After the 6th segment the
+     sticky releases and the page scrolls on to Skills. */
   .tl-runway {
-    height: auto;
+    /* 360vh runway. vh first as a fallback for browsers without dvh, then dvh so
+       the runway tracks the dynamic viewport (iOS address-bar collapse). */
+    height: calc(var(--tl-count, 6) * 60vh);
+    height: calc(var(--tl-count, 6) * 60dvh);
   }
   .tl-sticky {
-    position: static;
-    height: auto;
+    position: sticky;
+    top: var(--tl-bar-h, 60px);                 /* sit just under the top bar */
+    height: calc(100vh - var(--tl-bar-h, 60px));
+    height: calc(100dvh - var(--tl-bar-h, 60px));
     justify-content: flex-start;
+    overflow: hidden;                            /* clip the sliding milestones */
   }
   .tl-years,
   .tl-line {
     display: none;
   }
-  .tl-detail {
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+  .tl-inner {
+    height: 100%;
+    width: 100%;
   }
+  /* Fill the space left under the "All About Me" header (which shares the pinned
+     frame) rather than a flat 100% — otherwise header + frame overflow and clip
+     the milestone's bottom copy on short screens. */
+  .timeline {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  .tl-detail {
+    position: relative;
+    flex: 1 1 auto;
+    height: 100%;
+    min-width: 0;
+  }
+  /* Each milestone fills the frame and is absolutely stacked so they overlap and
+     slide through one constant frame: year (top) · image · description. */
   .tl-panel {
-    position: static;
-    opacity: 1;
-    visibility: visible;
+    position: absolute;
+    inset: 0;
     flex-direction: column;
     align-items: flex-start;
-    transition: none;
+    gap: 16px;
+    padding-bottom: 16px;        /* breathing room so copy never hugs the frame edge */
+    /* Slide-up: resting BELOW + transparent → active centred → exiting ABOVE. */
+    transform: translateY(40px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 350ms ease, opacity 350ms ease;
+  }
+  .tl-panel.is-active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  .tl-panel.is-exiting {
+    transform: translateY(-40px);
+    opacity: 0;
+    visibility: visible;
   }
   .tl-panel-year {
     display: block;
-    font-size: 18px;
+    order: 0;
+    flex: none;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1;
     color: #ffffff;
   }
+  /* Image above the description (visual hierarchy); fills the space left between
+     the year and the copy so the whole milestone fits one screen. */
+  .tl-image {
+    order: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+  }
+  .tl-text {
+    order: 2;
+    flex: none;
+    width: 100%;
+    overflow: visible;
+  }
   .tl-title {
     font-size: 22px;
   }
-  .tl-image {
-    flex: none;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
+  /* The whole panel slides on mobile, so the desktop inner crossfade wrappers must
+     NOT also animate — render their content statically inside the sliding panel. */
+  .tl-text-inner,
+  .tl-image-inner {
+    transform: none;
+    opacity: 1;
+    transition: none;
   }
 
   /* ---- SKILLS — single column; questions visible (no hover-gate on mobile) ---- */
@@ -2207,11 +2386,6 @@ section {
   }
   .invisible-text {
     font-size: 20px;
-  }
-
-  /* Testimonials — let the single card fill a little more of the screen */
-  .testi-card {
-    flex-basis: 88vw;
   }
 
   /* Footer padding tighter for the narrowest phones */

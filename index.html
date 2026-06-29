@@ -14,6 +14,27 @@
   />
 
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Hero landing-sequence gate. Adds .hero-intro to <html> BEFORE first paint
+       (so the name/headline/CTA start hidden with no flash) ONLY on the first
+       visit of the session with motion allowed. script.js (initHeroIntro) runs
+       the sequence and removes the class; the 9s failsafe reveals the hero if the
+       sequence never completes. Reduced motion / repeat visits skip all of this. -->
+  <script>
+    (function () {
+      try {
+        var mm = window.matchMedia;
+        var reduce = mm && mm("(prefers-reduced-motion: reduce)").matches;
+        var played = sessionStorage.getItem("heroIntroPlayed") === "1";
+        if (!reduce && !played) {
+          document.documentElement.classList.add("hero-intro");
+          window.setTimeout(function () {
+            document.documentElement.classList.remove("hero-intro");
+          }, 9000);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <main>
@@ -53,18 +74,16 @@
     <div class="layout">
       <!-- Left sidebar — sticky, shared by every section -->
       <aside class="layout-left layout-left--home">
-        <div class="ls-bio">
           <div class="ls-id">
             <h2 class="home-name">Parichehr Talebzadeh</h2>
             <p class="home-role">Product Designer</p>
-            <p class="home-location">Based in Amsterdam <span class="ls-flag" role="img" aria-label="Netherlands">🇳🇱</span></p>
+            <p class="home-location">Based in Amsterdam <img class="ls-flag" src="Assets/images/flag-nl.svg" alt="Netherlands" width="16" height="16" /></p>
           </div>
+        <nav class="ls-contacts" aria-label="Contact">
           <a class="ls-link ls-link--resume" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf" download="Parichehr_Talebzadeh_Resume.pdf">
             <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M5 16.6667H15M10 3.33333V13.3333M7.08333 10.4167L10 13.3333L12.9167 10.4167" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <span class="ls-link-text">Download resume</span>
           </a>
-        </div>
-        <nav class="ls-contacts" aria-label="Contact">
           <a class="ls-link" href="mailto:parichehr.t96@gmail.com">
             <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M14.1667 17.0833H5.83333C3.33333 17.0833 1.66667 15.8333 1.66667 12.9167V7.08333C1.66667 4.16667 3.33333 2.91667 5.83333 2.91667H14.1667C16.6667 2.91667 18.3333 4.16667 18.3333 7.08333V12.9167C18.3333 15.8333 16.6667 17.0833 14.1667 17.0833Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.1667 7.5L11.5583 9.58333C10.7 10.2667 9.29166 10.2667 8.43333 9.58333L5.83333 7.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <span class="ls-link-text">Send an email</span>
@@ -182,7 +201,7 @@
               <div class="testi-details">
                 <div class="testi-id">
                   <p class="testi-name">Amir Tavakoli</p>
-                  <p class="testi-role">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                  <p class="testi-role" title="Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
                 </div>
                 <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
               </div>
@@ -193,7 +212,7 @@
               <div class="testi-details">
                 <div class="testi-id">
                   <p class="testi-name">Kirsten Oliemans</p>
-                  <p class="testi-role">Sales &amp; UX/UI Design at Webpaste</p>
+                  <p class="testi-role" title="Sales &amp; UX/UI Design at Webpaste">Sales &amp; UX/UI Design at Webpaste</p>
                 </div>
                 <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
               </div>
@@ -216,7 +235,7 @@
              Years (left, right-aligned toward a vertical line with a dot on the
              active year) + the active milestone's text & 301×301 image (right).
              Reduced-motion fallback (static stacked list) lives in styles.css. -->
-        <div class="tl-runway" id="tl-runway" style="--tl-count: 7;">
+        <div class="tl-runway" id="tl-runway" style="--tl-count: 6;">
           <div class="tl-sticky">
             <div class="tl-inner">
               <div class="mid-header">
@@ -231,8 +250,7 @@
                   <button class="tl-year" type="button" role="tab" data-index="2" aria-selected="false">2022</button>
                   <button class="tl-year" type="button" role="tab" data-index="3" aria-selected="false">2023</button>
                   <button class="tl-year" type="button" role="tab" data-index="4" aria-selected="false">2025</button>
-                  <button class="tl-year" type="button" role="tab" data-index="5" aria-selected="false">2025</button>
-                  <button class="tl-year" type="button" role="tab" data-index="6" aria-selected="false">2026</button>
+                  <button class="tl-year" type="button" role="tab" data-index="5" aria-selected="false">2026</button>
                 </div>
                 <div class="tl-detail">
                 <div class="tl-panel is-active" data-index="0">
@@ -242,7 +260,7 @@
                     <p class="tl-title">Bachelor's in Industrial Design</p>
                     <p class="tl-body">Art University of Isfahan. A foundation in creative sensibility and systems thinking — learning to break big problems into designable parts.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Bachelor's in Industrial Design — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2017-2021.png" loading="lazy" alt="Bachelor's in Industrial Design, Isfahan, 2017" /></div>
                 </div>
                 <div class="tl-panel" data-index="1">
                   <span class="tl-panel-year" aria-hidden="true">2021</span>
@@ -251,7 +269,7 @@
                     <p class="tl-title">Enterprise ERP for oil and gas industry</p>
                     <p class="tl-body">One of the most challenging products I've worked on. Understanding interconnected systems, stakeholder needs, and product complexity wasn't optional — it was essential. Often the only designer in the room, working closely with product managers and engineers.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Enterprise ERP for oil and gas — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2021-2022.png" loading="lazy" alt="Enterprise ERP for oil and gas, Canada remote, 2021" /></div>
                 </div>
                 <div class="tl-panel" data-index="2">
                   <span class="tl-panel-year" aria-hidden="true">2022</span>
@@ -260,7 +278,7 @@
                     <p class="tl-title">B2B ecosystem for auto parts</p>
                     <p class="tl-body">Designed a connected three-product system — consumer site, agent dashboard, repairman app — with a shared design system. Learned to hold multiple audiences and platforms in mind simultaneously.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">B2B ecosystem for auto parts — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2022-2023.png" loading="lazy" alt="B2B ecosystem for auto parts, Tehran, 2022" /></div>
                 </div>
                 <div class="tl-panel" data-index="3">
                   <span class="tl-panel-year" aria-hidden="true">2023</span>
@@ -269,34 +287,25 @@
                     <p class="tl-title">Web3 consumer products on Telegram</p>
                     <p class="tl-body">Sole designer on ONTON for 13 months. Grew the product from 87 to 1,500 daily active users. I naturally notice broken handoffs, conflicting requirements, and gaps between what a product promises and what users actually experience.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Web3 consumer products on Telegram — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2023-2025.png" loading="lazy" alt="Web3 consumer products on Telegram, Finland remote, 2023" /></div>
                 </div>
                 <div class="tl-panel" data-index="4">
-                  <span class="tl-panel-year" aria-hidden="true">2025</span>
-                  <div class="tl-text">
-                    <p class="tl-loc">Netherlands</p>
-                    <p class="tl-title">Moved to the Netherlands</p>
-                    <p class="tl-body">Because of the way people here approach problems. Not just in design, but in how they collaborate — incrementally, openly, and without ego. That's the kind of culture I want to contribute to.</p>
-                  </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Moved to the Netherlands — image placeholder</span></div>
-                </div>
-                <div class="tl-panel" data-index="5">
                   <span class="tl-panel-year" aria-hidden="true">2025</span>
                   <div class="tl-text">
                     <p class="tl-loc">Amsterdam</p>
                     <p class="tl-title">Master's in Interaction Design</p>
                     <p class="tl-body">Amsterdam University of Applied Sciences. Deepened my understanding of human-centered design, emerging technologies, and interactive systems. Whether designing a consumer app or an enterprise platform, I enjoy untangling complexity until it feels effortless.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Master's in Interaction Design — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2025-2026.png" loading="lazy" alt="Master's in Interaction Design, Amsterdam, 2025" /></div>
                 </div>
-                <div class="tl-panel" data-index="6">
+                <div class="tl-panel" data-index="5">
                   <span class="tl-panel-year" aria-hidden="true">2026</span>
                   <div class="tl-text">
                     <p class="tl-loc">Amsterdam</p>
                     <p class="tl-title">Looking for a team</p>
                     <p class="tl-body">I'm looking for a team building ambitious products where design has a meaningful influence on product decisions, not just interfaces.</p>
                   </div>
-                  <div class="tl-image" aria-hidden="true"><span class="tl-image-label">Looking for a team — image placeholder</span></div>
+                  <div class="tl-image"><img src="Assets/images/timeline/2026-.png" loading="lazy" alt="Looking for a team, Amsterdam, 2026" /></div>
                 </div>
                 </div>
               </div>
