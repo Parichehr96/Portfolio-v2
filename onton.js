@@ -129,7 +129,12 @@ function initFooterContact() {
   backdrop.className = "footer-backdrop";
   backdrop.style.cssText =
     "position:fixed;background:var(--bg);z-index:149;pointer-events:none;display:none;";
-  document.body.appendChild(backdrop);
+  // IMPORTANT: append inside <main> (not <body>). <main> is a z-index:1 stacking
+  // context, so the card's z-index:150 is scoped to it. A body-level backdrop at
+  // z-index:149 would out-rank the whole <main> (z-index:1) in the root context
+  // and paint OVER the card + its content — the blank-contact bug on case studies.
+  // Keeping the backdrop inside <main> preserves backdrop(149) < card(150).
+  (document.querySelector("main") || document.body).appendChild(backdrop);
 
   const ED = 200;          // scroll distance (px) that drives a full expansion
   const SNAP_MS = 300;     // snap / click animation duration
@@ -278,19 +283,25 @@ function initFooterContact() {
       const navSpace = nav
         ? Math.max(0, window.innerHeight - nav.getBoundingClientRect().top + 16)
         : 0;
-      const b = lerp(0, navSpace, p);
-      const h = lerp(H, window.innerHeight - navSpace, p);
+      // Figma 308:6011 — expanded card is an INSET floating panel (48px top +
+      // bottom clearance; case-study pages have no nav so navSpace = 0), matching
+      // the home page. The 40px horizontal inset comes from the stage box.
+      const VPAD = 48;
+      const b = lerp(0, VPAD + navSpace, p);
+      const h = lerp(H, window.innerHeight - 2 * VPAD - navSpace, p);
+      const topGap = lerp(0, VPAD, p);
       card.style.position = "fixed";
       card.style.left = rect.left + "px";
       card.style.width = rect.width + "px";
       card.style.bottom = b + "px";
       card.style.height = h + "px";
       card.style.zIndex = "150";
+      // Backdrop fills the whole column height so the inset gaps read as #111323.
       backdrop.style.display = "block";
       backdrop.style.left = rect.left + "px";
       backdrop.style.width = rect.width + "px";
       backdrop.style.bottom = "0px";
-      backdrop.style.height = h + b + "px";
+      backdrop.style.height = h + b + topGap + "px";
     }
   };
 

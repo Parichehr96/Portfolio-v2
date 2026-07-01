@@ -1002,21 +1002,28 @@ function initFooterContact() {
       const navSpace = nav
         ? Math.max(0, window.innerHeight - nav.getBoundingClientRect().top + 16)
         : 0;
-      const b = lerp(0, navSpace, p);
-      const h = lerp(H, window.innerHeight - navSpace, p);
+      // Figma 308:6011 — the expanded card is an INSET floating panel, not a
+      // full-viewport fill: 48px clearance top AND bottom (plus nav clearance on
+      // the home page) so the #111323 page shows around all four sides. The 40px
+      // horizontal inset already comes from the stage box (home-middle padding).
+      // Interpolated by p so the expand/collapse animation stays smooth.
+      const VPAD = 48;
+      const b = lerp(0, VPAD + navSpace, p);
+      const h = lerp(H, window.innerHeight - 2 * VPAD - navSpace, p);
+      const topGap = lerp(0, VPAD, p);
       card.style.position = "fixed";
       card.style.left = rect.left + "px";
       card.style.width = rect.width + "px";
       card.style.bottom = b + "px";
       card.style.height = h + "px";
       card.style.zIndex = "150"; // above content + sidebars, below the nav (200)
-      // Backdrop fills from the viewport bottom up to the card's top, so the nav
-      // sits on clean page colour (not works content) in the gap below the card.
+      // Backdrop fills the whole column height behind the card so the inset gaps
+      // (top + bottom) read as clean #111323, never bleeding works content or nav.
       backdrop.style.display = "block";
       backdrop.style.left = rect.left + "px";
       backdrop.style.width = rect.width + "px";
       backdrop.style.bottom = "0px";
-      backdrop.style.height = h + b + "px";
+      backdrop.style.height = h + b + topGap + "px";
     }
 
     const nowExpanded = pc > 0.5;
