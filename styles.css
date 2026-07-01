@@ -824,6 +824,16 @@ section {
   gap: 80px;
 }
 
+/* Contact section (bottom of #works) — Figma Contact/Desktop/Dark (308:6011)
+   insets the card 48px from the column bottom, vs the 40px general bottom inset.
+   Desktop-only refinement (Figma frame is 1512 wide); smaller tiers keep their
+   uniform responsive padding. Scoped to #works so #home/#about are unaffected. */
+@media (min-width: 1280px) {
+  #works .home-middle {
+    padding-bottom: 48px;
+  }
+}
+
 /* ===== #home middle — content blocks ===== */
 .mid-block {
   display: flex;
