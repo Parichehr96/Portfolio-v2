@@ -878,6 +878,14 @@ section {
   font-weight: 600;
 }
 
+/* Resume CTA under the How I Think table. .mid-block is a stretch flex column,
+   so align-self is what centres it; the 24px above comes from that block's own
+   gap and the space below from .home-middle's section gap. */
+.think-resume {
+  align-self: center;
+  text-decoration: none;
+}
+
 /* Scoped overrides (the base .mid-body is shared by the About bio, which stays
    Regular/1.8). Home Summary body is Light; the How I Work intro line is tighter. */
 .mid-body--light { font-weight: 300; }

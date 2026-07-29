@@ -101,7 +101,7 @@
     gtag('config', 'G-JXCBH3PH93');
   </script>
 </head>
-<body>
+<body data-page="home">
   <main>
     <section id="splash">
       <!-- Bio container (Figma 662:8525): fills the viewport minus 120px padding
@@ -259,6 +259,15 @@
               <div class="think-cell think-cell--this"><span>Evaluating success through clarity</span></div>
             </div>
           </div>
+          <!-- Resume CTA — the shared Primary Button. The dashed pill border and
+               the cursor-origin radial hover fill are both injected by
+               button-fill.js, so no extra markup or wiring is needed here. -->
+          <a class="btn-primary think-resume reveal-item"
+             href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf"
+             download="Parichehr_Talebzadeh_Resume.pdf"
+             target="_blank" rel="noopener noreferrer">
+            <span class="btn-primary-label">Download Resume</span>
+          </a>
         </div>
 
         <!-- 4. WHAT OTHERS THINK (Figma 140:3517) — 2 cards: quote on top,
@@ -675,6 +684,9 @@
   <script defer src="mailto-fallback.js"></script>
   <script defer src="button-fill.js"></script>
   <script defer src="Assets/js/amsterdam-widget.js"></script>
+
+  <!-- GA4 custom events (see Assets/js/analytics-events.js) -->
+  <script defer src="Assets/js/analytics-events.js"></script>
 
   <!-- Vercel Web Analytics -->
   <script>
