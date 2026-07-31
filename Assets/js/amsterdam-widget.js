@@ -1,8 +1,13 @@
-/* "Live in Amsterdam" widget — home page right sidebar only.
+/* Reduced time widget — home page LEFT sidebar (Figma 6:24129 / 16:3216).
  *
- * Shows the visitor's local time (and Amsterdam time when they differ), a live
- * status (dot + headline + sub-text) derived from the current Amsterdam wall
- * clock, and a "best time to reach me" range converted to the visitor's zone.
+ * Shows the visitor's local time plus a live status (headline + sub-text)
+ * derived from the current Amsterdam wall clock.
+ *
+ * Previously the right-sidebar "Live in Amsterdam" widget. The "best time to
+ * reach me" range and the "Speak with me" CTA were dropped with the redesign —
+ * the Contact nav owns contact now — so the zone-conversion helper and the
+ * "HH:MM in Amsterdam" second line went with them. The SCHEDULE blocks and the
+ * once-per-session phrasing pick are unchanged.
  *
  * Zero dependencies. Timezone + DST handled natively by the IANA string
  * "Europe/Amsterdam" via the Intl API — no manual UTC offsets baked in.
@@ -10,16 +15,13 @@
 (function () {
   "use strict";
 
-  var root = document.getElementById("live-widget");
+  var root = document.getElementById("ls-clock");
   if (!root) return; // only present on index.html
 
   var els = {
-    visitorTime: document.getElementById("lw-visitor-time"),
-    amsTime: document.getElementById("lw-ams-time"),
-    dot: document.getElementById("lw-dot"),
-    head: document.getElementById("lw-status-head"),
-    sub: document.getElementById("lw-status-sub"),
-    range: document.getElementById("lw-range"),
+    time: document.getElementById("ls-clock-time"),
+    head: document.getElementById("ls-clock-head"),
+    sub: document.getElementById("ls-clock-sub"),
   };
 
   var M = function (h, m) { return h * 60 + (m || 0); };
@@ -116,52 +118,13 @@
     return { h: +parts[0], m: +parts[1], str: s };
   }
 
-  // Convert an Amsterdam wall time (h:m, today) to the visitor's local "HH:MM".
-  function amsWallToLocal(h, m) {
-    var now = new Date();
-    // Amsterdam's current UTC offset (ms), DST-aware.
-    var amsOffsetMs =
-      new Date(now.toLocaleString("en-US", { timeZone: "Europe/Amsterdam" })) -
-      new Date(now.toLocaleString("en-US", { timeZone: "UTC" }));
-    // Today's date in Amsterdam.
-    var p = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Europe/Amsterdam", year: "numeric", month: "2-digit", day: "2-digit",
-    }).formatToParts(now);
-    var get = function (t) { return +p.find(function (x) { return x.type === t; }).value; };
-    // UTC instant for "Amsterdam y-mo-d h:m", then format in the visitor's zone.
-    var utcMs = Date.UTC(get("year"), get("month") - 1, get("day"), h, m) - amsOffsetMs;
-    return hhmm(new Date(utcMs));
-  }
-
-  // Best time to reach me: 09:00–17:00 CET, converted if the visitor isn't in CET.
-  function renderRange() {
-    var a = amsWallToLocal(9, 0);
-    var b = amsWallToLocal(17, 0);
-    if (a === "09:00" && b === "17:00") {
-      els.range.textContent = "09:00 – 17:00";
-    } else {
-      els.range.textContent = a + " – " + b + " (your time)";
-    }
-  }
-
   function render() {
     var now = new Date();
-    var local = hhmm(now);          // visitor local
-    var ams = amsHM(now);           // Amsterdam
+    var ams = amsHM(now);           // Amsterdam — drives the status text
 
-    els.visitorTime.textContent = local;
+    els.time.textContent = hhmm(now); // visitor local
 
-    // Second line only when the visitor's wall clock differs from Amsterdam's
-    // (covers both other zones and same-offset zones — no redundancy).
-    if (local === ams.str) {
-      els.amsTime.hidden = true;
-      els.amsTime.textContent = "";
-    } else {
-      els.amsTime.hidden = false;
-      els.amsTime.textContent = ams.str + " in Amsterdam";
-    }
-
-    // Active block by Amsterdam minutes → its pre-picked phrasing + dot state.
+    // Active block by Amsterdam minutes → its pre-picked phrasing + state.
     var mins = ams.h * 60 + ams.m;
     var idx = 0;
     for (var i = 0; i < SCHEDULE.length; i++) {
@@ -171,11 +134,13 @@
     var variation = block.v[picks[idx]];
     els.head.textContent = variation.text;
     els.sub.textContent = variation.sub;
-    els.dot.className = "lw-dot lw-dot--" + block.dot;
+    // The redesigned connector has no state dot, so `block.dot` no longer paints
+    // anything. Kept on the root as a data attribute so the live state is still
+    // addressable if the cue comes back.
+    root.setAttribute("data-state", block.dot);
   }
 
-  renderRange();
   render();
   // Recompute clock + status every minute (DST handled by the zone string).
-  setInterval(function () { render(); renderRange(); }, 60000);
+  setInterval(render, 60000);
 })();

@@ -61,11 +61,12 @@
   <meta name="twitter:description" content="Product designer building interaction systems. Based in Amsterdam." />
   <meta name="twitter:image" content="https://parichehr.design/Assets/og/og-preview.png" />
 
-  <!-- Figtree from Google Fonts (300, 400, 500, 600 + light italic) -->
+  <!-- Figtree from Google Fonts (300, 400, 500, 600 + light italic).
+       DM Mono Regular (400) is the Snake panel's score readout (Figma 11:5527). -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400&display=swap"
     rel="stylesheet"
   />
 
@@ -137,32 +138,48 @@
     </section>
     <!-- One continuous 3-column page layout; sidebars persist across ALL sections -->
     <div class="layout">
-      <!-- Left sidebar — sticky, shared by every section -->
+      <!-- Left sidebar — sticky, shared by every section. Figma 6:24129
+           ("Panel=Left, Page=Home"): the identity block, then the reduced time
+           widget 40px below. The contact links that used to live here are gone
+           — the Contact nav owns contact now. -->
       <aside class="layout-left layout-left--home">
-          <div class="ls-id">
-            <h2 class="home-name">Parichehr Talebzadeh</h2>
-            <p class="home-role">Product Designer</p>
-            <p class="home-location">Based in Amsterdam <img class="ls-flag" src="Assets/images/flag-nl.svg" alt="Netherlands" width="16" height="16" /></p>
+        <!-- Snake's left-panel render target (Epic 5 Part 2). The game is ONE
+             logical grid whose right half lives in the right sidebar; this canvas
+             draws the columns that belong to this panel, so the snake teleports
+             between the two and the middle column — which has no canvas — can
+             never show a snake pixel. Sized and positioned by
+             Assets/js/snake.js; painted behind this panel's text (z-index -1) so
+             it slides over the grid background but under the name and clock. -->
+        <canvas class="snake-canvas snake-canvas--left" id="snake-canvas-left" aria-hidden="true"></canvas>
+
+        <div class="ls-id">
+          <h2 class="home-name">Pari<span class="ls-name-rest">chehr Talebzadeh</span></h2>
+          <p class="ls-role">Product Designer in <img class="ls-flag" src="Assets/images/flag-nl.svg" alt="the Netherlands" width="16" height="16" /></p>
+        </div>
+
+        <!-- Reduced time widget (Figma 16:3216): clock, status headline, sub-line.
+             Populated by Assets/js/amsterdam-widget.js. -->
+        <div class="ls-clock" id="ls-clock">
+          <p class="ls-clock-time" id="ls-clock-time" aria-live="polite">--:--</p>
+          <div class="ls-clock-status">
+            <!-- "Line 31" (Figma 16:3222) — a 20x10 L linking the clock to the
+                 status line, with the live status dot at its tip. The L is
+                 static navy-light; the dot takes its colour (and pulse) from
+                 [data-state] on #ls-clock. -->
+            <span class="ls-clock-bracket" aria-hidden="true">
+              <svg viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.599806 0.300048C0.599804 0.134362 0.46549 4.79194e-05 0.299805 4.7942e-05C0.134119 4.79645e-05 -0.000194542 0.134363 -0.00019455 0.300048L0.299805 0.300048L0.599806 0.300048ZM0.299806 10.3L-0.000193079 10.3L-0.000193092 10.6L0.299806 10.6L0.299806 10.3ZM0.299805 0.300048L-0.00019455 0.300048L-0.000193079 10.3L0.299806 10.3L0.599807 10.3L0.599806 0.300048L0.299805 0.300048ZM0.299806 10.3L0.299806 10.6L20.2998 10.6L20.2998 10.3L20.2998 10L0.299806 10L0.299806 10.3Z" fill="#B3BAE1" fill-opacity="0.7"/>
+                <circle class="ls-clock-dot" cx="20.2998" cy="10.3" r="1.6" />
+              </svg>
+            </span>
+            <div class="ls-clock-text">
+              <p class="ls-clock-head" id="ls-clock-head"></p>
+              <p class="ls-clock-sub" id="ls-clock-sub"></p>
+            </div>
           </div>
-        <nav class="ls-contacts" aria-label="Contact">
-          <a class="ls-link ls-link--resume" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf" download="Parichehr_Talebzadeh_Resume.pdf">
-            <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M5 16.6666H15M10 3.33325V13.3333M7.08333 10.4166L10 13.3333L12.9167 10.4166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span class="ls-link-text">Download resume</span>
-          </a>
-          <a class="ls-link" href="mailto:info@parichehr.design">
-            <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M14.167 17.0834H5.83366C3.33366 17.0834 1.66699 15.8334 1.66699 12.9167V7.08341C1.66699 4.16675 3.33366 2.91675 5.83366 2.91675H14.167C16.667 2.91675 18.3337 4.16675 18.3337 7.08341V12.9167C18.3337 15.8334 16.667 17.0834 14.167 17.0834Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.1663 7.5L11.558 9.58333C10.6997 10.2667 9.29134 10.2667 8.433 9.58333L5.83301 7.5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span class="ls-link-text">Send an email</span>
-          </a>
-          <a class="ls-link" href="https://wa.me/31657248971" target="_blank" rel="noopener noreferrer">
-            <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M5.75033 17.1667C7.00033 17.9167 8.50033 18.3334 10.0003 18.3334C14.5837 18.3334 18.3337 14.5834 18.3337 10.0001C18.3337 5.41675 14.5837 1.66675 10.0003 1.66675C5.41699 1.66675 1.66699 5.41675 1.66699 10.0001C1.66699 11.5001 2.08366 12.9167 2.75033 14.1667L2.10744 16.6394C1.91271 17.3883 2.60592 18.0652 3.34998 17.8526L5.75033 17.1667Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.75 12.3737C13.75 12.5087 13.72 12.6475 13.6561 12.7825C13.5923 12.9175 13.5096 13.045 13.4007 13.165C13.2167 13.3675 13.0139 13.5138 12.7848 13.6075C12.5595 13.7013 12.3153 13.75 12.0525 13.75C11.6694 13.75 11.26 13.66 10.8281 13.4763C10.3962 13.2925 9.96432 13.045 9.53618 12.7338C9.10428 12.4188 8.69492 12.07 8.30433 11.6837C7.9175 11.2937 7.56823 10.885 7.25651 10.4575C6.94855 10.03 6.70068 9.6025 6.52041 9.17875C6.34014 8.75125 6.25 8.3425 6.25 7.9525C6.25 7.6975 6.29507 7.45375 6.3852 7.22875C6.47534 7 6.61805 6.79 6.8171 6.6025C7.05746 6.36625 7.32036 6.25 7.59827 6.25C7.70343 6.25 7.80859 6.2725 7.90248 6.3175C8.00013 6.3625 8.0865 6.43 8.15411 6.5275L9.02541 7.75375C9.09301 7.8475 9.14184 7.93375 9.17564 8.01625C9.20944 8.095 9.22822 8.17375 9.22822 8.245C9.22822 8.335 9.20193 8.425 9.14935 8.51125C9.10053 8.5975 9.02917 8.6875 8.93903 8.7775L8.65361 9.07375C8.61229 9.115 8.59352 9.16375 8.59352 9.22375C8.59352 9.25375 8.59727 9.28 8.60478 9.31C8.61605 9.34 8.62732 9.3625 8.63483 9.385C8.70243 9.50875 8.81885 9.67 8.9841 9.865C9.1531 10.06 9.33337 10.2588 9.52867 10.4575C9.73147 10.6563 9.92677 10.84 10.1258 11.0087C10.3211 11.1737 10.4826 11.2862 10.6103 11.3537C10.6291 11.3612 10.6516 11.3725 10.6779 11.3837C10.7079 11.395 10.738 11.3987 10.7718 11.3987C10.8356 11.3987 10.8845 11.3763 10.9258 11.335L11.2112 11.0538C11.3051 10.96 11.3952 10.8887 11.4816 10.8438C11.568 10.7912 11.6544 10.765 11.7482 10.765C11.8196 10.765 11.8947 10.78 11.9773 10.8138C12.06 10.8475 12.1463 10.8963 12.2402 10.96L13.4834 11.8412C13.581 11.9087 13.6486 11.9875 13.6899 12.0812C13.7275 12.175 13.75 12.2687 13.75 12.3737Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10"/></svg></span>
-            <span class="ls-link-text">Drop a text</span>
-          </a>
-          <a class="ls-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">
-            <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M5.83333 8.33341V14.1667M9.16667 10.8334V14.1667M9.16667 10.8334C9.16667 10.5051 9.23133 10.18 9.35697 9.87671C9.4826 9.57339 9.66675 9.29779 9.8989 9.06565C10.131 8.8335 10.4066 8.64935 10.71 8.52372C11.0133 8.39808 11.3384 8.33341 11.6667 8.33341C11.995 8.33341 12.3201 8.39808 12.6234 8.52372C12.9267 8.64935 13.2023 8.8335 13.4344 9.06565C13.6666 9.29779 13.8507 9.57339 13.9764 9.87671C14.102 10.18 14.1667 10.5051 14.1667 10.8334V14.1667M9.16667 10.8334V8.33341M5.9375 5.62508H5.83333M6.04167 5.62508C6.04167 5.68033 6.01972 5.73333 5.98065 5.7724C5.94158 5.81147 5.88859 5.83341 5.83333 5.83341C5.77808 5.83341 5.72509 5.81147 5.68602 5.7724C5.64695 5.73333 5.625 5.68033 5.625 5.62508C5.625 5.56983 5.64695 5.51684 5.68602 5.47777C5.72509 5.4387 5.77808 5.41675 5.83333 5.41675C5.88859 5.41675 5.94158 5.4387 5.98065 5.47777C6.01972 5.51684 6.04167 5.56983 6.04167 5.62508Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 10C2.5 6.46417 2.5 4.69667 3.59833 3.59833C4.69667 2.5 6.465 2.5 10 2.5C13.535 2.5 15.3033 2.5 16.4017 3.59833C17.5 4.69667 17.5 6.465 17.5 10C17.5 13.535 17.5 15.3033 16.4017 16.4017C15.3033 17.5 13.535 17.5 10 17.5C6.465 17.5 4.69667 17.5 3.59833 16.4017C2.5 15.3033 2.5 13.535 2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span class="ls-link-text">Visit Linkedin</span>
-          </a>
-        </nav>
+        </div>
       </aside>
+
 
       <!-- Middle column — holds every section's content -->
       <div class="layout-main">
@@ -173,132 +190,198 @@
           <h2 class="home-name">Parichehr Talebzadeh</h2>
           <p class="home-role">Product Designer</p>
         </div>
-        <!-- 1. SUMMARY -->
-        <div class="mid-block">
+        <!-- 1. AT A GLANCE (Figma "Work Experience" 6:25769). The nav label for
+             this section stays "Summary" — only the on-page header changed. -->
+        <div class="mid-block" id="summary">
           <div class="mid-header reveal-item">
-            <span class="mid-label">Summary</span>
+            <span class="mid-label">At a Glance</span>
             <span class="mid-rule"></span>
           </div>
-          <p class="mid-body mid-body--light reveal-item">I design complex products that real people actually use. Over five years I’ve shipped end-to-end across consumer apps, B2B platforms, and Web3; building design systems, structuring user flows, and turning messy multi-audience problems into products that hold together at scale. Currently based in Amsterdam, looking for a team that ships with intention.</p>
-          <!-- Mobile-only resume link (the sticky top bar drops it for space; CSS
-               reveals this in-content copy ≤768px). Mirrors the sidebar .ls-link. -->
-          <a class="ls-link resume-mobile reveal-item" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf" download="Parichehr_Talebzadeh_Resume.pdf">
-            <span class="ls-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" focusable="false"><path d="M5 16.6666H15M10 3.33325V13.3333M7.08333 10.4166L10 13.3333L12.9167 10.4166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span class="ls-link-text">Download resume</span>
-          </a>
+
+          <!-- Stat + education cards (Figma 23:8085) -->
+          <div class="glance-cards reveal-item">
+            <div class="glance-row">
+              <div class="glance-card">
+                <p class="glance-label glance-label--stat">Years of experience</p>
+                <p class="glance-stat">5+</p>
+              </div>
+              <div class="glance-card">
+                <p class="glance-label glance-label--stat">Shipped Products</p>
+                <p class="glance-stat">6</p>
+              </div>
+              <div class="glance-card">
+                <p class="glance-label glance-label--stat">Side Projects</p>
+                <p class="glance-stat">8</p>
+              </div>
+            </div>
+            <div class="glance-row">
+              <div class="glance-card glance-card--edu">
+                <p class="glance-edu">Industrial Design</p>
+                <p class="glance-label">Bachelor at AUI</p>
+              </div>
+              <div class="glance-card glance-card--edu">
+                <p class="glance-edu">Interaction Design</p>
+                <p class="glance-label">Master at HvA</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Body copy, availability, domain tags (Figma 23:8062) -->
+          <div class="glance-intro reveal-item">
+            <p class="mid-body">I design complex products that real people actually use. Five years across consumer apps, B2B platforms, and Web3, usually as the only designer in the room. I build design systems, structure multi-audience flows, and turn messy problems into products that hold together at scale. Based in Amsterdam, looking for a team building something worth the complexity.</p>
+            <p class="glance-availability">Available immediately</p>
+            <!-- Chips and the resume link share ONE row (Figma 53:8182): a flex
+                 row, 8px gap, bottom-aligned. The chip list flexes to fill
+                 (Figma flex:1 0 0) and the link is shrink-0, which is what pushes
+                 it to the right end of the row. -->
+            <div class="glance-tagrow">
+              <!-- Display-only domain tags: labels, not filters. No link, no
+                   button, no handler — deliberately inert. -->
+              <ul class="glance-tags">
+                <li class="glance-tag">Web3</li>
+                <li class="glance-tag">Enterprise</li>
+                <li class="glance-tag">Consumer</li>
+                <li class="glance-tag">EdTech</li>
+              </ul>
+
+              <!-- Resume CTA, moved here from under the milestone timeline. Figma
+                   53:8173 is a Tertiary Button: 15px Figtree Regular cream with a
+                   dashed 1px cream underline and pb 4px — NO icon (the component
+                   has a 4px icon gap but the instance ships text only). The
+                   underline itself comes from the shared tertiary rule. -->
+              <a class="glance-resume" href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf"
+                 download="Parichehr_Talebzadeh_Resume.pdf"
+                 target="_blank" rel="noopener noreferrer">Download Resume</a>
+            </div>
+          </div>
         </div>
 
         <!-- 2. PROJECTS (Figma 140:3498) — filter chips + project list.
              Replaces the old Services + Works + Strengths sections. -->
-        <div class="mid-block">
+        <div class="mid-block" id="featured-works">
           <div class="mid-header reveal-item">
             <span class="mid-label">Projects</span>
             <span class="mid-rule"></span>
           </div>
-          <div class="proj-filters reveal-item" id="project-filters">
-            <button class="btn-primary" type="button" data-filter="all"><span class="btn-primary-label">All projects</span></button>
-            <button class="btn-primary selected" type="button" data-filter="featured"><span class="btn-primary-label">Featured projects</span></button>
-            <button class="btn-primary" type="button" data-filter="playground"><span class="btn-primary-label">Playground</span></button>
-          </div>
-          <div class="work-list reveal-item" id="project-list">
-            <!-- featured = case studies (internal routes); playground = side projects/
-                 experiments. Ordered by year desc (Figma 227:8225). External playground
-                 rows carry .work-arrow (mirrored vuesax "Arrow/link" 140:3991, hover-only)
-                 + target/rel; internal case-study rows never get the arrow. -->
-            <a class="work-row" href="https://hackathonharlem.vercel.app/" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">Maverx</span><span class="work-sub">Digilize Hackathon</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2026</span></a>
-            <a class="work-row" data-tags="playground"><span class="work-name">ViaVia</span><span class="work-sub">Master’s project</span><span class="work-dots"></span><span class="work-year">2026</span></a>
-            <a class="work-row" data-tags="playground"><span class="work-name">Mindful Meet</span><span class="work-sub">Master’s project</span><span class="work-dots"></span><span class="work-year">2025</span></a>
-            <a class="work-row" href="onton.html" data-tags="featured"><span class="work-name">ONTON</span><span class="work-sub">Pomegroup</span><span class="work-dots"></span><span class="work-year">2024-2025</span></a>
-            <a class="work-row" href="challenquiz.html" data-tags="featured"><span class="work-name">Challenquiz</span><span class="work-sub">Pomegroup</span><span class="work-dots"></span><span class="work-year">2023-2024</span></a>
-            <a class="work-row" href="ezam.html" data-tags="featured"><span class="work-name">Ezam Part</span><span class="work-sub">Ezam</span><span class="work-dots"></span><span class="work-year">2022-2023</span></a>
-            <a class="work-row" href="https://www.behance.net/gallery/157057987/Filala-Library-mobile-app-for-kids-2-5-years-old" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">Filala</span><span class="work-sub">Volunteer</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2022</span></a>
-            <a class="work-row" data-tags="featured"><span class="work-name">WOW Global Solution</span><span class="work-sub">RDSysCo</span><span class="work-dots"></span><span class="work-year">2021-2022</span></a>
-            <a class="work-row" href="https://www.behance.net/gallery/157018767/Golestan-Educational-ERP-for-universities-(Redesign)" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">Golestan ERP</span><span class="work-sub">Bachelor’s project</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2021</span></a>
-            <a class="work-row" href="https://www.behance.net/gallery/156981393/maaxu-Virtual-Inventory-for-Instagram-shops" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">maaxu</span><span class="work-sub">Personal project</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2021</span></a>
-            <a class="work-row" href="https://www.behance.net/gallery/157009357/Living-Maples-Pill-reminder-app-for-seniors-over-60" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">Living Maples</span><span class="work-sub">Internship Project</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2021</span></a>
-            <a class="work-row" href="https://www.behance.net/gallery/156982595/Navigator-app-University-Ergonomic-Project-(3)" target="_blank" rel="noopener noreferrer" data-tags="playground"><span class="work-name">Polaris</span><span class="work-sub">Bachelor’s ergonomics project</span><svg class="work-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true" focusable="false"><path d="M20.5 22.75H3.5C3.09 22.75 2.75 22.41 2.75 22C2.75 21.59 3.09 21.25 3.5 21.25H20.5C20.91 21.25 21.25 21.59 21.25 22C21.25 22.41 20.91 22.75 20.5 22.75Z" fill="currentColor"/><path d="M18.9999 18.25C18.8099 18.25 18.6199 18.18 18.4699 18.03L4.46994 4.03C4.17994 3.74 4.17994 3.26 4.46994 2.97C4.75994 2.68 5.23994 2.68 5.52994 2.97L19.5299 16.97C19.8199 17.26 19.8199 17.74 19.5299 18.03C19.3799 18.18 19.1899 18.25 18.9999 18.25Z" fill="currentColor"/><path d="M5 14.52C4.59 14.52 4.25 14.18 4.25 13.77V3.5C4.25 3.09 4.59 2.75 5 2.75H15.27C15.68 2.75 16.02 3.09 16.02 3.5C16.02 3.91 15.68 4.25 15.27 4.25H5.75V13.77C5.75 14.18 5.41 14.52 5 14.52Z" fill="currentColor"/></svg><span class="work-dots"></span><span class="work-year">2020</span></a>
-          </div>
-        </div>
-
-        <!-- 3. HOW I THINK (Figma 140:3505) — "Not this / This" comparison table.
-             Replaces the old How I Work cycle. -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">How I Think</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="think-table reveal-item">
-            <div class="think-head">
-              <span class="think-num-spacer" aria-hidden="true"></span>
-              <span class="think-col">Not this</span>
-              <span class="think-col">This</span>
-            </div>
-            <div class="think-row">
-              <span class="think-num" aria-hidden="true">01</span>
-              <div class="think-cell think-cell--not"><span>Adding features to solve problems</span></div>
-              <div class="think-cell think-cell--this"><span>Reducing system complexity</span></div>
-            </div>
-            <div class="think-row">
-              <span class="think-num" aria-hidden="true">02</span>
-              <div class="think-cell think-cell--not"><span>Designing screens</span></div>
-              <div class="think-cell think-cell--this"><span>Identifying decision points</span></div>
-            </div>
-            <div class="think-row">
-              <span class="think-num" aria-hidden="true">03</span>
-              <div class="think-cell think-cell--not"><span>Visual design first</span></div>
-              <div class="think-cell think-cell--this"><span>Structure before pixels</span></div>
-            </div>
-            <div class="think-row">
-              <span class="think-num" aria-hidden="true">04</span>
-              <div class="think-cell think-cell--not"><span>Designing in isolation</span></div>
-              <div class="think-cell think-cell--this"><span>Aligning constraints with team early</span></div>
-            </div>
-            <div class="think-row">
-              <span class="think-num" aria-hidden="true">05</span>
-              <div class="think-cell think-cell--not"><span>Measuring output volume</span></div>
-              <div class="think-cell think-cell--this"><span>Evaluating success through clarity</span></div>
-            </div>
-          </div>
-          <!-- Resume CTA — the shared Primary Button. The dashed pill border and
-               the cursor-origin radial hover fill are both injected by
-               button-fill.js, so no extra markup or wiring is needed here. -->
-          <a class="btn-primary think-resume reveal-item"
-             href="Assets/documents/Parichehr_Talebzadeh_Resume.pdf"
-             download="Parichehr_Talebzadeh_Resume.pdf"
-             target="_blank" rel="noopener noreferrer">
-            <span class="btn-primary-label">Download Resume</span>
-          </a>
-        </div>
-
-        <!-- 4. WHAT OTHERS THINK (Figma 140:3517) — 2 cards: quote on top,
-             name/role/link below, NO avatars; split by a vertical divider. -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">What Others Think</span>
-            <span class="mid-rule"></span>
-          </div>
-          <p class="mid-body reveal-item">Let the people I've built with, describe me.</p>
-          <div class="testi-row reveal-item">
-            <div class="testi-card">
-              <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague. With a solid academic background in Industrial Design, Parichehr brings a rare combination of creative sensibility and systems thinking to her work. She has a remarkable ability to turn complex, often ambiguous problems into intuitive, structured, and aesthetically thoughtful design solutions. Her work consistently impressed both our internal teams and external stakeholders. One of her standout strengths is her meticulous attention to detail and her strong grasp of information architecture. She's highly skilled at extracting structure from complexity and transforming it into clean, user-centered experiences. Her command of design systems is especially strong—not just in execution, but in strategic thinking around consistency, reusability, and scale.</p>
-              <div class="testi-details">
-                <div class="testi-id">
-                  <p class="testi-name">Amir Tavakoli</p>
-                  <p class="testi-role" title="Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+          <!-- Carousel (Figma 12:5617, 640x485) — ONE 375x437 Project card
+               visible at a time, centred in the column, with the shared 40x40
+               arrow Button (12:5618 / 12:5629) pinned to the section edges and
+               vertically centred on the card. -->
+          <div class="proj-carousel reveal-item">
+            <div class="proj-track" id="project-track" tabindex="0" role="group" aria-label="Featured projects">
+              <!-- Project card (Figma 66:1357): a tinted 375x375 Info Section,
+                   then the caption + "Explore <project>" link. The Info Section
+                   is intentionally EMPTY — thumbnails were removed, and its fixed
+                   375px height keeps every card at Figma's 437 so nothing jumps.
+                   The WHOLE card is the anchor, so the Explore line is a <span> —
+                   an <a> nested inside an <a> is invalid HTML. It still gets the
+                   shared tertiary dashed underline via .project-link. -->
+              <a class="project-card" href="onton.html">
+                <div class="project-info"></div>
+                <div class="project-meta">
+                  <p class="project-caption">Every Other User Was Dropping at the Exact Same Point</p>
+                  <span class="project-link">Explore ONTON</span>
                 </div>
-                <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
-              </div>
-            </div>
-            <span class="testi-divider" aria-hidden="true"></span>
-            <div class="testi-card">
-              <p class="testi-quote">It was an absolute pleasure to work with Pari during a 10-week Mobility Design Project. Her design skills and ability to explore and refine ideas were a huge asset to our team. She has a strong eye for translating concepts into thoughtful, user-focused solutions and often helped guide us toward the right design direction when we felt stuck. Beyond her design expertise, Pari played an important role in keeping the team moving forward. She was great at stepping up when decisions needed to be made, helping organize work, and ensuring we stayed on track despite tight deadlines. What stood out most to me was her collaborative approach. Pari is a great listener who genuinely values different perspectives, and when she has a different opinion, she explains it thoughtfully and with clear reasoning. This made discussions productive, balanced, and enjoyable. I'd be really happy to work with her again!</p>
-              <div class="testi-details">
-                <div class="testi-id">
-                  <p class="testi-name">Kirsten Oliemans</p>
-                  <p class="testi-role" title="Sales &amp; UX/UI Design at Webpaste">Sales &amp; UX/UI Design at Webpaste</p>
+              </a>
+              <a class="project-card" href="challenquiz.html">
+                <div class="project-info"></div>
+                <div class="project-meta">
+                  <p class="project-caption">A Blank Waiting Screen Was Reading as a Broken App</p>
+                  <span class="project-link">Explore Challenquiz</span>
                 </div>
-                <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
+              </a>
+              <a class="project-card" href="ezam.html">
+                <div class="project-info"></div>
+                <div class="project-meta">
+                  <p class="project-caption">Agents Bore the Cost of Everyone Else’s Convenience</p>
+                  <span class="project-link">Explore Ezam Part</span>
+                </div>
+              </a>
+              <!-- No case-study page yet: href is a placeholder and the caption
+                   is a stand-in pending real copy. -->
+              <a class="project-card" href="#">
+                <div class="project-info"></div>
+                <div class="project-meta">
+                  <p class="project-caption">Case Study Coming Soon</p>
+                  <span class="project-link">Explore WOW Global Solution</span>
+                </div>
+              </a>
+            </div>
+            <button class="btn-primary proj-arrow proj-arrow--prev show-icon" type="button"
+                    aria-label="Previous project" aria-controls="project-track">
+              <span class="btn-primary-icon"><svg viewBox="0 0 28 28" fill="none" focusable="false" aria-hidden="true"><path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/></svg></span>
+            </button>
+            <button class="btn-primary proj-arrow proj-arrow--next show-icon" type="button"
+                    aria-label="Next project" aria-controls="project-track">
+              <span class="btn-primary-icon"><svg viewBox="0 0 28 28" fill="none" focusable="false" aria-hidden="true"><path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/></svg></span>
+            </button>
+          </div>
+          <!-- Pagination dots — one per project, centred directly under the card
+               (below the caption / Explore line, above the CTA). The buttons are
+               injected by Assets/js/projects.js from the real card count, so the
+               dot count can never drift from the number of slides. -->
+          <div class="proj-dots reveal-item" id="project-dots" role="group" aria-label="Choose a project"></div>
+          <!-- "View All Projects" (Figma 12:5602 / 12:5603, 178x58) — the shared
+               Primary Button, centred. PLACEHOLDER href: the all-projects page
+               has not been designed yet. -->
+          <div class="proj-cta-row reveal-item">
+            <a class="btn-primary proj-cta show-icon" href="#">
+              <span class="btn-primary-label">View All Projects</span>
+              <span class="btn-primary-icon"><svg viewBox="0 0 28 28" fill="none" focusable="false" aria-hidden="true"><path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/></svg></span>
+            </a>
+          </div>
+          <!-- Feedbacks (Figma 66:1306) — the testimonials are the TAIL of the
+               Projects section, not a section of their own. The design has NO
+               header here: just the one-line intro (66:1307) and then the card
+               row (66:1309). Figma places the block at y691 with the CTA ending
+               at y651 (40px clear), and the intro 24px above the cards. -->
+          <div class="testi-block">
+            <p class="mid-body reveal-item">Let the people I've built with, describe me.</p>
+            <!-- Horizontal snap row of fixed 240x240 cards (Figma "Methodology
+                 Steps" 66:1309), split by 0.6px Gray-Navy vertical dividers.
+                 Quotes truncate inside the card; the full text lives behind the
+                 LinkedIn link. -->
+            <div class="testi-scroller reveal-item">
+              <div class="testi-track" id="testi-track" tabindex="0" role="group" aria-label="Testimonials">
+              <article class="testi-card">
+                <p class="testi-quote">I've had the pleasure of working with Parichehr across two different organizations: at Tafarda, where I was the Product Manager, and earlier at Rdsysco, where I led the Design and Design Systems team. Throughout both experiences, she consistently stood out as an exceptional designer and colleague. With a solid academic background in Industrial Design, Parichehr brings a rare combination of creative sensibility and systems thinking to her work. She has a remarkable ability to turn complex, often ambiguous problems into intuitive, structured, and aesthetically thoughtful design solutions. Her work consistently impressed both our internal teams and external stakeholders. One of her standout strengths is her meticulous attention to detail and her strong grasp of information architecture. She's highly skilled at extracting structure from complexity and transforming it into clean, user-centered experiences. Her command of design systems is especially strong—not just in execution, but in strategic thinking around consistency, reusability, and scale.</p>
+                <div class="testi-details">
+                  <div class="testi-id">
+                    <p class="testi-name">Amir Tavakoli</p>
+                    <p class="testi-role" title="Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development">Technical Product Manager | SPM at Heli Technology | Co-founder of Virazh, DevCord, HamfekrSirjan | 10+ years in Digital Product Development</p>
+                  </div>
+                  <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
+                </div>
+              </article>
+              <article class="testi-card">
+                <p class="testi-quote">It was an absolute pleasure to work with Pari during a 10-week Mobility Design Project. Her design skills and ability to explore and refine ideas were a huge asset to our team. She has a strong eye for translating concepts into thoughtful, user-focused solutions and often helped guide us toward the right design direction when we felt stuck. Beyond her design expertise, Pari played an important role in keeping the team moving forward. She was great at stepping up when decisions needed to be made, helping organize work, and ensuring we stayed on track despite tight deadlines. What stood out most to me was her collaborative approach. Pari is a great listener who genuinely values different perspectives, and when she has a different opinion, she explains it thoughtfully and with clear reasoning. This made discussions productive, balanced, and enjoyable. I'd be really happy to work with her again!</p>
+                <div class="testi-details">
+                  <div class="testi-id">
+                    <p class="testi-name">Kirsten Oliemans</p>
+                    <p class="testi-role" title="Sales &amp; UX/UI Design at Webpaste">Sales &amp; UX/UI Design at Webpaste</p>
+                  </div>
+                  <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
+                </div>
+              </article>
+              <article class="testi-card">
+                <p class="testi-quote">I had the pleasure of working with Parichehr for over two years at Connect2Wow, and throughout that time she consistently impressed me with her professionalism, dedication, and problem-solving mindset. As a Product Designer, Parichehr has a great ability to understand both user needs and business goals, turning them into thoughtful and practical design solutions. She is highly responsible, hardworking, and always committed to delivering high-quality work. One of her strongest qualities is her ability to collaborate effectively with everyone involved in the product development process. Whether working with clients, cross-functional teammates, or engineering teams, she communicates clearly, builds trust, and helps move projects forward smoothly. Beyond her technical and design skills, Parichehr is someone you can truly rely on. She takes ownership of her work, approaches challenges with a positive attitude, and is always willing to go the extra mile. I genuinely enjoyed working with Parichehr and would highly recommend her to any team looking for a talented, collaborative, and dependable Product Designer.</p>
+                <div class="testi-details">
+                  <div class="testi-id">
+                    <p class="testi-name">Mobina Hosseini</p>
+                    <p class="testi-role" title="Product Designer | UI/UX Designer">Product Designer | UI/UX Designer</p>
+                  </div>
+                  <a class="testi-link" href="https://www.linkedin.com/in/parichehr-talebzadeh/" target="_blank" rel="noopener noreferrer">Full version on Linkedin</a>
+                </div>
+              </article>
               </div>
+            <button class="btn-primary testi-arrow testi-arrow--prev show-icon" type="button"
+                    aria-label="Scroll testimonials left" aria-controls="testi-track">
+              <span class="btn-primary-icon"><svg viewBox="0 0 28 28" fill="none" focusable="false" aria-hidden="true"><path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/></svg></span>
+            </button>
+            <button class="btn-primary testi-arrow testi-arrow--next show-icon" type="button"
+                    aria-label="Scroll testimonials right" aria-controls="testi-track">
+              <span class="btn-primary-icon"><svg viewBox="0 0 28 28" fill="none" focusable="false" aria-hidden="true"><path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/></svg></span>
+            </button>
             </div>
           </div>
         </div>
@@ -306,7 +389,7 @@
         </section>
 
         <section id="about">
-          <div class="home-middle">
+          <div class="home-middle" id="all-about-me">
         <!-- Mobile-only identity header (shared left sidebar is hidden < 768px) -->
         <div class="section-identity">
           <h2 class="home-name">Parichehr Talebzadeh</h2>
@@ -395,6 +478,48 @@
             </div>
           </div>
         </div>
+
+        <!-- HOW I THINK (Figma 140:3505) — "Not this / This" comparison table.
+             Replaces the old How I Work cycle. NO section header: Figma runs this
+             as "Work Experience" (6:25786) inside About Me, starting straight at
+             the "Comparison Details" row (6:25789 — spacer / Not this / This), so
+             the block opens on the table itself. The 80px separation from the
+             timeline above is .home-middle's shared gap. -->
+        <div class="mid-block" id="how-i-think">
+          <div class="think-table reveal-item">
+            <div class="think-head">
+              <span class="think-num-spacer" aria-hidden="true"></span>
+              <span class="think-col">Not this</span>
+              <span class="think-col">This</span>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">01</span>
+              <div class="think-cell think-cell--not"><span>Adding features to solve problems</span></div>
+              <div class="think-cell think-cell--this"><span>Reducing system complexity</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">02</span>
+              <div class="think-cell think-cell--not"><span>Designing screens</span></div>
+              <div class="think-cell think-cell--this"><span>Identifying decision points</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">03</span>
+              <div class="think-cell think-cell--not"><span>Visual design first</span></div>
+              <div class="think-cell think-cell--this"><span>Structure before pixels</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">04</span>
+              <div class="think-cell think-cell--not"><span>Designing in isolation</span></div>
+              <div class="think-cell think-cell--this"><span>Aligning constraints with team early</span></div>
+            </div>
+            <div class="think-row">
+              <span class="think-num" aria-hidden="true">05</span>
+              <div class="think-cell think-cell--not"><span>Measuring output volume</span></div>
+              <div class="think-cell think-cell--this"><span>Evaluating success through clarity</span></div>
+            </div>
+          </div>
+        </div>
+
 
         <!-- SKILLS (Figma 184:13739) — per category: a 104px header (left) + a
              list of skill rows (name + description on the left, a question on the
@@ -486,40 +611,6 @@
                 <div class="skill-info"><span class="skill-name">Stakeholder management</span><span class="skill-sub">Design needs a translator</span></div>
                 <span class="skill-q">How I align people who want different things.</span>
               </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ALL TIME FAVOURITES (Figma 156:11490) — 3 categories, 3 items each. -->
-        <div class="mid-block">
-          <div class="mid-header reveal-item">
-            <span class="mid-label">All Time Favourites</span>
-            <span class="mid-rule"></span>
-          </div>
-          <div class="favs">
-            <div class="fav-cat reveal-item">
-              <p class="fav-cat-name">Movies</p>
-              <div class="fav-row">
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/her.png" alt="Her movie poster" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Her</span><span class="fav-sub">Design as emotion</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/parasite.png" alt="Parasite movie poster" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Parasite</span><span class="fav-sub">Systems within systems</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/arrival.png" alt="Arrival movie poster" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Arrival</span><span class="fav-sub">Language shapes thought</span></span></div>
-              </div>
-            </div>
-            <div class="fav-cat reveal-item">
-              <p class="fav-cat-name">Books</p>
-              <div class="fav-row">
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/design-of-everyday-things.png" alt="Design of Everyday Things book cover" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Design of everyday things</span><span class="fav-sub">Why I became a designer</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/atomic-habits.png" alt="Atomic Habits book cover" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Atomic habits</span><span class="fav-sub">Behaviour over intent</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/thinking-fast-and-slow.png" alt="Thinking Fast and Slow book cover" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Thinking, fast & slow</span><span class="fav-sub">Every UX decision ever</span></span></div>
-              </div>
-            </div>
-            <div class="fav-cat reveal-item">
-              <p class="fav-cat-name">Designers</p>
-              <div class="fav-row">
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/don-norman.png" alt="Don Norman portrait" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Don Norman</span><span class="fav-sub">Blame the design, not the user</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/dieter-rams.png" alt="Dieter Rams portrait" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Dieter Rams</span><span class="fav-sub">Less, but better. Still the standard.</span></span></div>
-                <div class="fav-item"><img class="fav-img" src="Assets/images/favourites/mike-monteiro.png" alt="Mike Monteiro portrait" width="60" height="80" loading="lazy" decoding="async"><span class="fav-info"><span class="fav-name">Mike Monteiro</span><span class="fav-sub">Not everything's worth shipping.</span></span></div>
               </div>
             </div>
           </div>
@@ -631,50 +722,117 @@
         </section>
       </div>
 
-      <!-- Right sidebar — Live in Amsterdam widget (home only), Figma 140:4256.
-           Populated by Assets/js/amsterdam-widget.js. Sticky via .layout-right. -->
-      <aside class="layout-right">
-        <div class="live-widget" id="live-widget">
-          <div class="lw-status">
-            <div class="lw-time-block">
-              <p class="lw-time" id="lw-visitor-time" aria-live="polite">--:--</p>
-              <p class="lw-time-ams" id="lw-ams-time" hidden></p>
+      <!-- Right sidebar — the Snake panel (Figma "Bio Container" 6:25834).
+           STRUCTURE + BACKGROUND ONLY: the game itself lands in Epic 5. The
+           board below is a deliberately empty placeholder, and the header /
+           D-pad controls are styled but wired to nothing yet. The live time
+           widget that used to sit here has moved to the left panel. -->
+      <aside class="layout-right layout-right--home">
+        <div class="snake-panel">
+          <!-- Header row (Figma Frame 2131328122 11:5546, 329×48 at 40,48 — the
+               40/48 offsets are the column's own padding). Playback controls
+               left, score pill right. -->
+          <div class="snake-header">
+            <div class="snake-transport">
+              <button class="snake-transport-btn" type="button" data-snake-action="pause" aria-label="Pause game">
+                <!-- solar:pause-linear (Figma 11:5529) -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M2 6c0-1.886 0-2.828.586-3.414S4.114 2 6 2s2.828 0 3.414.586S10 4.114 10 6v12c0 1.886 0 2.828-.586 3.414S7.886 22 6 22s-2.828 0-3.414-.586S2 19.886 2 18zm12 0c0-1.886 0-2.828.586-3.414S16.114 2 18 2s2.828 0 3.414.586S22 4.114 22 6v12c0 1.886 0 2.828-.586 3.414S19.886 22 18 22s-2.828 0-3.414-.586S14 19.886 14 18z"/></svg>
+              </button>
+              <button class="snake-transport-btn" type="button" data-snake-action="play" aria-label="Play game">
+                <!-- solar:play-line-duotone (Figma 11:5531) -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M20.409 9.353a2.998 2.998 0 0 1 0 5.294L7.597 21.614C5.534 22.737 3 21.277 3 18.968V5.033c0-2.31 2.534-3.769 4.597-2.648z"/></svg>
+              </button>
+              <button class="snake-transport-btn" type="button" data-snake-action="restart" aria-label="Restart game">
+                <!-- solar:restart-linear (Figma 11:5533) -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m18.364 8.05l-.707-.707a8 8 0 1 0 2.28 4.658m-1.573-3.95h-4.243m4.243 0V3.807"/></svg>
+              </button>
             </div>
-            <div class="lw-status-row">
-              <span class="lw-dot lw-dot--sleep" id="lw-dot" aria-hidden="true">
-                <svg class="lw-bracket" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0.599806 0.300048C0.599804 0.134362 0.46549 4.79194e-05 0.299805 4.7942e-05C0.134119 4.79645e-05 -0.000194542 0.134363 -0.00019455 0.300048L0.299805 0.300048L0.599806 0.300048ZM0.299806 10.3L-0.000193079 10.3L-0.000193092 10.6L0.299806 10.6L0.299806 10.3ZM0.299805 0.300048L-0.00019455 0.300048L-0.000193079 10.3L0.299806 10.3L0.599807 10.3L0.599806 0.300048L0.299805 0.300048ZM0.299806 10.3L0.299806 10.6L20.2998 10.6L20.2998 10.3L20.2998 10L0.299806 10L0.299806 10.3Z" fill="#B3BAE1" fill-opacity="0.7"/>
-                  <circle class="lw-bracket-dot" cx="20.2998" cy="10.3" r="1.6"/>
-                </svg>
+
+            <!-- Score pill (Figma 11:5519): 24px game icon + DM Mono score. -->
+            <div class="snake-score">
+              <span class="snake-score-icon" aria-hidden="true">
+                <!-- hugeicons:game (Figma 11:5521) -->
+                <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M2 14.5c0-3.287 0-4.931.908-6.038a4 4 0 0 1 .554-.554C4.57 7 6.212 7 9.5 7h5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C22 9.57 22 11.212 22 14.5s0 4.931-.908 6.038a4 4 0 0 1-.554.554C19.43 22 17.788 22 14.5 22h-5c-3.287 0-4.931 0-6.038-.908a4 4 0 0 1-.554-.554C2 19.43 2 17.788 2 14.5Z"/><path stroke-linejoin="round" d="M12 7V5a1 1 0 0 1 1-1a1 1 0 0 0 1-1V2"/><path d="m10 16l-1.5-1.5m0 0L7 13m1.5 1.5L7 16m1.5-1.5L10 13"/><path stroke-linejoin="round" d="M17 15.5v-2"/></g></svg>
               </span>
-              <div class="lw-status-text">
-                <p class="lw-status-head" id="lw-status-head"></p>
-                <p class="lw-status-sub" id="lw-status-sub"></p>
-              </div>
+              <span class="snake-score-value" id="snake-score">00</span>
             </div>
           </div>
-          <div class="lw-reach">
-            <div class="lw-reach-text">
-              <p class="lw-label">Best time to reach me</p>
-              <div class="lw-reach-time">
-                <p class="lw-range" id="lw-range">09:00 – 17:00</p>
-                <p class="lw-note">I usually reply within a few hours.</p>
-              </div>
+
+          <!-- Game board. The div is the in-flow spacer that decides how much
+               vertical room the game gets and publishes the grid metrics; the
+               canvas and overlay are positioned over it by Assets/js/snake.js,
+               bled to the panel's edges so the cells sit in phase with the
+               background grid (in Figma the snake IS recoloured grid cells). -->
+          <div class="snake-board" id="snake-board" role="application"
+               tabindex="0" aria-label="Snake game. Use the arrow keys to steer.">
+            <canvas class="snake-canvas" id="snake-canvas"></canvas>
+
+            <!-- Game-over / paused overlay. NOT a Figma node — 6:25834 has no
+                 game-over state, so this is built from the design system: the
+                 Retry control is the Primary Button (dashed pill). Kept in
+                 layout (visibility, not display) so button-fill.js can measure
+                 it on load and draw its dashed SVG border. -->
+            <div class="snake-overlay" id="snake-overlay">
+              <p class="snake-overlay-title">Game Over</p>
+              <p class="snake-overlay-score">Score 00</p>
+              <button class="btn-primary snake-retry" type="button">
+                <span class="btn-primary-label">Retry</span>
+              </button>
             </div>
-            <a class="lw-cta" href="https://calendar.app.google/9cZ7WsXM7LsT4E49A" target="_blank" rel="noopener noreferrer">
-              <span class="lw-cta-icon" aria-hidden="true">
-                <svg viewBox="0 0 20 20" fill="none" focusable="false" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 9.82051C3 7.11312 3 5.75906 3.84144 4.91834C4.68287 4.07762 6.03621 4.0769 8.74359 4.0769H11.6154C14.3228 4.0769 15.6768 4.0769 16.5175 4.91834C17.3583 5.75978 17.359 7.11312 17.359 9.82051V11.2564C17.359 13.9638 17.359 15.3179 16.5175 16.1586C15.6761 16.9993 14.3228 17 11.6154 17H8.74359C6.03621 17 4.68215 17 3.84144 16.1586C3.00072 15.3171 3 13.9638 3 11.2564V9.82051Z" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M6.59014 4.07693V3M13.7696 4.07693V3M3.35938 7.66668H17.0004" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M14.4875 13.4106C14.4875 13.601 14.4118 13.7836 14.2772 13.9182C14.1425 14.0529 13.9599 14.1285 13.7695 14.1285C13.5791 14.1285 13.3965 14.0529 13.2618 13.9182C13.1272 13.7836 13.0516 13.601 13.0516 13.4106C13.0516 13.2201 13.1272 13.0375 13.2618 12.9029C13.3965 12.7682 13.5791 12.6926 13.7695 12.6926C13.9599 12.6926 14.1425 12.7682 14.2772 12.9029C14.4118 13.0375 14.4875 13.2201 14.4875 13.4106ZM14.4875 10.5388C14.4875 10.7292 14.4118 10.9118 14.2772 11.0464C14.1425 11.1811 13.9599 11.2567 13.7695 11.2567C13.5791 11.2567 13.3965 11.1811 13.2618 11.0464C13.1272 10.9118 13.0516 10.7292 13.0516 10.5388C13.0516 10.3483 13.1272 10.1657 13.2618 10.0311C13.3965 9.89644 13.5791 9.8208 13.7695 9.8208C13.9599 9.8208 14.1425 9.89644 14.2772 10.0311C14.4118 10.1657 14.4875 10.3483 14.4875 10.5388ZM10.8977 13.4106C10.8977 13.601 10.8221 13.7836 10.6874 13.9182C10.5528 14.0529 10.3702 14.1285 10.1798 14.1285C9.98935 14.1285 9.80674 14.0529 9.6721 13.9182C9.53745 13.7836 9.46181 13.601 9.46181 13.4106C9.46181 13.2201 9.53745 13.0375 9.6721 12.9029C9.80674 12.7682 9.98935 12.6926 10.1798 12.6926C10.3702 12.6926 10.5528 12.7682 10.6874 12.9029C10.8221 13.0375 10.8977 13.2201 10.8977 13.4106ZM10.8977 10.5388C10.8977 10.7292 10.8221 10.9118 10.6874 11.0464C10.5528 11.1811 10.3702 11.2567 10.1798 11.2567C9.98935 11.2567 9.80674 11.1811 9.6721 11.0464C9.53745 10.9118 9.46181 10.7292 9.46181 10.5388C9.46181 10.3483 9.53745 10.1657 9.6721 10.0311C9.80674 9.89644 9.98935 9.8208 10.1798 9.8208C10.3702 9.8208 10.5528 9.89644 10.6874 10.0311C10.8221 10.1657 10.8977 10.3483 10.8977 10.5388ZM7.30797 13.4106C7.30797 13.601 7.23233 13.7836 7.09769 13.9182C6.96304 14.0529 6.78043 14.1285 6.59002 14.1285C6.39961 14.1285 6.21699 14.0529 6.08235 13.9182C5.94771 13.7836 5.87207 13.601 5.87207 13.4106C5.87207 13.2201 5.94771 13.0375 6.08235 12.9029C6.21699 12.7682 6.39961 12.6926 6.59002 12.6926C6.78043 12.6926 6.96304 12.7682 7.09769 12.9029C7.23233 13.0375 7.30797 13.2201 7.30797 13.4106ZM7.30797 10.5388C7.30797 10.7292 7.23233 10.9118 7.09769 11.0464C6.96304 11.1811 6.78043 11.2567 6.59002 11.2567C6.39961 11.2567 6.21699 11.1811 6.08235 11.0464C5.94771 10.9118 5.87207 10.7292 5.87207 10.5388C5.87207 10.3483 5.94771 10.1657 6.08235 10.0311C6.21699 9.89644 6.39961 9.8208 6.59002 9.8208C6.78043 9.8208 6.96304 9.89644 7.09769 10.0311C7.23233 10.1657 7.30797 10.3483 7.30797 10.5388Z" fill="currentColor"/>
-                </svg>
-              </span>
-              <span class="lw-cta-text">Speak with me</span>
-            </a>
+          </div>
+
+          <!-- D-pad (Figma 11:5537/5539/5541/5543): four 16px glyphs on the
+               background grid's own 33px pitch (32px button + 1px gutter).
+               NOTE: the Figma layer names are swapped relative to their slots
+               ("arrow-right" sits in the left cell) — glyphs are placed by
+               position, per the render. -->
+          <div class="snake-dpad">
+            <button class="snake-dpad-btn snake-dpad-btn--up" type="button" data-snake-dir="up" aria-label="Move up">
+              <!-- majesticons:arrow-up-line (Figma 11:5539) -->
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 5l6 6m-6-6l-6 6m6-6v14"/></svg>
+            </button>
+            <button class="snake-dpad-btn snake-dpad-btn--left" type="button" data-snake-dir="left" aria-label="Move left">
+              <!-- majesticons:arrow-left (Figma 11:5541) -->
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12l6-6m-6 6l6 6m-6-6h14"/></svg>
+            </button>
+            <button class="snake-dpad-btn snake-dpad-btn--right" type="button" data-snake-dir="right" aria-label="Move right">
+              <!-- majesticons:arrow-right (Figma 11:5537) -->
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 12l-6-6m6 6l-6 6m6-6H5"/></svg>
+            </button>
+            <button class="snake-dpad-btn snake-dpad-btn--down" type="button" data-snake-dir="down" aria-label="Move down">
+              <!-- majesticons:arrow-down (Figma 11:5543) -->
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19l6-6m-6 6l-6-6m6 6V5"/></svg>
+            </button>
           </div>
         </div>
       </aside>
     </div>
+
+    <!-- Floating bottom navigation (Figma "Navigation Bar" 6:24205). Lives
+         INSIDE <main> on purpose: <main> is the z-index:1 stacking context the
+         expanding footer card scopes itself to, and that card caps itself at
+         z-index 150 specifically to stay under this nav at 200. -->
+    <nav class="bottom-nav" aria-label="Page sections">
+      <!-- Four items. ORDER MATTERS: bottom-nav.js decides the selected item by
+           walking these targets and keeping the LAST one whose top has crossed
+           the line, which assumes this list is in DOCUMENT order. It must stay
+           that way — "My model" (#how-i-think) was dropped precisely because How
+           I Think now lives *inside* the About Me block, so a nav item pointing
+           at it sat out of sequence and stopped "About me" from ever lighting up.
+           "Feedbacks" (#what-others-think) went the same way: the testimonials
+           now live *inside* the Projects block, so "Projects" (#featured-works)
+           covers them — it stays selected all the way through the carousel and
+           the testimonials, because #all-about-me is the next target.
+           "About me" targets the whole block (#all-about-me), so it stays
+           selected across the timeline, How I Think and Skills —
+           #contact is the next target and only starts after all of them. -->
+      <ul class="bottom-nav-list">
+        <li><a class="bottom-nav-item" href="#summary">Summary</a></li>
+        <li><a class="bottom-nav-item" href="#featured-works">Projects</a></li>
+        <li><a class="bottom-nav-item" href="#all-about-me">About me</a></li>
+        <li><a class="bottom-nav-item bottom-nav-item--contact" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
   </main>
 
 
@@ -684,6 +842,10 @@
   <script defer src="mailto-fallback.js"></script>
   <script defer src="button-fill.js"></script>
   <script defer src="Assets/js/amsterdam-widget.js"></script>
+  <script defer src="Assets/js/bottom-nav.js"></script>
+  <script defer src="Assets/js/testimonials.js"></script>
+  <script defer src="Assets/js/projects.js"></script>
+  <script defer src="Assets/js/snake.js"></script>
 
   <!-- GA4 custom events (see Assets/js/analytics-events.js) -->
   <script defer src="Assets/js/analytics-events.js"></script>

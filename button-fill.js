@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * an ellipse because SVG clamps rx and ry independently). x/y inset 0.25 +
    * (w/h − 0.5) keeps the 0.5px stroke fully inside the box. Recomputed on resize.
    *
-   * Injected into EVERY .btn-primary (not just unselected ones): .selected is
-   * toggled at runtime by the filter chips, so a previously-selected button must
-   * still have its border element ready — CSS hides it while .selected. */
+   * Injected into EVERY .btn-primary (not just unselected ones), so a button
+   * that gains .selected at runtime already has its border element ready —
+   * CSS hides it while .selected, and shows it again the moment that drops. */
   function setBorders() {
     document.querySelectorAll('.btn-primary').forEach((btn) => {
       let svg = btn.querySelector('.btn-border-svg');

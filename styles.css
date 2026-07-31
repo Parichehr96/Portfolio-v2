@@ -646,6 +646,101 @@ section {
   display: block;
 }
 
+/* ===== Floating bottom navigation (Figma "Navigation Bar" 6:24205) =====
+   A pill of six section links, fixed 24px off the viewport bottom and centred.
+   z-index 200 is the slot the expanding footer card already reserves for it
+   (that card pins itself to 150 to stay underneath).
+
+   Figma geometry: container p-2 / gap-4 / radius-400, items px-24 py-16 /
+   radius-40, text Figtree 14px / 20px / 0.25px tracking. Every item carries a
+   1px transparent border so the selected state's border can't shift the row. */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 200;
+  max-width: calc(100vw - 40px);
+  /* Starts hidden: the hero owns the first screen, and starting from the
+     hidden state means no flash of the bar before the observer's first
+     callback. bottom-nav.js adds .is-revealed once the splash is less than
+     half in view (and removes it on the way back up). */
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+.bottom-nav.is-revealed {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.bottom-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 400px;
+  background: var(--bg);       /* #111323 (Figma) */
+  list-style: none;
+}
+.bottom-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border: 1px solid transparent;
+  border-radius: 40px;
+  background-color: rgba(249, 245, 235, 0.04);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  /* 70% via colour alpha, not layer opacity (Figma shows opacity-70 on the
+     text node — same result, but this leaves the border alone). */
+  color: rgba(249, 245, 235, 0.7);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Contact is the action item: a solid cream fill even at rest, in Figtree
+   Medium (Figma 6:24220/6:24221). */
+.bottom-nav-item--contact {
+  background-color: var(--cream);           /* #F9F5EB */
+  color: rgba(17, 19, 35, 0.7);             /* #111323 @ 70% */
+  font-weight: 500;
+}
+
+/* Hover — a low-opacity wash in the opposite key: cream over the dark items,
+   navy over Contact's light fill (layered as a background-image so the cream
+   base stays exact underneath). */
+.bottom-nav-item:hover {
+  background-color: rgba(249, 245, 235, 0.08);
+  color: var(--cream);
+}
+.bottom-nav-item--contact:hover {
+  background-color: var(--cream);
+  background-image: linear-gradient(rgba(17, 19, 35, 0.08), rgba(17, 19, 35, 0.08));
+  color: #111323;
+}
+
+/* Selected (Figma 6:24206) — cream-light hairline outline, 8% cream fill, white
+   text. Declared last so it wins over both defaults and hover, and so Contact
+   drops its cream fill and Medium weight to look like any other selected item. */
+.bottom-nav-item.is-active,
+.bottom-nav-item.is-active:hover {
+  background-color: rgba(249, 245, 235, 0.08);
+  background-image: none;
+  border-color: #FFF9F1;                    /* Cream light (Figma) */
+  color: #FFFFFF;                           /* White (Figma) */
+  font-weight: 400;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav,
+  .bottom-nav-item {
+    transition: none;
+  }
+}
+
 /* Middle column — every section's content stacks here */
 .layout-main {
   flex: 1;
@@ -690,10 +785,157 @@ section {
   display: block;
 }
 
-/* Index left-sidebar groups. Two top-level blocks (bio + contacts) separated by
-   40px; gaps inside each block per the Figma Bio Summary (140:4246) hierarchy. */
+/* Index left-sidebar groups. Two top-level blocks (identity + time widget)
+   separated by 40px (Figma 6:24129 — the identity block ends at y=50, the widget
+   starts at y=90). */
 .layout-left--home {
-  gap: 40px;                   /* bio block ↔ contact links (download → email) */
+  gap: 40px;                   /* identity block ↔ time widget */
+
+  /* ---- Panel background (Figma "Left_bg" 22:2559) ----
+     BASE GRID — a field of 32px tiles, 8px radius, filled #111323 (the page bg
+     itself), laid out with a 1px gutter, sitting on a rgba(217,217,217,0.02)
+     wash. Only the gutters let the wash through, so the grid reads as 1px lines
+     of #151727 that pool wider at the tiles' rounded corners. Drawn as one 33px
+     SVG tile (32px + the 1px gutter) rather than gradients, which can't do the
+     rounded corners.
+
+     EDGE FADES — Figma layers two "Overlay" gradient rects over the grid, each
+     fading it into solid page bg at an edge:
+       · top   (11:3830, 396×186, #111323 → transparent) — the grid also has no
+         wash above y=157 (Container 11:3413), so the two combine into one fade.
+         Opaque to 157px, gone by 270px: taken off the render, where the grid
+         only appears ~20px below the widget (which ends at 48+50+40+113=251).
+       · right (11:3829, 119×1140, transparent → #111323 at the edge).
+     The bottom fade is NOT in this node — see the comment on that layer below.
+
+     All layers use the default `scroll` attachment so `right`/`bottom` resolve
+     against the PANEL box, not the viewport (which is 1152px further right).
+     The column is min-height:100vh and sticky at top:0, so once stuck the panel
+     box and the viewport coincide and the grid still reads as fixed. */
+  min-height: 100vh;           /* so the grid fills the column, not just the content */
+  background-image:
+    /* top fade — Figma Overlay 11:3830 + the wash's 157px start */
+    linear-gradient(180deg, #111323 0, #111323 157px, rgba(17, 19, 35, 0) 270px),
+    /* right fade — Figma Overlay 11:3829, 119px deep */
+    linear-gradient(90deg, rgba(17, 19, 35, 0) 0, #111323 100%),
+    /* bottom fade — not present in 22:2559 (Figma's second Overlay reads as the
+       TOP band, not the bottom). Added on request; depth mirrors the top band's
+       186px so the two soft edges match. */
+    linear-gradient(180deg, rgba(17, 19, 35, 0) 0, #111323 100%),
+    /* base grid */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='33' height='33'%3E%3Crect width='33' height='33' fill='%23151727'/%3E%3Crect width='32' height='32' rx='8' fill='%23111323'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  background-size: 100% 270px, 119px 100%, 100% 186px, 33px 33px;
+  background-position: left top, right top, left bottom, left top;
+}
+
+/* Name (Figma 16:3211) — one 20px/28px line, "Pari" at full cream and the rest
+   at 70%. The 70% is a colour alpha on the span, not layer opacity. */
+.ls-name-rest {
+  color: rgba(249, 245, 235, 0.7);
+}
+
+/* Role + flag on a single line (Figma 6:24133), replacing the old separate
+   role and "Based in Amsterdam" location lines. 70% via colour alpha so the
+   flag keeps full opacity. */
+.ls-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                    /* text → flag (Figma: text ends 133, icon at 137) */
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(249, 245, 235, 0.7);
+}
+
+/* ===== Reduced time widget (left sidebar; Figma 16:3216) =====
+   Clock + the current Amsterdam-schedule status. This replaces the old
+   right-sidebar "Live in Amsterdam" widget: the "Best time to reach me" block
+   and the "Speak with me" CTA are gone — the Contact nav owns those now.
+   Populated by Assets/js/amsterdam-widget.js. */
+.ls-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                    /* time ↔ status row (Figma: 30 → 38) */
+  width: 100%;
+}
+.ls-clock-time {
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: 1px;         /* Figma 16:3220 */
+  color: var(--cream);
+}
+/* Status row — the L-connector is absolutely placed at x=20 (Figma "Line 31"
+   16:3222) so it can hang under the clock without pushing the text.
+
+   Figma puts Task Info (16:3223) at x=32 while Line 31 spans x=20→40, i.e. the
+   arrow tip lands 8px INSIDE the text — in the Figma render the tip all but
+   touches the "P". The connector art is an exported vector, so rather than
+   distort it the text moves right instead: tip at 40 + 12px = 52px. 12px is
+   the gap this project already uses for exactly this connector→text
+   relationship (the old right-sidebar widget's .lw-status-row). */
+.ls-clock-status {
+  position: relative;
+  padding-left: 52px;
+  min-height: 12px;
+}
+.ls-clock-bracket {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  width: 22px;                 /* exported viewBox; the L itself is 20×10 */
+  height: 12px;
+  color: #6b6f86;              /* indicator colour; overridden per state below */
+}
+.ls-clock-bracket svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;           /* so the dot's glow isn't clipped */
+}
+
+/* ===== Live status indicator =====
+   The dot at the connector's tip. Not specified in the current Figma nodes —
+   these are the state colours this widget already carried over from the earlier
+   Figma. The L itself stays static navy-light; only the dot recolours, driven
+   by [data-state] on #ls-clock (set from the schedule block in
+   amsterdam-widget.js), so the cue tracks the status text automatically. */
+.ls-clock-dot {
+  fill: currentColor;
+  transition: fill 0.3s ease;
+}
+.ls-clock[data-state="active"] .ls-clock-bracket { color: #5fbf8e; }
+.ls-clock[data-state="away"]   .ls-clock-bracket { color: #e0a458; }
+.ls-clock[data-state="sleep"]  .ls-clock-bracket { color: #6b6f86; }
+
+/* Active reads as "live": a 2s pulse plus a soft glow. Away pulses at half
+   speed; sleep stays static. */
+@keyframes ls-clock-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.ls-clock[data-state="active"] .ls-clock-dot {
+  filter: drop-shadow(0 0 3px currentColor);
+  animation: ls-clock-pulse 2s ease-in-out infinite;
+}
+.ls-clock[data-state="away"] .ls-clock-dot {
+  animation: ls-clock-pulse 4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ls-clock .ls-clock-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+.ls-clock-head {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cream);
+}
+.ls-clock-sub {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.4;
 }
 .ls-bio {
   display: flex;
@@ -754,7 +996,8 @@ section {
    testimonials (.testi-link), default footer (.footer-link), Go Back
    (.home-portfolio), case-study sidebar (.side-link), the live widget's "Speak
    with me" (.lw-cta-text), the expanded-footer contact items (.contact-name),
-   and the project list titles (.work-name). */
+   the Project card's "Explore <project>" line (.project-link), and the Summary
+   resume link (.glance-resume). */
 .ls-link-text,
 .testi-link,
 .footer-link,
@@ -762,7 +1005,8 @@ section {
 .side-link,
 .lw-cta-text,
 .contact-name,
-.work-name {
+.project-link,
+.glance-resume {
   font-size: 15px;
   color: var(--cream);
   text-decoration: none;
@@ -782,19 +1026,13 @@ section {
 .footer-link:hover,
 .home-portfolio:hover,
 .side-link:hover,
+.glance-resume:hover,
 .ls-link:hover .ls-link-text,
 .lw-cta:hover .lw-cta-text,
 .contact-row:hover .contact-name,
-.work-row:hover .work-name {
+.project-card:hover .project-link {
   background-image: linear-gradient(var(--cream), var(--cream));
   font-weight: 500;
-}
-
-/* Mobile-only "Download resume" link, placed in the page content. The desktop
-   sidebar shows the resume in its bio block; on mobile that link is dropped from
-   the sticky bar (no room) and this in-content copy is revealed instead (≤768). */
-.resume-mobile {
-  display: none;
 }
 
 /* Layout only — dashed-underline treatment comes from the shared tertiary rule.
@@ -878,12 +1116,124 @@ section {
   font-weight: 600;
 }
 
-/* Resume CTA under the How I Think table. .mid-block is a stretch flex column,
-   so align-self is what centres it; the 24px above comes from that block's own
-   gap and the space below from .home-middle's section gap. */
-.think-resume {
-  align-self: center;
-  text-decoration: none;
+
+/* ===== "At a Glance" (Figma "Work Experience" 6:25769) =====
+   Two card rows over the intro copy. The 24px gaps between the header, the
+   cards and the intro come from .mid-block's own gap — they already match the
+   Figma frame. */
+.glance-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;                   /* stat row ↔ education row */
+}
+.glance-row {
+  display: flex;
+  gap: 16px;                   /* between cards */
+}
+.glance-card {
+  flex: 1 0 0;                 /* equal widths */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  /* Figma carries 80% as a layer opacity on the card, so it dims the fill and
+     the text together — kept as layer opacity rather than folded into the
+     colours so the two stay locked to each other. */
+  opacity: 0.8;
+  text-align: center;
+}
+.glance-card--edu {
+  padding: 16px 8px;
+}
+/* Shared by the stat labels (above the number) and the education subtitles. */
+/* Base = the education card subtitles (Bachelor at AUI / Master at HvA). */
+.glance-label {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--cream);
+  opacity: 0.7;
+}
+/* Stat card labels sit a step smaller than the education subtitles, so they
+   need their own size rather than the shared one. */
+.glance-label--stat {
+  font-size: 12px;
+}
+.glance-stat {
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--cream);
+}
+.glance-edu {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--cream);
+}
+
+.glance-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                    /* body ↔ availability ↔ tags */
+  align-items: flex-start;
+}
+.glance-availability {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cream);
+  opacity: 0.4;
+}
+/* Domain tags (Figma 23:8067) — static labels. Same pill geometry as the nav
+   items but display-only: no hover, no focus ring, no pointer. */
+.glance-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+.glance-tag {
+  padding: 8px 16px;
+  border-radius: 40px;
+  background: rgba(249, 245, 235, 0.04);
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: rgba(249, 245, 235, 0.7);
+}
+
+/* Chips + resume link on one row (Figma 53:8182): chips left, the link pushed to
+   the container's right edge, both bottom-aligned so the link's dashed underline
+   sits level with the bottom of the pills.
+
+   width:100% is REQUIRED, not cosmetic: the parent .glance-intro is a column with
+   align-items:flex-start, so this row does NOT stretch on its own — it would
+   shrink to its content and leave the link sitting right against the chips with
+   no free space for space-between to distribute. Figma's own wrapper carries
+   `w-full` for exactly the same reason (23:8062 is items-start).
+
+   space-between (rather than margin-left:auto) also degrades better: when the row
+   wraps on a narrow phone the link lands at the start of its own line instead of
+   being stranded out on the right. The 8px gap is the floor if they ever meet. */
+.glance-tagrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+/* Sized to its chips (no flex-grow) so the leftover width becomes the gap that
+   space-between opens up between the chips and the link. */
+.glance-tagrow .glance-tags {
+  min-width: 0;
+}
+/* Layout only — the dashed underline comes from the shared tertiary rule above.
+   Figma 53:8173 ships no icon, so there is no icon slot here. */
+.glance-resume {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* Scoped overrides (the base .mid-body is shared by the About bio, which stays
@@ -930,100 +1280,218 @@ section {
      thumb bg rgba(255,255,255,0.16)
    ============================================================ */
 
-/* --- Works list (Small item, INTERNAL: scroll to a project → no hover icon) --- */
-.work-list {
+/* ===== Featured Works — Project card + carousel (Figma "Projects" 6:25772) ====
+   The section is: title -> a one-card-at-a-time carousel -> "View All Projects".
+   Figma's own layout has NO filter chips and no row list, so both were removed
+   along with initHomeMiddle() in script.js; the full catalogue moves to the
+   all-projects page the CTA points at.
+   Figma geometry (640-wide column):
+     title        y0   640 x 28
+     track frame  y68  640 x 485   arrows 40x40 @ x0 / x600, card 375x437 @ x132.5,y24
+     CTA row      y593 640 x 58    button 178x58, centred
+   .mid-block already supplies a 24px gap between children; the extra 16px
+   margins below top that up to Figma's 40px. ------------------------------- */
+
+/* Track frame (12:5617). 24px of vertical padding reproduces the 485-437 inset
+   around the card AND puts the arrows' top:50% exactly on the card's centre. */
+.proj-carousel {
+  position: relative;
+  margin-top: 16px;            /* 24 (.mid-block) + 16 = Figma's 40 */
+  padding: 24px 0;
+}
+
+/* Scroll-snap row exactly ONE card wide, centred: neighbours are clipped rather
+   than peeking, which is what Figma draws (a single card in the frame). Wheel,
+   trackpad, touch and keyboard work with no JS — Assets/js/projects.js only adds
+   the arrow clicks and their disabled state. */
+.proj-track {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  width: 375px;
+  max-width: 100%;
+  margin-inline: auto;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Scrollbar hidden, track still scrollable by wheel/trackpad/keys/arrows. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
-.work-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  font-size: 15px;
-  color: var(--cream);
-  transition: all 0.2s ease;
-}
-
-/* Title: dashed underline, 0.5px #F9F5EB, pb 4px. The underline is a repeating
-   gradient (6px dash / 4px gap) — CSS `dashed` can't size dashes. Hover only
-   brightens the text to white; the cream underline is unchanged. */
-/* Layout only — the dashed→solid underline treatment comes from the shared
-   tertiary rule. The transition drives the text-colour change on row hover; the
-   row-hover white text below stacks on top of the shared underline + weight. */
-.work-name {
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-/* Leader line — present in BOTH states: 0.5px, #EDEAE4 @40%, dash 2px / gap 4px */
-.work-dots {
-  flex: 1;
-  height: 0.5px;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(237, 234, 228, 0.4) 0,
-    rgba(237, 234, 228, 0.4) 2px,
-    transparent 2px,
-    transparent 6px
-  );
-}
-
-.work-year {
-  white-space: nowrap;
-  font-size: 14px;
-  color: var(--cream);
-  transition: all 0.2s ease;
-}
-
-/* Hover: title + year → white (leader unchanged) */
-.work-row:hover .work-name {
-  color: #FFFFFF;
-}
-
-.work-row:hover .work-year {
-  color: #FFFFFF;
-}
-
-/* Subtitle (org/role) between title and leader — Figma 227:8225 (I…;953:13816):
-   Figtree 14px, cream @ 70%. Present on every project row. */
-.work-sub {
-  white-space: nowrap;
-  font-size: 14px;
-  color: var(--cream);
-  opacity: 0.7;
-  transition: all 0.2s ease;
-}
-
-/* External-link arrow — the exact Figma "Arrow/link" glyph (140:3991), mirrored
-   with scaleX(-1) so it points ↗. Sits after the subtitle (Figma hover row
-   140:4134); reserves its 14px in-flow so there's no layout shift, and fades in
-   only on row hover. Internal case-study rows carry no .work-arrow. */
-.work-arrow {
-  flex-shrink: 0;
-  color: var(--cream);
-  transform: scaleX(-1);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.work-row:hover .work-arrow {
-  opacity: 1;
-}
-
-/* Hidden when filtered out (overrides the flex display). */
-.work-row[hidden] {
+.proj-track::-webkit-scrollbar {
   display: none;
 }
-
-/* Projects filter chips (Figma 161:5392) — three equal-width .btn-primary pills. */
-.proj-filters {
-  display: flex;
-  gap: 24px;
+.proj-track:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
 }
-.proj-filters .btn-primary {
-  flex: 1 1 0;
+
+/* --- Project card (Figma 66:1357) — 375 x 437 -------------------------------
+   375 image + 16 gap + 20 caption + 4 gap + 22 link = 437. The whole card is the
+   anchor to its case study. */
+.project-card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;                   /* Figma 66:3333 */
+  border-radius: 20px;         /* Figma 66:1357 */
+  text-decoration: none;
+  color: var(--cream);
+}
+
+/* Info Section (66:3334) — the tinted panel the thumbnail sits in. Stays visible
+   as an empty panel when a project has no artwork yet, exactly as in Figma. */
+.project-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 375px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+/* NOTE: thumbnails were removed from the card — the Info Section above is now an
+   empty tinted panel, which is also what Figma's Thumbnail frame (66:3335) draws.
+   Its fixed height is what holds the card at 437, so it must keep one. To bring
+   artwork back, re-add an <img class="project-thumb"> and this rule:
+     .project-thumb { display:block; width:100%; aspect-ratio:343/212;
+                      object-fit:cover; border-radius:16px; }
+   The image files themselves are still on disk under Assets/images/<project>/. */
+
+/* Caption + link stack (66:3336) */
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Caption (66:3337) — Figtree Light, 14px/1.4, cream @ 70%. */
+.project-caption {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--cream);
+  opacity: 0.7;
+  overflow-wrap: break-word;   /* Figma [word-break:break-word] */
+}
+
+/* "Explore <project>" (66:3340). Layout only — the dashed underline and its
+   hover come from the shared tertiary rule above. A <span>, not an <a>: the card
+   itself is the link, and an anchor inside an anchor is invalid HTML. */
+.project-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                    /* Figma 66:3340 */
+}
+
+/* Arrow buttons (Figma 12:5618 / 12:5629) — the same 40x40 icon-only Primary
+   Button the testimonials row uses (12px padding around a 16px icon); see
+   .testi-arrow for the sizing rationale. Opaque so the card can't show through.
+   NOTE the compound `.btn-primary.proj-arrow` selector: .btn-primary is declared
+   BELOW this block and sets position/padding at the same specificity, so a bare
+   .proj-arrow would lose on source order and drop the arrows into normal flow.
+   (.testi-arrow gets away with a bare selector only because it sits after it.) */
+.btn-primary.proj-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  padding: 12px;
+  gap: 0;
+  background: var(--bg);
+}
+.proj-arrow--prev {
+  left: 0;
+}
+.proj-arrow--next {
+  right: 0;
+}
+.proj-arrow .btn-primary-icon {
+  width: 16px;
+  height: 16px;
+}
+.proj-arrow .btn-primary-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* The shared chevron points DOWN; rotate it onto each axis. */
+.proj-arrow--prev .btn-primary-icon {
+  transform: rotate(90deg);
+}
+.proj-arrow--next .btn-primary-icon {
+  transform: rotate(-90deg);
+}
+.proj-arrow[disabled] {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Pagination dots — one per project, centred under the card. The negative
+   margin cancels .proj-carousel's 24px bottom padding so the dots sit 24px below
+   the card's actual bottom edge rather than 48px; that padding can't simply be
+   reduced because the arrows are centred on the carousel box (top: 50%) and are
+   only on the card's centre while it stays symmetric. */
+.proj-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -24px;
+}
+
+/* Muted = the shared Navy Light at 40%; active = full Cream. Both are existing
+   tokens — no new colours. Size/opacity animate so a dot change reads as a
+   state change rather than a repaint. */
+.proj-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--navy-light);
+  opacity: 0.4;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.proj-dot:hover {
+  opacity: 0.7;
+}
+.proj-dot[aria-current="true"] {
+  background: var(--cream);
+  opacity: 1;
+}
+.proj-dot:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-dot { transition: none; }
+}
+
+/* "View All Projects" CTA (Figma 12:5602 / 12:5603) — the shared Primary Button
+   at Figma's 178x58: label 114x18 at x20/y20, so 20px padding all round
+   (20 + 18 + 20 = 58) and the default 8px gap before the 16x16 chevron. */
+.proj-cta-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;            /* 24 (.mid-block) + 16 = Figma's 40 */
+}
+/* Compound selector for the same source-order reason as .btn-primary.proj-arrow
+   above — a bare .proj-cta would lose its padding to .btn-primary's 12px 20px. */
+.btn-primary.proj-cta {
+  padding: 20px;
+  text-decoration: none;
+}
+/* The shared chevron points DOWN; Figma's CTA icon points RIGHT. */
+.proj-cta .btn-primary-icon {
+  transform: rotate(-90deg);
 }
 
 /* ---------------------------------------------------------------
@@ -1253,47 +1721,139 @@ section {
    Two equal cards (flex-1) split by a vertical divider; content-sized (equal
    height via align-items:stretch). Quote on top (clamped to 8 lines), then
    name / role (clamped to 2 lines) / link below — no avatars. */
-.testi-row {
-  display: flex;
-  align-items: stretch;
-  gap: 27px;
-}
-.testi-card {
-  flex: 1 1 0;
-  min-width: 0;
-  height: 100%;
+/* ===== Testimonials — horizontal snap row (Figma "Methodology Steps" 6:25814)
+   Fixed 240x240 cards on a scroll-snap track. The cards carry NO background,
+   border, radius or padding — in Figma they are bare text columns, so the only
+   card-level styling is the size and the 24px internal gap. */
+/* Feedbacks (Figma 66:1306) — the testimonials sit at the END of the Projects
+   block, with NO header of their own: just the intro line (66:1307) then the card
+   row (66:1309). Figma runs the block from y691 while the CTA ends at y651, so it
+   clears the CTA by 40px; .mid-block already gives 24px, hence the extra 16.
+   The internal 24px matches Figma's intro (ends y21) -> cards (start y45). */
+.testi-block {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  border-radius: 0;
-  overflow: hidden;
+  margin-top: 16px;
 }
-/* Vertical divider between the two cards (Figma Line 26). */
-.testi-divider {
-  flex: 0 0 auto;
-  align-self: stretch;
-  width: 0;
-  border-left: 1px solid rgba(249, 245, 235, 0.15);
+
+.testi-scroller {
+  position: relative;
+}
+.testi-track {
+  display: flex;
+  gap: 54px;                   /* Figma: card origins 240 -> 294 */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Scrollbar hidden, track still scrollable by wheel/trackpad/keys/arrows. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.testi-track::-webkit-scrollbar {
+  display: none;
+}
+.testi-track:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 4px;
+}
+.testi-card {
+  position: relative;          /* anchors the divider pseudo-element below */
+  flex: 0 0 240px;             /* fixed — never flexes, never wraps */
+  width: 240px;
+  height: 240px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;                   /* quote -> details (Figma 6:25815) */
+}
+
+/* Vertical divider between cards (Figma "Line 26" 66:1319 / "Line 27" 66:1329):
+   0.6px SOLID Gray Navy, the card's full 240px height. Figma draws it at x267 —
+   dead centre of the 54px gap between a card ending at 240 and the next starting
+   at 294 — hence left: -27px. Drawn as a pseudo-element on every card AFTER the
+   first, so a line only ever falls BETWEEN two cards and never leads or trails
+   the row (3 cards -> 2 dividers, and it stays right if cards are added). */
+.testi-card + .testi-card::before {
+  content: '';
+  position: absolute;
+  left: -27px;
+  top: 0;
+  height: 100%;
+  border-left: 0.6px solid var(--gray-navy);
+  pointer-events: none;
 }
 .testi-quote {
-  flex: 1;
-  min-height: 0;
+  flex: 0 0 auto;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 300;            /* Figtree Light */
   line-height: 1.4;
   color: var(--cream);
   opacity: 0.9;
-  /* Show a substantial excerpt of the quote: clamp to 8 lines with an ellipsis
-     (the card is content-sized now, so 8 lines actually fit). flex:1 keeps the
-     name/role/link block pinned to the bottom when a card is stretched taller. */
+  /* Figma's quote box is 142px, but 142 / (14 x 1.4) = 7.24 lines: pinning that
+     height leaves the 8th line's top 4.8px INSIDE the box, so it paints as a
+     sliced row of glyphs under the ellipsis. Let the clamp set the height
+     instead (7 lines = 137.2px) and pin the details to the card's bottom edge
+     below — which is where Figma has them anyway (166 + 74 = 240). */
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 8;
-  line-clamp: 8;
+  -webkit-line-clamp: 7;
+  line-clamp: 7;
   overflow: hidden;
 }
+
+/* Arrow buttons (Figma 16:8056) — the shared Primary Button in icon-only mode:
+   12px padding around a 16px icon = the 40x40 circle Figma specifies, and
+   button-fill.js gives it the same dashed border + radial hover fill as every
+   other button. Overlaid on the track edges, vertically centred. Figma only
+   draws the right-hand arrow; the left one is its mirror. */
+.testi-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  padding: 12px;
+  gap: 0;
+  /* Opaque so the cards it overlaps don't show through. */
+  background: var(--bg);
+}
+.testi-arrow--prev {
+  left: 0;
+}
+.testi-arrow--next {
+  right: 0;
+}
+.testi-arrow .btn-primary-icon {
+  width: 16px;
+  height: 16px;
+}
+.testi-arrow .btn-primary-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* The shared chevron points DOWN; rotate it onto each axis. */
+.testi-arrow--prev .btn-primary-icon {
+  transform: rotate(90deg);
+}
+.testi-arrow--next .btn-primary-icon {
+  transform: rotate(-90deg);
+}
+.testi-arrow[disabled] {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+.testi-arrow[hidden] {
+  display: none;
+}
+
 .testi-details {
   flex-shrink: 0;
+  /* Bottom-aligned: Figma runs this block 166 -> 240, flush with the card's
+     lower edge, so it stays put regardless of where the quote's clamp lands. */
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1726,60 +2286,6 @@ section {
   }
 }
 
-/* ===== All Time Favourites (Figma 156:11490) — 3 categories, 3 items each === */
-.favs {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-.fav-cat {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.fav-cat-name {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 24px;
-  color: var(--cream);
-}
-.fav-row {
-  display: flex;
-  gap: 16px;
-}
-.fav-item {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  gap: 8px;
-  align-items: stretch;
-}
-.fav-img {
-  flex: 0 0 60px;
-  width: 60px;
-  height: 80px;
-  border-radius: 8px;
-  background: rgba(249, 245, 235, 0.04); /* tint shown while the image lazy-loads */
-  object-fit: cover;                     /* fill the 60×80 box, no distortion */
-  display: block;
-}
-.fav-info {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.fav-name {
-  font-size: 14px;
-  line-height: 20px;
-  color: #ffffff;
-}
-.fav-sub {
-  font-size: 14px;
-  line-height: 1.4;
-  color: rgba(249, 245, 235, 0.5);
-}
 
 
 /* ===== Footer → Contact: ONE element, two states =====
@@ -1963,8 +2469,307 @@ section {
   pointer-events: none;
 }
 
-/* Right sidebar — intentionally empty; width + sticky come from the shared
-   .home-left, .home-right rule above. */
+/* ===== Right sidebar — Snake panel (Figma "Bio Container" 6:25834) ==========
+   Width + sticky come from the shared .layout-left, .layout-right rule near the
+   top of this file; the 48px top / 40px side+bottom padding comes from
+   .layout-right. Everything below is the panel background (22:2560 "Right_bg")
+   plus the game's container structure. The GAME ITSELF IS NOT HERE — Epic 5
+   fills .snake-board and wires the controls; they are inert (disabled) for now.
+   ------------------------------------------------------------------------- */
+
+/* ---- Panel background (Figma "Right_bg" 22:2560) ----
+   BASE GRID — byte-for-byte the same as the left panel's (22:2559): 32px tiles,
+   8px radius, filled #111323 (the page bg itself), laid out with a 1px gutter
+   over a rgba(217,217,217,0.02) wash. Only the gutters let the wash through, so
+   the grid reads as 1px lines of #151727 that pool wider at the tiles' rounded
+   corners. (0.02·217 + 0.98·(17,19,35) = (21,23,39) = #151727 exactly.) Drawn as
+   one 33px SVG tile (32px + the 1px gutter) rather than gradients, which can't
+   do the rounded corners. The left panel keeps its own inline copy of this tile
+   — it is deliberately left untouched, so the two rules duplicate the data URI.
+
+   EDGE FADES — Figma layers two "Overlay" gradient rects over the grid. Both are
+   byte-identical to the left panel's pair, so they get the same treatment that
+   was already verified on screen there; only the side fade's DEPTH differs:
+     · top   (11:5199, 396×186, #111323 → transparent) — identical node to the
+       left panel's 11:3830. The grid also has no wash above y=157 (Container
+       11:4778), so the two combine into one fade: opaque to 157px, gone by 270px.
+     · right (11:5198, 129×1140, transparent → #111323 at the edge) — identical
+       to the left panel's 11:3829 apart from 129px vs 119px.
+   NOTE both panels fade at their RIGHT edge — in Figma this is a duplicated
+   layer, not a mirrored one, so this panel's grid is strongest at its inner
+   (left) edge and fades out toward the outer page edge. Their overlap makes the
+   TOP-RIGHT corner the strongest wash. There is NO bottom overlay in 22:2560
+   (the left panel's bottom fade was added on request, not from Figma), so none
+   is added here — keeping this node pixel-exact.
+
+   All layers use the default `scroll` attachment so `right` resolves against the
+   PANEL box, not the viewport. The column is min-height:100vh and sticky at
+   top:0, so once stuck the panel box and the viewport coincide and the grid
+   still reads as fixed. Grid phase is anchored `left top` to match the left
+   panel, so the two panels' grids stay in step with each other. */
+.layout-right--home {
+  min-height: 100vh;           /* so the grid fills the column, not just the content */
+  background-image:
+    /* top fade — Figma Overlay 11:5199 + the wash's 157px start */
+    linear-gradient(180deg, #111323 0, #111323 157px, rgba(17, 19, 35, 0) 270px),
+    /* right fade — Figma Overlay 11:5198, 129px deep */
+    linear-gradient(90deg, rgba(17, 19, 35, 0) 0, #111323 100%),
+    /* base grid */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='33' height='33'%3E%3Crect width='33' height='33' fill='%23151727'/%3E%3Crect width='32' height='32' rx='8' fill='%23111323'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 100% 270px, 129px 100%, 33px 33px;
+  background-position: left top, right top, left top;
+}
+
+/* Panel column: header pinned top, D-pad near the bottom, board taking the slack
+   between them. Height is the sticky column's 100vh minus its own 48+40 padding
+   so the D-pad's bottom offset resolves against the viewport. */
+.snake-panel {
+  min-height: calc(100vh - 88px);
+  display: flex;
+  flex-direction: column;
+  /* Containing block for the absolutely-positioned canvas + overlay, which
+     snake.js places using panel-relative offsets. REQUIRED: without it the
+     nearest positioned ancestor is .layout-right — which is position:sticky, and
+     sticky counts as positioned — so every offset would resolve against the
+     wrong box and the canvas would sit 40px outside the panel. */
+  position: relative;
+}
+
+/* Header row (Figma Frame 2131328122 11:5546, 329×48): transport controls left,
+   score pill right. The pill's 48px height sets the row height.
+   NOTE 1: 11:5546's reported child coordinates contradict the render (they place
+   the pill left and overflow the controls past the frame's right edge), so this
+   row follows the RENDER — controls left, pill right, vertically centred.
+   NOTE 2: the row fills the column's content width rather than Figma's 329px.
+   329 + its 40px left inset leaves only 27px on the right of the 396px board,
+   i.e. an asymmetric gutter; the site's gutter is 40px everywhere (.layout-right,
+   and the left panel), so the pill sits 40px from the edge, not 27px. */
+.snake-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Transport controls (Figma 11:5528): three 20px glyphs, 16px apart (92×20). */
+.snake-transport {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+/* 20px cream @40% — the same treatment as every other sidebar icon on the site
+   (see the shared .ls-icon rule), which is also what the Figma render shows:
+   cream 40% over #111323 resolves to the mid-grey those glyphs read as. */
+.snake-transport-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--cream);         /* SVGs use currentColor */
+  opacity: 0.4;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+/* Figma defines no hover state for these, but a control that stays at 40% reads
+   as disabled — lifting to full cream is the minimum affordance, and matches how
+   the site's other tertiary controls brighten on hover. */
+.snake-transport-btn:hover,
+.snake-transport-btn:focus-visible {
+  opacity: 1;
+}
+
+/* Score pill (Figma 11:5519, 98×48): 24px icon + score, 8px apart, padding
+   12/24, fully rounded. Dashed cream outline per the render — the project's
+   established tertiary/primary treatment (see .btn-primary), since 11:5519's
+   exact stroke data needs an asset export this session could not perform. */
+.snake-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* Figma's 12/24 padding is measured from the frame edge and its stroke sits
+     INSIDE that 98×48 box, so the 1px border has to come out of the padding —
+     11+1 and 23+1 — or the pill renders 2px over on both axes. Verified: this
+     gives exactly 98.06 × 48 (DM Mono's "00" advance is 18.06px vs Figma's 18). */
+  padding: 11px 23px;
+  border: 1px dashed rgba(249, 245, 235, 0.4);
+  border-radius: 24px;         /* half the 48px height — full pill */
+}
+.snake-score-icon {
+  /* Figma hugeicons:game 11:5521, 24×24. Matches the score's own #FFFFFF. */
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #ffffff;              /* SVG uses currentColor */
+}
+
+/* These two glyphs fill their slot exactly (20px and 24px); colour comes from
+   the slot's `color` via currentColor. The D-pad's glyph is smaller than its
+   button, so it is sized separately below. */
+.snake-transport-btn svg,
+.snake-score-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Figma 11:5527: DM Mono Regular 15px/24px, #FFFFFF (white here, NOT --cream). */
+.snake-score-value {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Game board — EMPTY PLACEHOLDER for Epic 5.
+   Figma has no board container: the snake's body is background grid cells
+   recoloured in place (the red→purple chain in the design is mock game state,
+   not decoration), so the board is simply the grid region. This box claims that
+   region and publishes the grid metrics for the game code to lay cells out on
+   the same 33px pitch as the background. */
+.snake-board {
+  --snake-cell: 32px;          /* Figma "Pixels" tile */
+  --snake-gutter: 1px;
+  --snake-pitch: 33px;         /* cell + gutter */
+  --snake-radius: 8px;
+  flex: 1;
+  min-height: 0;
+}
+/* Keyboard users can enter the game deliberately; while it is focused the arrow
+   keys steer instead of scrolling the page (see Assets/js/snake.js). */
+.snake-board:focus-visible {
+  outline: 1px dashed rgba(249, 245, 235, 0.4);
+  outline-offset: 4px;
+}
+
+/* Canvas and overlay are both positioned against .snake-panel and given their
+   box by snake.js, which bleeds them past the column's 40px padding to the
+   panel edges so the cells land in phase with the background grid. */
+.snake-canvas,
+.snake-overlay {
+  position: absolute;
+}
+.snake-canvas {
+  display: block;
+  pointer-events: none;        /* steering is keys + the D-pad, not the canvas */
+}
+
+/* Left sidebar render target for the cross-panel grid (Epic 5 Part 2). Its box
+   comes from snake.js, which anchors it to the same 33px phase as this panel's
+   background so the snake lands on the background cells here too.
+
+   z-index:-1 puts it behind the panel's own text but still above the panel's
+   background: position:sticky on .layout-left makes that column a stacking
+   context, and inside one, negative-z children paint after the element's own
+   background and before its in-flow content. The snake is allowed to cross the
+   name / clock area — those cells stay in play — it just passes behind them
+   rather than over the type. */
+.snake-canvas--left {
+  z-index: -1;
+}
+/* Guarantees the containment the z-index above depends on. position:sticky
+   already creates a stacking context, so this is a no-op in practice — it is
+   here so the left-panel snake cannot silently disappear behind the panel
+   background if that column's positioning ever changes. */
+.layout-left--home {
+  isolation: isolate;
+}
+.snake-canvas--left[hidden] {
+  display: none;
+}
+
+/* Game-over / paused overlay. NOT from Figma (6:25834 has no such state) —
+   assembled from the design system: page-bg scrim, cream text, and the Primary
+   Button for the action. Hidden with visibility rather than display so
+   button-fill.js can measure the Retry pill on load and draw its dashed border. */
+.snake-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: var(--snake-radius, 8px);
+  background: rgba(17, 19, 35, 0.82);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.snake-overlay.is-shown {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+.snake-overlay-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  color: var(--cream);
+}
+/* Score echoes the header readout's DM Mono. */
+.snake-overlay-score {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgba(249, 245, 235, 0.7);
+}
+.snake-overlay-score[hidden] {
+  display: none;
+}
+
+/* D-pad (Figma 11:5537 / 11:5539 / 11:5541 / 11:5543): a plus of four buttons on
+   the background grid's own 33px pitch, sitting 206px above the panel bottom
+   (Figma: cluster bottom 1047 of a 1253-tall frame; 166px here + the column's
+   40px bottom padding). Centred horizontally — Figma has it 6px right of centre
+   because it snaps to the grid, which is not worth reproducing on a
+   percentage-width column.
+   The 16px glyph size, the 33px pitch and the plus layout are from Figma. The
+   button CHROME (24px square, cream fill, 8px radius) is measured off the render
+   — those squares are absent from 6:25834's node list, so they could not be read
+   as exact values. Flagged for the same asset-export pass as the glyphs. */
+.snake-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 24px);
+  grid-template-rows: repeat(3, 24px);
+  gap: 9px;                    /* 24 + 9 = the grid's 33px pitch */
+  align-self: center;
+  /* Pinned to the LOWEST VISIBLE pixels of the panel, just above the
+     out-of-contract area (Epic 5 Part 2). The column is sticky at top:0 with
+     min-height:100vh, so its bottom edge is the viewport bottom while stuck and
+     the only thing below the D-pad is that column's own 40px bottom padding.
+     This intentionally departs from Figma, which parks the cluster at y=965..1047
+     of a 1253-tall frame (206px up from the bottom) — a static-layout position
+     that has no meaning once the panel is viewport-locked. */
+  margin-bottom: 0;
+}
+.snake-dpad-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;          /* matches the grid tile's radius */
+  background: var(--cream);
+  cursor: pointer;
+}
+/* The glyph itself is 16px inside the 24px button (Figma's icon frames are 16px);
+   dark-on-cream, so it takes the page bg. */
+.snake-dpad-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: var(--bg);
+}
+.snake-dpad-btn--up    { grid-area: 1 / 2; }
+.snake-dpad-btn--left  { grid-area: 2 / 1; }
+.snake-dpad-btn--right { grid-area: 2 / 3; }
+.snake-dpad-btn--down  { grid-area: 3 / 2; }
 
 /* ============================================================================
    RESPONSIVE — breakpoints cascade via max-width (each tier overrides the last)
@@ -2004,8 +2809,6 @@ section {
   .mid-label,
   .mid-body,
   .footer-link,
-  .work-row,
-  .work-year,
   .contact-row {
     font-size: 14px;
   }
@@ -2061,9 +2864,21 @@ section {
   .layout-left--case {
     gap: 16px;
   }
+  /* The desktop panel grid and the full-height column don't apply to the
+     compact bar — it keeps the flat .layout-left background above. */
+  .layout-left--home {
+    min-height: 0;
+    background-image: none;
+  }
+  /* The time widget is desktop-only, exactly like the right-sidebar widget it
+     replaced (which was hidden with .layout-right below). */
+  .ls-clock {
+    display: none;
+  }
 
   /* Identity block (home): name over role, tight. Resume + location are dropped
-     from the bar (resume relocates into the page content as .resume-mobile). */
+     from the bar — the resume lives in the Summary chips row (.glance-resume),
+     which is in the page content and shows at every width. */
   .ls-bio {
     gap: 0;
     min-width: 0;
@@ -2079,11 +2894,20 @@ section {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .home-role {
+  .home-role,
+  .ls-role {
     font-size: 12px;
   }
   .home-location {
     display: none;
+  }
+  /* The flag stays in the compact bar — unlike the old "Based in Amsterdam"
+     line it can't be dropped, since "Product Designer in" needs it to finish
+     the sentence. Scaled down to sit on the 12px role text. */
+  .ls-role .ls-flag {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
   }
   .ls-link--resume {
     display: none;
@@ -2136,15 +2960,51 @@ section {
     display: none;
   }
 
+  /* ---- BOTTOM NAV ----
+     Five items still don't fit at 375px (the Figma pill is 731px wide), so the
+     bar spans the screen with tighter items and the row scrolls horizontally
+     inside the pill. Figma has no mobile variant of this component. */
+  .bottom-nav {
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+    max-width: none;
+    /* No centring translate here (left+right do the work), so the reveal
+       offset is the whole transform. */
+    transform: translateY(20px);
+  }
+  .bottom-nav.is-revealed {
+    transform: translateY(0);
+  }
+  .bottom-nav-list {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .bottom-nav-list::-webkit-scrollbar {
+    display: none;
+  }
+  .bottom-nav-item {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
   /* The sticky bar carries identity now, so the per-section mobile identity
      headers stay hidden. */
   .section-identity {
     display: none;
   }
 
-  /* Resume link relocated into the page content (after Summary). */
-  .resume-mobile {
-    display: inline-flex;
+  /* ---- "At a Glance" cards ----
+     Figma has no mobile variant. No type overrides here: at 24/18/12 the sizes
+     already fit three stat cards across a 375px screen, and stepping them again
+     would have made mobile LARGER than desktop. Layout only — tighter row gap,
+     and the education pair stacks. */
+  .glance-row {
+    gap: 8px;
+  }
+  .glance-row:last-child {
+    flex-direction: column;
   }
 
   /* ---- Content: full width, ~20px side padding ---- */
@@ -2180,21 +3040,28 @@ section {
     max-width: 100%;
   }
 
-  /* ---- PROJECTS — filter chips wrap to 2 rows, slightly smaller ---- */
-  .proj-filters {
-    flex-wrap: wrap;
-    gap: 12px;
+  /* ---- PROJECTS — the carousel shrinks to the column ----
+     No Figma mobile spec for this section. The track drops its fixed 375px so
+     the card fills the column, and the arrows tuck inside the track edges
+     (there's no room for them to sit outside it below ~455px). */
+  .proj-track {
+    width: 100%;
   }
-  .proj-filters .btn-primary {
-    flex: 0 0 auto;
-    padding: 10px 16px;
-    font-size: 14px;
+  .proj-carousel {
+    padding: 24px 0;
   }
-  /* No Figma mobile spec for the row subtitle/arrow; drop them so rows stay
-     tight (title · dots · year) and never overflow the narrow column. */
-  .work-sub,
-  .work-arrow {
-    display: none;
+  .proj-arrow--prev {
+    left: -8px;
+  }
+  .proj-arrow--next {
+    right: -8px;
+  }
+  /* The fixed 375px panel is too deep once the card is narrower than 375px.
+     aspect-ratio keeps it SQUARE and proportional to the column — the panel is
+     empty, so without an intrinsic ratio it would collapse to nothing. */
+  .project-info {
+    height: auto;
+    aspect-ratio: 1;
   }
 
   /* ---- HOW I THINK — drop the 01–05 numbers; tighten the two columns ---- */
@@ -2214,36 +3081,10 @@ section {
     font-size: 13px;
   }
 
-  /* ---- TESTIMONIALS — stack vertically (1 column), lighter, 3-line quote ----
-     Desktop keeps its 2-column row; on mobile the cards stack full-width for a
-     vertical-scroll read, with tighter internal spacing and the quote clamped to
-     3 lines so each card stays compact and scannable. */
-  .testi-row {
-    flex-direction: column;
-    gap: 32px;                 /* ≥32px separation between the stacked cards */
-  }
-  .testi-card {
-    flex: none;
-    width: 100%;
-    gap: 12px;                 /* tighter quote ↔ name/role (was 24px) */
-  }
-  .testi-quote {
-    /* Override the desktop 8-line excerpt: exactly 3 lines on mobile. The
-       -webkit-box / box-orient / overflow:hidden come from the base rule, so the
-       ellipsis works the same way (incl. Safari iOS). */
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-  /* The desktop VERTICAL divider becomes a full-width HORIZONTAL rule between the
-     stacked cards (sits between the two cards in the DOM, so the column gap spaces
-     it evenly above and below). */
-  .testi-divider {
-    align-self: stretch;
-    width: auto;
-    height: 0;
-    border-left: 0;
-    border-top: 1px solid rgba(249, 245, 235, 0.12);
-  }
+  /* ---- TESTIMONIALS ----
+     No mobile override: the fixed 240x240 snap row IS the mobile pattern, and a
+     240px card plus the 54px gap leaves the next card peeking, which advertises
+     the scroll. The old stacked-column rules are gone with the two-up split. */
 
   /* ---- TIMELINE — sticky scroll on mobile (full-width slide-up) -------------
      Same mechanic as desktop (script.js drives the active milestone off scroll
@@ -2371,29 +3212,6 @@ section {
     transform: none;
   }
 
-  /* ---- ALL TIME FAVOURITES — 3 per row, thumbnail on top, text below ---- */
-  .fav-row {
-    gap: 10px;
-  }
-  .fav-item {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .fav-img {
-    flex: none;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 60 / 80;
-  }
-  .fav-info {
-    justify-content: flex-start;
-  }
-  .fav-name,
-  .fav-sub {
-    font-size: 12px;
-    line-height: 1.3;
-  }
-
   /* ---- FOOTER — default card stacks; expanded contact is single column ---- */
   .footer-row {
     flex-direction: column;
@@ -2486,19 +3304,6 @@ section {
 /* --- Preserve existing interactive transitions on tagged elements ---------- */
 /* The base `.reveal-item` rule replaces these elements' own `transition`, so we
    re-declare their hover/dim transitions alongside the reveal ones. */
-
-/* Sibling dimming: hovering one project row dims the others to 50% (shared
-   pattern — matches the default + expanded footers). The rows are .reveal-item
-   (550ms reveal transition), so while the list is hovered a snappy 200ms opacity
-   transition is restored on EVERY row (dim-down + un-dim both feel responsive);
-   the slower reveal transition returns only once the cursor leaves the list.
-   The 0.5 opacity wins over .reveal-item.revealed on specificity. */
-.work-list:has(.work-row:hover) .work-row {
-  transition: opacity 200ms ease-out;
-}
-.work-list:has(.work-row:hover) .work-row:not(:hover) {
-  opacity: 0.5;
-}
 
 /* --- Reduced motion: no animation, final state immediately. !important beats
    the per-element transition overrides above regardless of specificity. ------ */

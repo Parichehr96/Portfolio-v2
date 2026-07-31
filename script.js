@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSplashAutoScroll();
   initSplashStars();
   initHero();
-  initHomeMiddle();
   initTimeline();
   initFooterContact();
 
@@ -1160,40 +1159,6 @@ function initFooterContact() {
     measure();
     renderFromScroll();
   });
-}
-
-/**
- * Home Projects section: the filter chips (.proj-filters) filter the project
- * list (#project-list) by data-tags. "Featured projects" is active on load.
- *   • all        → every project
- *   • featured   → main case studies (data-tags includes "featured")
- *   • playground → side projects / experiments (data-tags includes "playground")
- * Rows that point to a case-study page navigate normally; rows without an href
- * (no case study yet) are inert.
- */
-function initHomeMiddle() {
-  const filters = document.getElementById("project-filters");
-  const list = document.getElementById("project-list");
-  if (!filters || !list) return;
-
-  const chips = Array.from(filters.querySelectorAll(".btn-primary[data-filter]"));
-  const rows = Array.from(list.querySelectorAll(".work-row"));
-
-  const apply = (filter) => {
-    rows.forEach((row) => {
-      const tags = (row.dataset.tags || "").split(/\s+/);
-      row.hidden = filter !== "all" && !tags.includes(filter);
-    });
-    chips.forEach((c) => c.classList.toggle("selected", c.dataset.filter === filter));
-  };
-
-  chips.forEach((chip) => {
-    chip.addEventListener("click", () => apply(chip.dataset.filter));
-  });
-
-  // Default state on load: "Featured projects" (matches the Figma selection).
-  const initial = filters.querySelector(".btn-primary.selected") || chips[0];
-  if (initial) apply(initial.dataset.filter);
 }
 
 
