@@ -2649,36 +2649,13 @@ section {
    box by snake.js, which bleeds them past the column's 40px padding to the
    panel edges so the cells land in phase with the background grid. */
 .snake-canvas,
-.snake-overlay {
+.snake-overlay,
+.snake-idle {
   position: absolute;
 }
 .snake-canvas {
   display: block;
   pointer-events: none;        /* steering is keys + the D-pad, not the canvas */
-}
-
-/* Left sidebar render target for the cross-panel grid (Epic 5 Part 2). Its box
-   comes from snake.js, which anchors it to the same 33px phase as this panel's
-   background so the snake lands on the background cells here too.
-
-   z-index:-1 puts it behind the panel's own text but still above the panel's
-   background: position:sticky on .layout-left makes that column a stacking
-   context, and inside one, negative-z children paint after the element's own
-   background and before its in-flow content. The snake is allowed to cross the
-   name / clock area — those cells stay in play — it just passes behind them
-   rather than over the type. */
-.snake-canvas--left {
-  z-index: -1;
-}
-/* Guarantees the containment the z-index above depends on. position:sticky
-   already creates a stacking context, so this is a no-op in practice — it is
-   here so the left-panel snake cannot silently disappear behind the panel
-   background if that column's positioning ever changes. */
-.layout-left--home {
-  isolation: isolate;
-}
-.snake-canvas--left[hidden] {
-  display: none;
 }
 
 /* Game-over / paused overlay. NOT from Figma (6:25834 has no such state) —
@@ -2719,6 +2696,45 @@ section {
 }
 .snake-overlay-score[hidden] {
   display: none;
+}
+
+/* Idle prompt — the board's resting state before the first game (and again
+   after RESTART). Deliberately NOT a scrim like .snake-overlay above: the
+   pixel-grid background must stay visible and the board holds no snake/bait,
+   so idle reads as genuinely empty rather than paused or game-over. */
+.snake-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.snake-idle.is-shown {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+.snake-idle-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  color: var(--cream);
+}
+/* Subtle pulse on the CTA — it's the only way into the game, so it gets a
+   quiet "start here" cue. */
+.snake-idle-play {
+  animation: snake-idle-pulse 2.2s ease-in-out infinite;
+}
+@keyframes snake-idle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snake-idle-play { animation: none; }
 }
 
 /* D-pad (Figma 11:5537 / 11:5539 / 11:5541 / 11:5543): a plus of four buttons on
@@ -2770,6 +2786,14 @@ section {
 .snake-dpad-btn--left  { grid-area: 2 / 1; }
 .snake-dpad-btn--right { grid-area: 2 / 3; }
 .snake-dpad-btn--down  { grid-area: 3 / 2; }
+
+/* Hidden while idle — there is no snake yet to steer. `visibility`, not
+   `display`: snake.js's layout() reads this element's live bounding box every
+   frame to bound the right panel's playable strip, and a display:none element
+   reports an empty 0,0,0,0 rect that would corrupt that calculation. */
+.snake-dpad.is-idle {
+  visibility: hidden;
+}
 
 /* ============================================================================
    RESPONSIVE — breakpoints cascade via max-width (each tier overrides the last)

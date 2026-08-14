@@ -1,35 +1,34 @@
 /* ===========================================================================
- * Snake — cross-panel game (Epic 5, Parts 1 + 2)
+ * Snake — right-panel game (Epic 5)
  *
- * ONE logical grid, TWO render targets. The right sidebar holds logical columns
- * [0, colsR); the left sidebar holds [colsR, colsR + colsL). The middle column
- * does not exist in game space at all — there is no canvas over it, so it can
- * never show a snake pixel, and a single modulo over the combined width gives
- * the teleport for free:
+ * ONE render target: the right sidebar's own canvas. The snake lives and moves
+ * entirely within the right panel's playfield — it wraps at that panel's own
+ * edges (top/bottom/left/right of the playable strip) and never reaches, nor
+ * paints a pixel into, the left panel.
  *
- *     x = -1        -> colsR+colsL-1   right panel's left edge  -> left panel's RIGHT edge
- *     x = colsR-1   <- colsR           left panel's left edge   -> right panel's RIGHT edge
- *     x = colsR+colsL -> 0             left panel's right edge  -> right panel's LEFT edge
- *
- * Both panels are locked to the SAME 33px grid as their backgrounds (Figma
- * "Right_bg" 22:2560 / "Left_bg" 22:2559): 32px tiles, 1px gutter, 8px radius.
- * In Figma the snake IS recoloured background grid cells (11:4902…11:4961), so
- * each canvas bleeds past its column's 40px padding to the panel edges and snaps
- * its origin to a grid line. Cell size comes from the CSS custom properties the
- * panel publishes, never from a hardcoded number here.
+ * The panel is locked to the same 33px grid as its background (Figma
+ * "Right_bg" 22:2560): 32px tiles, 1px gutter, 8px radius. In Figma the snake
+ * IS recoloured background grid cells (11:4902…11:4961), so the canvas bleeds
+ * past the column's 40px padding to the panel edges and snaps its origin to a
+ * grid line. Cell size comes from the CSS custom properties the panel
+ * publishes, never from a hardcoded number here.
  *
  * OUT OF CONTRACT: only cells completely outside the viewport are out of play.
- * The playable band is the vertical intersection of both panels with the
+ * The playable band is the vertical intersection of the panel with the
  * viewport, recomputed on scroll and resize; a row that is even partially
- * visible counts. Both sidebars are sticky at top:0 with height 100vh, so while
- * they are stuck the band is exactly the viewport and the row count is constant —
+ * visible counts. The sidebar is sticky at top:0 with height 100vh, so while
+ * it's stuck the band is exactly the viewport and the row count is constant —
  * it only moves during the scroll-in / scroll-out transitions, and refit()
  * absorbs that without ever wedging the snake into itself.
  *
  * Loop: one requestAnimationFrame loop, stepping on a timestamp accumulator and
  * drawing only on a step (the board is discrete, so redrawing identical frames at
- * 60fps would be pure waste). Fully cancelled whenever the game is paused, over,
- * off-screen, too small, or the tab is hidden, so an idle panel costs nothing.
+ * 60fps would be pure waste). Fully cancelled whenever the game is idle, paused,
+ * over, off-screen, too small, or the tab is hidden, so an unstarted or inactive
+ * panel costs nothing.
+ *
+ * No autoplay: the board boots (and RESTART returns) into an explicit IDLE state
+ * — empty board, "Up for a game?" prompt — and the only way in is the Play CTA.
  * ======================================================================== */
 (() => {
   'use strict';
@@ -37,20 +36,16 @@
   const board = document.getElementById('snake-board');
   const panel = document.querySelector('.snake-panel');
   const rightAside = document.querySelector('.layout-right--home');
-  const leftAside = document.querySelector('.layout-left--home');
   const rightCanvas = document.getElementById('snake-canvas');
-  const leftCanvas = document.getElementById('snake-canvas-left');
   const overlay = document.getElementById('snake-overlay');
+  const idlePrompt = document.getElementById('snake-idle');
   const scoreEl = document.getElementById('snake-score');
   /* UI the snake must never overlap. Their live boxes bound the playable strip. */
-  const lsId = document.querySelector('.ls-id');            /* name + role   */
-  const lsClock = document.getElementById('ls-clock');      /* time widget   */
   const snakeHeader = document.querySelector('.snake-header'); /* score + transport */
   const dpad = document.querySelector('.snake-dpad');       /* arrow controls */
-  if (!board || !panel || !rightAside || !rightCanvas || !overlay) return;
+  if (!board || !panel || !rightAside || !rightCanvas || !overlay || !idlePrompt) return;
 
   const rightCtx = rightCanvas.getContext('2d');
-  const leftCtx = leftCanvas ? leftCanvas.getContext('2d') : null;
   if (!rightCtx) return;
 
   /* ---- Grid metrics, read from the panel's own custom properties ---------- */
@@ -74,20 +69,15 @@
   const stepMs = () =>
     Math.max(STEP_MIN, STEP_BASE - STEP_DROP * Math.floor(score / STEP_PER));
 
-  /* Idle autopilot keeps going straight this often, so the random wander reads
-   * as exploring rather than vibrating in place. */
-  const STRAIGHT_BIAS = 0.75;
-
   const START_LEN = 3;
   const MIN_ROWS = 4;
 
-  /* Gradient fade depths, mirroring each panel's background-size in styles.css
-   * (.layout-left--home / .layout-right--home). Under these bands the background
-   * grid dissolves into the page colour, so a snake pixel there would float on
-   * apparently empty space — the whole fade depth is treated as off-limits.
-   * Keep in sync with those two rules. */
+  /* Gradient fade depths, mirroring the panel's background-size in styles.css
+   * (.layout-right--home). Under these bands the background grid dissolves into
+   * the page colour, so a snake pixel there would float on apparently empty
+   * space — the whole fade depth is treated as off-limits. Keep in sync with
+   * that rule. */
   const FADE_R = { top: 270, bottom: 0, side: 129 };
-  const FADE_L = { top: 270, bottom: 186, side: 119 };
 
   /* Where the top boundary sits relative to the point at which the top gradient
    * has FULLY cleared, in whole grid rows. Negative means the strip is allowed to
@@ -127,29 +117,18 @@
     const b = Math.round(HEAD_RGB.b + (255 - HEAD_RGB.b) * t);
     return `rgb(${r}, ${g}, ${b})`;
   }
-  const DIRS = [
-    { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 },
-  ];
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ---- State ------------------------------------------------------------- */
-  let colsR = 0;                  /* right panel's columns: logical [0, colsR)  */
-  let colsL = 0;                  /* left panel's columns: [colsR, colsR+colsL) */
-  let cols = 0;                   /* colsR + colsL — the combined grid width    */
-  /* Each panel's playable row range over the SHARED row axis, inclusive.
-   * They differ: the right strip stops above the D-pad, the left above its
-   * bottom fade. */
+  let colsR = 0;                  /* right panel's columns: logical [0, colsR) */
+  /* The right panel's playable row range, inclusive — stops above the D-pad
+   * at the bottom and below the header at the top. */
   let zoneR = { top: 0, bot: -1 };
-  let zoneL = { top: 0, bot: -1 };
-  let rowMin = 0;                 /* union span, used only to index `occ` */
-  let rowsSpan = 0;
   let seg = [];                   /* [{x,y}], head first */
   let dir = { x: 1, y: 0 };
   let queuedDir = null;
   let food = null;
   let score = 0;
-  let autopilot = true;           /* cleared the moment the user steers */
+  let idle = true;                /* true before the first game starts, and after RESTART */
   let paused = false;
   let over = false;
   let onScreen = true;
@@ -160,28 +139,18 @@
   let lastStep = 0;
 
   const wrap = (v, n) => ((v % n) + n) % n;
-  const wrapX = (x) => wrap(x, cols);
-  const idx = (x, y) => x + (y - rowMin) * cols;
-  /* Which panel owns a logical column, and therefore which row range applies. */
-  const rangeOf = (x) => (x < colsR ? zoneR : zoneL);
+  const wrapX = (x) => wrap(x, colsR);
+  const idx = (x, y) => x + (y - zoneR.top) * colsR;
   const rowsOf = (r) => r.bot - r.top + 1;
 
-  /* One step from `from` in direction `d`, honouring both rules:
-   *   vertical   — wrap inside the CURRENT column's range (per-column modulo)
-   *   horizontal — carry the row across, then clamp into the TARGET column's
-   *                range, since the two panels' strips end at different heights
-   * Off-limit cells are simply not addressable, so the snake can never enter one. */
+  /* One step from `from` in direction `d`, wrapping at the playfield's own
+   * edges — horizontally within [0, colsR), vertically within zoneR. Off-limit
+   * cells are simply not addressable, so the snake can never enter one. */
   function nextCell(from, d) {
     const nx = wrapX(from.x + d.x);
     let ny = from.y + d.y;
-    if (d.y !== 0) {
-      const r = rangeOf(from.x);
-      if (ny > r.bot) ny = r.top;
-      else if (ny < r.top) ny = r.bot;
-    }
-    const t = rangeOf(nx);
-    if (ny > t.bot) ny = t.bot;
-    else if (ny < t.top) ny = t.top;
+    if (ny > zoneR.bot) ny = zoneR.top;
+    else if (ny < zoneR.top) ny = zoneR.bot;
     return { x: nx, y: ny };
   }
 
@@ -189,22 +158,15 @@
    * A cell is playable only where the panel is BOTH clearly visible AND empty:
    *
    *   visible = panel box  ∩  viewport  −  the background's gradient fades
-   *   empty   = not under any of that panel's UI
+   *   empty   = not under the panel's own UI (scoreboard + pause/play/restart
+   *             at the top, the D-pad at the bottom — the strip ends at the
+   *             last whole row ABOVE the arrow controls), or the right-edge fade
    *
-   * Off-limits, per panel:
-   *   LEFT  — name/role block and the time widget (top), the bottom fade, the
-   *           right-edge fade.
-   *   RIGHT — scoreboard + pause/play/restart (top), the D-pad (bottom: the
-   *           strip ends at the last whole row ABOVE the arrow controls), the
-   *           right-edge fade.
    * NOTE the TOP fade is only a soft constraint (TOP_FADE_OFFSET_ROWS): the strip
    * deliberately reaches a few rows into it to gain height. The snake itself is
    * painted on the canvas ABOVE that gradient, so it stays fully opaque there —
    * it is the grid BEHIND it that thins out. Every other listed area is hard.
    *
-   * The two strips end at different heights, so each panel keeps its own row
-   * range over ONE shared, grid-aligned row axis (anchored to the right panel's
-   * top, which is what keeps the snake in step with the background grid).
    * Recomputed on every scroll and resize, since both the visible region and the
    * UI boxes move. */
   /* The two TOP constraints are returned separately because they are enforced
@@ -228,7 +190,6 @@
   function layout() {
     const vh = window.innerHeight;
     const rBox = rightAside.getBoundingClientRect();
-    const lBox = leftAside ? leftAside.getBoundingClientRect() : null;
     const panelBox = panel.getBoundingClientRect();
 
     const originTop = rBox.top;
@@ -244,7 +205,6 @@
     const rowBotOf = (b) => Math.floor((b - originTop - CELL) / PITCH);
     const colsIn = (box, right) => Math.floor((right - box.left - CELL) / PITCH) + 1;
 
-    /* ---- right panel ---- */
     const rs = strip(rBox, FADE_R, [snakeHeader], dpad, vh);
     const nextColsR = colsIn(rBox, rs.right);
     const nextZoneR = { top: topRowOf(rs), bot: rowBotOf(rs.bottom) };
@@ -252,27 +212,12 @@
     tooSmall = rowsOf(nextZoneR) < MIN_ROWS || nextColsR < 2;
     if (tooSmall) return false;
 
-    /* ---- left panel (joins only when it is a real vertical strip) ---- */
-    let leftOk = false;
-    let nextColsL = 0;
-    let nextZoneL = { top: nextZoneR.top, bot: nextZoneR.bot };
-    if (lBox && lBox.width >= PITCH * 2) {
-      const ls = strip(lBox, FADE_L, [lsId, lsClock], null, vh);
-      const c = colsIn(lBox, ls.right);
-      const z = { top: topRowOf(ls), bot: rowBotOf(ls.bottom) };
-      if (c >= 2 && rowsOf(z) >= MIN_ROWS) {
-        leftOk = true;
-        nextColsL = c;
-        nextZoneL = z;
-      }
-    }
-
-    /* ---- canvases cover exactly their own playable strip, so nothing can be
+    /* ---- canvas covers exactly the playable strip, so nothing can be
      * painted outside it even if the game logic were wrong ---- */
     const rPxW = nextColsR * PITCH - GAP;
     const rPxH = rowsOf(nextZoneR) * PITCH - GAP;
     const rTop = originTop + nextZoneR.top * PITCH;
-    for (const el of [rightCanvas, overlay]) {
+    for (const el of [rightCanvas, overlay, idlePrompt]) {
       el.style.left = `${rBox.left - panelBox.left}px`;
       el.style.top = `${rTop - panelBox.top}px`;
       el.style.width = `${rPxW}px`;
@@ -280,32 +225,13 @@
     }
     sizeCanvas(rightCanvas, rightCtx, rPxW, rPxH);
 
-    if (leftCanvas) {
-      leftCanvas.hidden = !leftOk;
-      if (leftOk) {
-        const lPxW = nextColsL * PITCH - GAP;
-        const lPxH = rowsOf(nextZoneL) * PITCH - GAP;
-        leftCanvas.style.left = '0px';
-        leftCanvas.style.top = `${originTop + nextZoneL.top * PITCH - lBox.top}px`;
-        leftCanvas.style.width = `${lPxW}px`;
-        leftCanvas.style.height = `${lPxH}px`;
-        sizeCanvas(leftCanvas, leftCtx, lPxW, lPxH);
-      }
-    }
-
     const changed =
-      nextColsR !== colsR || nextColsL !== colsL ||
-      nextZoneR.top !== zoneR.top || nextZoneR.bot !== zoneR.bot ||
-      nextZoneL.top !== zoneL.top || nextZoneL.bot !== zoneL.bot;
+      nextColsR !== colsR ||
+      nextZoneR.top !== zoneR.top || nextZoneR.bot !== zoneR.bot;
 
     colsR = nextColsR;
-    colsL = nextColsL;
-    cols = colsR + colsL;
     zoneR = nextZoneR;
-    zoneL = leftOk ? nextZoneL : nextZoneR;
-    rowMin = Math.min(zoneR.top, zoneL.top);
-    rowsSpan = Math.max(zoneR.bot, zoneL.bot) - rowMin + 1;
-    if (changed) occ = new Uint8Array(cols * rowsSpan);
+    if (changed) occ = new Uint8Array(colsR * rowsOf(zoneR));
     return changed;
   }
 
@@ -323,21 +249,11 @@
   /* ---- Drawing ----------------------------------------------------------- */
   const hasRoundRect = typeof rightCtx.roundRect === 'function';
 
-  /* Maps a logical column to the panel that owns it. This is the only place the
-   * two-zone split is interpreted, so nothing else needs to know about it. */
-  function zoneOf(x) {
-    if (x < colsR) return { cx: rightCtx, lx: x };
-    return { cx: leftCtx, lx: x - colsR };
-  }
-
   function tile(x, y, color) {
-    const z = zoneOf(x);
-    if (!z.cx) return;            /* left panel not in play */
-    const r = rangeOf(x);
-    if (y < r.top || y > r.bot) return;   /* never paint outside the strip */
-    const px = z.lx * PITCH;
-    const py = (y - r.top) * PITCH;       /* rows are relative to this strip */
-    const cx = z.cx;
+    if (y < zoneR.top || y > zoneR.bot) return;   /* never paint outside the strip */
+    const px = x * PITCH;
+    const py = (y - zoneR.top) * PITCH;           /* rows are relative to the strip */
+    const cx = rightCtx;
     cx.fillStyle = color;
     cx.beginPath();
     if (hasRoundRect) {
@@ -356,15 +272,11 @@
   function draw() {
     /* Pausing dims ONLY what is painted here — the snake and the food. The panel
      * background, the grid, the header and the D-pad are all DOM behind/around
-     * these canvases and are deliberately left untouched. */
+     * the canvas and are deliberately left untouched. */
     const alpha = paused ? PAUSED_ALPHA : 1;
 
     rightCtx.clearRect(0, 0, colsR * PITCH, rowsOf(zoneR) * PITCH);
     rightCtx.globalAlpha = alpha;
-    if (leftCtx && colsL) {
-      leftCtx.clearRect(0, 0, colsL * PITCH, rowsOf(zoneL) * PITCH);
-      leftCtx.globalAlpha = alpha;
-    }
 
     if (food) tile(food.x, food.y, FOOD_COLOR);
     /* Tail first so the head paints last. Colour is derived from position in the
@@ -373,14 +285,12 @@
     for (let i = n - 1; i >= 0; i--) tile(seg[i].x, seg[i].y, segmentColor(i, n));
 
     rightCtx.globalAlpha = 1;
-    if (leftCtx) leftCtx.globalAlpha = 1;
   }
 
-  /* Wipes both canvases outright — used when the playable band collapses, so a
+  /* Wipes the canvas outright — used when the playable band collapses, so a
    * frozen frame can't be left sitting at a stale position. */
-  function clearCanvases() {
+  function clearCanvas() {
     rightCtx.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
-    if (leftCtx) leftCtx.clearRect(0, 0, leftCanvas.width, leftCanvas.height);
   }
 
   /* ---- Occupancy --------------------------------------------------------- *
@@ -392,38 +302,15 @@
     for (let i = 0; i < seg.length - 1; i++) occ[idx(seg[i].x, seg[i].y)] = 1;
   }
 
-  /* ---- Autopilot: random wander -------------------------------------------
-   * Deliberately NOT food-seeking. Left alone the snake mooches around and only
-   * eats what it happens to walk into, so an unattended panel keeps a short
-   * snake for a long time. It still refuses to turn into its own body. */
-  function chooseAuto() {
-    const head = seg[0];
-    const safe = [];
-    let straight = null;
-    for (const d of DIRS) {
-      if (d.x === -dir.x && d.y === -dir.y) continue;        /* no reversing */
-      const n = nextCell(head, d);
-      const nx = n.x;
-      const ny = n.y;
-      if (occ[idx(nx, ny)]) continue;                        /* immediate self-hit */
-      safe.push(d);
-      if (d.x === dir.x && d.y === dir.y) straight = d;
-    }
-    if (!safe.length) return null;
-    if (straight && Math.random() < STRAIGHT_BIAS) return straight;
-    return safe[(Math.random() * safe.length) | 0];
-  }
-
   /* ---- Food -------------------------------------------------------------- */
-  /* Bait only ever lands on a playable cell: the walk is driven by each column's
-   * own row range, so off-limit cells are never even candidates. */
+  /* Bait only ever lands on a playable cell: the walk is driven by zoneR's own
+   * row range, so off-limit cells are never even candidates. */
   function placeFood() {
     const taken = new Set();
     for (const s of seg) taken.add(s.x + ',' + s.y);
     const free = [];
-    for (let x = 0; x < cols; x++) {
-      const r = rangeOf(x);
-      for (let y = r.top; y <= r.bot; y++) {
+    for (let x = 0; x < colsR; x++) {
+      for (let y = zoneR.top; y <= zoneR.bot; y++) {
         if (!taken.has(x + ',' + y)) free.push({ x, y });
       }
     }
@@ -454,9 +341,19 @@
     overlay.classList.remove('is-shown');
   }
 
+  /* Idle CTA ("Up for a game?" + Play). Toggled together with the D-pad, since
+   * the arrow controls have nothing to control until a game exists. The D-pad
+   * is hidden with `visibility`, not `display` — layout() reads its live
+   * bounding box every frame to bound the right panel's playable strip, and a
+   * display:none element reports an empty 0,0,0,0 rect that would corrupt it. */
+  function setIdleUI(show) {
+    if (dpad) dpad.classList.toggle('is-idle', show);
+    idlePrompt.classList.toggle('is-shown', show);
+  }
+
   /* ---- Lifecycle --------------------------------------------------------- */
   function reset() {
-    const cx = Math.floor(colsR / 2);   /* start in the right panel */
+    const cx = Math.floor(colsR / 2);   /* start centred in the playfield */
     const cy = Math.floor((zoneR.top + zoneR.bot) / 2);
     seg = [];
     for (let i = 0; i < START_LEN; i++) seg.push({ x: wrapX(cx - i), y: cy });
@@ -464,11 +361,40 @@
     queuedDir = null;
     score = 0;
     over = false;
-    autopilot = true;
     renderScore();
     placeFood();
     rebuildOcc();
     draw();
+  }
+
+  /* The ONLY entry point into a game: spawns the snake + first bait, reveals
+   * the D-pad, and starts the step loop. Used by both the idle Play CTA and
+   * Game Over's Retry — Retry bypasses idle and jumps straight back in. */
+  function startGame() {
+    layout();
+    reset();
+    idle = false;
+    setIdleUI(false);
+    hideOverlay();
+    paused = false;
+    sync();
+  }
+
+  /* RESTART's destination. No autoplay exists to fall back to any more, so
+   * restart now means "empty board, wait for Play" rather than "spawn a new
+   * autopiloted snake". */
+  function goIdle() {
+    stopLoop();
+    idle = true;
+    paused = false;
+    over = false;
+    seg = [];
+    food = null;
+    score = 0;
+    renderScore();
+    hideOverlay();
+    setIdleUI(true);
+    draw();              /* empty seg/food -> just clears the canvas */
   }
 
   /* Re-fit the snake after the playable zone changed shape (scroll/resize).
@@ -482,8 +408,7 @@
     const nextSeg = [];
     for (let i = 0; i < seg.length; i++) {
       const x = wrapX(seg[i].x);
-      const r = rangeOf(x);
-      const y = Math.min(r.bot, Math.max(r.top, seg[i].y));
+      const y = Math.min(zoneR.bot, Math.max(zoneR.top, seg[i].y));
       const key = x + ',' + y;
       if (seen.has(key)) break;
       seen.add(key);
@@ -503,16 +428,11 @@
   }
 
   function step() {
-    if (autopilot) {
-      const move = chooseAuto();
-      if (move) dir = move;
-    } else if (queuedDir) {
+    if (queuedDir) {
       dir = queuedDir;
       queuedDir = null;
     }
 
-    /* wrapX is the teleport: crossing a panel edge lands on the other panel's
-     * far edge in the same step, so nothing is ever drawn over the middle. */
     const head = nextCell(seg[0], dir);
     const eating = !!food && head.x === food.x && head.y === food.y;
 
@@ -549,7 +469,7 @@
   }
 
   function active() {
-    return !dormant && !tooSmall && !paused && !over && onScreen && !document.hidden;
+    return !idle && !dormant && !tooSmall && !paused && !over && onScreen && !document.hidden;
   }
 
   function frame(ts) {
@@ -592,27 +512,15 @@
   function setPaused(next) {
     if (over) return;
     paused = next;
-    if (!paused) hideOverlay();   /* also clears the reduced-motion start prompt */
+    if (!paused) hideOverlay();
     draw();                       /* re-paint at the dimmed / full alpha */
-    sync();
-  }
-
-  function restart() {
-    layout();
-    reset();
-    hideOverlay();
-    paused = false;
     sync();
   }
 
   /* The single entry point for BOTH input methods — the on-screen D-pad and the
    * keyboard arrows call this, so they behave identically by construction. */
   function steer(d) {
-    if (over) return;
-    /* ANY arrow press or D-pad click hands over control — including one that is
-     * not a legal turn. Pressing "back the way you came" is the most natural
-     * first thing to try, and it must not leave the autopilot quietly driving. */
-    autopilot = false;
+    if (idle || over) return;    /* idle: only the Play CTA starts a game */
     if (paused) setPaused(false);
     /* Validated against the COMMITTED direction, never the queued one, so a
      * fast two-key sequence can't fold into a reversal within one step. */
@@ -661,23 +569,23 @@
     });
   });
 
+  /* Inert while idle — there is nothing to pause/resume/restart yet, and none
+   * of these may start a game; only the idle Play CTA does that. */
   document.querySelectorAll('[data-snake-action]').forEach((btn) => {
     btn.addEventListener('click', () => {
+      if (idle) return;
       const a = btn.dataset.snakeAction;
       if (a === 'pause') setPaused(true);
-      else if (a === 'play') (over ? restart() : setPaused(false));
-      else if (a === 'restart') restart();
+      else if (a === 'play') (over ? startGame() : setPaused(false));
+      else if (a === 'restart') goIdle();
     });
   });
 
-  overlay.querySelector('.snake-retry')?.addEventListener('click', () => {
-    /* Game over is the only state this restarts from. Any other time the overlay
-     * is up it is the reduced-motion start prompt, which RESUMES — this used to
-     * call restart() unconditionally, which is what made pausing look like it
-     * reset the game. */
-    if (over) restart();
-    else setPaused(false);
-  });
+  /* The overlay is only ever raised for Game Over now, so Retry always starts a
+   * fresh game directly (it does not go through idle). */
+  overlay.querySelector('.snake-retry')?.addEventListener('click', startGame);
+
+  idlePrompt.querySelector('.snake-idle-play')?.addEventListener('click', startGame);
 
   /* ---- Environment ------------------------------------------------------- */
   document.addEventListener('visibilitychange', sync);
@@ -701,21 +609,20 @@
     if (tooSmall) {
       if (!wasTooSmall) {
         stopLoop();
-        /* layout() bails before re-sizing the canvases when the band collapses,
+        /* layout() bails before re-sizing the canvas when the band collapses,
          * so the last frame would otherwise stay painted at its old position —
          * i.e. snake pixels left sitting in cells that are now out of contract.
          * Wipe them instead. */
-        clearCanvases();
+        clearCanvas();
       }
       return;
     }
     if (changed || wasTooSmall) {
       /* On first load the splash owns the screen, so both sidebars are entirely
-       * below the viewport and there is no band to build a board in — the game
-       * boots with no snake at all. The first scroll that reveals a usable band
-       * is therefore a cold start, not a re-fit. */
-      if (!seg.length) reset();
-      else refit();
+       * below the viewport and there is no band to build a board in yet. Idle
+       * has no snake to re-fit either way — only a game already in progress
+       * (seg.length) needs its body re-wrapped into the new zone shape. */
+      if (seg.length) refit();
       draw();
     }
     sync();
@@ -737,17 +644,18 @@
     resizeTimer = setTimeout(() => {
       if (!displayed()) {
         dormant = true;
-        if (leftCanvas) leftCanvas.hidden = true;
         stopLoop();
         return;
       }
       const woke = dormant;
       dormant = false;
-      /* Waking from mobile starts a fresh board; otherwise the zone just changed
-       * shape and the running game is re-fitted into it. */
+      /* Waking from mobile re-measures the zone; a game already in progress is
+       * re-fitted into it, same as any other resize. Idle stays idle — waking
+       * must not spawn a snake on its own. */
       if (woke) {
         layout();
-        reset();
+        if (seg.length) refit();
+        draw();
       } else {
         remeasure();
         return;
@@ -760,23 +668,15 @@
    * Runs synchronously (this file is deferred, so the DOM and stylesheets are
    * ready) and BEFORE DOMContentLoaded — which matters because button-fill.js
    * measures .btn-primary on DOMContentLoaded to draw its dashed border, and the
-   * Retry button needs a real box by then. */
+   * idle Play / Retry buttons need a real box by then.
+   *
+   * No autoplay, no reduced-motion special case needed: every visitor lands on
+   * the same idle board and nothing moves until they press Play. */
   if (!displayed()) {
     dormant = true;               /* mobile: wait for a resize that reveals the column */
-    if (leftCanvas) leftCanvas.hidden = true;
   } else {
     layout();
-    if (!tooSmall) reset();
-
-    if (reduceMotion.matches) {
-      /* Reduced motion: nothing moves until the visitor asks for it. reset()
-       * already painted at full alpha, so re-draw once the paused flag is set to
-       * pick up the dimmed snake/food. */
-      paused = true;
-      if (!tooSmall) draw();
-      showOverlay('Snake', '', 'Play');
-    } else {
-      sync();
-    }
+    if (!tooSmall) draw();        /* empty seg/food -> a clean, empty canvas */
   }
+  setIdleUI(true);
 })();

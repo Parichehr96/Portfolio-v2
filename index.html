@@ -143,15 +143,6 @@
            widget 40px below. The contact links that used to live here are gone
            — the Contact nav owns contact now. -->
       <aside class="layout-left layout-left--home">
-        <!-- Snake's left-panel render target (Epic 5 Part 2). The game is ONE
-             logical grid whose right half lives in the right sidebar; this canvas
-             draws the columns that belong to this panel, so the snake teleports
-             between the two and the middle column — which has no canvas — can
-             never show a snake pixel. Sized and positioned by
-             Assets/js/snake.js; painted behind this panel's text (z-index -1) so
-             it slides over the grid background but under the name and clock. -->
-        <canvas class="snake-canvas snake-canvas--left" id="snake-canvas-left" aria-hidden="true"></canvas>
-
         <div class="ls-id">
           <h2 class="home-name">Pari<span class="ls-name-rest">chehr Talebzadeh</span></h2>
           <p class="ls-role">Product Designer in <img class="ls-flag" src="Assets/images/flag-nl.svg" alt="the Netherlands" width="16" height="16" /></p>
@@ -777,6 +768,21 @@
               <p class="snake-overlay-score">Score 00</p>
               <button class="btn-primary snake-retry" type="button">
                 <span class="btn-primary-label">Retry</span>
+              </button>
+            </div>
+
+            <!-- Idle prompt — the game's resting state on first load and after
+                 RESTART. Deliberately NOT a scrim like #snake-overlay above: the
+                 pixel-grid background stays visible and the board holds no
+                 snake/bait, so idle can't be mistaken for paused or game over. -->
+            <div class="snake-idle" id="snake-idle">
+              <p class="snake-idle-title">Up for a game?</p>
+              <button class="btn-primary show-icon snake-idle-play" type="button">
+                <span class="btn-primary-label">Play</span>
+                <span class="btn-primary-icon" aria-hidden="true">
+                  <!-- solar:play-line-duotone, matches the header's play glyph -->
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M20.409 9.353a2.998 2.998 0 0 1 0 5.294L7.597 21.614C5.534 22.737 3 21.277 3 18.968V5.033c0-2.31 2.534-3.769 4.597-2.648z"/></svg>
+                </span>
               </button>
             </div>
           </div>
