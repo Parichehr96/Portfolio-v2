@@ -1,0 +1,42 @@
+/* CASE STUDY — page shell, reading-progress bar, meta list. */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: var(--z-nav);
+  background-color: transparent;
+}
+.progress-bar-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background-color: var(--accent);
+  transition: width var(--duration-fast) linear;
+}
+.case-study {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--page-padding-lg) var(--page-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+.case-header { display: flex; flex-direction: column; gap: var(--space-4); }
+.case-back { align-self: flex-start; font-size: var(--text-sm); }
+.case-title { font-size: var(--text-2xl); font-weight: var(--weight-light); line-height: var(--leading-tight); }
+.case-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-4);
+}
+.case-meta dt { color: var(--text-muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.case-meta dd { color: var(--text-primary); font-size: var(--text-base); }
+.case-body { display: flex; flex-direction: column; gap: var(--space-6); }
+.case-body h2 { font-size: var(--text-xl); font-weight: var(--weight-light); }
+.case-body h3 { font-size: var(--text-md); font-weight: var(--weight-medium); }
+.case-body p { color: var(--text-secondary); }
+.case-body img { border-radius: var(--radius-lg); }
+.case-footer { display: flex; justify-content: center; }

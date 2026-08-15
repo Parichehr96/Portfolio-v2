@@ -1,0 +1,16 @@
+{
+  "name": "portfolio-v2",
+  "version": "2.0.0",
+  "description": "Parichehr Talebzadeh — product design portfolio. Eleventy static site.",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "eleventy --serve",
+    "dev": "eleventy --serve",
+    "build": "eleventy",
+    "clean": "rm -rf _site"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

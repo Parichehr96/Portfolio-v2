@@ -1,0 +1,62 @@
+---
+layout: layouts/base.njk
+title: "Projects · Parichehr Talebzadeh"
+description: "Every project — case studies across Web3, enterprise and consumer products."
+pageId: projects
+permalink: /projects/
+---
+{#
+  ALL PROJECTS — the destination for "View All Projects", which pointed at
+  href="#" on the old site because this page did not exist.
+
+  Renders collections.projects, so it lists EVERY project including the ones
+  without a case study yet. The homepage carousel renders the `featured` subset
+  of the same array — one source, two views.
+#}
+
+{% from "components/section-header.njk" import sectionHeader %}
+{% from "components/link.njk" import link %}
+{% from "components/chip.njk" import chip %}
+
+<div class="layout">
+  {% include "partials/panel-left.njk" %}
+
+  <div class="layout-main">
+    <div class="content-column">
+      <div class="section-identity">
+        <h2 class="panel-name">{{ site.name }}</h2>
+        <p class="panel-role">{{ site.role }}</p>
+      </div>
+
+      <div class="section-block">
+        {{ sectionHeader("All Projects") }}
+
+        <ul class="project-list">
+          {%- for p in collections.projects %}
+            <li class="project-list-item">
+              <div class="project-list-main">
+                <p class="project-list-title">{{ p.title }}</p>
+                <p class="project-list-caption">{{ p.summary or p.caption }}</p>
+              </div>
+              <div class="project-list-meta">
+                <span class="project-list-year">{{ p.year }}</span>
+                <ul class="chip-list">{{ chip(p.domain) }}</ul>
+              </div>
+              <div class="project-list-action">
+                {%- if p.url %}
+                  {{ link("Explore " + p.title, href=p.url) }}
+                {%- else %}
+                  <span class="project-card-link--muted">Coming soon</span>
+                {%- endif %}
+              </div>
+            </li>
+          {%- endfor %}
+        </ul>
+      </div>
+
+      {% include "partials/footer.njk" %}
+    </div>
+  </div>
+
+  {% include "partials/panel-right.njk" %}
+</div>

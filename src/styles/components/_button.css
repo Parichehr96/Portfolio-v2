@@ -1,0 +1,38 @@
+/* BUTTON (primary) — the dashed pill.
+ * The dashed border is drawn as an SVG overlay by scripts/button-fill.js so the
+ * dash phase stays even on any width; the CSS border here is the no-JS
+ * fallback, which is why both exist. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-width) dashed var(--border-dashed);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: 1;
+  position: relative;
+  transition: color var(--duration-base) var(--ease-out),
+              background-color var(--duration-base) var(--ease-out);
+}
+.btn-primary:hover {
+  background-color: var(--surface-raised);
+}
+/* Icon-only: a 40px circle, which is the carousel arrow and nothing else. */
+.btn-primary--icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex: 0 0 auto;
+}
+.btn-primary-icon {
+  display: inline-flex;
+  align-items: center;
+}
+.btn-primary[disabled] {
+  opacity: 0.35;
+  pointer-events: none;
+}

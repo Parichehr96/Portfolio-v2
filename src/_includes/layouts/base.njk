@@ -1,0 +1,86 @@
+{#
+  BASE LAYOUT — <head>, the 3-column shell, nav, footer, scripts.
+
+  Every page passes through here. Front matter switches the parts that vary:
+    panels: false   drop the left/right sidebars (full-width page)
+    nav: false      drop the floating bottom nav
+    footer: false   drop the contact footer
+    bodyClass       extra class on <body>
+    pageId          data-page value, used by scripts to scope behaviour
+
+  STYLESHEET ORDER IS LOAD-BEARING: tokens → base → components. Components read
+  the custom properties tokens.css defines, so a component file loaded first
+  would resolve every var() to nothing and render unstyled.
+#}
+<!DOCTYPE html>
+<html lang="{{ site.lang }}">
+<head>
+  {% include "partials/head-seo.njk" %}
+
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components/index.css" />
+
+  {# Hero landing-sequence gate. Adds .hero-intro to <html> BEFORE first paint —
+     so the name/headline/CTA start hidden with no flash — but only on the first
+     visit of the session with motion allowed. scripts/hero.js runs the sequence
+     and removes the class; the 9s failsafe reveals the hero if it never
+     completes. Reduced motion and repeat visits skip all of this.
+     MUST stay inline and MUST stay in <head>: as an external file it would race
+     first paint and the flash it exists to prevent would happen anyway. #}
+  <script>
+    (function () {
+      try {
+        var mm = window.matchMedia;
+        var reduce = mm && mm("(prefers-reduced-motion: reduce)").matches;
+        var played = sessionStorage.getItem("heroIntroPlayed") === "1";
+        if (!reduce && !played) {
+          document.documentElement.classList.add("hero-intro");
+          window.setTimeout(function () {
+            document.documentElement.classList.remove("hero-intro");
+          }, 9000);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  {%- if site.analytics.ga4 %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.analytics.ga4 }}');
+  </script>
+  {%- endif %}
+</head>
+
+<body data-page="{{ pageId or 'home' }}"{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+  <main>
+    {{ content | safe }}
+
+    {%- if nav != false %}
+      {% include "partials/nav.njk" %}
+    {%- endif %}
+  </main>
+
+  <script src="/scripts/app.js"></script>
+  <script defer src="/scripts/reveal.js"></script>
+  <script defer src="/scripts/cursor.js"></script>
+  <script defer src="/scripts/mailto-fallback.js"></script>
+  <script defer src="/scripts/button-fill.js"></script>
+  <script defer src="/scripts/clock.js"></script>
+  <script defer src="/scripts/nav.js"></script>
+  <script defer src="/scripts/carousel.js"></script>
+  <script defer src="/scripts/timeline.js"></script>
+  <script defer src="/scripts/snake.js"></script>
+  <script defer src="/scripts/analytics-events.js"></script>
+
+  {%- if site.analytics.vercel %}
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  {%- endif %}
+</body>
+</html>

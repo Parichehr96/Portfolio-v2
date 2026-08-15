@@ -1,0 +1,83 @@
+{#
+  HEAD / SEO — every meta tag on the site, generated from data.
+
+  Precedence is always: page front matter → site.js default. So a case study sets
+  `title` and `description` in its front matter and inherits everything else.
+
+  The old site duplicated ~35 meta tags across index.html and three case-study
+  pages. They had already diverged: only index.html had the twitter:site tag,
+  and two pages pointed og:url at the homepage.
+#}
+
+{%- set pageTitle = title or site.title -%}
+{%- set pageDesc = description or site.description -%}
+{%- set pageUrl = (page.url | absoluteUrl(site.url)) -%}
+{%- set pageImage = (ogImage or site.ogImage) | absoluteUrl(site.url) -%}
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{ pageTitle }}</title>
+<meta name="description" content="{{ pageDesc }}" />
+<meta name="author" content="{{ site.name }}" />
+<link rel="canonical" href="{{ pageUrl }}" />
+
+{# Structured data. Person on the homepage; case studies additionally describe
+   the work itself, which is what lets them surface as creative work rather than
+   as another copy of the same Person entity. #}
+{%- if page.url == "/" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": {{ site.name | dump | safe }},
+  "jobTitle": {{ site.role | dump | safe }},
+  "url": {{ site.url | dump | safe }},
+  "sameAs": {{ site.sameAs | dump | safe }},
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": {{ site.location.city | dump | safe }},
+    "addressCountry": {{ site.location.country | dump | safe }}
+  },
+  "knowsAbout": {{ site.knowsAbout | dump | safe }}
+}
+</script>
+{%- elif caseStudy %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": {{ pageTitle | dump | safe }},
+  "description": {{ pageDesc | dump | safe }},
+  "url": {{ pageUrl | dump | safe }},
+  "author": { "@type": "Person", "name": {{ site.name | dump | safe }}, "url": {{ site.url | dump | safe }} }
+}
+</script>
+{%- endif %}
+
+<link rel="icon" type="image/svg+xml" href="/Assets/favicon/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/Assets/favicon/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/Assets/favicon/favicon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/Assets/favicon/apple-touch-icon.png" />
+<meta name="theme-color" content="{{ site.themeColor }}" />
+
+<meta property="og:type" content="{{ 'article' if caseStudy else 'website' }}" />
+<meta property="og:url" content="{{ pageUrl }}" />
+<meta property="og:site_name" content="{{ site.name }}" />
+<meta property="og:title" content="{{ pageTitle }}" />
+<meta property="og:description" content="{{ ogDescription or site.ogDescription }}" />
+<meta property="og:image" content="{{ pageImage }}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="{{ ogImageAlt or site.ogImageAlt }}" />
+<meta property="og:locale" content="{{ site.locale }}" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@PariUXD" />
+<meta name="twitter:creator" content="@PariUXD" />
+<meta name="twitter:title" content="{{ pageTitle }}" />
+<meta name="twitter:description" content="{{ ogDescription or site.ogDescription }}" />
+<meta name="twitter:image" content="{{ pageImage }}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="{{ site.fonts }}" rel="stylesheet" />

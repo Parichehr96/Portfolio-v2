@@ -1,0 +1,44 @@
+/* CAROUSEL — shared by the project and testimonial rows.
+ * A CSS scroll-snap track: wheel, trackpad, touch and keyboard work with no JS
+ * at all. scripts/carousel.js only adds arrows, dots and looping on top. */
+.carousel { position: relative; width: 100%; }
+.carousel-track {
+  display: flex;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+/* Arrows are pinned to the section edges and centred on the card, not the
+   whole block — the caption below the card must not drag them off-centre. */
+.carousel-arrow {
+  position: absolute;
+  top: calc(var(--project-card-media) / 2);
+  transform: translateY(-50%);
+  z-index: var(--z-content);
+}
+.carousel-arrow--prev { left: calc(var(--space-7) * -1); }
+.carousel-arrow--next { right: calc(var(--space-7) * -1); }
+.carousel-arrow[hidden] { display: none; }
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background-color: var(--text-muted);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+.carousel-dot[aria-current="true"] { background-color: var(--text-primary); }
+/* Clones exist only for the infinite loop: hidden from AT, skipped by Tab. */
+.carousel-clone { pointer-events: none; }
+@media (max-width: 1200px) {
+  .carousel-arrow--prev { left: 0; }
+  .carousel-arrow--next { right: 0; }
+}

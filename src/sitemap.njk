@@ -1,0 +1,17 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+{#- Generated from the page collection, so a new page is in the sitemap the
+    moment it builds. The old sitemap.xml was hand-maintained and had already
+    fallen behind: it listed pages by their .html filename, which the new
+    permalinks no longer use. -#}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for page in collections.all %}
+  <url>
+    <loc>{{ page.url | absoluteUrl(site.url) }}</loc>
+    <lastmod>{{ page.date | isoDate }}</lastmod>
+  </url>
+{%- endfor %}
+</urlset>

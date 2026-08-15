@@ -1,0 +1,33 @@
+{#
+  SKILL — one row (name + stance on the left, question on the right), and the
+  category block that holds a list of them.
+
+  The divider between rows is drawn by CSS (:not(:last-child) border), NOT by
+  markup. The old page interleaved <span class="skill-divider"> elements between
+  rows by hand, which meant adding a skill in the middle required also adding a
+  separator in the right place — and produced a trailing divider whenever
+  someone forgot to remove one.
+
+  PROPS
+    s         one item object {name, sub, question}
+    category  {category, items} — the group macro
+#}
+
+{% macro skillRow(s) %}
+  <div class="skill-row">
+    <div class="skill-info">
+      <span class="skill-name">{{ s.name }}</span>
+      <span class="skill-sub">{{ s.sub }}</span>
+    </div>
+    <span class="skill-q">{{ s.question }}</span>
+  </div>
+{% endmacro %}
+
+{% macro skillCategory(category) %}
+  <div class="skill-cat reveal-item">
+    <span class="skill-cat-name">{{ category.category }}</span>
+    <div class="skill-list">
+      {%- for s in category.items %}{{ skillRow(s) }}{% endfor -%}
+    </div>
+  </div>
+{% endmacro %}

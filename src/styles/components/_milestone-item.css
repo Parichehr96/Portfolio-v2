@@ -1,0 +1,83 @@
+/* TIMELINE — sticky viewport, years rail on the left, active panel on the right.
+ * The runway height is count x 60vh, published by the page as --tl-count, so
+ * adding a milestone lengthens the scroll automatically. */
+.tl-runway {
+  position: relative;
+  height: calc(var(--tl-count, 6) * 60vh);
+}
+.tl-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.tl-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.timeline {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: var(--space-6);
+}
+.tl-years {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-end;
+  padding-right: var(--space-4);
+}
+.tl-line {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--border-hairline);
+  background-color: var(--border-subtle);
+}
+.tl-year {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  transition: color var(--duration-base) var(--ease-out);
+}
+.tl-year.is-active { color: var(--text-primary); }
+.tl-detail { position: relative; min-height: 320px; }
+.tl-panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+.tl-panel.is-active { opacity: 1; pointer-events: auto; }
+.tl-panel-year {
+  display: none; /* the rail already shows it; kept for the static fallback */
+}
+.tl-text { display: flex; flex-direction: column; gap: var(--space-2); }
+.tl-loc { color: var(--text-muted); font-size: var(--text-xs); }
+.tl-title { color: var(--text-primary); font-size: var(--text-lg); line-height: var(--leading-snug); }
+.tl-body { color: var(--text-secondary); font-size: var(--text-base); }
+.tl-image img { width: 301px; height: 301px; object-fit: cover; border-radius: var(--radius-lg); }
+
+/* Reduced motion / no JS: the sticky scroll-scrub becomes a plain stacked list
+   with every panel visible. Nothing is lost, it just does not animate. */
+@media (prefers-reduced-motion: reduce) {
+  .tl-runway { height: auto; }
+  .tl-sticky { position: static; height: auto; }
+  .tl-detail { position: static; min-height: 0; display: flex; flex-direction: column; gap: var(--space-8); }
+  .tl-panel { position: static; opacity: 1; pointer-events: auto; }
+  .tl-panel-year { display: block; color: var(--text-muted); font-size: var(--text-sm); }
+  .tl-years { display: none; }
+  .timeline { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 768px) {
+  .tl-panel { grid-template-columns: minmax(0, 1fr); }
+  .tl-image img { width: 100%; height: auto; }
+}

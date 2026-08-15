@@ -1,0 +1,25 @@
+{#
+  CHIP — a small pill label.
+
+  Used for the domain tags (Web3 / Enterprise / Consumer / EdTech). These are
+  DISPLAY ONLY and deliberately inert: no link, no button, no handler. If a chip
+  ever needs to filter something, that is a new variant with a real <button>,
+  not an onclick bolted onto this one — an interactive-looking element that does
+  nothing is worse than a plain label.
+
+  PROPS
+    text   chip label (required)
+    class  extra classes
+
+  `chipList` renders a whole <ul> from an array of strings.
+#}
+
+{% macro chip(text, class="") %}
+  <li class="chip{% if class %} {{ class }}{% endif %}">{{ text }}</li>
+{% endmacro %}
+
+{% macro chipList(items, class="") %}
+  <ul class="chip-list{% if class %} {{ class }}{% endif %}">
+    {%- for item in items %}{{ chip(item) }}{% endfor -%}
+  </ul>
+{% endmacro %}

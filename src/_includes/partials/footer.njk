@@ -1,0 +1,58 @@
+{#
+  FOOTER → CONTACT — ONE element with two states.
+
+  .footer-stage is a fixed-height scroll runway so the card can expand without
+  reflowing the document; #footer-cta is the single card that morphs between its
+  default (a short link row) and expanded (full contact directory) state.
+  #contact wraps it as the anchor target for every "Contact" link.
+
+  Both states read from site.js: contactPrimary for the collapsed row,
+  contactGroups for the expanded directory. They cannot drift apart, which they
+  had in the old markup — the collapsed row linked linkedin.com/in/... while the
+  expanded row used a different casing of the same URL.
+#}
+
+{% from "components/section-header.njk" import sectionHeader %}
+
+<div id="contact">
+  <div class="footer-stage" id="footer-stage">
+    <div class="footer-card" id="footer-cta">
+
+      <div class="footer-default">
+        <div class="footer-row">
+          <span class="footer-title">Contact Me</span>
+          <div class="footer-links">
+            {%- for l in site.contactPrimary %}
+              <a class="footer-link" href="{{ l.url }}"{% if l.external %} target="_blank" rel="noopener"{% endif %}>{{ l.name }}</a>
+            {%- endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-expanded" aria-hidden="true">
+        <div class="contact-groups">
+          {%- for group in site.contactGroups %}
+            <div class="contact-group">
+              {{ sectionHeader(group.label) }}
+              <div class="contact-list">
+                {%- for l in group.links %}
+                  <a class="contact-row" href="{{ l.url }}"{% if l.external %} target="_blank" rel="noopener"{% endif %}>
+                    <span class="contact-name">{{ l.name }}</span>
+                    <span class="contact-leader" aria-hidden="true"></span>
+                    <span class="contact-value">{{ l.value }}</span>
+                  </a>
+                {%- endfor %}
+              </div>
+            </div>
+          {%- endfor %}
+        </div>
+
+        <div class="contact-bottom">
+          <span class="contact-copy">© {{ site.copyrightYear }}, {{ site.name }}</span>
+          <span class="contact-updated" id="last-updated"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

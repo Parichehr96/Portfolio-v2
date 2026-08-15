@@ -1,0 +1,55 @@
+---
+layout: layouts/base.njk
+caseStudy: true
+pageId: work
+---
+{#
+  CASE STUDY LAYOUT — the shell every project write-up renders into.
+
+  Wraps base.njk, so a case study inherits <head>, nav and scripts and only
+  declares what is specific to it. Front matter a case study must set:
+
+    title        page + OG title
+    description  meta description
+    project      slug matching an entry in _data/projects.js — the header,
+                 the prev/next links and the JSON-LD all read from that entry
+                 rather than repeating client/year/role in front matter
+
+  The reading-progress bar is a case-study-only affordance; scripts/progress.js
+  is a no-op on any page without [data-progress].
+#}
+
+{% from "components/button.njk" import button %}
+{% from "components/link.njk" import link %}
+
+{%- set current = null -%}
+{%- for p in collections.projects -%}
+  {%- if p.slug == project %}{% set current = p %}{% endif -%}
+{%- endfor -%}
+
+<div class="progress-bar" data-progress aria-hidden="true"><span class="progress-bar-fill"></span></div>
+
+<article class="case-study">
+  <header class="case-header">
+    {{ link("← All projects", href="/projects/", class="case-back") }}
+    <h1 class="case-title">{{ title }}</h1>
+    {%- if current %}
+      <dl class="case-meta">
+        <div><dt>Client</dt><dd>{{ current.title }}</dd></div>
+        <div><dt>Role</dt><dd>{{ current.role }}</dd></div>
+        <div><dt>Year</dt><dd>{{ current.year }}</dd></div>
+        <div><dt>Domain</dt><dd>{{ current.domain }}</dd></div>
+      </dl>
+    {%- endif %}
+  </header>
+
+  <div class="case-body">
+    {{ content | safe }}
+  </div>
+
+  <footer class="case-footer">
+    {{ button(label="View All Projects", href="/projects/", iconName="chevron-down", rotate=-90) }}
+  </footer>
+</article>
+
+{% include "partials/footer.njk" %}

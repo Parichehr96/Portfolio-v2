@@ -1,0 +1,24 @@
+{#
+  FLOATING BOTTOM NAV — driven by site.nav.
+
+  Lives INSIDE <main> on purpose: <main> is the z-index:1 stacking context the
+  expanding footer card scopes itself to, and that card caps itself at z-index
+  150 specifically to stay under this nav at 200.
+
+  ORDER MATTERS. scripts/nav.js picks the selected item by walking the targets
+  and keeping the LAST one whose top has crossed the line, which assumes the
+  list is in DOCUMENT order. Reordering site.nav without reordering the page
+  will break the highlight. The rule is documented on site.nav too, because
+  that is where someone will be standing when they change it.
+#}
+
+<nav class="bottom-nav" aria-label="Page sections">
+  <ul class="bottom-nav-list">
+    {%- for item in site.nav %}
+      <li>
+        <a class="bottom-nav-item{% if item.modifier %} bottom-nav-item--{{ item.modifier }}{% endif %}"
+           href="{{ item.target if page.url == '/' else '/' + item.target }}">{{ item.label }}</a>
+      </li>
+    {%- endfor %}
+  </ul>
+</nav>

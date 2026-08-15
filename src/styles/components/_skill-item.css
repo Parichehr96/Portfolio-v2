@@ -1,0 +1,40 @@
+/* SKILLS — a category label beside a divided list of rows.
+ * The divider is a border on every row but the last, NOT a separate element:
+ * inserting a skill can no longer leave a stray or missing separator. */
+.skills { display: flex; flex-direction: column; gap: var(--space-8); }
+.skill-cat {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: var(--space-5);
+}
+.skill-cat-name {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.skill-list { display: flex; flex-direction: column; }
+.skill-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+}
+.skill-row:not(:last-child) {
+  border-bottom: var(--border-hairline) solid var(--border-subtle);
+}
+.skill-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.skill-name { color: var(--text-primary); font-size: var(--text-base); }
+.skill-sub { color: var(--text-muted); font-size: var(--text-xs); }
+.skill-q {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-align: right;
+  flex: 0 1 auto;
+}
+@media (max-width: 768px) {
+  .skill-cat { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .skill-row { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+  .skill-q { text-align: left; }
+}

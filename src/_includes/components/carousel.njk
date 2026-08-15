@@ -1,0 +1,45 @@
+{#
+  CAROUSEL — the shared horizontal scroller behind BOTH the project carousel and
+  the testimonial row.
+
+  Previously these were two separate implementations (Assets/js/projects.js and
+  Assets/js/testimonials.js) with two sets of arrow classes and two scroll
+  handlers that had drifted apart. One markup contract, one stylesheet, one
+  script (scripts/carousel.js) reading the data attributes below.
+
+  The track is a CSS scroll-snap row, so wheel, trackpad, touch and keyboard all
+  work with zero JS. The script only adds arrows, dots and looping on top.
+
+  PROPS
+    id     unique id for the track — the script and aria-controls both need it
+    label  accessible name for the scroll region (required)
+    loop   true → infinite wrap with cloned edge cards (projects)
+           false → clamped ends, arrows disable at the edges (testimonials)
+    dots   true → pagination dots, one per real card, injected by the script
+    class  extra classes
+
+  USAGE — content goes in the call block, one child element per slide:
+    {% raw %}{% call carousel(id="project-track", label="Featured projects", loop=true, dots=true) %}
+      {% for p in projects %}{{ projectCard(p) }}{% endfor %}
+    {% endcall %}{% endraw %}
+#}
+
+{% from "components/button.njk" import button %}
+
+{% macro carousel(id, label, loop=false, dots=false, class="") %}
+  <div class="carousel{% if class %} {{ class }}{% endif %}"
+       data-carousel data-loop="{{ 'true' if loop else 'false' }}" data-dots="{{ 'true' if dots else 'false' }}">
+    <div class="carousel-track" id="{{ id }}" tabindex="0" role="group" aria-label="{{ label }}">
+      {{ caller() }}
+    </div>
+    {{ button(iconOnly=true, iconName="chevron-down", rotate=90, aria="Previous",
+              class="carousel-arrow carousel-arrow--prev",
+              attrs='data-carousel-prev aria-controls="' + id + '"') }}
+    {{ button(iconOnly=true, iconName="chevron-down", rotate=-90, aria="Next",
+              class="carousel-arrow carousel-arrow--next",
+              attrs='data-carousel-next aria-controls="' + id + '"') }}
+  </div>
+  {%- if dots %}
+    <div class="carousel-dots" data-carousel-dots role="group" aria-label="Choose a slide"></div>
+  {%- endif %}
+{% endmacro %}

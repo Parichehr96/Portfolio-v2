@@ -1,0 +1,31 @@
+{#
+  CONTRAST PAIR — one "Not this / This" row in the How I Think table.
+
+  The row number is derived from the loop index at the call site and passed in,
+  never stored in the data — see _data/principles.js.
+
+  The numbers and the header row are decorative scaffolding for a comparison
+  that reads fine as prose, so the numeral is aria-hidden and the table is built
+  from divs rather than a <table>: there is no tabular data here, just two
+  parallel lists.
+
+  PROPS
+    pair   one object {not, this} (required)
+    index  zero-based position; rendered as a zero-padded 01, 02, …
+#}
+
+{% macro contrastHead() %}
+  <div class="contrast-head">
+    <span class="contrast-num-spacer" aria-hidden="true"></span>
+    <span class="contrast-col">Not this</span>
+    <span class="contrast-col">This</span>
+  </div>
+{% endmacro %}
+
+{% macro contrastPair(pair, index) %}
+  <div class="contrast-row">
+    <span class="contrast-num" aria-hidden="true">{{ "0" if index < 9 }}{{ index + 1 }}</span>
+    <div class="contrast-cell contrast-cell--not"><span>{{ pair.not }}</span></div>
+    <div class="contrast-cell contrast-cell--this"><span>{{ pair.this }}</span></div>
+  </div>
+{% endmacro %}

@@ -1,2 +1,7 @@
 .DS_Store
 .claude/
+
+# Eleventy
+_site/
+node_modules/
+.cache/

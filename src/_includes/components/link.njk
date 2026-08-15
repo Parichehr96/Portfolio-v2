@@ -1,0 +1,32 @@
+{#
+  LINK (tertiary) — cream text with a dashed underline.
+
+  Covers "Download Resume", "Explore <project>", "Full version on Linkedin" and
+  the footer links. All four were separate classes with duplicated underline
+  rules before; here the treatment is defined once.
+
+  IMPORTANT — the `as` prop. A tertiary link that sits INSIDE another anchor
+  (the project card wraps its whole body in an <a>) must render as a <span>,
+  because a nested <a> is invalid HTML and browsers silently unnest it, which
+  breaks the card's click target. Pass as="span" there.
+
+  PROPS
+    text      link text (required)
+    href      destination; ignored when as="span"
+    as        "a" (default) | "span"
+    external  adds target=_blank + rel=noopener noreferrer
+    download  filename → download attribute, implies external
+    class     extra classes
+    attrs     raw attribute string
+#}
+
+{% macro link(text, href="", as="a", external=false, download="", class="", attrs="") %}
+  {%- if as == "span" -%}
+    <span class="link-tertiary{% if class %} {{ class }}{% endif %}"{% if attrs %} {{ attrs | safe }}{% endif %}>{{ text }}</span>
+  {%- else -%}
+    <a class="link-tertiary{% if class %} {{ class }}{% endif %}" href="{{ href }}"
+      {%- if download %} download="{{ download }}"{% endif %}
+      {%- if external or download %} target="_blank" rel="noopener noreferrer"{% endif %}
+      {%- if attrs %} {{ attrs | safe }}{% endif %}>{{ text }}</a>
+  {%- endif -%}
+{% endmacro %}

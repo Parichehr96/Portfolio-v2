@@ -1,0 +1,171 @@
+---
+layout: layouts/base.njk
+pageId: home
+permalink: /
+---
+{#
+  HOMEPAGE — composition only.
+
+  Every section below is a loop over _data plus a component call. There is no
+  content in this file and no styling decisions: if you find yourself wanting to
+  add a colour or a hardcoded string here, it belongs in styles/tokens.css or
+  src/_data/ respectively.
+
+  SECTION ORDER IS THE NAV CONTRACT. scripts/nav.js highlights the last nav
+  target whose top has crossed the line, walking site.nav in order — so the ids
+  #summary, #featured-works, #all-about-me and #contact must appear in the
+  document in that order. Testimonials live INSIDE the projects block and How I
+  Think / Skills live INSIDE the about block precisely so the four nav items
+  stay in sequence with no gaps.
+#}
+
+{% from "components/section-header.njk" import sectionHeader %}
+{% from "components/stat-card.njk" import statCard %}
+{% from "components/education-card.njk" import educationCard %}
+{% from "components/project-card.njk" import projectCard %}
+{% from "components/testimonial-card.njk" import testimonialCard %}
+{% from "components/milestone-item.njk" import milestoneYear, milestonePanel %}
+{% from "components/skill-item.njk" import skillCategory %}
+{% from "components/contrast-pair.njk" import contrastHead, contrastPair %}
+{% from "components/carousel.njk" import carousel %}
+{% from "components/chip.njk" import chipList %}
+{% from "components/button.njk" import button %}
+{% from "components/link.njk" import link %}
+
+{# ---- HERO ---------------------------------------------------------------- #}
+<section class="hero" id="splash">
+  <div class="hero-content">
+    <div>
+      <p class="hero-name">
+        <span class="hero-name-lg">{{ site.nameSplit.lead }}</span><span class="hero-name-sm">{{ site.nameSplit.rest }}</span>
+      </p>
+    </div>
+
+    {# The hidden tagline is painted the same colour as the background: present
+       and selectable in the DOM, invisible until the cursor spotlight swaps it
+       with the lead sentence. #}
+    <div class="hero-mid">
+      <p class="hero-lead">
+        {{ site.lead.visible }} <span class="hero-lead-muted">{{ site.lead.muted }}</span>
+      </p>
+      <p class="hero-hidden">
+        {%- for line in site.lead.hidden %}{{ line }}{% if not loop.last %}<br />{% endif %}{% endfor -%}
+      </p>
+    </div>
+
+    <div>
+      {{ button(iconOnly=true, iconName="chevron-down", aria="Scroll to start exploring",
+                href="#summary", class="hero-cta") }}
+    </div>
+  </div>
+</section>
+
+{# ---- 3-COLUMN SHELL ------------------------------------------------------ #}
+<div class="layout">
+  {% include "partials/panel-left.njk" %}
+
+  <div class="layout-main">
+    <div class="content-column">
+
+      {# Mobile-only identity header — the sidebars are hidden below 768px. #}
+      <div class="section-identity">
+        <h2 class="panel-name">{{ site.name }}</h2>
+        <p class="panel-role">{{ site.role }}</p>
+      </div>
+
+      {# ---- 1. AT A GLANCE ------------------------------------------------- #}
+      <div class="section-block" id="summary">
+        {{ sectionHeader("At a Glance") }}
+
+        <div class="reveal-item">
+          <div class="stat-grid">
+            {%- for s in stats %}{{ statCard(s.label, s.value) }}{% endfor %}
+          </div>
+          <div class="stat-grid stat-grid--edu" style="margin-top: var(--space-2)">
+            {%- for e in education %}{{ educationCard(e.field, e.credential, e.institution) }}{% endfor %}
+          </div>
+        </div>
+
+        <div class="reveal-item">
+          <p>{{ site.intro }}</p>
+          <p style="margin-top: var(--space-4)">{{ site.availability }}</p>
+          {# Chips and the resume link share one row: the chip list flexes to
+             fill, the link is shrink-0, which is what pushes it to the end. #}
+          <div style="display:flex; gap:var(--space-2); align-items:flex-end; margin-top: var(--space-4)">
+            {{ chipList(site.domains) }}
+            {{ link(site.resume.label, href=site.resume.url, download=site.resume.filename) }}
+          </div>
+        </div>
+      </div>
+
+      {# ---- 2. PROJECTS ---------------------------------------------------- #}
+      <div class="section-block" id="featured-works">
+        {{ sectionHeader("Projects") }}
+
+        <div class="reveal-item">
+          {% call carousel(id="project-track", label="Featured projects", loop=true, dots=true) %}
+            {%- for p in collections.featuredProjects %}{{ projectCard(p) }}{% endfor -%}
+          {% endcall %}
+        </div>
+
+        <div style="display:flex; justify-content:center" class="reveal-item">
+          {{ button(label="View All Projects", href="/projects/", iconName="chevron-down", rotate=-90) }}
+        </div>
+
+        {# Testimonials are the TAIL of Projects, not a section of their own —
+           no header, just the one-line intro and the card row. This is what
+           keeps "Projects" highlighted in the nav all the way through. #}
+        <div class="reveal-item">
+          <p style="margin-bottom: var(--space-5)">Let the people I've built with, describe me.</p>
+          {% call carousel(id="testi-track", label="Testimonials", loop=false, dots=false) %}
+            {%- for t in testimonials %}{{ testimonialCard(t) }}{% endfor -%}
+          {% endcall %}
+        </div>
+      </div>
+
+      {# ---- 3. ALL ABOUT ME ------------------------------------------------ #}
+      {# --tl-count drives the scroll runway height and comes from the data
+         length, so adding a milestone lengthens the scroll automatically. It
+         was previously hardcoded in the markup and had to be edited by hand. #}
+      <div class="tl-runway" id="tl-runway" style="--tl-count: {{ milestones | length }}">
+        <div class="tl-sticky">
+          <div class="tl-inner" id="all-about-me">
+            {{ sectionHeader("All About Me") }}
+            <div class="timeline" id="timeline">
+              <div class="tl-years" role="tablist" aria-label="Career timeline">
+                <span class="tl-line" aria-hidden="true"></span>
+                {%- for m in milestones %}{{ milestoneYear(m, loop.index0, loop.first) }}{% endfor %}
+              </div>
+              <div class="tl-detail">
+                {%- for m in milestones %}{{ milestonePanel(m, loop.index0, loop.first) }}{% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ---- HOW I THINK ---------------------------------------------------- #}
+      {# No section header by design — the block opens straight on the table. #}
+      <div class="section-block" id="how-i-think">
+        <div class="contrast-table reveal-item">
+          {{ contrastHead() }}
+          {%- for p in principles %}{{ contrastPair(p, loop.index0) }}{% endfor %}
+        </div>
+      </div>
+
+      {# ---- SKILLS --------------------------------------------------------- #}
+      {# Also headerless by design. #}
+      <div class="section-block">
+        <div class="skills">
+          {%- for cat in skills %}{{ skillCategory(cat) }}{% endfor %}
+        </div>
+      </div>
+
+      {# ---- CONTACT -------------------------------------------------------- #}
+      {% include "partials/footer.njk" %}
+
+    </div>
+  </div>
+
+  {% include "partials/panel-right.njk" %}
+</div>

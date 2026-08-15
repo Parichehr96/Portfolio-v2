@@ -1,0 +1,41 @@
+{#
+  LEFT PANEL — sticky identity block + the Amsterdam time widget.
+
+  Persists across every section of the homepage. Hidden below 768px, where
+  each section renders its own compact identity header instead.
+
+  The canvas is Snake's left-half render target: the game is ONE logical grid
+  whose right half lives in the right panel, so the snake appears to teleport
+  across the middle column. scripts/snake.js owns its size and position.
+#}
+
+<aside class="panel panel--left">
+  <canvas class="snake-canvas snake-canvas--left" id="snake-canvas-left" aria-hidden="true"></canvas>
+
+  <div class="panel-id">
+    <h2 class="panel-name">{{ site.nameSplit.lead }}<span class="panel-name-rest">{{ site.nameSplit.rest }}</span></h2>
+    <p class="panel-role">
+      {{ site.role }} in
+      <img class="panel-flag" src="{{ site.flag }}" alt="{{ site.location.countryName }}" width="16" height="16" />
+    </p>
+  </div>
+
+  {# Time widget — populated by scripts/clock.js. The bracket is a static 20×10
+     rule linking the clock to the status line; the dot at its tip takes its
+     colour and pulse from [data-state] on the wrapper. #}
+  <div class="panel-clock" id="panel-clock">
+    <p class="panel-clock-time" id="panel-clock-time" aria-live="polite">--:--</p>
+    <div class="panel-clock-status">
+      <span class="panel-clock-bracket" aria-hidden="true">
+        <svg viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.599806 0.300048C0.599804 0.134362 0.46549 4.79194e-05 0.299805 4.7942e-05C0.134119 4.79645e-05 -0.000194542 0.134363 -0.00019455 0.300048L0.299805 0.300048L0.599806 0.300048ZM0.299806 10.3L-0.000193079 10.3L-0.000193092 10.6L0.299806 10.6L0.299806 10.3ZM0.299805 0.300048L-0.00019455 0.300048L-0.000193079 10.3L0.299806 10.3L0.599807 10.3L0.599806 0.300048L0.299805 0.300048ZM0.299806 10.3L0.299806 10.6L20.2998 10.6L20.2998 10.3L20.2998 10L0.299806 10L0.299806 10.3Z" fill="currentColor" fill-opacity="0.7"/>
+          <circle class="panel-clock-dot" cx="20.2998" cy="10.3" r="1.6" />
+        </svg>
+      </span>
+      <div class="panel-clock-text">
+        <p class="panel-clock-head" id="panel-clock-head"></p>
+        <p class="panel-clock-sub" id="panel-clock-sub"></p>
+      </div>
+    </div>
+  </div>
+</aside>

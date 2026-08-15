@@ -1,0 +1,49 @@
+{#
+  ICON — the single source for inline SVG.
+
+  Every glyph in the site is defined once in the `paths` map below and rendered
+  through this macro. Nothing else in the codebase should paste raw <svg> markup:
+  the old index.html shipped the same 700-byte chevron five separate times, and
+  every one of them had to be edited by hand to change a colour.
+
+  PROPS
+    name    key in the map below (required)
+    size    px, applied to width AND height (default 24)
+    rotate  degrees, for reusing one glyph in several directions (default 0)
+    class   extra classes on the <svg>
+    title   accessible name; when omitted the icon is aria-hidden (decorative)
+
+  USAGE
+    {% raw %}{% from "components/icon.njk" import icon %}
+    {{ icon("chevron-down") }}
+    {{ icon("chevron-down", rotate=90, title="Next project") }}{% endraw %}
+#}
+
+{% set paths = {
+  "chevron-down": '<path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>',
+  "arrow-up": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 5l6 6m-6-6l-6 6m6-6v14"/>',
+  "arrow-down": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19l6-6m-6 6l-6-6m6 6V5"/>',
+  "arrow-left": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12l6-6m-6 6l6 6m-6-6h14"/>',
+  "arrow-right": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 12l-6-6m6 6l-6 6m6-6H5"/>',
+  "pause": '<path fill="none" stroke="currentColor" stroke-width="1.5" d="M2 6c0-1.886 0-2.828.586-3.414S4.114 2 6 2s2.828 0 3.414.586S10 4.114 10 6v12c0 1.886 0 2.828-.586 3.414S7.886 22 6 22s-2.828 0-3.414-.586S2 19.886 2 18zm12 0c0-1.886 0-2.828.586-3.414S16.114 2 18 2s2.828 0 3.414.586S22 4.114 22 6v12c0 1.886 0 2.828-.586 3.414S19.886 22 18 22s-2.828 0-3.414-.586S14 19.886 14 18z"/>',
+  "play": '<path fill="none" stroke="currentColor" stroke-width="1.5" d="M20.409 9.353a2.998 2.998 0 0 1 0 5.294L7.597 21.614C5.534 22.737 3 21.277 3 18.968V5.033c0-2.31 2.534-3.769 4.597-2.648z"/>',
+  "restart": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m18.364 8.05l-.707-.707a8 8 0 1 0 2.28 4.658m-1.573-3.95h-4.243m4.243 0V3.807"/>',
+  "game": '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M2 14.5c0-3.287 0-4.931.908-6.038a4 4 0 0 1 .554-.554C4.57 7 6.212 7 9.5 7h5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C22 9.57 22 11.212 22 14.5s0 4.931-.908 6.038a4 4 0 0 1-.554.554C19.43 22 17.788 22 14.5 22h-5c-3.287 0-4.931 0-6.038-.908a4 4 0 0 1-.554-.554C2 19.43 2 17.788 2 14.5Z"/><path stroke-linejoin="round" d="M12 7V5a1 1 0 0 1 1-1a1 1 0 0 0 1-1V2"/><path d="m10 16l-1.5-1.5m0 0L7 13m1.5 1.5L7 16m1.5-1.5L10 13"/><path stroke-linejoin="round" d="M17 15.5v-2"/></g>'
+} %}
+
+{#
+  Two viewBoxes are in play: the chevron is drawn on a 28-unit grid, everything
+  else on 24. Sizing is handled by width/height, so the difference is invisible
+  to callers — but it must be honoured here or the chevron renders cropped.
+#}
+{% macro icon(name, size=24, rotate=0, class="", title="") %}
+  {%- set box = "0 0 28 28" if name == "chevron-down" else "0 0 24 24" -%}
+  <svg
+    class="icon icon--{{ name }}{% if class %} {{ class }}{% endif %}"
+    width="{{ size }}" height="{{ size }}" viewBox="{{ box }}"
+    fill="none" focusable="false"
+    {%- if rotate %} style="transform: rotate({{ rotate }}deg)"{% endif %}
+    {%- if title %} role="img" aria-label="{{ title }}"{% else %} aria-hidden="true"{% endif %}>
+    {{- paths[name] | safe -}}
+  </svg>
+{% endmacro %}

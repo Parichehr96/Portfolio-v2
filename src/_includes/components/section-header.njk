@@ -1,0 +1,21 @@
+{#
+  SECTION HEADER — a small label followed by a rule that fills the row.
+
+  Used by "At a Glance", "Projects", "All About Me" and each contact group.
+
+  NOTE: not every section has one. "How I Think" and "Skills" open straight on
+  their content by design — do not add a header there to make things look
+  consistent; the omission is deliberate.
+
+  PROPS
+    label  the text (required)
+    id     anchor id — nav targets and deep links attach here
+    class  extra classes
+#}
+
+{% macro sectionHeader(label, id="", class="") %}
+  <div class="section-header{% if class %} {{ class }}{% endif %}"{% if id %} id="{{ id }}"{% endif %}>
+    <span class="section-header-label">{{ label }}</span>
+    <span class="section-header-rule" aria-hidden="true"></span>
+  </div>
+{% endmacro %}

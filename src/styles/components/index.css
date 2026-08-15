@@ -1,0 +1,26 @@
+/* Component stylesheet manifest.
+ *
+ * ORDER: primitives first (button, link, chip, icon), then composites that
+ * build on them, then layout-scoped partials. A composite may rely on a
+ * primitive's rules being already declared; the reverse is never true.
+ *
+ * One @import per component keeps the mapping to _includes/components/ exact —
+ * if you add foo.njk, add _foo.css here and nowhere else.
+ */
+@import "_button.css";
+@import "_link.css";
+@import "_chip.css";
+@import "_section-header.css";
+@import "_stat-card.css";
+@import "_project-card.css";
+@import "_testimonial-card.css";
+@import "_milestone-item.css";
+@import "_skill-item.css";
+@import "_contrast-pair.css";
+@import "_carousel.css";
+@import "_panel.css";
+@import "_nav.css";
+@import "_footer.css";
+@import "_hero.css";
+@import "_snake.css";
+@import "_case-study.css";

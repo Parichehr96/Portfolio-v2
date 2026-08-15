@@ -1,0 +1,56 @@
+/* SNAKE PANEL — structure only; scripts/snake.js owns geometry and paint. */
+.snake-panel { display: flex; flex-direction: column; gap: var(--space-4); height: 100%; }
+.snake-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.snake-transport { display: flex; gap: var(--space-2); }
+.snake-transport-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.snake-transport-btn:hover { color: var(--text-primary); }
+.snake-score { display: flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); }
+.snake-score-value { font-family: var(--font-mono); font-size: var(--text-base); color: var(--text-primary); }
+/* The board div is an in-flow spacer that publishes grid metrics; the canvas is
+ * positioned over it and bled to the panel edges by the script. */
+.snake-board { position: relative; flex: 1 1 auto; min-height: 200px; }
+.snake-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* visibility (not display) so button-fill.js can measure Retry on load. */
+.snake-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  visibility: hidden;
+  background-color: var(--surface-nav);
+}
+.snake-overlay.is-visible { visibility: visible; }
+.snake-overlay-title { font-size: var(--text-lg); }
+.snake-overlay-score { color: var(--text-secondary); font-family: var(--font-mono); font-size: var(--text-sm); }
+/* D-pad on the background grid's 33px pitch (32px button + 1px gutter). */
+.snake-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  grid-template-rows: repeat(2, 32px);
+  gap: 1px;
+  justify-content: center;
+}
+.snake-dpad-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background-color: var(--surface-raised);
+}
+.snake-dpad-btn:hover { color: var(--text-primary); }
+.snake-dpad-btn--up { grid-column: 2; grid-row: 1; }
+.snake-dpad-btn--left { grid-column: 1; grid-row: 2; }
+.snake-dpad-btn--down { grid-column: 2; grid-row: 2; }
+.snake-dpad-btn--right { grid-column: 3; grid-row: 2; }

@@ -1,0 +1,34 @@
+{#
+  MILESTONE — one panel in the About timeline, plus the year button on the rail.
+
+  Two macros because the timeline splits one milestone across two columns: the
+  years form a tablist on the left, the panels stack on the right. They are
+  driven by the SAME array and the same index, which is what guarantees the rail
+  and the panel can never disagree about which year is showing.
+
+  PROPS (both)
+    m       one object from milestones.js
+    index   position in the array (required — it is the tab↔panel link)
+    active  true for the initially-visible one (index 0)
+#}
+
+{% macro milestoneYear(m, index, active=false) %}
+  <button class="tl-year{% if active %} is-active{% endif %}" type="button" role="tab"
+          data-index="{{ index }}" aria-selected="{{ 'true' if active else 'false' }}"
+          aria-controls="tl-panel-{{ index }}">{{ m.year }}</button>
+{% endmacro %}
+
+{% macro milestonePanel(m, index, active=false) %}
+  <div class="tl-panel{% if active %} is-active{% endif %}" id="tl-panel-{{ index }}"
+       role="tabpanel" data-index="{{ index }}">
+    <span class="tl-panel-year" aria-hidden="true">{{ m.year }}</span>
+    <div class="tl-text">
+      <p class="tl-loc">{{ m.location }}</p>
+      <p class="tl-title">{{ m.title }}</p>
+      <p class="tl-body">{{ m.body }}</p>
+    </div>
+    {%- if m.image %}
+      <div class="tl-image"><img src="{{ m.image }}" loading="lazy" alt="{{ m.alt }}" /></div>
+    {%- endif %}
+  </div>
+{% endmacro %}

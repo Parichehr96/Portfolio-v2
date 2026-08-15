@@ -1,0 +1,52 @@
+{#
+  RIGHT PANEL — the Snake board mount.
+
+  Structure only; scripts/snake.js owns all behaviour. The board div is an
+  in-flow spacer that decides how much vertical room the game gets and publishes
+  the grid metrics — the canvas and overlay are positioned over it and bled to
+  the panel edges so cells sit in phase with the background grid.
+
+  The transport and D-pad buttons are declarative: the script binds by
+  data-snake-action / data-snake-dir, never by DOM order, so these can be
+  reordered or restyled without touching JS.
+#}
+
+{% from "components/icon.njk" import icon %}
+{% from "components/button.njk" import button %}
+
+<aside class="panel panel--right">
+  <div class="snake-panel">
+    <div class="snake-header">
+      <div class="snake-transport">
+        <button class="snake-transport-btn" type="button" data-snake-action="pause" aria-label="Pause game">{{ icon("pause") }}</button>
+        <button class="snake-transport-btn" type="button" data-snake-action="play" aria-label="Play game">{{ icon("play") }}</button>
+        <button class="snake-transport-btn" type="button" data-snake-action="restart" aria-label="Restart game">{{ icon("restart") }}</button>
+      </div>
+
+      <div class="snake-score">
+        <span class="snake-score-icon">{{ icon("game") }}</span>
+        <span class="snake-score-value" id="snake-score">00</span>
+      </div>
+    </div>
+
+    <div class="snake-board" id="snake-board" role="application" tabindex="0"
+         aria-label="Snake game. Use the arrow keys to steer.">
+      <canvas class="snake-canvas" id="snake-canvas"></canvas>
+
+      {# Kept in layout (visibility, not display) so button-fill.js can measure
+         the Retry button on load and draw its dashed SVG border. #}
+      <div class="snake-overlay" id="snake-overlay">
+        <p class="snake-overlay-title">Game Over</p>
+        <p class="snake-overlay-score">Score 00</p>
+        {{ button(label="Retry", class="snake-retry", attrs='data-snake-action="restart"') }}
+      </div>
+    </div>
+
+    <div class="snake-dpad">
+      <button class="snake-dpad-btn snake-dpad-btn--up" type="button" data-snake-dir="up" aria-label="Move up">{{ icon("arrow-up", size=16) }}</button>
+      <button class="snake-dpad-btn snake-dpad-btn--left" type="button" data-snake-dir="left" aria-label="Move left">{{ icon("arrow-left", size=16) }}</button>
+      <button class="snake-dpad-btn snake-dpad-btn--right" type="button" data-snake-dir="right" aria-label="Move right">{{ icon("arrow-right", size=16) }}</button>
+      <button class="snake-dpad-btn snake-dpad-btn--down" type="button" data-snake-dir="down" aria-label="Move down">{{ icon("arrow-down", size=16) }}</button>
+    </div>
+  </div>
+</aside>

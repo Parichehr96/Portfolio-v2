@@ -1,0 +1,15 @@
+/* LINK (tertiary) — cream text, dashed underline.
+ * Defined once and inherited by the resume link, the project Explore line and
+ * the testimonial LinkedIn link. `as="span"` variants get the same treatment,
+ * which is why the selector is a class and not `a.link-tertiary`. */
+.link-tertiary {
+  display: inline-block;
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  padding-bottom: var(--space-1);
+  border-bottom: var(--border-width) dashed currentColor;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.link-tertiary:hover {
+  color: var(--text-secondary);
+}
