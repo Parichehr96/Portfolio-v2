@@ -21,29 +21,6 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/components/index.css" />
 
-  {# Hero landing-sequence gate. Adds .hero-intro to <html> BEFORE first paint —
-     so the name/headline/CTA start hidden with no flash — but only on the first
-     visit of the session with motion allowed. scripts/hero.js runs the sequence
-     and removes the class; the 9s failsafe reveals the hero if it never
-     completes. Reduced motion and repeat visits skip all of this.
-     MUST stay inline and MUST stay in <head>: as an external file it would race
-     first paint and the flash it exists to prevent would happen anyway. #}
-  <script>
-    (function () {
-      try {
-        var mm = window.matchMedia;
-        var reduce = mm && mm("(prefers-reduced-motion: reduce)").matches;
-        var played = sessionStorage.getItem("heroIntroPlayed") === "1";
-        if (!reduce && !played) {
-          document.documentElement.classList.add("hero-intro");
-          window.setTimeout(function () {
-            document.documentElement.classList.remove("hero-intro");
-          }, 9000);
-        }
-      } catch (e) {}
-    })();
-  </script>
-
   {%- if site.analytics.ga4 %}
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"></script>
   <script>
@@ -56,12 +33,16 @@
 </head>
 
 <body data-page="{{ pageId or 'home' }}"{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+  {# The header is page furniture and sits ABOVE <main>, unlike the v2 bottom
+     nav it replaces — that one lived inside <main> to stay in the same stacking
+     context as the expanding footer card. This one is in normal flow and needs
+     no z-index relationship with anything. #}
+  {%- if nav != false %}
+    {% include "partials/nav.njk" %}
+  {%- endif %}
+
   <main>
     {{ content | safe }}
-
-    {%- if nav != false %}
-      {% include "partials/nav.njk" %}
-    {%- endif %}
   </main>
 
   <script src="/scripts/app.js"></script>

@@ -1,35 +1,138 @@
-/* FLOATING BOTTOM NAV — fixed, centred, above the expanding footer card. */
-.bottom-nav {
-  position: fixed;
-  left: 50%;
-  bottom: var(--space-6);
-  transform: translateX(-50%);
-  z-index: var(--z-nav);
-  background-color: var(--surface-nav);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: var(--border-hairline) solid var(--border-subtle);
-  border-radius: var(--radius-pill);
-  padding: var(--space-2);
+/* SITE HEADER — Figma 184:13318.
+ *
+ * Replaces the v2 floating bottom nav. Colours come from the .site-header
+ * scope in tokens.css, so nothing here names a Figma hex directly.
+ *
+ * THE THREE RULES. Figma draws a full-width hairline UNDER the header at 12%
+ * black, and two more either side of the inner container at 16%. They are
+ * different opacities on purpose — the horizontal one reads as the page edge,
+ * the verticals as the content gutter — which is why --border-subtle and
+ * --border-strong are both in play on one component.
+ */
+
+.site-header {
+  padding-inline: var(--space-11);
+  border-bottom: var(--border-width) solid var(--border-subtle);
 }
-.bottom-nav-list { display: flex; gap: var(--space-1); }
-.bottom-nav-item {
-  display: inline-block;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  min-height: var(--header-height);
+  padding: var(--space-5) var(--space-6);
+  border-left: var(--border-width) solid var(--border-strong);
+  border-right: var(--border-width) solid var(--border-strong);
+}
+
+/* ---- Logo ---------------------------------------------------------------- */
+.site-header__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.site-header__mark {
+  display: block;
+  height: var(--space-7);
+  width: auto;
+}
+
+.site-header__name {
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-regular);
   white-space: nowrap;
-  transition: color var(--duration-fast) var(--ease-out),
-              background-color var(--duration-fast) var(--ease-out);
 }
-.bottom-nav-item:hover { color: var(--text-primary); }
-.bottom-nav-item[aria-current="true"] {
-  color: var(--text-inverse);
+
+/* "Pari" is bold, the rest regular — one word, two weights, no space between
+   the spans (the markup closes them tight for exactly this reason). */
+.site-header__name-lead {
+  font-weight: var(--weight-bold);
+}
+
+/* ---- Links + CTA --------------------------------------------------------- */
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.site-header__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-header__link {
+  color: var(--text-primary);
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.site-header__link:hover {
+  opacity: 0.6;
+}
+
+.site-header__cta {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2h) var(--space-4h);
+  border-radius: var(--radius-pill);
   background-color: var(--accent);
+  color: var(--text-inverse);
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--duration-fast) var(--ease-out);
 }
-@media (max-width: 768px) {
-  .bottom-nav { bottom: var(--space-4); width: calc(100% - var(--space-8)); }
-  .bottom-nav-list { justify-content: space-between; width: 100%; }
-  .bottom-nav-item { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
+
+.site-header__cta:hover {
+  opacity: 0.85;
+}
+
+.site-header__logo:focus-visible,
+.site-header__link:focus-visible,
+.site-header__cta:focus-visible {
+  outline: var(--border-width) solid var(--text-primary);
+  outline-offset: var(--space-1);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* The 120px gutter is most of the width on a phone, so it collapses first and
+   the side rules go with it — they only make sense as gutter edges. */
+@media (max-width: 900px) {
+  .site-header {
+    padding-inline: 0;
+  }
+  .site-header__inner {
+    padding-inline: var(--space-5);
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header__name {
+    display: none;
+  }
+  .site-header__nav,
+  .site-header__links {
+    gap: var(--space-4);
+  }
 }

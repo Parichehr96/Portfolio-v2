@@ -1,0 +1,84 @@
+{#
+  HERO — Figma 184:13327. Content and geometry both come from _data/hero.js.
+
+  TWO BANDS. The intro (white) and the board (#F2F2F7) are separate full-bleed
+  rows; the colour change at their seam is the design, not a gap.
+
+  THE FOLDER IS FIVE SEPARATE ELEMENTS, never one flattened image:
+
+      __back      orange sheet behind everything
+      __cards     three <article>s, z-ordered 1 → 3
+      __front     yellow flap, painted OVER the lower half of the cards
+
+  That stack is what makes the cards read as tucked INTO the folder, and it is
+  the structure the open/drag phase animates. Flattening it to a single export
+  would look identical at rest and be impossible to animate afterwards.
+
+  The board is a fixed 1272 × 668 frame in Figma. Everything inside is
+  positioned in PERCENT of that frame (see hero.js), and aspect-ratio holds the
+  proportions, so the whole composition scales as one piece.
+
+  Cards are positioned by their CENTRE and pulled back with translate(-50%,-50%)
+  before rotating, so each fans around its own middle. The --tuck-* custom
+  properties are identity here and are the seam the open/close animation will
+  drive; leaving them in place now means that phase touches no markup.
+#}
+
+<section class="hero" id="hero">
+  <div class="hero__intro">
+    <h1 class="hero__title">
+      <span class="hero__line">
+        <span class="hero__greeting">{{ hero.title.greeting }}</span>
+        <span class="hero__name">{{ hero.title.name }}</span>
+      </span>
+      <span class="hero__line">
+        <span class="hero__role">{{ hero.title.roleLead }}</span>
+        <span class="hero__role-outline">{{ hero.title.roleOutline }}</span>
+      </span>
+    </h1>
+    <p class="hero__tagline">{{ hero.tagline }}</p>
+  </div>
+
+  <div class="hero__board">
+    {%- for icon in hero.icons %}
+      <img
+        class="hero__icon hero__icon--{{ icon.slug }}"
+        src="{{ hero.assetPath }}/{{ icon.file }}"
+        alt="{{ icon.label }}"
+        {% if not icon.label %}aria-hidden="true"{% endif %}
+        style="--icon-x: {{ icon.x }}%; --icon-y: {{ icon.y }}%; --icon-size: {{ icon.size }}%"
+      />
+    {%- endfor %}
+
+    <div class="hero-folder">
+      <img
+        class="hero-folder__back"
+        src="{{ hero.assetPath }}/{{ hero.folder.back.file }}"
+        alt=""
+        aria-hidden="true"
+      />
+
+      <div class="hero-folder__cards">
+        {%- for card in hero.cards %}
+          <article
+            class="hero-folder__card hero-folder__card--{{ loop.index }}"
+            style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-rot: {{ card.rotate }}deg"
+          >
+            <h2 class="hero-folder__card-title">{{ card.title }}</h2>
+            <p class="hero-folder__card-body">{{ card.body }}</p>
+          </article>
+        {%- endfor %}
+      </div>
+
+      <img
+        class="hero-folder__front"
+        src="{{ hero.assetPath }}/{{ hero.folder.front.file }}"
+        alt=""
+        aria-hidden="true"
+      />
+    </div>
+
+    <p class="hero__years">{{ hero.caption.years }}</p>
+    <p class="hero__hint">{{ hero.caption.hint }}</p>
+  </div>
+</section>

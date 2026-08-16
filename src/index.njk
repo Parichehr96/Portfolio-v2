@@ -33,32 +33,7 @@ permalink: /
 {% from "components/link.njk" import link %}
 
 {# ---- HERO ---------------------------------------------------------------- #}
-<section class="hero" id="splash">
-  <div class="hero-content">
-    <div>
-      <p class="hero-name">
-        <span class="hero-name-lg">{{ site.nameSplit.lead }}</span><span class="hero-name-sm">{{ site.nameSplit.rest }}</span>
-      </p>
-    </div>
-
-    {# The hidden tagline is painted the same colour as the background: present
-       and selectable in the DOM, invisible until the cursor spotlight swaps it
-       with the lead sentence. #}
-    <div class="hero-mid">
-      <p class="hero-lead">
-        {{ site.lead.visible }} <span class="hero-lead-muted">{{ site.lead.muted }}</span>
-      </p>
-      <p class="hero-hidden">
-        {%- for line in site.lead.hidden %}{{ line }}{% if not loop.last %}<br />{% endif %}{% endfor -%}
-      </p>
-    </div>
-
-    <div>
-      {{ button(iconOnly=true, iconName="chevron-down", aria="Scroll to start exploring",
-                href="#summary", class="hero-cta") }}
-    </div>
-  </div>
-</section>
+{% include "partials/hero.njk" %}
 
 {# ---- 3-COLUMN SHELL ------------------------------------------------------ #}
 <div class="layout">

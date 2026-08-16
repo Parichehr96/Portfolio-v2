@@ -1,24 +1,42 @@
 {#
-  FLOATING BOTTOM NAV — driven by site.nav.
+  SITE HEADER — Figma 184:13318. Driven by _data/hero.js.
 
-  Lives INSIDE <main> on purpose: <main> is the z-index:1 stacking context the
-  expanding footer card scopes itself to, and that card caps itself at z-index
-  150 specifically to stay under this nav at 200.
+  Replaces the v2 floating bottom nav. That bar was a scroll-spy driven by
+  scripts/nav.js; this is plain anchors with no JS at all, so nav.js now finds
+  no .bottom-nav and returns at its first guard. Deleting it belongs to the §9
+  sweep, not here.
 
-  ORDER MATTERS. scripts/nav.js picks the selected item by walking the targets
-  and keeping the LAST one whose top has crossed the line, which assumes the
-  list is in DOCUMENT order. Reordering site.nav without reordering the page
-  will break the highlight. The rule is documented on site.nav too, because
-  that is where someone will be standing when they change it.
+  Hrefs are absolute (/#id) rather than bare fragments so the header behaves
+  identically on /work/* and /projects, where those sections don't exist.
+
+  The rule below the header and the rules either side of the container are
+  three separate 1px borders in Figma at two different opacities — see
+  _nav.css, where they are the only thing the two --fig-rule-* tokens exist for.
 #}
 
-<nav class="bottom-nav" aria-label="Page sections">
-  <ul class="bottom-nav-list">
-    {%- for item in site.nav %}
-      <li>
-        <a class="bottom-nav-item{% if item.modifier %} bottom-nav-item--{{ item.modifier }}{% endif %}"
-           href="{{ item.target if page.url == '/' else '/' + item.target }}">{{ item.label }}</a>
-      </li>
-    {%- endfor %}
-  </ul>
-</nav>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/">
+      <img
+        class="site-header__mark"
+        src="{{ hero.assetPath }}/{{ hero.header.logo.file }}"
+        alt=""
+        width="{{ hero.header.logo.size }}"
+        height="{{ hero.header.logo.size }}"
+      />
+      <span class="site-header__name"
+        ><strong class="site-header__name-lead">{{ hero.header.name.lead }}</strong
+        >{{ hero.header.name.rest }}</span
+      >
+    </a>
+
+    <nav class="site-header__nav" aria-label="Primary">
+      <ul class="site-header__links">
+        {%- for item in hero.header.links %}
+          <li><a class="site-header__link" href="{{ item.href }}">{{ item.label }}</a></li>
+        {%- endfor %}
+      </ul>
+      <a class="site-header__cta" href="{{ hero.header.cta.href }}">{{ hero.header.cta.label }}</a>
+    </nav>
+  </div>
+</header>

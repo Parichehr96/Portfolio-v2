@@ -114,8 +114,12 @@ module.exports = {
 
   // ---- Third party ----------------------------------------------------------
   analytics: { ga4: "G-JXCBH3PH93", vercel: true },
+  /* Figtree + DM Mono are the v2 faces, still used by every section below the
+     hero. Roboto and Ribeye Marrow are the redesign faces: Roboto at 400/500/700
+     covers the M3 scale, and Ribeye Marrow (single weight) draws the outlined
+     "Designer" — the outline is in the typeface, not a CSS stroke. */
   fonts:
-    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400&display=swap",
+    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400&family=Roboto:wght@400;500;700&family=Ribeye+Marrow&display=swap",
 
   copyrightYear: 2026,
 };

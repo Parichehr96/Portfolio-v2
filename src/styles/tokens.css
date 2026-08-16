@@ -30,6 +30,17 @@
   --cream-200: #EDEAE4;
   --white: #FFFFFF;
 
+  /* Figma light palette (redesign file B8Kfu0nGgUIG0REVlQTD5C). These are
+     PRIMITIVES: only the scoped block at the bottom of this file references
+     them, and only .site-header / .hero consume that block. The rest of the
+     page stays on the v2 dark palette above until its own phase lands. */
+  --fig-black: #000000;
+  --fig-ink: #1A1A1A;
+  --fig-gray: #727272;
+  --fig-elevated: #F2F2F7;
+  --fig-rule-soft: rgba(0, 0, 0, 0.12);
+  --fig-rule-strong: rgba(0, 0, 0, 0.16);
+
   /* ---- 2. SEMANTICS -------------------------------------------------------
      What components actually reference. Retheme by repointing these. */
   --surface: var(--navy-900);
@@ -57,6 +68,10 @@
      A 4px base. Use the token, not the number — the redesign may rescale. */
   --space-1: 4px;
   --space-2: 8px;
+  /* Half-steps. The base scale jumps 8 → 12 → 16 → 24 and skips 10 and 20,
+     which is exactly the padding the Figma Contact pill uses. */
+  --space-2h: 10px;
+  --space-4h: 20px;
   --space-3: 12px;
   --space-4: 16px;
   --space-5: 24px;
@@ -72,6 +87,31 @@
   --font-sans: "Figtree", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
+  /* Redesign faces. Ribeye Marrow is an INHERENTLY OUTLINED typeface — the
+     hollow letterforms are drawn into the glyphs. Never add -webkit-text-stroke
+     to it; that double-draws the outline and thickens it off-spec. */
+  --font-roboto: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-outline: "Ribeye Marrow", Georgia, serif;
+
+  /* M3 static type scale, values straight from the Figma variables. Each size
+     carries its own line-height and tracking because M3 pairs them — using one
+     without the others is what makes ported M3 text look subtly wrong. */
+  --m3-display-lg: 57px;
+  --m3-display-lg-leading: 64px;
+  --m3-display-lg-tracking: -0.25px;
+
+  --m3-title-lg: 22px;
+  --m3-title-lg-leading: 28px;
+  --m3-title-lg-tracking: 0;
+
+  --m3-title-md: 16px;
+  --m3-title-md-leading: 24px;
+  --m3-title-md-tracking: 0.15px;
+
+  --m3-body-lg: 16px;
+  --m3-body-lg-leading: 24px;
+  --m3-body-lg-tracking: 0.5px;
+
   --text-xs: 12px;
   --text-sm: 13px;
   --text-base: 15px;
@@ -86,6 +126,7 @@
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
+  --weight-bold: 700;
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;
@@ -124,6 +165,23 @@
   --project-card-media: 375px;
   --testimonial-card-size: 240px;
 
+  /* ---- 3e-bis. HERO GEOMETRY ---------------------------------------------
+     The Figma hero is one fixed 1272 × 668 board with everything inside placed
+     absolutely. Rather than freeze that in pixels, the board keeps its ratio
+     and every child is positioned in % of it (see _data/hero.js), so the whole
+     composition scales as a single unit.
+
+     --hero-card-base is the one number the card interior hangs off: it is the
+     card's BODY font size expressed in cqw against the board. Everything else
+     inside a card (title, padding, gap, radius, tracking) is a clean em
+     multiple of it — 2em padding, 1.25em gap, 1.375em title — which is why
+     there is no second magic number in _hero.css. */
+  --header-height: 92px;
+  --hero-board-w: 1272;
+  --hero-board-h: 668;
+  --hero-folder-width: 56.6038%;  /* 720 of 1272 */
+  --hero-card-base: 0.845cqw;     /* ≈10.75px at a 1272px board */
+
   /* ---- 3f. Z-INDEX --------------------------------------------------------
      Named layers. The footer card caps at 150 specifically to sit UNDER the
      nav at 200 while still covering page content — that relationship is the
@@ -161,4 +219,40 @@
 
   --accent: var(--navy-900);
   --accent-dim: var(--navy-500);
+}
+
+/* ---------------------------------------------------------------------------
+   REDESIGN SCOPE — the light Figma palette, switched on for the two components
+   that have been rebuilt against it and nowhere else.
+
+   This is the migration seam. The redesigned Header and Hero are light
+   (white ground, black text, Roboto); every section below them is still the v2
+   dark theme. Repointing the SAME semantic aliases the rest of the site uses,
+   scoped to these two selectors, means neither half needs to know about the
+   other: components keep reading --text-primary and get the right answer for
+   where they sit.
+
+   As each later section is rebuilt, add its selector here. When the last one
+   lands, this block collapses into :root and the dark palette is deleted in a
+   single commit — that is the whole point of routing through the aliases
+   instead of hardcoding the Figma hexes into _hero.css and _nav.css.
+   --------------------------------------------------------------------------- */
+.site-header,
+.hero {
+  --surface: var(--white);
+  --surface-raised: var(--fig-elevated);
+
+  --text-primary: var(--fig-black);
+  --text-secondary: var(--fig-gray);
+  --text-muted: var(--fig-gray);
+  --text-inverse: var(--white);
+
+  --border-subtle: var(--fig-rule-soft);
+  --border-strong: var(--fig-rule-strong);
+
+  --accent: var(--fig-black);
+
+  font-family: var(--font-roboto);
+  background-color: var(--surface);
+  color: var(--text-primary);
 }
