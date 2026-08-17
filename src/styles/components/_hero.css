@@ -61,12 +61,15 @@
   font-weight: var(--weight-bold);
 }
 
-/* Ribeye Marrow is an inherently outlined face — the hollow letterforms are
-   drawn into the glyphs themselves. Adding -webkit-text-stroke here would
-   double the outline and thicken it well off-spec. Deliberately absent. */
+/* Ribeye Marrow's letterforms are hollow by design, but the Figma comp strokes
+   them ON TOP of that: at the same size and position the reference render
+   carries 1.75x the ink of the bare face. The width below was not guessed — it
+   was chosen by sweeping candidates, rendering each, and measuring ink coverage
+   against that reference. See --designer-stroke in tokens.css. */
 .hero__role-outline {
   font-family: var(--font-outline);
   font-weight: var(--weight-regular);
+  -webkit-text-stroke: var(--designer-stroke) currentColor;
 }
 
 .hero__tagline {

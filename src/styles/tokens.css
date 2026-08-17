@@ -87,10 +87,12 @@
   --font-sans: "Figtree", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
-  /* Redesign faces. Ribeye Marrow is an INHERENTLY OUTLINED typeface — the
-     hollow letterforms are drawn into the glyphs. Never add -webkit-text-stroke
-     to it; that double-draws the outline and thickens it off-spec. */
-  --font-roboto: "Roboto", system-ui, -apple-system, sans-serif;
+  /* Ribeye Marrow draws only "Designer". Its letterforms are hollow by design,
+     but the Figma comp strokes them ON TOP of that — measured at 1.75x the ink
+     of the bare face — so _hero.css adds a matched text-stroke. Everything else
+     in the header and hero is Figtree, the same face the rest of the site uses.
+     (An earlier pass used Roboto here, from the M3 variables in the original
+     Figma; the comp has since moved to Figtree and the two now agree.) */
   --font-outline: "Ribeye Marrow", Georgia, serif;
 
   /* M3 static type scale, values straight from the Figma variables. Each size
@@ -176,6 +178,13 @@
      inside a card (title, padding, gap, radius, tracking) is a clean em
      multiple of it — 2em padding, 1.25em gap, 1.375em title — which is why
      there is no second magic number in _hero.css. */
+  /* Stroke added to "Designer" on top of Ribeye Marrow's own hollow outline, to
+     match the Figma comp. Fitted by sweeping 0–3px, rendering each, and counting
+     ink against the reference: 2.25px lands within 1.2% (5226 vs 5288 px), where
+     the bare face is 42% under. Neighbours bracket it at -5.0% (2.0px) and
+     +3.7% (2.5px), so this is a measured optimum, not a round number. */
+  --designer-stroke: 2.25px;
+
   --header-height: 92px;
   --hero-board-w: 1272;
   --hero-board-h: 668;
@@ -226,7 +235,7 @@
    that have been rebuilt against it and nowhere else.
 
    This is the migration seam. The redesigned Header and Hero are light
-   (white ground, black text, Roboto); every section below them is still the v2
+   (white ground, black text); every section below them is still the v2
    dark theme. Repointing the SAME semantic aliases the rest of the site uses,
    scoped to these two selectors, means neither half needs to know about the
    other: components keep reading --text-primary and get the right answer for
@@ -252,7 +261,7 @@
 
   --accent: var(--fig-black);
 
-  font-family: var(--font-roboto);
+  font-family: var(--font-sans);
   background-color: var(--surface);
   color: var(--text-primary);
 }

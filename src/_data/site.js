@@ -114,12 +114,15 @@ module.exports = {
 
   // ---- Third party ----------------------------------------------------------
   analytics: { ga4: "G-JXCBH3PH93", vercel: true },
-  /* Figtree + DM Mono are the v2 faces, still used by every section below the
-     hero. Roboto and Ribeye Marrow are the redesign faces: Roboto at 400/500/700
-     covers the M3 scale, and Ribeye Marrow (single weight) draws the outlined
-     "Designer" — the outline is in the typeface, not a CSS stroke. */
+  /* Figtree everywhere, DM Mono for the Snake readout, Ribeye Marrow for the
+     single word "Designer" in the hero.
+
+     WEIGHT 700 IS LOAD-BEARING: the hero sets "Pari.", "Product" and the folder
+     card titles bold. Without it in this list the browser synthesises a faux
+     bold, which is visibly wrong next to the real 600. Roboto was dropped here
+     when the comp moved to Figtree — nothing references it any more. */
   fonts:
-    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400&family=Roboto:wght@400;500;700&family=Ribeye+Marrow&display=swap",
+    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=DM+Mono:wght@400&family=Ribeye+Marrow&display=swap",
 
   copyrightYear: 2026,
 };
