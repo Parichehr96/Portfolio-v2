@@ -86,7 +86,11 @@ module.exports = {
     { slug: "claude", label: "Claude", file: "icon-claude.svg", x: pctX(226), y: pctY(529), size: pctX(80) },
     { slug: "figma", label: "Figma", file: "icon-figma.svg", x: pctX(936), y: pctY(90), size: pctX(80) },
     { slug: "jira", label: "Jira", file: "icon-jira.svg", x: pctX(1117), y: pctY(370), size: pctX(60) },
-    { slug: "cursor", label: "", file: "icon-cursor.svg", x: pctX(859), y: pctY(377), size: pctX(96) },
+    // Resized in Figma after the first build: the node (367:42813, renamed
+    // "icon-cursor") went 96 -> 47.04 square, shrinking in place around an
+    // unchanged centre of (907, 425). The exported SVG's 48 viewBox already
+    // matched the new size; only these numbers were stale.
+    { slug: "cursor", label: "", file: "icon-cursor.svg", x: pctX(883.48), y: pctY(401.48), size: pctX(47.04) },
   ],
 
   // Folder art. Insets are percentages of the 720 × 720 glyph box (367:42712).

@@ -87,10 +87,9 @@
   --font-sans: "Figtree", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
-  /* Ribeye Marrow draws only "Designer". Its letterforms are hollow by design,
-     but the Figma comp strokes them ON TOP of that — measured at 1.75x the ink
-     of the bare face — so _hero.css adds a matched text-stroke. Everything else
-     in the header and hero is Figtree, the same face the rest of the site uses.
+  /* Ribeye Marrow draws only "Designer", at its natural regular weight — the
+     hollow letterforms are the typeface, not a CSS stroke. Everything else in
+     the header and hero is Figtree, the same face the rest of the site uses.
      (An earlier pass used Roboto here, from the M3 variables in the original
      Figma; the comp has since moved to Figtree and the two now agree.) */
   --font-outline: "Ribeye Marrow", Georgia, serif;
@@ -178,13 +177,6 @@
      inside a card (title, padding, gap, radius, tracking) is a clean em
      multiple of it — 2em padding, 1.25em gap, 1.375em title — which is why
      there is no second magic number in _hero.css. */
-  /* Stroke added to "Designer" on top of Ribeye Marrow's own hollow outline, to
-     match the Figma comp. Fitted by sweeping 0–3px, rendering each, and counting
-     ink against the reference: 2.25px lands within 1.2% (5226 vs 5288 px), where
-     the bare face is 42% under. Neighbours bracket it at -5.0% (2.0px) and
-     +3.7% (2.5px), so this is a measured optimum, not a round number. */
-  --designer-stroke: 2.25px;
-
   --header-height: 92px;
   --hero-board-w: 1272;
   --hero-board-h: 668;
