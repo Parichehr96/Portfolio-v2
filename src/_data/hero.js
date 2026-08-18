@@ -64,7 +64,13 @@ module.exports = {
       title: "Interaction and UX Design",
       body: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
       x: 29.034,
-      y: 67.6141,
+      // DELIBERATELY NOT THE COMP. Figma places this card's centre at 67.6141,
+      // which sits it ~47 units below card 3 and makes the resting fan look
+      // lopsided — the two outer tilted cards read as mismatched rather than
+      // as a pair. Levelled with card 3 (49.8036) so the fan is symmetric.
+      // Revisit only alongside the comp; re-syncing it from Figma will
+      // reintroduce the imbalance.
+      y: 49.8036,
       rotate: -11.31,
     },
     {

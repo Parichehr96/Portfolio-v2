@@ -50,7 +50,20 @@
       />
     {%- endfor %}
 
-    <div class="hero-folder">
+    {#
+      THE FLAP IS THE BUTTON. It cannot wrap the whole folder: the cards are
+      draggable, and a <button> containing them would nest interactive controls
+      AND make every pointerdown-to-drag fight the button's click. The flap is
+      already the topmost layer and already sits exactly over the folder art, so
+      it is the natural grab target — and the cards stay siblings, never
+      descendants, so they remain independently draggable.
+
+      The markup carries NO state class. Rest — cards peeking, as the comp draws
+      them — is what plain CSS produces with no custom properties set;
+      hero-folder.js only ever ADDS .is-expanded. So with JS absent or slow, the
+      hero still renders correctly and the cards never disappear.
+    #}
+    <div class="hero-folder" data-hero-folder>
       <img
         class="hero-folder__back"
         src="{{ hero.assetPath }}/{{ hero.folder.back.file }}"
@@ -58,7 +71,7 @@
         aria-hidden="true"
       />
 
-      <div class="hero-folder__cards">
+      <div class="hero-folder__cards" id="hero-folder-cards">
         {%- for card in hero.cards %}
           <article
             class="hero-folder__card hero-folder__card--{{ loop.index }}"
@@ -70,12 +83,20 @@
         {%- endfor %}
       </div>
 
-      <img
+      <button
+        type="button"
         class="hero-folder__front"
-        src="{{ hero.assetPath }}/{{ hero.folder.front.file }}"
-        alt=""
-        aria-hidden="true"
-      />
+        aria-expanded="false"
+        aria-controls="hero-folder-cards"
+      >
+        <img
+          src="{{ hero.assetPath }}/{{ hero.folder.front.file }}"
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
+        <span class="hero-folder__label" data-folder-label>Pull the cards out</span>
+      </button>
     </div>
 
     <p class="hero__years">{{ hero.caption.years }}</p>

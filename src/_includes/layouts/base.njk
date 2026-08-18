@@ -55,6 +55,11 @@
   <script defer src="/scripts/carousel.js"></script>
   <script defer src="/scripts/timeline.js"></script>
   <script defer src="/scripts/snake.js"></script>
+  {# draggable.js MUST load before hero-folder.js: it publishes window.HeroDrag,
+     which hero-folder.js reads. Both are `defer`, so they run in document
+     order. #}
+  <script defer src="/scripts/draggable.js"></script>
+  <script defer src="/scripts/hero-folder.js"></script>
   <script defer src="/scripts/analytics-events.js"></script>
 
   {%- if site.analytics.vercel %}

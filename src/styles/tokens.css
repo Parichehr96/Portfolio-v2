@@ -150,6 +150,14 @@
   --duration-fast: 120ms;
   --duration-base: 240ms;
   --duration-slow: 480ms;
+  /* Folder expand/collapse. Not folded into --duration-slow: the cards travel
+     much further than any other transition on the site and read as rushed at
+     480ms. The stagger is what makes three cards leaving a folder look like a
+     hand fanning them rather than one rigid object. base.css already zeroes
+     every transition under prefers-reduced-motion, so these need no counterpart
+     there — the toggle simply becomes instantaneous. */
+  --duration-folder: 500ms;
+  --stagger-folder: 70ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 

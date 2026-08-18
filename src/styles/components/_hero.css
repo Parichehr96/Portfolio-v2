@@ -22,6 +22,41 @@
      intro's padding fully determine the height, exactly as in Figma. */
   display: block;
   width: 100%;
+  position: relative; /* anchors the gutter rules below */
+}
+
+/* ---- Gutter rules -------------------------------------------------------- */
+/* Figma's hero Container (184:13333) sits at x=120 with width 1272 — the exact
+   same box as the header's inner container — and carries the same left/right
+   strokes, so the two read as one continuous pair of lines down the page.
+ *
+ * DRAWN AS PSEUDO-ELEMENTS, NOT BORDERS, ON PURPOSE. A real border-inline on a
+ * wrapper would eat 1px from each side of the content box, shrinking the board
+ * from 1272 to 1270 and shifting every card and icon by up to a pixel. The
+ * board's geometry is verified against Figma to 0.03 units and worth
+ * protecting, so these rules are painted over the layout instead of
+ * participating in it — same pixels, zero layout cost.
+ *
+ * z-index lifts them above the board's background; without it the ::before
+ * would paint underneath it and only half the line would show. */
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  z-index: var(--z-content);
+  pointer-events: none;
+}
+
+.hero::before {
+  left: var(--space-11);
+}
+
+.hero::after {
+  right: var(--space-11);
 }
 
 /* ---- Intro band ---------------------------------------------------------- */
@@ -93,6 +128,29 @@
   overflow: hidden;
 }
 
+/* ---- Live cursor --------------------------------------------------------- */
+/* The board swaps the OS pointer for the same arrow the comp draws, so the
+   canvas announces itself as interactive. The comp's static arrow is not
+   rendered as an element (see hero.js) — this replaces it, and drawing both
+   would leave a frozen duplicate on screen.
+ *
+ * Hotspot 8 7 is the arrow's tip, measured off a 48x48 render of the file
+ * rather than guessed. The `auto` fallback is load-bearing: Safari does not
+ * support SVG cursor images and lands there, showing the normal system arrow.
+ *
+ * The hover/pointer query keeps this off touch devices, where there is no
+ * cursor to swap. Descendants inherit rather than restate the url, so the arrow
+ * survives over the cards and over the flap button — which would otherwise
+ * revert to its UA default — and stays put for the whole of a drag. */
+@media (hover: hover) and (pointer: fine) {
+  .hero__board {
+    cursor: url("/Assets/images/hero/icon-cursor.svg") 8 7, auto;
+  }
+  .hero__board * {
+    cursor: inherit;
+  }
+}
+
 /* Figma anchors each mark by its top-left, so these map straight across.
    One size drives both axes via aspect-ratio. */
 .hero__icon {
@@ -137,11 +195,43 @@
   height: 55.68%;
 }
 
+/* The flap is a <button> (see hero.njk). Stripped to a bare box so it still
+   paints as pure artwork, with the geometry unchanged from when it was an
+   <img>. */
 .hero-folder__front {
   left: 11.05%;
   top: 43.25%;
   width: 79.36%;
   height: 35%;
+  padding: 0;
+  border: 0;
+  background: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.hero-folder__front img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-folder__front:focus-visible {
+  outline: var(--border-width) solid var(--text-primary);
+  outline-offset: var(--space-1);
+}
+
+/* Accessible name for the toggle, swapped with the state by hero-folder.js. */
+.hero-folder__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .hero-folder__cards {
@@ -172,8 +262,73 @@
   background-color: var(--white);
   overflow: hidden;
   font-size: var(--hero-card-base);
-  transform: translate(-50%, -50%) translate(var(--tuck-x, 0), var(--tuck-y, 0))
-    rotate(var(--card-rot, 0deg));
+  /* ORDER IS LOAD-BEARING. Both translates sit LEFT of the rotates, so their
+     vectors stay in unrotated board space — a dragged card follows the pointer
+     exactly instead of moving along its own tilted axes. Percentages resolve
+     against the card's own border box and are unaffected by the rotates that
+     follow, which keeps the centring exact at any board size.
+
+     --tuck-rot is a DELTA, not an absolute angle: --card-rot is written inline
+     per card by hero.js, and inline styles outrank stylesheet rules, so the
+     expanded state cannot overwrite it. A second rotate composes
+     (rotate(a) rotate(b) === rotate(a+b)) and leaves hero.js the single source
+     of the rest positions.
+
+     EVERY --tuck-* FALLS BACK TO IDENTITY. That is the resting state: cards
+     peeking exactly as the comp draws them, produced by plain CSS with nothing
+     set. Never give these a non-identity default — doing so is what previously
+     made the cards flash on load and then vanish. */
+  transform: translate(-50%, -50%)
+    translate(var(--drag-x, 0px), var(--drag-y, 0px))
+    translate(var(--tuck-x, 0%), var(--tuck-y, 0%)) rotate(var(--card-rot, 0deg))
+    rotate(var(--tuck-rot, 0deg));
+  transition: transform var(--duration-folder) var(--ease-out);
+  transition-delay: var(--card-delay, 0ms);
+  will-change: transform;
+  /* The pointer drag owns these gestures; without this, touch scrolls the page
+     and text selection fights the drag on desktop. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- Expanded ------------------------------------------------------------ */
+/* Activating the flap pulls the cards FURTHER OUT of the folder — up and fanned
+   wider. It never hides them: rest is already visible, and this is the more
+   open of two visible states.
+ *
+ * The lift is deliberately bounded. At -30% of card height (~66 units) every
+ * card's BOTTOM still sits below the flap's top edge, so they read as emerging
+ * from inside the folder rather than floating free of it. Lift much further and
+ * the illusion breaks. */
+.hero-folder.is-expanded .hero-folder__card--1 {
+  --tuck-x: -10%;
+  --tuck-y: -30%;
+  --tuck-rot: -3deg;
+  --card-delay: 0ms;
+}
+.hero-folder.is-expanded .hero-folder__card--2 {
+  --tuck-x: 0%;
+  --tuck-y: -30%;
+  --tuck-rot: 0deg;
+  --card-delay: var(--stagger-folder);
+}
+.hero-folder.is-expanded .hero-folder__card--3 {
+  --tuck-x: 10%;
+  --tuck-y: -30%;
+  --tuck-rot: 3deg;
+  --card-delay: calc(var(--stagger-folder) * 2);
+}
+
+/* Collapsing reverses the stagger, so the last card out is the first back. */
+.hero-folder:not(.is-expanded) .hero-folder__card--1 { --card-delay: calc(var(--stagger-folder) * 2); }
+.hero-folder:not(.is-expanded) .hero-folder__card--2 { --card-delay: var(--stagger-folder); }
+.hero-folder:not(.is-expanded) .hero-folder__card--3 { --card-delay: 0ms; }
+
+/* A held card must track the pointer 1:1 — any easing here reads as lag. */
+.hero-folder__card.is-dragging {
+  transition: none;
+  z-index: var(--z-content);
 }
 
 .hero-folder__card-title {
@@ -229,6 +384,13 @@
    needed before this can be tuned properly, so nothing is invented here beyond
    dropping the gutters and stepping the display type down. */
 @media (max-width: 900px) {
+  /* The 120px gutter collapses here, and the rules go with it — they only mean
+     anything as gutter edges. The header drops its side borders at the same
+     breakpoint, so the two stay consistent. */
+  .hero::before,
+  .hero::after {
+    display: none;
+  }
   .hero__intro {
     padding: var(--space-10) var(--space-7);
   }
