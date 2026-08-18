@@ -152,7 +152,15 @@
 }
 
 /* Figma anchors each mark by its top-left, so these map straight across.
-   One size drives both axes via aspect-ratio. */
+   One size drives both axes via aspect-ratio.
+
+   ROAM USES THE INDIVIDUAL translate/rotate/scale PROPERTIES, not `transform`,
+   and that separation is load-bearing. scripts/hero-icons.js rewrites
+   --roam-x/--roam-y every animation frame, so `translate` must never
+   transition — but `scale` and `rotate` DO need to ease when an icon is picked
+   up. Packed into one `transform` they would share a single transition
+   setting, and the grab lift would fight the roam loop over the same property.
+   Split, each gets exactly the treatment it needs. */
 .hero__icon {
   position: absolute;
   left: var(--icon-x);
@@ -160,6 +168,34 @@
   width: var(--icon-size);
   height: auto;
   aspect-ratio: 1;
+  translate: var(--roam-x, 0px) var(--roam-y, 0px);
+  rotate: var(--roam-rot, 0deg);
+  scale: var(--lift-scale, 1);
+  transition: scale var(--duration-grab) var(--ease-out),
+    rotate var(--duration-grab) var(--ease-out);
+  will-change: translate;
+  /* The pointer drag owns these gestures; without them touch scrolls the page
+     and the browser's native image drag swallows the pointer stream. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  /* ABOVE THE FOLDER, so an icon stays grabbable where the two overlap. The
+     icons are DOM siblings emitted BEFORE .hero-folder, so without this the
+     folder paints and hit-tests over them and any icon near it is dead to the
+     pointer. Hit-testing stays correct: an icon only captures within its own
+     box, so the flap toggle and the cards still respond everywhere an icon is
+     not — with the caveat that an icon's transparent corners capture too,
+     since a square <img> has no per-pixel hit area. */
+  z-index: var(--z-hero-icon);
+}
+
+/* Held: lifted, and the idle tilt eases out to flat so it is carried level.
+   `translate` is untouched here, which is what keeps tracking 1:1. */
+.hero__icon.is-dragging {
+  --lift-scale: var(--lift-amount);
+  --roam-rot: 0deg;
+  z-index: var(--z-hero-icon-held);
 }
 
 /* ---- Folder -------------------------------------------------------------- */
@@ -278,10 +314,16 @@
      peeking exactly as the comp draws them, produced by plain CSS with nothing
      set. Never give these a non-identity default — doing so is what previously
      made the cards flash on load and then vanish. */
+  /* The two rotations are summed inside ONE rotate() and multiplied by
+     --rot-scale, rather than chained. That is what lets a grab straighten the
+     card to exactly 0deg with a single property: scaling the sum by 0 zeroes
+     whatever angle the card currently holds — rest tilt or expanded slot —
+     without JS ever reading or computing an angle. */
   transform: translate(-50%, -50%)
     translate(var(--drag-x, 0px), var(--drag-y, 0px))
-    translate(var(--tuck-x, 0%), var(--tuck-y, 0%)) rotate(var(--card-rot, 0deg))
-    rotate(var(--tuck-rot, 0deg));
+    translate(var(--tuck-x, 0%), var(--tuck-y, 0%))
+    rotate(calc((var(--card-rot, 0deg) + var(--tuck-rot, 0deg)) * var(--rot-scale, 1)))
+    scale(var(--lift-scale, 1));
   transition: transform var(--duration-folder) var(--ease-out);
   transition-delay: var(--card-delay, 0ms);
   will-change: transform;
@@ -325,9 +367,33 @@
 .hero-folder:not(.is-expanded) .hero-folder__card--2 { --card-delay: var(--stagger-folder); }
 .hero-folder:not(.is-expanded) .hero-folder__card--3 { --card-delay: 0ms; }
 
-/* A held card must track the pointer 1:1 — any easing here reads as lag. */
+/* ---- Drag phases --------------------------------------------------------- */
+/* GRAB. A short eased beat while the card straightens and lifts. The pointer
+   has only moved past the 4px threshold at this point, so the brief smoothing
+   reads as the card being picked up rather than as lag. */
+.hero-folder__card.is-grabbing {
+  transition: transform var(--duration-grab) var(--ease-out);
+  --rot-scale: 0;
+  --lift-scale: var(--lift-amount);
+  z-index: var(--z-content);
+}
+
+/* HOLD. Tracking must be 1:1 — any easing here reads as the card lagging
+   behind the cursor. Rotation stays zeroed so it is carried flat. */
 .hero-folder__card.is-dragging {
   transition: none;
+  --rot-scale: 0;
+  --lift-scale: var(--lift-amount);
+  z-index: var(--z-content);
+}
+
+/* RELEASE. Everything returns to its computed home — and "home" is whatever the
+   folder state says it is, because clearing --drag-* and --rot-scale simply
+   lets the existing rest/expanded rules apply again. A card let go while the
+   folder is expanded settles into its expanded slot, not the rest peek, with no
+   bookkeeping in JS. */
+.hero-folder__card.is-returning {
+  transition: transform var(--duration-return) var(--ease-out);
   z-index: var(--z-content);
 }
 

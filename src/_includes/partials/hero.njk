@@ -46,6 +46,7 @@
         src="{{ hero.assetPath }}/{{ icon.file }}"
         alt="{{ icon.label }}"
         {% if not icon.label %}aria-hidden="true"{% endif %}
+        draggable="false"
         style="--icon-x: {{ icon.x }}%; --icon-y: {{ icon.y }}%; --icon-size: {{ icon.size }}%"
       />
     {%- endfor %}

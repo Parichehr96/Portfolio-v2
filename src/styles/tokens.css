@@ -158,6 +158,53 @@
      there — the toggle simply becomes instantaneous. */
   --duration-folder: 500ms;
   --stagger-folder: 70ms;
+
+  /* Drag feel. Grab is short — the card only has to straighten and lift, and
+     the pointer has barely moved past the 4px threshold, so anything longer
+     reads as the card being slow to respond. Return is deliberately much
+     slower than grab: letting go should feel like the card settling back into
+     the folder under its own weight, not snapping. --lift-amount is the scale
+     while held; it is the whole of the "picked up" cue, since no shadow is
+     added. */
+  --duration-grab: 180ms;
+  --duration-return: 600ms;
+  --lift-amount: 1.03;
+
+  /* Roaming tool icons — see scripts/hero-icons.js. Speeds are px/s, JITTER is
+     px/s^2 of random acceleration, EDGE-* describe the soft cushion the icons
+     curve away from instead of bouncing off. */
+  --roam-speed-min: 10;
+  --roam-speed-max: 30;
+  --roam-jitter: 40;
+  --roam-edge-margin: 48;
+  --roam-edge-force: 1.5;
+
+  /* Keep-out ellipse. The icons are margin furniture: the centre of the board
+     belongs to the folder, the cards (including their expanded lift) and the
+     captions, and an icon wandering across it competes with the content.
+     Semi-axes are FRACTIONS of the board, so the zone scales with it.
+     0.26 x 0.45 covers x 305-967 and y 33-635 of a 1272x668 board.
+
+     An ellipse rather than a rectangle because a rect's corners are
+     discontinuities in the steering field and the drift visibly snaps as an
+     icon rounds one. Force falls to zero at the boundary and peaks at the
+     centre, so there is no wall to bounce off.
+
+     THE FALLOFF EXPONENT IS THE LOAD-BEARING PART. With a linear ramp the
+     force near the boundary is almost nothing — at d=0.9 only a tenth of the
+     peak — while the speed floor keeps the icon moving, so it sails straight
+     through: simulated over 10 minutes, 3 of 4 icons crossed the centre and
+     they sat inside the zone 23% of the time. A square-root falloff triples
+     the force at that same depth (158 vs 50 px/s^2) and the crossings stop:
+     2.4% of time inside, deepest dip 3.7%, none crossing. Those shallow dips
+     are the occasional inward wander, kept rather than designed out.
+
+     A hard positional projection was tried instead and rejected: it pins icons
+     exactly on the boundary and they slide along it, which reads as a wall. */
+  --roam-keepout-x: 0.26;
+  --roam-keepout-y: 0.45;
+  --roam-keepout-force: 500;
+  --roam-keepout-falloff: 0.5;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
@@ -198,6 +245,12 @@
   --z-behind: -1;
   --z-base: 0;
   --z-content: 1;
+  /* Hero board layers. The icons must sit ABOVE the folder so they stay
+     grabbable where the two overlap — the folder is a transform'd element and
+     therefore its own stacking context, so its children cannot rise past them.
+     A held icon goes higher still so it is never buried by a sibling. */
+  --z-hero-icon: 2;
+  --z-hero-icon-held: 4;
   --z-footer-expanded: 150;
   --z-nav: 200;
   --z-cursor: 300;
