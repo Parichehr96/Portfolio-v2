@@ -15,8 +15,12 @@ pageId: work
                  the prev/next links and the JSON-LD all read from that entry
                  rather than repeating client/year/role in front matter
 
-  The reading-progress bar is a case-study-only affordance; scripts/progress.js
-  is a no-op on any page without [data-progress].
+  THE READING-PROGRESS BAR HAS NO DRIVER. scripts/progress.js was deleted in
+  the cleanup sweep; it had never driven this element in the first place, since
+  it queried `.scroll-progress` while this markup renders `.progress-bar`, and
+  no template ever loaded it. The bar therefore paints at 0% and stays there.
+  Left in place rather than removed because the fix is a few lines of JS and
+  belongs with the case-study redesign, not with a deletion sweep.
 #}
 
 {% from "components/button.njk" import button %}

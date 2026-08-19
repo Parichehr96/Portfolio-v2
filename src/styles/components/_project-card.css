@@ -1,57 +1,17 @@
-/* PROJECT CARD — fixed width so the carousel's scroll maths stay integral.
- * The media slot keeps its height even when empty: that is what stops cards of
- * differing caption length from changing height mid-scroll. */
-.project-card {
-  flex: 0 0 var(--project-card-width);
-  width: var(--project-card-width);
-  scroll-snap-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-.project-card-media {
-  width: 100%;
-  height: var(--project-card-media);
-  background-color: var(--surface-raised);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-.project-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.project-card-meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  align-items: flex-start;
-}
-.project-card-caption {
-  color: var(--text-primary);
-  font-size: var(--text-md);
-  line-height: var(--leading-snug);
-}
-/* No case study yet: inert, and visibly so. */
-.project-card--soon {
-  cursor: default;
-}
+/* PROJECT LIST — the /projects page. A row, not a card: this view is for
+ * scanning every project at once.
+ *
+ * THE CARD HALF OF THIS FILE IS GONE. It styled components/project-card.njk,
+ * which rendered inside the homepage's Projects carousel — both were removed
+ * in the cleanup sweep, along with the carousel itself. Only the list view and
+ * the muted "coming soon" treatment it borrows are still rendered anywhere.
+ */
 .project-card-link--muted {
   color: var(--text-muted);
   border-bottom: none;
   font-size: var(--text-base);
 }
-@media (max-width: 768px) {
-  .project-card {
-    flex-basis: min(var(--project-card-width), 82vw);
-    width: min(var(--project-card-width), 82vw);
-  }
-  .project-card-media { height: min(var(--project-card-media), 82vw); }
-}
 
-/* PROJECT LIST — the /projects page. A row, not a card: this view is for
- * scanning every project at once, so it trades the carousel's imagery for
- * density. Shares the card's muted "coming soon" treatment. */
 .project-list { display: flex; flex-direction: column; }
 .project-list-item {
   display: grid;

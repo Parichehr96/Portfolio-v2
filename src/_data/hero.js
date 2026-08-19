@@ -28,7 +28,10 @@ module.exports = {
     name: { lead: "Pari", rest: "chehr Talebzadeh" },
     // Absolute hrefs so the header works from /work/* and /projects too.
     links: [
-      { label: "About Me", href: "/#all-about-me" },
+      // #about-me, not the v2 #all-about-me — that id belonged to the milestone
+      // timeline, which the cleanup sweep removed. partials/about.njk carries
+      // this one.
+      { label: "About Me", href: "/#about-me" },
       { label: "My Work", href: "/#featured-works" },
     ],
     cta: { label: "Contact", href: "/#contact" },

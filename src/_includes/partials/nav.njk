@@ -2,12 +2,18 @@
   SITE HEADER — Figma 184:13318. Driven by _data/hero.js.
 
   Replaces the v2 floating bottom nav. That bar was a scroll-spy driven by
-  scripts/nav.js; this is plain anchors with no JS at all, so nav.js now finds
-  no .bottom-nav and returns at its first guard. Deleting it belongs to the §9
-  sweep, not here.
+  scripts/nav.js; this is plain anchors with no JS at all. nav.js has since been
+  deleted in the cleanup sweep, along with the site.nav array that fed it —
+  that data is still in _data/site.js and is now unused.
 
   Hrefs are absolute (/#id) rather than bare fragments so the header behaves
   identically on /work/* and /projects, where those sections don't exist.
+
+  TWO OF THE THREE POINT AT NOTHING RIGHT NOW. /#featured-works and /#contact
+  were ids on the old Projects and Footer blocks, both removed in the sweep;
+  they come back when Testimonials (187:2301) and Footer (289:2233) are built.
+  /#about-me was repointed off the timeline's old #all-about-me at the same
+  time and does resolve.
 
   The rule below the header and the rules either side of the container are
   three separate 1px borders in Figma at two different opacities — see
