@@ -1,0 +1,91 @@
+{#
+  ABOUT ME — Figma 185:2029. Content from _data/about.js.
+
+  TWO COLUMNS of equal width inside the same 120px gutters as the header and
+  hero, so the page frame runs unbroken down the page. The rules are part of
+  that frame: the outer pair continue the header's, and the comp adds two more
+  inside — a divider between the columns and one above the time widget.
+
+  THE TIME WIDGET IS STATIC. Every value is mocked from the comp. The
+  data-clock-* hooks are the contract for the later phase that makes it live:
+  scripts/clock.js already computes exactly these three fields, so that phase
+  is a rewire, not a rewrite. Do not rename them casually.
+#}
+
+{% from "components/stat.njk" import stat %}
+
+<section class="about" id="about-me">
+  <div class="about__inner">
+    <div class="about__figure-col">
+      {#
+        TWO LAYERS, frame behind the figure — the same order Figma draws them.
+        The frame is an exported open path (see about.js); the figure is a
+        transparent PNG that overhangs it at the bottom, so the arms read as
+        crossing the line rather than sitting inside a box.
+      #}
+      <div class="about__figure">
+        <img
+          class="about__frame"
+          src="{{ about.illustration.frame }}"
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
+        <img
+          class="about__illustration"
+          src="{{ about.illustration.file }}"
+          alt="{{ about.illustration.alt }}"
+          draggable="false"
+        />
+      </div>
+    </div>
+
+    <div class="about__body">
+      <div class="about__content">
+        <h2 class="about__heading">
+          <span class="about__heading-lead">{{ about.heading.lead }}</span>
+          <span class="about__heading-rest">{{ about.heading.rest }}</span>
+        </h2>
+
+        <ul class="about__stats">
+          {%- for s in about.stats %}{{ stat(s.value, s.label) }}{% endfor %}
+        </ul>
+
+        {%- for para in about.bio %}
+          <p class="about__bio">{{ para }}</p>
+        {%- endfor %}
+
+        <p class="about__location">
+          <img
+            class="about__flag"
+            src="{{ site.flag }}"
+            alt=""
+            aria-hidden="true"
+            width="16"
+            height="16"
+          />
+          {{ about.location }}
+        </p>
+      </div>
+
+      <div class="about__clock" data-clock>
+        <p class="about__clock-time">
+          <span class="about__clock-at">{{ about.clock.atLabel }}</span>
+          <span class="about__clock-value" data-clock-time>{{ about.clock.time }}</span>
+        </p>
+        <p class="about__clock-status">
+          {#
+            NOT IN THE COMP. Figma 185:2029 draws no indicator — the v2 sidebar
+            widget had one at the tip of an L-connector and the brief asks for
+            it back, so it is added here rather than invented silently. It is
+            one span and one CSS block; delete both to return to the comp.
+          #}
+          <span class="about__clock-dot" data-clock-dot aria-hidden="true"></span>
+          <span class="about__clock-lead" data-clock-lead>{{ about.clock.statusLead }}</span>
+          <span class="about__clock-headline" data-clock-status>{{ about.clock.status }}</span>
+        </p>
+        <p class="about__clock-detail" data-clock-detail>{{ about.clock.detail }}</p>
+      </div>
+    </div>
+  </div>
+</section>

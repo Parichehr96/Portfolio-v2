@@ -1,0 +1,292 @@
+/* ABOUT ME — Figma 185:2029.
+ *
+ * Colours come from the .about scope in tokens.css, the same light block the
+ * header and hero use, so no Figma hex appears here.
+ *
+ * THE PAGE FRAME CONTINUES THROUGH THIS SECTION. Four rules in total: the outer
+ * pair at x=120/1392 carry on from the header and hero, and the comp adds a
+ * divider between the two columns and one above the time widget. They are all
+ * --border-strong; together they are what makes the page read as one ruled
+ * grid rather than a stack of unrelated bands.
+ *
+ * The outer pair are pseudo-elements rather than borders for the same reason as
+ * the hero's: a real border-inline would eat 1px per side off the content box
+ * and shift the columns. The inner two CAN be borders, because they sit on
+ * boxes whose exact width is not load-bearing.
+ */
+
+.about {
+  position: relative;
+  width: 100%;
+  background-color: var(--surface);
+}
+
+/* Outer gutter rules — same x positions as the header and hero. */
+.about::before,
+.about::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+.about::before { left: var(--space-11); }
+.about::after { right: var(--space-11); }
+
+.about__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-inline: var(--space-11);
+}
+
+/* ---- Left: illustration -------------------------------------------------- */
+.about__figure-col {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-block: var(--space-11);
+}
+
+/* THE FRAME IS ARTWORK, NOT A BORDER. It was a CSS rounded rect until the real
+   export was inspected: Figma strokes it 2px solid black at radius 12, and the
+   path is OPEN — the bottom edge stops at x=73.85 and picks up again at x=425,
+   leaving a gap the folded arms pass through. A border can draw a rounded
+   rectangle; it cannot leave a hole in one side. So it ships as an SVG.
+
+   Both layers share the exported 528x622 coordinate space, which is why the
+   percentages below are exact rather than eyeballed. */
+.about__figure {
+  position: relative;
+  width: var(--about-figure-size);
+  aspect-ratio: var(--about-figure-w) / var(--about-figure-h);
+}
+
+.about__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* MIRRORED, because the comp mirrors it: the export places the raster under
+   transform="matrix(-1 0 0 1 493 0)", so the source PNG faces the other way.
+   Positioned from the same matrix — x 53..493 of 528 — rather than centred,
+   which is what keeps the figure aligned to the frame's opening. */
+.about__illustration {
+  position: absolute;
+  left: 10.0379%; /* 53 / 528 */
+  top: 0;
+  width: 83.3333%; /* 440 / 528 */
+  height: 100%;
+  scale: -1 1;
+}
+
+/* ---- Right: copy + clock ------------------------------------------------- */
+.about__body {
+  display: flex;
+  flex-direction: column;
+  border-left: var(--border-width) solid var(--border-strong);
+}
+
+.about__content {
+  flex: 1;
+  padding: var(--about-head-top) var(--space-6) var(--space-6);
+}
+
+.about__heading {
+  margin: 0;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-lg-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+/* ---- Stats --------------------------------------------------------------- */
+.about__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+/* Ribeye Marrow, matching the hero's "Designer" — the numerals are display
+   figures, not body text. */
+.stat__value {
+  font-family: var(--font-outline);
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.stat__label {
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  color: var(--text-primary);
+}
+
+/* ---- Bio ----------------------------------------------------------------- */
+.about__bio {
+  margin: var(--space-5) 0 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+.about__location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-5) 0 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-primary);
+}
+
+.about__flag {
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* ---- Time widget --------------------------------------------------------- */
+/* STATIC. The values are the comp's; the data-clock-* hooks in about.njk are
+   the seam for the phase that makes this live. No script reads them yet. */
+.about__clock {
+  border-top: var(--border-width) solid var(--border-strong);
+  padding: var(--space-7) var(--space-6);
+}
+
+.about__clock-time,
+.about__clock-status {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.about__clock-at,
+.about__clock-lead {
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: var(--text-secondary);
+}
+
+.about__clock-value {
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--text-primary);
+}
+
+.about__clock-status {
+  margin-top: var(--space-2);
+}
+
+.about__clock-headline {
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+
+/* Live indicator. Colours and pulse rates are ported verbatim from the v2
+   widget: active pulses at 2s with a soft glow, away at half that rate, sleep
+   sits static. The state comes from [data-state] on the widget root, which
+   scripts/clock.js sets from the schedule block.
+
+   The blink is also covered by base.css's global reduced-motion rule, but it is
+   restated below because that rule only near-zeroes the DURATION — the dot
+   would still sit at whatever opacity the last frame left it. */
+.about__clock-dot {
+  flex: 0 0 auto;
+  align-self: center;
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background-color: var(--status-offline);
+}
+
+@keyframes about-clock-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+[data-state="active"] .about__clock-dot {
+  background-color: var(--status-online);
+  color: var(--status-online);
+  filter: drop-shadow(0 0 var(--space-1) currentColor);
+  animation: about-clock-pulse 2s ease-in-out infinite;
+}
+
+[data-state="away"] .about__clock-dot {
+  background-color: var(--status-away);
+  animation: about-clock-pulse 4s ease-in-out infinite;
+}
+
+/* sleep keeps the default colour and does not animate. */
+
+@media (prefers-reduced-motion: reduce) {
+  .about__clock-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.about__clock-detail {
+  margin: 0;
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* Below 900px the gutters collapse and the columns stack, matching how the
+   header drops its side rules at the same breakpoint. The column divider goes
+   with the two-column layout; the widget rule stays, since it still separates
+   two stacked blocks. */
+@media (max-width: 900px) {
+  .about::before,
+  .about::after {
+    display: none;
+  }
+  .about__inner {
+    grid-template-columns: 1fr;
+    margin-inline: 0;
+  }
+  .about__body {
+    border-left: 0;
+  }
+  .about__figure-col {
+    padding-block: var(--space-10);
+  }
+  .about__content {
+    padding: var(--space-8) var(--space-7) var(--space-7);
+  }
+  .about__stats {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}

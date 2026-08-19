@@ -1,0 +1,18 @@
+{#
+  STAT — a display numeral beside its label, as used in the About row.
+
+  Distinct from stat-card.njk, which is a bordered card with the label ABOVE a
+  large number for the Summary grid. This one is inline and unboxed; they share
+  no markup, so they stay separate components rather than one with a modifier.
+
+  PROPS
+    value  the numeral (required)
+    label  the caption (required)
+#}
+
+{% macro stat(value, label) %}
+  <li class="stat">
+    <span class="stat__value">{{ value }}</span>
+    <span class="stat__label">{{ label }}</span>
+  </li>
+{% endmacro %}
