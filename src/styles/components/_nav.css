@@ -10,7 +10,30 @@
  * --border-strong are both in play on one component.
  */
 
+/* STICKY ACROSS THE WHOLE PAGE. The header is a direct child of <body> and a
+   sibling of <main>, so its sticky containing block is the body box — it pins
+   for the entire document rather than for one section.
+ *
+ * Two things had to be true for this to work, and both already were:
+ *   • No ancestor is a scroll container. base.css sets `overflow-x: clip` on
+ *     html/body rather than `hidden` precisely because `hidden` would compute
+ *     overflow-y to `auto`, make them scrollports, and break sticky. The
+ *     comment there says it cost an afternoon to learn; this rule depends on it.
+ *   • Case studies inherit this. layouts/case-study.njk chains to base.njk, so
+ *     there is one header for every page and no second copy to keep in sync.
+ *
+ * --z-nav sits above --z-content, which <main> carries: main is a stacking
+ * context, so everything inside it — the hero's roaming icons, the folder, the
+ * expanding footer card — is capped beneath this regardless of its own z-index.
+ *
+ * The background must stay OPAQUE. It comes from the .site-header scope in
+ * tokens.css (--surface, solid white); anything translucent and page content
+ * reads through the header as it scrolls under. The existing bottom border is
+ * kept as the hairline that separates the two. */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
   padding-inline: var(--space-11);
   border-bottom: var(--border-width) solid var(--border-subtle);
 }

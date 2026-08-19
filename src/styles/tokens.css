@@ -113,6 +113,21 @@
   --m3-body-lg-leading: 24px;
   --m3-body-lg-tracking: 0.5px;
 
+  /* Added for About Me — these three steps of the M3 scale were not needed by
+     the header or hero, so they were never declared. Values are the same Figma
+     variables the rest of this block came from. */
+  --m3-headline-lg: 32px;
+  --m3-headline-lg-leading: 40px;
+  --m3-headline-lg-tracking: 0;
+
+  --m3-headline-md: 28px;
+  --m3-headline-md-leading: 36px;
+  --m3-headline-md-tracking: 0;
+
+  --m3-body-md: 14px;
+  --m3-body-md-leading: 20px;
+  --m3-body-md-tracking: 0.25px;
+
   --text-xs: 12px;
   --text-sm: 13px;
   --text-base: 15px;
@@ -287,6 +302,14 @@
      inside a card (title, padding, gap, radius, tracking) is a clean em
      multiple of it — 2em padding, 1.25em gap, 1.375em title — which is why
      there is no second magic number in _hero.css. */
+  /* About Me. 60px is the comp's heading inset and is not on the 4px scale --
+     it sits between --space-9 (64) and --space-8 (48), so it is named here
+     rather than rounded to a neighbour and losing the geometry match. */
+  --about-head-top: 60px;
+  --about-figure-size: 83.1%;   /* 528 of the 635 column */
+  --about-figure-w: 528;        /* the exported frame + figure coordinate space */
+  --about-figure-h: 622;
+
   --header-height: 92px;
   --hero-board-w: 1272;
   --hero-board-h: 668;
@@ -355,7 +378,8 @@
    instead of hardcoding the Figma hexes into _hero.css and _nav.css.
    --------------------------------------------------------------------------- */
 .site-header,
-.hero {
+.hero,
+.about {
   --surface: var(--white);
   --surface-raised: var(--fig-elevated);
 
