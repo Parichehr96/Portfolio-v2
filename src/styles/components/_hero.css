@@ -149,6 +149,31 @@
   .hero__board * {
     cursor: inherit;
   }
+
+  /* THE CARDS ARE THE ONE EXCEPTION. Everything else on the board keeps the
+     arrow — it is the comp's own mark and it says "this canvas is live" — but a
+     card is a thing you literally pick up, and `grab` is the only cursor the
+     whole platform already agrees means that. The arrow is what makes the
+     override legible: because it is unusual, the change to a hand is noticed.
+
+     Written as .hero__board .hero-folder__card (0,2,0) rather than the bare
+     class (0,1,0) so it outranks `.hero__board *` on specificity instead of on
+     source order — this rule stays correct wherever it sits in the file.
+
+     The card's own children need no rule: `cursor: inherit` above resolves
+     against the card, so the title and body inherit `grab` for free. */
+  .hero__board .hero-folder__card {
+    cursor: grab;
+  }
+
+  /* Both drag phases, not just the hold — the straighten is already the card
+     leaving its slot, so the cursor must commit at the same moment the card
+     does. Pointer capture keeps the cursor sourced from the card for the whole
+     gesture, including the parts spent outside its box. */
+  .hero__board .hero-folder__card.is-grabbing,
+  .hero__board .hero-folder__card.is-dragging {
+    cursor: grabbing;
+  }
 }
 
 /* Figma anchors each mark by its top-left, so these map straight across.
@@ -298,11 +323,19 @@
   background-color: var(--white);
   overflow: hidden;
   font-size: var(--hero-card-base);
-  /* ORDER IS LOAD-BEARING. Both translates sit LEFT of the rotates, so their
+  /* ORDER IS LOAD-BEARING. Every translate sits LEFT of the rotates, so their
      vectors stay in unrotated board space — a dragged card follows the pointer
-     exactly instead of moving along its own tilted axes. Percentages resolve
-     against the card's own border box and are unaffected by the rotates that
-     follow, which keeps the centring exact at any board size.
+     exactly instead of moving along its own tilted axes, and the hover and peek
+     lifts go straight UP the board rather than up the card's own tilted axis
+     (which on the ±11deg outer cards would visibly drift them sideways).
+     Percentages resolve against the card's own border box and are unaffected by
+     the rotates that follow, which keeps the centring exact at any board size.
+
+     --hover-y and --peek-y are separate steps rather than one summed translate
+     so that each stays independently addressable: the drag phases zero the
+     hover lift without touching the peek, and the peek settles without having
+     to know whether a hover is also in play. Pure translates commute, so their
+     order relative to each other carries no meaning.
 
      --tuck-rot is a DELTA, not an absolute angle: --card-rot is written inline
      per card by hero.js, and inline styles outrank stylesheet rules, so the
@@ -321,11 +354,20 @@
      without JS ever reading or computing an angle. */
   transform: translate(-50%, -50%)
     translate(var(--drag-x, 0px), var(--drag-y, 0px))
+    translate(0px, var(--hover-y, 0px))
+    translate(0px, var(--peek-y, 0px))
     translate(var(--tuck-x, 0%), var(--tuck-y, 0%))
     rotate(calc((var(--card-rot, 0deg) + var(--tuck-rot, 0deg)) * var(--rot-scale, 1)))
     scale(var(--lift-scale, 1));
-  transition: transform var(--duration-folder) var(--ease-out);
-  transition-delay: var(--card-delay, 0ms);
+  /* Rest shadow is a transparent MATCHING PAIR, not `none`, so the hover fade
+     is a plain per-layer interpolation. */
+  box-shadow: var(--hero-card-shadow-rest);
+  /* --card-delay rides INSIDE the transform entry rather than as a standalone
+     transition-delay, which would have applied to the shadow too — an expanded
+     card carries up to 140ms of stagger, and a hover that took 140ms to start
+     shading reads as broken. Transform keeps the stagger; shadow never has it. */
+  transition: transform var(--duration-folder) var(--ease-out) var(--card-delay, 0ms),
+    box-shadow var(--duration-hover) var(--ease-out);
   will-change: transform;
   /* The pointer drag owns these gestures; without this, touch scrolls the page
      and text selection fights the drag on desktop. */
@@ -367,6 +409,65 @@
 .hero-folder:not(.is-expanded) .hero-folder__card--2 { --card-delay: var(--stagger-folder); }
 .hero-folder:not(.is-expanded) .hero-folder__card--3 { --card-delay: 0ms; }
 
+/* ---- Hover --------------------------------------------------------------- */
+/* THE DISCOVERABILITY PROBLEM THIS SOLVES: at rest the cards are indistinguish-
+ * able from printed artwork. Nothing about a static tilted rectangle says it
+ * can be picked up, so the whole drag interaction went unfound. A card that
+ * visibly answers the pointer is the cheapest possible fix — it costs one
+ * frame of attention and requires no instruction.
+ *
+ * LIFT AND SHADOW, NEVER SCALE. See the --lift-amount note in tokens.css: the
+ * grab already owns the scale channel, and spending part of it here would blunt
+ * the pick-up. Translating the card while darkening the ground beneath it says
+ * "off the surface" just as clearly and leaves size free to mean "held".
+ *
+ * Guarded by (hover: hover) alone rather than the board's arrow query — a
+ * hover-capable coarse pointer still deserves the feedback even though it gets
+ * no cursor swap. On pure touch this would latch on after a tap and never
+ * clear, which is exactly the sticky-hover bug the query exists to prevent. */
+@media (hover: hover) {
+  .hero-folder__card:hover {
+    --hover-y: var(--hover-lift);
+    box-shadow: var(--hero-card-shadow-hover);
+    /* Restates the shorthand to drop --card-delay: the transform entry in the
+       base rule carries the expanded stagger, and a hover must never wait on
+       it. Also outranks the base entry's --duration-folder, so the lift is a
+       160ms answer rather than a 500ms drift. */
+    transition: transform var(--duration-hover) var(--ease-out),
+      box-shadow var(--duration-hover) var(--ease-out);
+  }
+}
+
+/* ---- Idle peek ----------------------------------------------------------- */
+/* The one-time invitation, played on the frontmost card a few seconds after
+ * load. scripts/hero-folder.js owns the delay, the phase handover and the
+ * cancel; these two rules are only the geometry and the feel.
+ *
+ * TWO CLASSES, NOT A @keyframes. The card's transform is composed from six
+ * custom properties that four other states all write into — an animation on
+ * `transform` would take the whole property over and blow away the fan, the
+ * tuck and the drag offset at once. Animating a custom property instead would
+ * need @property registration to interpolate at all. Driving --peek-y through
+ * the SAME class-per-phase pattern the drag already uses keeps every duration
+ * in CSS, costs no new mechanism, and makes cancelling it a class removal.
+ *
+ * REDUCED MOTION never reaches here: the script returns before adding either
+ * class, so the card does not so much as flicker. That is stricter than the
+ * global transition-zeroing in base.css, which would still leave an instant
+ * 6px jump and jump back — technically motionless, in practice a flash. */
+.hero-folder__card.is-peeking {
+  --peek-y: var(--peek-lift);
+  transition: transform var(--duration-peek-rise) var(--ease-out);
+}
+
+/* Settle. --peek-y is back to its 0 default the moment .is-peeking leaves; this
+ * class exists only to own the return's slower, gentler curve, and is what the
+ * cancel path drops the card into so an interrupted peek eases home instead of
+ * snapping back at the base rule's 500ms folder timing. */
+.hero-folder__card.is-peek-settling {
+  transition: transform var(--duration-peek-settle) var(--ease-in-out);
+}
+
 /* ---- Drag phases --------------------------------------------------------- */
 /* GRAB. A short eased beat while the card straightens and lifts. The pointer
    has only moved past the 4px threshold at this point, so the brief smoothing
@@ -375,6 +476,12 @@
   transition: transform var(--duration-grab) var(--ease-out);
   --rot-scale: 0;
   --lift-scale: var(--lift-amount);
+  /* The hover lift hands its 4px back over this same beat, so the card does not
+     arrive at the pointer sitting 4px high on top of the scale. :hover is still
+     true here — pointer capture guarantees it — so this must be an explicit
+     zero rather than something we can wait for the hover to release. The shadow
+     is deliberately NOT zeroed: it stays for the whole gesture. */
+  --hover-y: 0px;
   z-index: var(--z-content);
 }
 
@@ -384,6 +491,7 @@
   transition: none;
   --rot-scale: 0;
   --lift-scale: var(--lift-amount);
+  --hover-y: 0px;
   z-index: var(--z-content);
 }
 
@@ -391,7 +499,14 @@
    folder state says it is, because clearing --drag-* and --rot-scale simply
    lets the existing rest/expanded rules apply again. A card let go while the
    folder is expanded settles into its expanded slot, not the rest peek, with no
-   bookkeeping in JS. */
+   bookkeeping in JS.
+
+   --hover-y IS DELIBERATELY NOT ZEROED HERE, unlike in the two phases above.
+   "Home" has to include the hover lift, because a card released under a
+   stationary pointer is still hovered: zero it and the card would settle flat,
+   then jerk 4px back up the instant this class expires. Left alone, it eases
+   into its hovered rest in one motion — and if the card travels out from under
+   the pointer on the way, the lift simply releases as part of the same settle. */
 .hero-folder__card.is-returning {
   transition: transform var(--duration-return) var(--ease-out);
   z-index: var(--z-content);

@@ -164,11 +164,66 @@
      reads as the card being slow to respond. Return is deliberately much
      slower than grab: letting go should feel like the card settling back into
      the folder under its own weight, not snapping. --lift-amount is the scale
-     while held; it is the whole of the "picked up" cue, since no shadow is
-     added. */
+     while held.
+
+     THE SCALE CHANNEL IS THE DRAG'S ALONE. The hover cue below deliberately
+     does NOT scale: if a card were already at 1.015 when grabbed, the jump to
+     1.03 would read as half a pick-up. Hover spends its budget on translate
+     and shadow instead, leaving this the only thing that ever changes size.
+
+     The card DOES carry a shadow while held, but it is the hover shadow rather
+     than a drag-specific one — :hover stays true for the whole gesture under
+     pointer capture, so the shadow is simply already there. Dropping it at
+     grab would pop. (This block previously said no shadow was added; that was
+     written before the hover cue existed.) */
   --duration-grab: 180ms;
   --duration-return: 600ms;
   --lift-amount: 1.03;
+
+  /* Hover cue on a folder card — the "these are movable" tell for anyone whose
+     pointer crosses one. Short enough to feel like a direct response rather
+     than an animation: 160ms is under the ~200ms where a hover starts reading
+     as laggy, and well under --duration-grab so the lift is fully settled by
+     the time a press could turn into a drag.
+
+     --hover-lift is a plain px translate, not a percentage, because it must
+     stay a constant visual nudge as the board scales — the same reason
+     --drag-x/--drag-y are px.
+
+     The shadow is the first box-shadow in the redesign. It is two layers: a
+     tight contact shadow that anchors the card's bottom edge, and a wide soft
+     one that does the lifting. The rest value is a matching pair of fully
+     transparent shadows rather than `none`, so the interpolation is a plain
+     per-layer lerp with no list-length padding to depend on. */
+  --duration-hover: 160ms;
+  --hover-lift: -4px;
+  --hero-card-shadow-rest: 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0);
+  --hero-card-shadow-hover: 0 2px 4px -1px rgb(0 0 0 / 0.06),
+    0 10px 24px -6px rgb(0 0 0 / 0.16);
+
+  /* Idle peek — the one-time invitation. A few seconds after load the frontmost
+     card nudges up and settles back, so the cards announce that they move
+     without anyone having to touch them first. See scripts/hero-folder.js,
+     which owns the delay and the cancel; these are the numbers it reads.
+
+     IT PLAYS ONCE AND ONLY ONCE. A looping hint would turn the hero into a
+     blinking cursor — the point is to be noticed and then forgotten, so any
+     interaction (hover, click, drag, focus) cancels it permanently.
+
+     6px is deliberately small. The cue is the MOTION, not the distance: a
+     moving object in an otherwise still frame is caught peripherally at almost
+     any amplitude, and going further starts to read as the card falling out of
+     the folder rather than offering itself.
+
+     Rise is quicker than the settle and eases out, so it reads as the card
+     being offered up; the settle eases in-out and takes longer, so it reads as
+     weight rather than a snap back. The hold between them is what makes the
+     two halves legible as one gesture instead of a bounce. */
+  --delay-peek: 2500ms;
+  --duration-peek-rise: 260ms;
+  --hold-peek: 140ms;
+  --duration-peek-settle: 420ms;
+  --peek-lift: -6px;
 
   /* Roaming tool icons — see scripts/hero-icons.js. Speeds are px/s, JITTER is
      px/s^2 of random acceleration, EDGE-* describe the soft cushion the icons

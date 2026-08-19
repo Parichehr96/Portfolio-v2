@@ -28,9 +28,23 @@
  * than the rest peek — with no bookkeeping here that could drift out of sync
  * with the folder state.
  *
- * REDUCED MOTION needs no branch: base.css already zeroes every transition
- * globally, so the phases collapse to instant. Dragging still works, because
- * dragging is a direct response to input rather than motion the page plays.
+ * REDUCED MOTION needs no branch FOR THE DRAG: base.css already zeroes every
+ * transition globally, so the phases collapse to instant. Dragging still works,
+ * because dragging is a direct response to input rather than motion the page
+ * plays.
+ *
+ * THE IDLE PEEK IS THE EXCEPTION and does branch, because it is the one thing
+ * here the page plays at nobody's request. Zeroed transitions would turn it
+ * into a 6px jump and jump back — motionless by the letter of the rule and a
+ * flash by the spirit of it — so under reduced motion it is never scheduled at
+ * all and no class is ever added.
+ *
+ * WHY A PEEK EXISTS. At rest the folder is indistinguishable from artwork, and
+ * an interaction nobody discovers may as well not ship. One small nudge on the
+ * frontmost card a few seconds in says "these move" without a word of
+ * instruction. It plays ONCE: a repeating hint reads as a broken loop, and
+ * anyone who has already touched the folder has been told what it needed to
+ * tell them, which is why every form of contact cancels it permanently.
  */
 (function (window, document) {
   "use strict";
@@ -54,6 +68,10 @@
   }
   var GRAB_MS = ms("--duration-grab", 180);
   var RETURN_MS = ms("--duration-return", 600);
+  var PEEK_DELAY_MS = ms("--delay-peek", 2500);
+  var PEEK_RISE_MS = ms("--duration-peek-rise", 260);
+  var PEEK_HOLD_MS = ms("--hold-peek", 140);
+  var PEEK_SETTLE_MS = ms("--duration-peek-settle", 420);
 
   // ---- Expand / collapse ----------------------------------------------------
   function setExpanded(on) {
@@ -69,6 +87,79 @@
     // A real <button> already fires click on Enter and Space, so there is
     // deliberately no key handler — adding one double-fires and toggles twice.
   }
+
+  // ---- Idle peek ------------------------------------------------------------
+  // One nudge on the frontmost card, a few seconds after load, then never
+  // again. Deliberately set up BEFORE the drag section's early return: the peek
+  // depends on nothing but CSS, so it must still play on a page where
+  // window.HeroDrag failed to load and the cards are only clickable.
+  (function schedulePeek() {
+    // The one hard branch in this file. Everything else degrades to instant
+    // under reduced motion; unrequested motion has to degrade to nothing.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // THE FRONTMOST CARD, which is the last in DOM order — the stack paints in
+    // document order (see _hero.css), so this is the only one with no sibling
+    // drawn over it. Nudging a buried card would animate a partly hidden edge.
+    var card = cards[cards.length - 1];
+    if (!card) return;
+
+    var timer = 0;
+    var done = false;
+
+    // Both phases collapse into one path so the natural end and an interrupted
+    // peek settle identically — there is no second way for the card to get home.
+    function settle() {
+      window.clearTimeout(timer);
+      card.classList.remove("is-peeking");
+      card.classList.add("is-peek-settling");
+      timer = window.setTimeout(function () {
+        card.classList.remove("is-peek-settling");
+      }, PEEK_SETTLE_MS);
+    }
+
+    // Idempotent, and permanent: `done` is what makes this a one-time cue even
+    // though three separate events race to call it.
+    function cancel() {
+      if (done) return;
+      done = true;
+      root.removeEventListener("pointerover", cancel);
+      root.removeEventListener("pointerdown", cancel);
+      root.removeEventListener("focusin", cancel);
+      // Nothing to settle if the delay has not elapsed — clearing the pending
+      // start is the whole cancel, and the card never moves at all.
+      if (card.classList.contains("is-peeking")) settle();
+      else window.clearTimeout(timer);
+    }
+
+    function play() {
+      if (done) return;
+      card.classList.add("is-peeking");
+      timer = window.setTimeout(settle, PEEK_RISE_MS + PEEK_HOLD_MS);
+    }
+
+    // pointerover, not pointerenter: it bubbles, so one listener on the folder
+    // covers the flap, the cards and the art behind them. pointerdown catches a
+    // press from a pointer that never hovered (touch, pen) and is also how a
+    // drag begins, so a grab mid-peek cancels on its first event rather than
+    // fighting the animation. focusin covers arriving by keyboard.
+    root.addEventListener("pointerover", cancel);
+    root.addEventListener("pointerdown", cancel);
+    root.addEventListener("focusin", cancel);
+
+    // A one-shot cue fired into a background tab is simply spent unseen — and
+    // there is no second one. Timers still run while hidden, so the delay has
+    // to start from the moment the page is actually being looked at.
+    if (document.visibilityState === "hidden") {
+      document.addEventListener("visibilitychange", function onVisible() {
+        if (document.visibilityState === "hidden") return;
+        document.removeEventListener("visibilitychange", onVisible);
+        timer = window.setTimeout(play, PEEK_DELAY_MS);
+      });
+    } else {
+      timer = window.setTimeout(play, PEEK_DELAY_MS);
+    }
+  })();
 
   // ---- Drag -----------------------------------------------------------------
   var drag = window.HeroDrag;

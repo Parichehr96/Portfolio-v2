@@ -48,7 +48,12 @@ module.exports = {
 
   caption: {
     years: "(2021 - 2026)",
-    hint: "Click to drag a card",
+    // NOT the Figma string, which is "Click to drag a card". That names the
+    // input ("click") and the mechanic ("drag") but never the outcome, so it
+    // reads as a description of the widget rather than an instruction. The verb
+    // plus the arrow says what to do and which way, and matches the flap
+    // button's own label ("Pull the cards out") so the two cues agree.
+    hint: "Pull a card out ↑",
   },
 
   /* Cards, in DOM order = z-order (1 backmost, 3 frontmost), matching the Figma
