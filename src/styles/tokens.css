@@ -40,6 +40,14 @@
   --fig-elevated: #F2F2F7;
   --fig-rule-soft: rgba(0, 0, 0, 0.12);
   --fig-rule-strong: rgba(0, 0, 0, 0.16);
+  /* The same two rules inverted, for the black My Work band. Kept as their own
+     primitives rather than reusing the light pair at some opacity: white on
+     black does not read at the same weight as black on white, so the values are
+     tuned rather than derived. */
+  --fig-rule-soft-on-dark: rgba(255, 255, 255, 0.12);
+  --fig-rule-strong-on-dark: rgba(255, 255, 255, 0.16);
+  /* Grays/Gray 2 in Figma — the secondary text colour on the dark band. */
+  --fig-gray-on-dark: #AEAEB2;
 
   /* ---- 2. SEMANTICS -------------------------------------------------------
      What components actually reference. Retheme by repointing these. */
@@ -116,6 +124,12 @@
   /* Added for About Me — these three steps of the M3 scale were not needed by
      the header or hero, so they were never declared. Values are the same Figma
      variables the rest of this block came from. */
+  /* Added for My Work — the card titles. Same Figma variable set as the steps
+     around it; it had no consumer until this section. */
+  --m3-display-md: 45px;
+  --m3-display-md-leading: 52px;
+  --m3-display-md-tracking: 0;
+
   --m3-headline-lg: 32px;
   --m3-headline-lg-leading: 40px;
   --m3-headline-lg-tracking: 0;
@@ -310,6 +324,30 @@
   --about-figure-w: 528;        /* the exported frame + figure coordinate space */
   --about-figure-h: 622;
 
+  /* ---- 3e-ter. MY WORK GEOMETRY ------------------------------------------
+     Figma 184:13749. The section is the same 1272 container as the header,
+     hero and about, so only what is INTERNAL to it lives here.
+
+     Two of these are off the 4px scale and are named rather than rounded to a
+     neighbour, for the same reason --about-head-top is: rounding them breaks
+     the geometry match with the comp.
+
+     --work-row-inset is the 160px band above and below each row's content;
+     --work-band-pad is the 60px above the heading and below the last rule.
+
+     The column ratio is expressed as two unitless numbers fed straight into
+     grid-template-columns as fr, so the 594:574 split from the comp is exact at
+     any width instead of being frozen in pixels. */
+  --work-row-inset: 160px;
+  --work-band-pad: 60px;
+  --work-media-w: 594;
+  --work-media-h: 476;
+  /* The WHOLE track list, not two separate numbers. `fr` is a flex unit and is
+     not valid inside calc(), and `var(--x)fr` does not concatenate either — so
+     the only way to keep these numbers in the token layer is to hold the
+     finished value here and let the component substitute it verbatim. */
+  --work-columns: 594fr 574fr;
+
   --header-height: 92px;
   --hero-board-w: 1272;
   --hero-board-h: 668;
@@ -378,6 +416,31 @@
    instead of hardcoding the Figma hexes into _hero.css and _nav.css.
    --------------------------------------------------------------------------- */
 .site-header,
+/* MY WORK — the one dark band in the redesign. It redefines the SAME semantic
+   aliases as the light block below and nothing else, which is the whole point
+   of the token layer: _work.css never names a colour, so this block is the only
+   place the inversion exists. */
+.work {
+  --surface: var(--fig-black);
+  /* Button hover only. A lift off black has to be a white wash, not a darker
+     grey, or it reads as a hole rather than a raise. */
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--white);
+  --text-secondary: var(--fig-gray-on-dark);
+  --text-muted: var(--fig-gray-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  --accent: var(--white);
+
+  font-family: var(--font-sans);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
 .hero,
 .about {
   --surface: var(--white);

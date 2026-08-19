@@ -47,6 +47,15 @@ module.exports = function (eleventyConfig) {
     return require("./src/_data/projects.js")().filter((p) => p.featured);
   });
 
+  // The My Work section's three rows: featured projects that actually have card
+  // copy written. Filtering on `card` rather than on `status` or a hand-kept
+  // list means the section grows by adding a `card` block in projects.js and
+  // nothing else — WOW Global is featured but uncarded, so it stays out until
+  // its case study is written.
+  eleventyConfig.addCollection("workCards", (collectionApi) => {
+    return require("./src/_data/projects.js")().filter((p) => p.featured && p.card);
+  });
+
   // Real case-study PAGES that exist in src/work/. Distinct from `projects`:
   // a project can be listed with no case study written yet.
   eleventyConfig.addCollection("caseStudies", (collectionApi) => {

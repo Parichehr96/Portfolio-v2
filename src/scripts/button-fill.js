@@ -26,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * that gains .selected at runtime already has its border element ready —
    * CSS hides it while .selected, and shows it again the moment that drops. */
   function setBorders() {
-    document.querySelectorAll('.btn-primary').forEach((btn) => {
+    /* :not(.btn-primary--solid) — the solid variant is a FILLED pill and has no
+       dashed outline to draw. Without this it gets a dashed rule painted over
+       its own edge, which on the white My Work pill is plainly visible. */
+    document.querySelectorAll('.btn-primary:not(.btn-primary--solid)').forEach((btn) => {
       let svg = btn.querySelector('.btn-border-svg');
       const w = btn.offsetWidth;
       const h = btn.offsetHeight;

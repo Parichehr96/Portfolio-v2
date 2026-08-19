@@ -1,0 +1,216 @@
+/* MY WORK — Figma 184:13749. The three featured case studies.
+ *
+ * NO COLOUR IS NAMED IN THIS FILE. The section is the one dark band on the
+ * page, and that inversion lives entirely in the .work scope in tokens.css,
+ * which redefines the same semantic aliases the light sections use. Everything
+ * below therefore reads --surface / --text-primary / --border-strong exactly as
+ * a light section would, and would render correctly on a white background if
+ * the scope were ever dropped. Do not put a hex or an rgba() here.
+ *
+ * THE PAGE FRAME CONTINUES THROUGH THIS SECTION. The outer rules at x=120/1392
+ * carry on from the header, hero and about, so the band reads as part of the
+ * same ruled grid rather than a slab dropped into it. They are pseudo-elements
+ * rather than borders for the reason the hero's are: a real border-inline eats
+ * 1px per side off the content box and shifts the columns off the comp.
+ *
+ * SCALING MODEL. The comp is a fixed 1272 container, but nothing here is frozen
+ * in pixels except the vertical rhythm. The two columns are declared as
+ * unitless fr in the comp's own 594:574 ratio and the media box holds its
+ * aspect-ratio, so the whole row scales as one piece at any width.
+ */
+
+.work {
+  position: relative;
+  width: 100%;
+  background-color: var(--surface);
+}
+
+/* Outer gutter rules — same x positions as the header, hero and about. */
+.work::before,
+.work::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+  z-index: var(--z-content);
+}
+.work::before { left: var(--space-11); }
+.work::after { right: var(--space-11); }
+
+.work__inner {
+  margin-inline: var(--space-11);
+  padding-block: var(--work-band-pad);
+}
+
+/* ---- Heading ------------------------------------------------------------- */
+/* Centred, and the two words are ONE line box with a single space between them
+   — the comp's 4px gap is the space character at this size, not a flex gap.
+   Written as inline spans inside a normal heading rather than a flex row so it
+   wraps as a phrase if the viewport ever forces it to. */
+.work__heading {
+  margin: 0;
+  padding-block: var(--space-4h);
+  text-align: center;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-lg-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  color: var(--text-primary);
+}
+
+.work__heading-lead {
+  font-weight: var(--weight-regular);
+}
+
+.work__heading-rest {
+  font-weight: var(--weight-bold);
+}
+
+/* ---- Rows ---------------------------------------------------------------- */
+/* The rule above the first row. Together with the per-row bottom border this
+   produces the comp's four lines — one above each row and one closing the last
+   — without an empty element for any of them. The 40px is the comp's gap
+   between the heading band and that first rule. */
+.work__rows {
+  position: relative;
+  margin-top: var(--space-7);
+}
+
+/* PAINTED, NOT LAID OUT — the same argument as the gutter rules above, and it
+   is measurable here: as real borders these four lines added 1px each and put
+   the section 4px taller than the comp, with every row after the first
+   displaced. Drawn as pseudo-elements they occupy the boundary without
+   participating in it, and the row heights land on 796 exactly. */
+.work__rows::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+
+.work-card {
+  position: relative;
+  display: grid;
+  /* 594 : 574 from the comp, as a ratio rather than two widths. */
+  grid-template-columns: var(--work-columns);
+  gap: var(--space-7);
+  padding: var(--work-row-inset) var(--space-6);
+}
+
+/* The closing rule under each row. Spans the full container, not the padded
+   content box, which is what makes the four lines align with the gutters. */
+.work-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+
+/* ---- Media --------------------------------------------------------------- */
+/* The box is the comp's 594x476; the exported fill is 692 wide, so `cover`
+   crops 49px from each side — which is exactly the comp's own crop. The
+   aspect-ratio is what holds the row's height together as the page scales, so
+   it must stay on the BOX rather than on the image. */
+.work-card__media {
+  aspect-ratio: var(--work-media-w) / var(--work-media-h);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.work-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Details ------------------------------------------------------------- */
+/* BOTTOM-ANCHORED, which is the whole trick of this row. In the comp the text
+   block starts at y=96 on cards 1 and 3 but y=116 on card 2 — not a designer's
+   inconsistency, but the consequence of card 2 having a one-line body while
+   the others wrap to two. Anchoring the column to the bottom and fixing the
+   gap above the button reproduces all three offsets exactly:
+
+       476 - 48 (button) - 120 (gap) - 212 or 192 (block)  =  96 or 116  ✓
+
+   Top-anchoring instead would need a hardcoded per-card offset and would break
+   the moment any body text changed length. */
+.work-card__details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: var(--space-11);
+}
+
+.work-card__text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ribeye Marrow, matching the About stats — display numerals on this site are
+   the outline face, and this is the same M3 step those use. */
+.work-card__number {
+  margin: 0;
+  font-family: var(--font-outline);
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-secondary);
+}
+
+.work-card__title {
+  margin: var(--space-5) 0 0;
+  font-size: var(--m3-display-md);
+  line-height: var(--m3-display-md-leading);
+  letter-spacing: var(--m3-display-md-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.work-card__body {
+  margin: var(--space-2) 0 0;
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-secondary);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* Figma specifies desktop only. The section stacks to one column and the
+   vertical rhythm steps down; nothing else is invented here, matching how the
+   hero and about handle the same gap in the comp. */
+@media (max-width: 900px) {
+  .work::before,
+  .work::after {
+    display: none;
+  }
+  .work__inner {
+    margin-inline: 0;
+    padding-inline: var(--space-7);
+  }
+  .work-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+    padding: var(--space-10) 0;
+  }
+  .work-card__details {
+    gap: var(--space-7);
+  }
+  .work-card__title {
+    font-size: var(--m3-headline-lg);
+    line-height: var(--m3-headline-lg-leading);
+  }
+}

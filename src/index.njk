@@ -25,13 +25,19 @@ permalink: /
   partials/nav.njk is plain anchors with no JS — so section order here is now a
   design decision and nothing else.
 
-  Two of those header anchors currently point at nothing: /#featured-works and
-  /#contact have no target until Testimonials and Footer are rebuilt. Known
-  gap, tracked with that work rather than papered over here.
+  One header anchor still points at nothing: /#contact has no target until the
+  Footer is rebuilt. /#featured-works resolves again as of the My Work section
+  below, which carries that id.
 #}
 
 {# ---- HERO ---------------------------------------------------------------- #}
 {% include "partials/hero.njk" %}
+
+{# ---- MY WORK -------------------------------------------------------------- #}
+{# BEFORE About, which is the comp's order (Project sits at y=1504, Bio at
+   y=4132). It reads as the stronger sequence too: the hero states what she
+   does, the work proves it, and About explains who was behind it. #}
+{% include "partials/work.njk" %}
 
 {# ---- ABOUT ME ------------------------------------------------------------ #}
 {% include "partials/about.njk" %}

@@ -1,0 +1,64 @@
+{#
+  PROJECT CARD — one row of the My Work section (Figma 184:13749).
+
+  A ROW, NOT A CARD, despite the name: screenshot on the left, details on the
+  right, the two separated by a rule from the row above. The name is kept
+  because it is the projects.js entry it renders, and because a v2 component of
+  the same name occupied this slot before the cleanup sweep — that one was a
+  fixed-width carousel slide and shares no markup with this.
+
+  THE NUMBER IS PRESENTATIONAL. It is the position in the section, not a
+  property of the project, so it is passed in rather than stored in projects.js
+  — reordering the array renumbers the cards with no data edit. It is
+  aria-hidden for the same reason: "01" read aloud before the title adds
+  nothing a sighted user gets from it.
+
+  The whole row is NOT one link. Only the pill is, because the screenshot has
+  no accessible name and wrapping both in a single anchor would put the image
+  inside the link's text alternative for no benefit.
+
+  PROPS
+    project  a projects.js entry — needs .card {title, body}, .url, .title
+    index    1-based position; rendered as 01/02/03 and used for the alt text
+#}
+
+{% from "components/button.njk" import button %}
+
+{% macro projectCard(project, index) %}
+  <article class="work-card">
+    <div class="work-card__media">
+      {#
+        The exported fill is 692 wide against a 594 box, so `cover` crops 49px
+        from each side — which is exactly what the comp does. Do not export the
+        594-wide frame instead: that bakes the crop in and the art no longer
+        reflows if the column ratio ever changes.
+      #}
+      <img
+        class="work-card__image"
+        src="/Assets/images/work/{{ project.slug }}-card.png"
+        alt="{{ project.title }} — interface screens"
+        width="{{ 692 }}"
+        height="{{ 476 }}"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+    </div>
+
+    <div class="work-card__details">
+      <div class="work-card__text">
+        <p class="work-card__number" aria-hidden="true">{{ "0" + index }}</p>
+        <h3 class="work-card__title">{{ project.card.title }}</h3>
+        <p class="work-card__body">{{ project.card.body }}</p>
+      </div>
+
+      {{ button(
+        label="Read more",
+        href=project.url,
+        iconName="arrow-right",
+        variant="solid",
+        aria="Read more about " + project.title
+      ) }}
+    </div>
+  </article>
+{% endmacro %}
