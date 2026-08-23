@@ -125,13 +125,29 @@
   aspect-ratio: var(--work-media-w) / var(--work-media-h);
   overflow: hidden;
   border-radius: var(--radius-lg);
+
+  /* Under the media, not behind a gap. A loop is fetched only once its row
+     scrolls in, so for the first moment of a fast scroll there is a poster and
+     nothing else — on the dark band an unpainted box reads as a hole. */
+  background-color: var(--border-subtle, transparent);
 }
 
+/* ONE RULE FOR BOTH BRANCHES. project-card.njk emits a <video> when the encodes
+   are on disk and an <img> when they are not, and neither should have its own
+   sizing: the crop is a property of the slot, not of what happens to be in it.
+   `object-fit` covers a video's poster as well as its frames, so the still and
+   the loop crop identically and there is no jump when playback starts. */
 .work-card__image {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* The loop is decoration with a label, never a control — no controls attribute
+   is set, and this stops a drag or a long-press from treating it as media. */
+video.work-card__image {
+  pointer-events: none;
 }
 
 /* ---- Details ------------------------------------------------------------- */

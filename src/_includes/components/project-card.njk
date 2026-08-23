@@ -17,8 +17,26 @@
   no accessible name and wrapping both in a single anchor would put the image
   inside the link's text alternative for no benefit.
 
+  THE MEDIA SLOT IS EITHER A LOOP OR A STILL, decided by whether projects.js
+  found encodes on disk. Both branches carry .work-card__image so _work.css
+  sizes them with one rule and the box keeps its own aspect-ratio either way.
+
+  NO `autoplay` ATTRIBUTE ON THE VIDEO, deliberately. scripts/work-motion.js
+  owns playback so it can check prefers-reduced-motion BEFORE anything moves or
+  is fetched; `autoplay` would start the loop the moment the file was parsed and
+  a reduced-motion visitor would catch a frame of movement before JS could pause
+  it. The cost is that a no-JS visitor gets the poster and no loop, which is the
+  right way round for a decorative thumbnail.
+
+  READ MORE IS CONDITIONAL, and stays that way even though all three rows
+  currently have a `url`. button.njk silently degrades a missing href to
+  <button type=button> — a control that looks live and does nothing — so the
+  guard is what stops a future carded-but-unlinked project from shipping one.
+  A url pointing at an unbuilt page is a different case and renders normally.
+
   PROPS
-    project  a projects.js entry — needs .card {title, body}, .url, .title
+    project  a projects.js entry — needs .card {title, body}, .title; .url and
+             .motion may both be null
     index    1-based position; rendered as 01/02/03 and used for the alt text
 #}
 
@@ -31,18 +49,41 @@
         The exported fill is 692 wide against a 594 box, so `cover` crops 49px
         from each side — which is exactly what the comp does. Do not export the
         594-wide frame instead: that bakes the crop in and the art no longer
-        reflows if the column ratio ever changes.
+        reflows if the column ratio ever changes. The loops follow the same
+        rule at their own native widths.
       #}
-      <img
-        class="work-card__image"
-        src="/Assets/images/work/{{ project.slug }}-card.png"
-        alt="{{ project.title }} — interface screens"
-        width="{{ 692 }}"
-        height="{{ 476 }}"
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-      />
+      {%- set poster = "/Assets/images/work/" + project.slug + "-card.png" %}
+      {%- if project.motion %}
+        <video
+          class="work-card__image"
+          data-work-motion
+          poster="{{ poster }}"
+          width="{{ project.motion.w }}"
+          height="{{ project.motion.h }}"
+          role="img"
+          aria-label="{{ project.title }} — interface screens"
+          loop
+          muted
+          playsinline
+          preload="none"
+          disablepictureinpicture
+          draggable="false"
+        >
+          {%- if project.motion.webm %}<source src="{{ project.motion.webm }}" type="video/webm" />{% endif %}
+          {%- if project.motion.mp4 %}<source src="{{ project.motion.mp4 }}" type="video/mp4" />{% endif %}
+        </video>
+      {%- else %}
+        <img
+          class="work-card__image"
+          src="{{ poster }}"
+          alt="{{ project.title }} — interface screens"
+          width="{{ 692 }}"
+          height="{{ 476 }}"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      {%- endif %}
     </div>
 
     <div class="work-card__details">
@@ -52,13 +93,15 @@
         <p class="work-card__body">{{ project.card.body }}</p>
       </div>
 
-      {{ button(
-        label="Read more",
-        href=project.url,
-        iconName="arrow-right",
-        variant="solid",
-        aria="Read more about " + project.title
-      ) }}
+      {%- if project.url %}
+        {{ button(
+          label="Read more",
+          href=project.url,
+          iconName="arrow-right",
+          variant="solid",
+          aria="Read more about " + project.title
+        ) }}
+      {%- endif %}
     </div>
   </article>
 {% endmacro %}

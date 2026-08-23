@@ -50,8 +50,12 @@ module.exports = function (eleventyConfig) {
   // The My Work section's three rows: featured projects that actually have card
   // copy written. Filtering on `card` rather than on `status` or a hand-kept
   // list means the section grows by adding a `card` block in projects.js and
-  // nothing else — WOW Global is featured but uncarded, so it stays out until
-  // its case study is written.
+  // nothing else.
+  //
+  // NOT A "HAS A CASE STUDY" FILTER, and it must not become one. Row 03 is
+  // Connect2WOW, whose write-up has not been built yet, while Ezam Part has a
+  // published case study and no row at all. Both facts come from the comp
+  // (184:13749), so `card` is the only honest predicate.
   eleventyConfig.addCollection("workCards", (collectionApi) => {
     return require("./src/_data/projects.js")().filter((p) => p.featured && p.card);
   });
