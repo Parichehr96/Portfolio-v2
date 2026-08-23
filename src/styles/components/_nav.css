@@ -1,7 +1,9 @@
 /* SITE HEADER — Figma 184:13318.
  *
- * Replaces the v2 floating bottom nav. Colours come from the .site-header
- * scope in tokens.css, so nothing here names a Figma hex directly.
+ * Replaces the v2 floating bottom nav. Colours come from the two .site-header
+ * scopes in tokens.css — light and dark, per 446:37196 — so nothing here names
+ * a Figma hex directly. Which of the two is live is decided at runtime by
+ * scripts/header-theme.js; this file only has to not care.
  *
  * THE THREE RULES. Figma draws a full-width hairline UNDER the header at 12%
  * black, and two more either side of the inner container at 16%. They are
@@ -26,16 +28,40 @@
  * context, so everything inside it — the hero's roaming icons, the folder, the
  * expanding footer card — is capped beneath this regardless of its own z-index.
  *
- * The background must stay OPAQUE. It comes from the .site-header scope in
- * tokens.css (--surface, solid white); anything translucent and page content
- * reads through the header as it scrolls under. The existing bottom border is
- * kept as the hairline that separates the two. */
+ * The background must stay OPAQUE. It comes from --surface, which is solid in
+ * both variants; anything translucent and page content reads through the header
+ * as it scrolls under — and with a header that recolours to match what is behind
+ * it, a translucent bar would be nearly invisible rather than merely wrong. The
+ * bottom border is the hairline that separates the two. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: var(--z-nav);
   padding-inline: var(--space-11);
   border-bottom: var(--border-width) solid var(--border-subtle);
+
+  /* The header applies the aliases it now owns; tokens.css only defines them.
+     Every other section applies its own in that file, but the header's palette
+     is rewritten at runtime, and the transition has to live with the property
+     it animates. */
+  font-family: var(--font-sans);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+/* THE CROSSFADE, and why it is on properties rather than on the tokens.
+   Custom properties do not interpolate — swapping --surface is an instant jump
+   no matter what is transitioned on the variable itself. So the concrete
+   properties each element paints are what ease, and every one that reads a
+   flipped alias needs to be listed or it snaps while its neighbours fade. */
+.site-header,
+.site-header__inner,
+.site-header__logo,
+.site-header__link {
+  transition:
+    background-color var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out),
+    color var(--duration-slow) var(--ease-out);
 }
 
 .site-header__inner {
@@ -58,10 +84,14 @@
   text-decoration: none;
 }
 
+/* Inline SVG, so it paints with `color` inherited from the logo link — which is
+   what lets it flip with the header variant. The explicit height keeps it on
+   the comp's 40px mark regardless of the icon macro's default sizing. */
 .site-header__mark {
   display: block;
-  height: var(--space-7);
-  width: auto;
+  height: var(--header-mark);
+  width: var(--header-mark);
+  flex: none;
 }
 
 .site-header__name {
@@ -78,7 +108,7 @@
   font-weight: var(--weight-bold);
 }
 
-/* ---- Links + CTA --------------------------------------------------------- */
+/* ---- Links --------------------------------------------------------------- */
 .site-header__nav {
   display: flex;
   align-items: center;
@@ -94,7 +124,21 @@
   padding: 0;
 }
 
+/* NAV ITEM — Figma 410:66301.
+   Centred in a 71px box with 4px of vertical padding. `min-width` rather than
+   the comp's fixed width: 71px fits all three current labels, but a fixed box
+   would clip the first longer one someone writes, and the section is driven by
+   data. The rules are transparent in the default state rather than absent, so
+   the item does not grow by 2px on hover — the comp's 32px -> 34px is an
+   artifact of Figma adding borders to a hugging frame, not an intended jump. */
 .site-header__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--header-item-w);
+  padding-block: var(--space-1);
+  border-top: var(--border-width) solid transparent;
+  border-bottom: var(--border-width) solid transparent;
   color: var(--text-primary);
   font-size: var(--m3-title-md);
   line-height: var(--m3-title-md-leading);
@@ -102,38 +146,44 @@
   font-weight: var(--weight-medium);
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity var(--duration-fast) var(--ease-out);
 }
 
-.site-header__link:hover {
-  opacity: 0.6;
+/* Hover and Selected are the SAME treatment — a rule above and below, in the
+   current text colour. That is not an omission: 410:66302 and 410:66304 are
+   identical in the design, down to the generated CSS
+   (`["Hover","Selected"].includes(property1)` picks one branch for both).
+
+   HOVER IS SUPPRESSED ON THE CURRENT ITEM, which the comp cannot express. With
+   both states drawn the same, hovering a second item would put two identically
+   marked items in the bar and neither would read as "where I am". */
+.site-header__link:hover:not([aria-current]),
+.site-header__link[aria-current] {
+  border-top-color: currentColor;
+  border-bottom-color: currentColor;
 }
 
-.site-header__cta {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-2h) var(--space-4h);
-  border-radius: var(--radius-pill);
-  background-color: var(--accent);
-  color: var(--text-inverse);
-  font-size: var(--m3-title-md);
-  line-height: var(--m3-title-md-leading);
-  letter-spacing: var(--m3-title-md-tracking);
-  font-weight: var(--weight-medium);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: opacity var(--duration-fast) var(--ease-out);
-}
+/* .site-header__cta — DELETED. Contact was a filled accent pill; 446:37196 has
+   no pill in either variant, and all three items are instances of one Nav_item
+   component. It is a plain link in hero.js's `links` array now. */
 
-.site-header__cta:hover {
-  opacity: 0.85;
-}
-
+/* Focus is an OUTLINE, not the hover rules, on purpose: reusing the underline
+   would make a keyboard user unable to tell a focused item from the current
+   one. currentColor keeps it legible in both variants. */
 .site-header__logo:focus-visible,
-.site-header__link:focus-visible,
-.site-header__cta:focus-visible {
-  outline: var(--border-width) solid var(--text-primary);
+.site-header__link:focus-visible {
+  outline: var(--border-width) solid currentColor;
   outline-offset: var(--space-1);
+}
+
+/* No crossfade for anyone who asked not to have one — the header still flips,
+   it just arrives already flipped. */
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header__inner,
+  .site-header__logo,
+  .site-header__link {
+    transition: none;
+  }
 }
 
 /* ---- Narrow -------------------------------------------------------------- */

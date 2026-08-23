@@ -348,7 +348,12 @@
      finished value here and let the component substitute it verbatim. */
   --work-columns: 594fr 574fr;
 
-  --header-height: 92px;
+  --header-height: 88px; /* 446:37196 — both variants are 1512x88. */
+  /* 367:42670 — the mark is 40 square inside a 40-tall Logo frame. */
+  --header-mark: 40px;
+  /* 410:66313/19/25 — each Nav_item is 71 wide, three of them 32 apart across
+     the 277px Nav Links frame. Applied as a MIN width, not a fixed one. */
+  --header-item-w: 71px;
   --hero-board-w: 1272;
   --hero-board-h: 668;
   --hero-folder-width: 56.6038%;  /* 720 of 1272 */
@@ -415,7 +420,6 @@
    single commit — that is the whole point of routing through the aliases
    instead of hardcoding the Figma hexes into _hero.css and _nav.css.
    --------------------------------------------------------------------------- */
-.site-header,
 /* MY WORK — the one dark band in the redesign. It redefines the SAME semantic
    aliases as the light block below and nothing else, which is the whole point
    of the token layer: _work.css never names a colour, so this block is the only
@@ -439,6 +443,56 @@
   font-family: var(--font-sans);
   background-color: var(--surface);
   color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   THE HEADER OWNS BOTH PALETTES — Figma 446:37196.
+
+   Every other block here is keyed to a section, because a section's colour is
+   fixed by what it is. The header's is not: it is one sticky element that
+   passes over light and dark sections in turn, so its palette is a function of
+   POSITION rather than identity. scripts/header-theme.js sets data-theme from
+   whichever section is under it.
+
+   BARE `.site-header` IS LIGHT, deliberately, and the light block repeats
+   itself in the attribute selector below rather than relying on inheritance.
+   Without JS the attribute never changes and the header stays light over the
+   hero, which is where the page opens — a static-but-correct header rather
+   than a black bar that never flips. The header was previously grouped with
+   .work, which is why its black logo went invisible on a black bar.
+
+   Only the aliases are redefined here. _nav.css names no colour, so this is the
+   only place the inversion exists — same contract as .work above.
+   --------------------------------------------------------------------------- */
+.site-header,
+.site-header[data-theme="light"] {
+  --surface: var(--white);
+  --surface-raised: var(--fig-elevated);
+
+  --text-primary: var(--fig-black);
+  --text-secondary: var(--fig-gray);
+  --text-muted: var(--fig-gray);
+  --text-inverse: var(--white);
+
+  --border-subtle: var(--fig-rule-soft);
+  --border-strong: var(--fig-rule-strong);
+
+  --accent: var(--fig-black);
+}
+
+.site-header[data-theme="dark"] {
+  --surface: var(--fig-black);
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--white);
+  --text-secondary: var(--fig-gray-on-dark);
+  --text-muted: var(--fig-gray-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  --accent: var(--white);
 }
 
 .hero,

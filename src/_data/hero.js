@@ -27,14 +27,21 @@ module.exports = {
     logo: { file: "logo-mark.svg", size: 40 },
     name: { lead: "Pari", rest: "chehr Talebzadeh" },
     // Absolute hrefs so the header works from /work/* and /projects too.
+    // THREE ITEMS, CONTACT INCLUDED. It used to be a `cta` rendered as a filled
+    // accent pill; Figma 446:37196 has no pill in either variant — all three are
+    // instances of the same Nav_item component, 71px wide and 32px apart. So
+    // Contact is a link like the others and the pill styling is gone.
     links: [
       // #about-me, not the v2 #all-about-me — that id belonged to the milestone
       // timeline, which the cleanup sweep removed. partials/about.njk carries
       // this one.
       { label: "About Me", href: "/#about-me" },
       { label: "My Work", href: "/#featured-works" },
+      // #contact HAS NO TARGET YET — the footer (289:2233) is unbuilt. The
+      // scroll-spy is written to cope: it observes whichever ids actually
+      // resolve, so this lights up on its own the day the section lands.
+      { label: "Contact", href: "/#contact" },
     ],
-    cta: { label: "Contact", href: "/#contact" },
   },
 
   title: {
