@@ -87,8 +87,13 @@
     });
 
     /* ---- 3. view_about — "All About Me" enters the viewport ---- */
+    /* #about-me is the redesigned About section. The two older ids are kept as
+       fallbacks only so this keeps firing on any page still serving the v2
+       markup; neither exists in the current build. */
     var about =
-      document.getElementById("all-about-me") || document.getElementById("about");
+      document.getElementById("about-me") ||
+      document.getElementById("all-about-me") ||
+      document.getElementById("about");
     if (about && "IntersectionObserver" in window) {
       var io = new IntersectionObserver(
         function (entries) {

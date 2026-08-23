@@ -1,60 +1,222 @@
-/* FOOTER / CONTACT — one card, two states.
- * .footer-stage is a fixed-height runway so expanding the card cannot reflow
- * the document; the card caps at --z-footer-expanded (150) to stay UNDER the
- * nav (200) while covering page content. */
-.footer-stage { position: relative; width: 100%; min-height: 60vh; }
-.footer-card {
-  width: 100%;
-  border: var(--border-hairline) solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  background-color: var(--surface);
-  transition: transform var(--duration-slow) var(--ease-out);
+/* SITE FOOTER — Figma 275:57838.
+ *
+ * The page's second dark band. Colours come from the .site-footer scope in
+ * tokens.css, which is deliberately NOT the .work block — the comp pitches this
+ * band's text one step off it (headings gray-6, body #BFBFBF, pure white kept
+ * for the menu items). Nothing here names a colour.
+ *
+ * THE GUTTER RULES ARE THE PAGE FRAME, the same pair the header and My Work
+ * carry: a 1px line either side of the inner container at 16% white. They are
+ * what makes the 120px page margin read as a frame rather than as padding, so
+ * they collapse together with it at narrow widths.
+ */
+.site-footer {
+  padding-inline: var(--space-11);
+  overflow: clip;
 }
-.footer-card.is-expanded { z-index: var(--z-footer-expanded); }
-.footer-row {
+
+/* py-120 in the comp, which is a lot — and correct: this is the end of the
+   page, and the whitespace is what stops the sign-off reading as another row of
+   content. px-32 matches the header's inner inset so the two frames line up. */
+.site-footer__inner {
+  padding: var(--space-11) var(--space-6);
+  border-left: var(--border-width) solid var(--border-strong);
+  border-right: var(--border-width) solid var(--border-strong);
+  overflow: clip;
+}
+
+/* TWO EQUAL HALVES. The comp gives both children flex:1 rather than sizing
+   either, so the split is 50/50 at any width and the columns reflow with it. */
+/* NO GAP between the halves, which is the comp: 275:57807 sets none, and only
+   the right section gaps its own three columns. The 50/50 split leaves the left
+   half far more room than its text needs, so the space between them is slack
+   rather than a gap that has to be reserved. */
+.site-footer__row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+}
+
+/* ---- Left: sign-off and copyright ---------------------------------------- */
+/* BOTTOM-ANCHORED COPYRIGHT, via space-between on a stretched column. In the
+   comp the copyright sits on the baseline of the tallest link column, not at a
+   fixed offset under the tagline — so it has to be pushed by the row's height
+   rather than positioned. Same trick the work cards use for their button. */
+.site-footer__intro {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  flex-direction: column;
+  align-self: stretch;
   justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+  gap: var(--space-5);
 }
-.footer-title { font-size: var(--text-lg); color: var(--text-primary); }
-.footer-links { display: flex; gap: var(--space-4); }
-.footer-link {
-  color: var(--text-secondary);
-  font-size: var(--text-base);
-  border-bottom: var(--border-width) dashed currentColor;
-  padding-bottom: 2px;
-}
-.footer-link:hover { color: var(--text-primary); }
-/* Expanded state — hidden until the card opens. */
-.footer-expanded { display: none; flex-direction: column; gap: var(--space-7); }
-.footer-card.is-expanded .footer-expanded { display: flex; }
-.footer-card.is-expanded .footer-default { display: none; }
-.contact-groups { display: flex; flex-direction: column; gap: var(--space-6); }
-.contact-group { display: flex; flex-direction: column; gap: var(--space-3); }
-.contact-list { display: flex; flex-direction: column; }
-/* Leader dots between name and value — a flex spacer with a dotted bottom
-   border, so it stretches to whatever room is left on the row. */
-.contact-row {
+
+.site-footer__intro-text {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
 }
-.contact-name { color: var(--text-primary); font-size: var(--text-base); flex: 0 0 auto; }
-.contact-leader {
-  flex: 1 1 auto;
-  border-bottom: var(--border-width) dotted var(--border-subtle);
-  transform: translateY(-4px);
+
+.site-footer__heading {
+  margin: 0;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-lg-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
 }
-.contact-value { color: var(--text-secondary); font-size: var(--text-base); flex: 0 0 auto; }
-.contact-row:hover .contact-value { color: var(--text-primary); }
-.contact-bottom {
+
+.site-footer__tagline {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-secondary);
+}
+
+/* Two spans with a 4px gap rather than one string: the comp keeps the year and
+   the site name as separate text nodes, and a gap survives the year changing
+   width in a way a hardcoded space does not. */
+.site-footer__copyright {
   display: flex;
-  justify-content: space-between;
-  gap: var(--space-4);
-  color: var(--text-muted);
-  font-size: var(--text-xs);
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  letter-spacing: var(--m3-body-sm-tracking);
+  color: var(--text-secondary);
+  opacity: var(--footer-dim);
+}
+
+/* ---- Right: three link columns ------------------------------------------- */
+.site-footer__columns {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.site-footer__column {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-4h);
+}
+
+/* The one type step in the comp that is not on the M3 scale — 20px at 1.5,
+   which is --text-lg. Regular weight, same off-white as the sign-off. */
+.site-footer__column-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-half);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- Menu item ------------------------------------------------------------ */
+/* THE HEADER'S NAV ITEM, ON A DARK GROUND. Figma builds these from the same
+   Nav_item component (410:66301) the header uses, so they share the mechanic:
+   rules above and below, transparent until the item is engaged, drawn in
+   currentColor so they can never disagree with the text.
+ *
+ * WHAT IS DIFFERENT IS THE RESTING STATE. Here the item sits at 70% (the comp's
+ * opacity-70 on the Nav_item wrapper) and hover takes it to full — so the hover
+ * is white text AND white rules at 100%, which is the header's behaviour plus
+ * the dim lifting. The header has no equivalent because its items are already
+ * at full strength.
+ *
+ * Transparent rather than absent borders again, so engaging an item does not
+ * grow it by 2px and shove the column. */
+.site-footer__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--space-1);
+  border-top: var(--border-width) solid transparent;
+  border-bottom: var(--border-width) solid transparent;
+  color: var(--accent);
+  opacity: var(--footer-dim);
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+/* a:hover, not :hover — a <span> item (Medium, which has no url) must not
+   light up as though it were going somewhere. */
+a.site-footer__item:hover,
+a.site-footer__item:focus-visible {
+  opacity: 1;
+  border-top-color: currentColor;
+  border-bottom-color: currentColor;
+}
+
+/* Focus keeps the rules AND adds the outline. On the header the two states are
+   distinguishable because only one item is ever current; here every item is
+   identical at rest, so the outline is what separates "focused" from "hovered
+   by someone else's mouse". */
+a.site-footer__item:focus-visible {
+  outline: var(--border-width) solid currentColor;
+  outline-offset: var(--space-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer__item {
+    transition: none;
+  }
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* The frame collapses first, exactly as it does on the header: at this width
+   the 120px gutter is most of the screen and the side rules stop reading as a
+   frame. Below it the two halves stack, because 50/50 leaves neither side
+   enough room for its own content. */
+@media (max-width: 900px) {
+  .site-footer {
+    padding-inline: 0;
+  }
+  .site-footer__inner {
+    padding: var(--space-10) var(--space-5);
+    border-left: 0;
+    border-right: 0;
+  }
+  .site-footer__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-9);
+  }
+  .site-footer__intro {
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 600px) {
+  .site-footer__columns {
+    flex-wrap: wrap;
+    gap: var(--space-7) var(--space-5);
+  }
+  .site-footer__column {
+    flex-basis: 40%;
+  }
 }

@@ -1,12 +1,18 @@
 {#
-  BASE LAYOUT — <head>, the 3-column shell, nav, footer, scripts.
+  BASE LAYOUT — <head>, the site header, <main>, scripts.
 
   Every page passes through here. Front matter switches the parts that vary:
-    panels: false   drop the left/right sidebars (full-width page)
-    nav: false      drop the floating bottom nav
-    footer: false   drop the contact footer
+    nav: false      drop the site header
     bodyClass       extra class on <body>
     pageId          data-page value, used by scripts to scope behaviour
+
+  THE SCRIPT LIST IS DELIBERATELY SHORT. The cleanup sweep deleted eight
+  modules with it — reveal, cursor, nav, carousel, timeline, snake, progress
+  and radial-fill. Five of those were ALREADY inert before they were removed:
+  the Phase 0 scaffold renamed the markup hooks they query without updating
+  them, so each returned at its first guard on every page. Do not re-add one
+  because a new section "probably needs it"; they are on main's history and
+  every one of them queries selectors this design no longer emits.
 
   STYLESHEET ORDER IS LOAD-BEARING: tokens → base → components. Components read
   the custom properties tokens.css defines, so a component file loaded first
@@ -46,21 +52,17 @@
   </main>
 
   <script src="/scripts/app.js"></script>
-  <script defer src="/scripts/reveal.js"></script>
-  <script defer src="/scripts/cursor.js"></script>
   <script defer src="/scripts/mailto-fallback.js"></script>
   <script defer src="/scripts/button-fill.js"></script>
   <script defer src="/scripts/clock.js"></script>
-  <script defer src="/scripts/nav.js"></script>
-  <script defer src="/scripts/carousel.js"></script>
-  <script defer src="/scripts/timeline.js"></script>
-  <script defer src="/scripts/snake.js"></script>
   {# draggable.js MUST load before hero-folder.js: it publishes window.HeroDrag,
      which hero-folder.js reads. Both are `defer`, so they run in document
      order. #}
   <script defer src="/scripts/draggable.js"></script>
   <script defer src="/scripts/hero-folder.js"></script>
   <script defer src="/scripts/hero-icons.js"></script>
+  <script defer src="/scripts/header-theme.js"></script>
+  <script defer src="/scripts/work-motion.js"></script>
   <script defer src="/scripts/analytics-events.js"></script>
 
   {%- if site.analytics.vercel %}

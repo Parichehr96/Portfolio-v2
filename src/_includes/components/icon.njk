@@ -19,7 +19,19 @@
     {{ icon("chevron-down", rotate=90, title="Next project") }}{% endraw %}
 #}
 
+{#
+  THE WORDMARK is in this map rather than an <img>, and that is load-bearing.
+  The header flips between a light and a dark variant (Figma 446:37196), so
+  the mark has to recolour with it — and an <img> cannot: SVG loaded that way
+  is an isolated document that the page's CSS and `currentColor` never reach.
+  Inline, it inherits `color` from .site-header__logo like every other glyph.
+
+  Assets/images/hero/logo-mark.svg is the same artwork with fill="black" baked
+  in. It is still what the OG/social tags point at, where a fixed colour is
+  correct, so that file stays.
+#}
 {% set paths = {
+  "logo-mark": '<path d="M31.5294 14.2117C31.5294 18.8818 28.7623 22.9082 24.7793 24.735C26.4612 23.3496 27.5322 21.248 27.5322 18.896C27.5322 14.7642 24.2259 11.4042 20.112 11.3204C20.0574 11.3167 20.0075 11.3167 19.9529 11.3167C19.8983 11.3167 19.8485 11.3167 19.7939 11.3204C18.2673 11.4033 17.0588 12.6663 17.0588 14.2108V28.6814C17.0588 33.4748 13.1699 37.3637 8.37646 37.3637V14.2117C8.37646 7.81925 13.5605 2.63525 19.9529 2.63525C26.3454 2.63525 31.5294 7.81925 31.5294 14.2117Z" fill="currentColor"/><path d="M21.5 18C23.1258 15.8666 23.9941 12.4877 22.7532 11.2468C21.5123 10.0059 18.826 10.6804 16.7532 12.7532C14.6804 14.826 14.2591 19.7591 15.5 21C16.7409 22.2409 19.9121 20.0836 21.5 18Z" fill="currentColor"/>',
   "chevron-down": '<path d="M14.0008 19.6007C13.1841 19.6007 12.3674 19.2857 11.7491 18.6674L4.14242 11.0607C3.80409 10.7224 3.80409 10.1624 4.14242 9.82406C4.48076 9.48573 5.04076 9.48573 5.37909 9.82406L12.9858 17.4307C13.5458 17.9907 14.4558 17.9907 15.0158 17.4307L22.6224 9.82406C22.9608 9.48573 23.5208 9.48573 23.8591 9.82406C24.1974 10.1624 24.1974 10.7224 23.8591 11.0607L16.2524 18.6674C15.6341 19.2857 14.8174 19.6007 14.0008 19.6007Z" fill="currentColor"/>',
   "arrow-up": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 5l6 6m-6-6l-6 6m6-6v14"/>',
   "arrow-down": '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19l6-6m-6 6l-6-6m6 6V5"/>',
@@ -31,13 +43,15 @@
   "game": '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M2 14.5c0-3.287 0-4.931.908-6.038a4 4 0 0 1 .554-.554C4.57 7 6.212 7 9.5 7h5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C22 9.57 22 11.212 22 14.5s0 4.931-.908 6.038a4 4 0 0 1-.554.554C19.43 22 17.788 22 14.5 22h-5c-3.287 0-4.931 0-6.038-.908a4 4 0 0 1-.554-.554C2 19.43 2 17.788 2 14.5Z"/><path stroke-linejoin="round" d="M12 7V5a1 1 0 0 1 1-1a1 1 0 0 0 1-1V2"/><path d="m10 16l-1.5-1.5m0 0L7 13m1.5 1.5L7 16m1.5-1.5L10 13"/><path stroke-linejoin="round" d="M17 15.5v-2"/></g>'
 } %}
 
-{#
-  Two viewBoxes are in play: the chevron is drawn on a 28-unit grid, everything
-  else on 24. Sizing is handled by width/height, so the difference is invisible
-  to callers — but it must be honoured here or the chevron renders cropped.
-#}
 {% macro icon(name, size=24, rotate=0, class="", title="") %}
-  {%- set box = "0 0 28 28" if name == "chevron-down" else "0 0 24 24" -%}
+  {#
+    Three viewBoxes now: the chevron is on a 28-unit grid, the wordmark on 40,
+    everything else on 24. Sizing is handled by width/height, so the difference
+    is invisible to callers — but it must be honoured here or the glyph crops.
+  #}
+  {%- if name == "chevron-down" -%}{%- set box = "0 0 28 28" -%}
+  {%- elif name == "logo-mark" -%}{%- set box = "0 0 40 40" -%}
+  {%- else -%}{%- set box = "0 0 24 24" -%}{%- endif -%}
   <svg
     class="icon icon--{{ name }}{% if class %} {{ class }}{% endif %}"
     width="{{ size }}" height="{{ size }}" viewBox="{{ box }}"

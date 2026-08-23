@@ -181,10 +181,10 @@
 
    ROAM USES THE INDIVIDUAL translate/rotate/scale PROPERTIES, not `transform`,
    and that separation is load-bearing. scripts/hero-icons.js rewrites
-   --roam-x/--roam-y every animation frame, so `translate` must never
+   --wiggle-x/--wiggle-y every animation frame, so `translate` must never
    transition — but `scale` and `rotate` DO need to ease when an icon is picked
    up. Packed into one `transform` they would share a single transition
-   setting, and the grab lift would fight the roam loop over the same property.
+   setting, and the grab lift would fight the wiggle loop over the same property.
    Split, each gets exactly the treatment it needs. */
 .hero__icon {
   position: absolute;
@@ -193,8 +193,15 @@
   width: var(--icon-size);
   height: auto;
   aspect-ratio: 1;
-  translate: var(--roam-x, 0px) var(--roam-y, 0px);
-  rotate: var(--roam-rot, 0deg);
+  /* CENTRED ON ITS FIGMA POINT. --icon-x/y are the mark's CENTRE now, not its
+     top-left, so the wiggle orbits the comp position and an icon's resting spot
+     does not shift when its size changes. The individual `translate` property
+     below composes OUTSIDE this transform (per CSS Transforms 2, `translate`
+     applies before `transform`), so the wiggle stays in unrotated board space
+     while the -50% centring stays local to the box. */
+  transform: translate(-50%, -50%);
+  translate: var(--wiggle-x, 0px) var(--wiggle-y, 0px);
+  rotate: var(--wiggle-rot, 0deg);
   scale: var(--lift-scale, 1);
   transition: scale var(--duration-grab) var(--ease-out),
     rotate var(--duration-grab) var(--ease-out);
@@ -219,7 +226,7 @@
    `translate` is untouched here, which is what keeps tracking 1:1. */
 .hero__icon.is-dragging {
   --lift-scale: var(--lift-amount);
-  --roam-rot: 0deg;
+  --wiggle-rot: 0deg;
   z-index: var(--z-hero-icon-held);
 }
 
@@ -229,8 +236,10 @@
    middle ~55% of the box, and the board clips the rest. */
 .hero-folder {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  /* Not 50/50: the 864-square glyph box sits fractionally off centre on the
+     897-tall board (457:58676). */
+  left: 49.8899%;
+  top: 50.2118%;
   width: var(--hero-folder-width);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
@@ -283,6 +292,34 @@
 }
 
 /* Accessible name for the toggle, swapped with the state by hero-folder.js. */
+/* THE VISIBLE PILL — 432:11655. A white capsule sitting on the flap, centred on
+   the comp's point. Positioned against the FLAP box (hero.js converts the board
+   percentage once), so it travels with the folder at any board size.
+
+   pointer-events:none so it never eats the toggle's own clicks — it is inside
+   the button precisely so the whole pill is part of that hit area, and letting
+   it capture would defeat that. */
+.hero-folder__expertise {
+  position: absolute;
+  left: var(--label-x);
+  top: var(--label-y);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-6);
+  border: var(--border-width) solid var(--fig-pill-edge);
+  border-radius: var(--radius-pill-sm);
+  background-color: var(--white);
+  color: var(--fig-ink);
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 .hero-folder__label {
   position: absolute;
   width: 1px;
@@ -295,12 +332,13 @@
   border: 0;
 }
 
+/* Re-solved against 457:58676 as a percentage of the 864 glyph box. */
 .hero-folder__cards {
   position: absolute;
-  left: 14.0278%;
-  top: 24.1667%;
-  width: 65.9722%;
-  height: 36.5278%;
+  left: 15.5984%;
+  top: 28.8009%;
+  width: 69.1655%;
+  height: 34.9537%;
 }
 
 /* Each card is anchored by its CENTRE and pulled back half its own size, so the
@@ -313,8 +351,12 @@
   position: absolute;
   left: var(--card-x);
   top: var(--card-y);
-  width: 49.9402%;
-  height: 83.8084%;
+  /* PER-CARD SIZE, on the same seam as --card-x/--card-y/--card-rot. The comp
+     gives all three different boxes (card 2 is the short one); one shared size
+     left the outer pair ~49px short. Percentages of the cards frame, so they
+     scale with the board like everything else. */
+  width: var(--card-w, 49.9402%);
+  height: var(--card-h, 83.8084%);
   display: flex;
   flex-direction: column;
   gap: 1.25em;
@@ -336,6 +378,15 @@
      hover lift without touching the peek, and the peek settles without having
      to know whether a hover is also in play. Pure translates commute, so their
      order relative to each other carries no meaning.
+
+     --tuck-x/--tuck-y ARE LENGTHS, NOT PERCENTAGES, and that is what makes
+     per-card sizing safe. A percentage in translate() resolves against the
+     element's OWN border box, so once the three cards stopped sharing a size,
+     `-30%` would have lifted each by a different number of pixels and the
+     expanded row would have stepped instead of aligning. Expressed in cqw —
+     1% of the board, the same basis every other measurement here uses — the
+     offsets stay identical for all three at any board size, and they are the
+     same absolute values the old percentages produced on the shared box.
 
      --tuck-rot is a DELTA, not an absolute angle: --card-rot is written inline
      per card by hero.js, and inline styles outrank stylesheet rules, so the
@@ -386,20 +437,20 @@
  * from inside the folder rather than floating free of it. Lift much further and
  * the illusion breaks. */
 .hero-folder.is-expanded .hero-folder__card--1 {
-  --tuck-x: -10%;
-  --tuck-y: -30%;
+  --tuck-x: calc(var(--tuck-step) * -1);
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: -3deg;
   --card-delay: 0ms;
 }
 .hero-folder.is-expanded .hero-folder__card--2 {
-  --tuck-x: 0%;
-  --tuck-y: -30%;
+  --tuck-x: 0;
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: 0deg;
   --card-delay: var(--stagger-folder);
 }
 .hero-folder.is-expanded .hero-folder__card--3 {
-  --tuck-x: 10%;
-  --tuck-y: -30%;
+  --tuck-x: var(--tuck-step);
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: 3deg;
   --card-delay: calc(var(--stagger-folder) * 2);
 }
@@ -520,6 +571,16 @@
   color: var(--text-primary);
 }
 
+/* Card 2's body is two toned spans; the others are one plain string and take
+   the base colour. The lead-in is the same ink as the title, so the first
+   sentence reads as part of the claim and the rest as supporting detail. */
+.hero-folder__card-body--lead {
+  color: var(--fig-ink);
+}
+.hero-folder__card-body--muted {
+  color: var(--text-secondary);
+}
+
 .hero-folder__card-body {
   margin: 0;
   line-height: 1.5;
@@ -528,36 +589,54 @@
   color: var(--text-secondary);
 }
 
-/* ---- Captions ------------------------------------------------------------ */
-/* These stay at their fixed M3 sizes rather than scaling with the board: they
-   are UI text, not part of the folder artwork, and shrinking them with the
-   composition would make them unreadable before the art got small. */
-.hero__years,
-.hero__hint {
+/* ---- Static decoration --------------------------------------------------- */
+/* The arrow, the small cursor mark and the two product mockups. Centred on
+   their Figma points exactly like the icons, but that is where the similarity
+   ends: these carry no [data-hero-icon], so hero-icons.js never sees them and
+   they can neither wiggle nor be dragged.
+
+   BELOW THE FOLDER in z-order. They are background furniture; the folder, its
+   cards and the flap all have to stay grabbable where they overlap. */
+.hero__decor {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--decor-x);
+  top: var(--decor-y);
+  width: var(--decor-w);
+  height: auto;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  z-index: var(--z-content);
+}
+
+/* THE WORDS BESIDE THE ARROW. Real HTML text in Caveat, because the comp's
+   Figma Hand cannot be licensed as a webfont and arrow-pull.svg is therefore
+   the arrow alone. Sized to the comp's 195 x 24 text box.
+
+   Not pointer-events:none — unlike the artwork this is readable content, and
+   there is no reason to make it unselectable. */
+.hero__arrow-text {
+  position: absolute;
+  left: var(--arrow-x);
+  top: var(--arrow-y);
+  transform: translate(-50%, -50%);
   margin: 0;
-  white-space: nowrap;
-}
-
-.hero__years {
-  top: 84.8802%;
-  color: var(--fig-ink);
-  font-size: var(--m3-title-lg);
-  line-height: var(--m3-title-lg-leading);
-  letter-spacing: var(--m3-title-lg-tracking);
-  font-weight: var(--weight-regular);
-}
-
-.hero__hint {
-  top: 89.6707%;
-  color: var(--text-secondary);
-  font-size: var(--m3-title-md);
+  font-family: var(--font-hand);
+  font-size: var(--hero-hand-size);
   line-height: var(--m3-title-md-leading);
-  letter-spacing: var(--m3-title-md-tracking);
   font-weight: var(--weight-medium);
+  color: var(--fig-ink);
+  white-space: nowrap;
+  text-align: center;
+  z-index: var(--z-content);
 }
+
+/* ---- Captions ------------------------------------------------------------ */
+/* .hero__years and .hero__hint are GONE. They sat below the folder — "(2021 -
+   2026)" and a pull hint — and 457:58676 replaces both: the instruction moved
+   onto the arrow, and the label moved onto the flap itself. */
 
 /* ---- Narrow -------------------------------------------------------------- */
 /* Figma specifies desktop only. The board keeps scaling proportionally, which

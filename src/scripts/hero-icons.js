@@ -1,33 +1,39 @@
-/* ROAMING TOOL ICONS — the four brand marks drift around the hero board and can
- * be picked up and thrown.
+/* IDLE TOOL ICONS — the four brand marks drift gently around their Figma
+ * resting points and can still be picked up and thrown.
  *
- * VELOCITY MODEL: a damped random walk, not per-frame randomness. Each frame
- * adds a small random ACCELERATION and then clamps the resulting speed into an
- * ambient band. Randomising velocity directly reads as jitter; accumulating
- * acceleration curves the path smoothly, which is the whole difference between
- * "ambient" and "busy".
+ * WIGGLE, NOT ROAM. This replaces an autonomous random-walk with keep-out
+ * fields that let the marks travel most of the board. That version had to fight
+ * itself: an icon free to wander also has to be told where it may not go, so
+ * the board's centre needed an elliptical repulsion field, the edges needed a
+ * cushion, and the composition still drifted away from the comp within seconds.
+ * Bounding the motion to a small circle around each icon's own resting point
+ * deletes all of that. The layout is always the comp's layout; the motion is
+ * texture on top of it, not transport.
  *
- * EDGES ARE A CUSHION, NOT A WALL. Flipping the velocity sign at the boundary
- * gives a hard billiard bounce. Instead a margin band applies an inward force
- * proportional to how far in the icon has pushed, so it decelerates and curves
- * away. Position is hard-clamped afterwards purely as a backstop, so a hard
- * throw can never outrun the cushion and escape.
+ * THE PATH IS TWO WAVES PER AXIS, not one. A single sine on x and y traces a
+ * straight line (matched frequencies) or a clean ellipse (unmatched) — both
+ * read as machinery. Summing a second, slower wave at an irrational-ish ratio
+ * gives a path that never quite closes, which is what reads as idle drift
+ * rather than an orbit. Each icon gets its own period and its own phase offsets
+ * so the four are never in step; with one shared clock and no per-icon
+ * randomness, that de-synchronisation is deterministic rather than luck.
  *
- * ONE LOOP FOR ALL FOUR, paused by IntersectionObserver when the hero scrolls
- * away and by visibilitychange when the tab is hidden. The timestamp is reset
- * on resume — without that, `dt` would integrate the entire paused span on the
- * first frame back and teleport every icon across the board.
+ * THE 20px RADIUS IS A GUARANTEE, not an average. The two summed waves can line
+ * up, so the vector is clamped to --wiggle-radius before it is written. Nothing
+ * downstream has to trust the maths.
  *
- * TRANSFORMS ONLY, and via the INDIVIDUAL translate/rotate/scale properties
- * rather than one `transform`. That separation is load-bearing: `translate` is
- * rewritten every frame and must never transition, while `scale` and `rotate`
- * need to ease when an icon is picked up. Packing them into a single
- * `transform` would force one transition setting on all three, and the grab
- * lift would fight the roam loop for the same property.
+ * DRAG IS UNCHANGED and still owned by HeroDrag: straighten to 0deg on grab,
+ * gentle return home on release. While held, the wiggle is skipped entirely;
+ * on release the icon eases from wherever it was dropped back onto its orbit,
+ * so the hand-off has no visible jump.
  *
- * REDUCED MOTION: no loop is started at all. Icons sit at their Figma
- * positions, and dragging still works — dragging is a direct response to input,
- * not motion the page decided to play.
+ * REDUCED MOTION: no loop is ever started. Icons sit exactly on their Figma
+ * points and dragging still works — dragging is a direct response to input, not
+ * motion the page decided to play.
+ *
+ * Only [data-hero-icon] is bound. The static decoration in the same board
+ * (arrow, cursor mark, the two product mockups) carries no such attribute, so
+ * it can neither wiggle nor be dragged.
  */
 (function (window, document) {
   "use strict";
@@ -35,7 +41,7 @@
   var board = document.querySelector(".hero__board");
   if (!board) return;
 
-  var icons = Array.prototype.slice.call(board.querySelectorAll(".hero__icon"));
+  var icons = Array.prototype.slice.call(board.querySelectorAll("[data-hero-icon]"));
   if (!icons.length) return;
 
   // Tuning lives in tokens.css so it sits with the rest of the motion scale.
@@ -45,79 +51,49 @@
     );
     return isNaN(v) ? fallback : v;
   }
-  var SPEED_MIN = num("--roam-speed-min", 10);
-  var SPEED_MAX = num("--roam-speed-max", 30);
-  var JITTER = num("--roam-jitter", 40);
-  var EDGE_MARGIN = num("--roam-edge-margin", 48);
-  var EDGE_FORCE = num("--roam-edge-force", 1.5);
-  var KEEP_X = num("--roam-keepout-x", 0.26);
-  var KEEP_Y = num("--roam-keepout-y", 0.45);
-  var KEEP_FORCE = num("--roam-keepout-force", 500);
-  var KEEP_FALLOFF = num("--roam-keepout-falloff", 0.5);
+  var RADIUS = num("--wiggle-radius", 20);
+  var PERIOD = num("--wiggle-period", 7);
 
   var BOB_DEG = 2; // amplitude of the idle tilt
-  var BOB_RATE = 0.4; // rad/s -> a ~16s cycle
-  var THROW_MAX = SPEED_MAX * 4; // a flick still settles quickly under damping
+  var RETURN_MS = 420; // release -> back on orbit
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- Per-icon state -------------------------------------------------------
+  /* Per-icon wiggle constants.
+   *
+   * The multipliers are deliberately not round ratios of each other. Whole-
+   * number ratios (2:1, 3:2) close the path into a repeating Lissajous figure
+   * that the eye locks onto after a few seconds; these do not resolve, so the
+   * drift stays unpredictable without being random. */
   var items = icons.map(function (el, i) {
-    var dir = Math.PI * 2 * (i / icons.length); // spread starting headings
-    var speed = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * 0.5;
+    var n = icons.length;
     return {
       el: el,
-      x: 0,
-      y: 0,
-      vx: Math.cos(dir) * speed,
-      vy: Math.sin(dir) * speed,
-      phase: dir, // so the four never bob in unison
+      // Each icon runs 0.8x-1.4x the base period, so no two ever line up.
+      speed: 1 / (PERIOD * (0.8 + 0.2 * i)),
+      // Quarter-turn offsets: the four start at different points on their path.
+      phase: (Math.PI * 2 * i) / n,
+      // The secondary wave is slower and offset again per icon.
+      speed2: 1 / (PERIOD * (1.7 + 0.3 * i)),
+      phase2: (Math.PI * 2 * ((i * 3) % n)) / n + 0.7,
       held: false,
-      min: { x: 0, y: 0 },
-      max: { x: 0, y: 0 },
+      // Offset carried out of a drag, eased back to zero so the icon rejoins
+      // its orbit instead of snapping.
+      restX: 0,
+      restY: 0,
+      restAt: 0,
     };
   });
 
-  // Bounds are measured, never assumed: each icon's allowed OFFSET range is
-  // whatever keeps its box inside the board from where CSS already placed it.
-  // Read once here and on resize — never inside the loop.
-  var boardW = 0;
-  var boardH = 0;
-
-  function measure() {
-    var b = board.getBoundingClientRect();
-    boardW = b.width;
-    boardH = b.height;
-    items.forEach(function (it) {
-      var r = it.el.getBoundingClientRect();
-      // Subtract the current offset to recover the CSS-placed position.
-      var left = r.left - it.x;
-      var top = r.top - it.y;
-      it.min.x = b.left - left;
-      it.max.x = b.right - (left + r.width);
-      it.min.y = b.top - top;
-      it.max.y = b.bottom - (top + r.height);
-      if (it.min.x > it.max.x) it.min.x = it.max.x = 0;
-      if (it.min.y > it.max.y) it.min.y = it.max.y = 0;
-      // Centre in BOARD coordinates with no offset applied — the keep-out test
-      // needs an absolute position, and this is the fixed part of it.
-      it.cx0 = left - b.left + r.width / 2;
-      it.cy0 = top - b.top + r.height / 2;
-    });
-  }
-
-  function clamp(v, lo, hi) {
-    return v < lo ? lo : v > hi ? hi : v;
-  }
-
-  function write(it, rot) {
+  function write(it, x, y, rot) {
     var s = it.el.style;
-    s.setProperty("--roam-x", it.x.toFixed(2) + "px");
-    s.setProperty("--roam-y", it.y.toFixed(2) + "px");
-    if (rot !== undefined) s.setProperty("--roam-rot", rot.toFixed(2) + "deg");
+    s.setProperty("--wiggle-x", x.toFixed(2) + "px");
+    s.setProperty("--wiggle-y", y.toFixed(2) + "px");
+    if (rot !== undefined) s.setProperty("--wiggle-rot", rot.toFixed(2) + "deg");
   }
 
   // ---- Drag -----------------------------------------------------------------
+  // Unchanged from the roaming version: same handle, same straighten-and-return.
   var drag = window.HeroDrag;
   if (drag) {
     items.forEach(function (it) {
@@ -126,30 +102,25 @@
           return board.getBoundingClientRect();
         },
         getOffset: function () {
-          return { x: it.x, y: it.y };
+          return { x: it.restX, y: it.restY };
         },
         onStart: function () {
-          it.held = true; // physics skips it; the lift eases via CSS
+          it.held = true; // the loop skips it; the lift eases via CSS
           it.el.classList.add("is-dragging");
         },
         onMove: function (dx, dy) {
-          it.x = dx;
-          it.y = dy;
-          write(it);
+          it.restX = dx;
+          it.restY = dy;
+          write(it, dx, dy);
         },
-        onEnd: function (dx, dy, vx, vy) {
-          it.x = dx;
-          it.y = dy;
-          write(it);
-          // Resume roaming from exactly where it was dropped, carrying the
-          // release velocity so the hand-off is continuous rather than a stop.
-          var s = Math.hypot(vx, vy);
-          if (s > THROW_MAX) {
-            vx *= THROW_MAX / s;
-            vy *= THROW_MAX / s;
-          }
-          it.vx = vx;
-          it.vy = vy;
+        onEnd: function (dx, dy) {
+          // Hand back to the loop from exactly where it was dropped. The
+          // release VELOCITY is deliberately discarded: a thrown icon that kept
+          // its momentum would sail away from a resting point it is supposed to
+          // stay within 20px of. It eases home instead.
+          it.restX = dx;
+          it.restY = dy;
+          it.restAt = now();
           it.held = false;
           it.el.classList.remove("is-dragging");
         },
@@ -157,86 +128,70 @@
     });
   }
 
-  measure();
-  if (window.ResizeObserver) new window.ResizeObserver(measure).observe(board);
-
-  // Reduced motion stops here: icons rest at their Figma positions, still
+  // Reduced motion stops here: icons rest on their Figma points, still
   // draggable, with no loop ever created.
   if (reduce) return;
 
   // ---- Loop -----------------------------------------------------------------
-  var frame = 0;
-  var last = 0;
-  var clock = 0;
+  function now() {
+    return window.performance && window.performance.now
+      ? window.performance.now()
+      : Date.now();
+  }
 
-  function step(now) {
+  var frame = 0;
+  var start0 = now();
+
+  function step() {
     frame = window.requestAnimationFrame(step);
-    if (!last) last = now;
-    // Cap dt so a dropped frame nudges rather than launches an icon.
-    var dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    clock += dt;
+    var t = (now() - start0) / 1000;
 
     for (var i = 0; i < items.length; i++) {
       var it = items[i];
       if (it.held) continue;
 
-      it.vx += (Math.random() - 0.5) * JITTER * dt;
-      it.vy += (Math.random() - 0.5) * JITTER * dt;
+      var a = t * it.speed * Math.PI * 2 + it.phase;
+      var b = t * it.speed2 * Math.PI * 2 + it.phase2;
 
-      /* KEEP-OUT. The centre of the board belongs to the folder, the cards and
-         the captions; icons are margin furniture. Distance is measured in the
-         ellipse's own normalised space, so one radial push handles both axes
-         at whatever aspect the board currently has. Force is zero exactly at
-         the boundary and strongest dead centre, with a SQRT falloff — a linear
-         one is too weak near the rim to turn an icon that is already moving,
-         and they sail straight through (see the note in tokens.css). Nothing
-         is forbidden: an icon can still drift a little way in before being
-         eased back out, which is the occasional dip rather than a hard wall. */
-      var cx = it.cx0 + it.x;
-      var cy = it.cy0 + it.y;
-      var nx = (cx - boardW / 2) / (KEEP_X * boardW);
-      var ny = (cy - boardH / 2) / (KEEP_Y * boardH);
-      var d = Math.hypot(nx, ny);
-      if (d < 1) {
-        var push = KEEP_FORCE * Math.pow(1 - d, KEEP_FALLOFF) * dt;
-        if (d > 0.001) {
-          it.vx += (nx / d) * push;
-          it.vy += (ny / d) * push;
+      // Two waves per axis, with x and y reading them in opposite order so the
+      // path is not a diagonal line.
+      var x = Math.sin(a) * 0.68 + Math.cos(b) * 0.32;
+      var y = Math.cos(a) * 0.62 + Math.sin(b) * 0.38;
+
+      x *= RADIUS;
+      y *= RADIUS;
+
+      // The guarantee: however the two waves stack, the offset never leaves the
+      // circle. Scaling both components preserves the direction.
+      var d = Math.hypot(x, y);
+      if (d > RADIUS) {
+        x *= RADIUS / d;
+        y *= RADIUS / d;
+      }
+
+      // Ease any leftover drag offset back to zero, so the icon rejoins its
+      // orbit rather than jumping onto it the frame the pointer lifts.
+      if (it.restX || it.restY) {
+        var k = (now() - it.restAt) / RETURN_MS;
+        if (k >= 1) {
+          it.restX = it.restY = 0;
         } else {
-          // Dead centre has no radial direction; any heading will do.
-          it.vx += push;
+          // easeOutCubic — quick to leave the drop point, slow to settle.
+          var e = 1 - Math.pow(1 - k, 3);
+          x += it.restX * (1 - e);
+          y += it.restY * (1 - e);
         }
       }
 
-      // Soft cushion: force grows with how far past the margin it has drifted.
-      if (it.x < it.min.x + EDGE_MARGIN) it.vx += EDGE_FORCE * (it.min.x + EDGE_MARGIN - it.x) * dt;
-      if (it.x > it.max.x - EDGE_MARGIN) it.vx -= EDGE_FORCE * (it.x - (it.max.x - EDGE_MARGIN)) * dt;
-      if (it.y < it.min.y + EDGE_MARGIN) it.vy += EDGE_FORCE * (it.min.y + EDGE_MARGIN - it.y) * dt;
-      if (it.y > it.max.y - EDGE_MARGIN) it.vy -= EDGE_FORCE * (it.y - (it.max.y - EDGE_MARGIN)) * dt;
-
-      var sp = Math.hypot(it.vx, it.vy);
-      if (sp > SPEED_MAX) {
-        it.vx *= SPEED_MAX / sp;
-        it.vy *= SPEED_MAX / sp;
-      } else if (sp < SPEED_MIN && sp > 0) {
-        it.vx *= SPEED_MIN / sp;
-        it.vy *= SPEED_MIN / sp;
-      }
-
-      it.x = clamp(it.x + it.vx * dt, it.min.x, it.max.x);
-      it.y = clamp(it.y + it.vy * dt, it.min.y, it.max.y);
-
-      write(it, Math.sin(clock * BOB_RATE + it.phase) * BOB_DEG);
+      write(it, x, y, Math.sin(a) * BOB_DEG);
     }
   }
 
-  function start() {
+  function startLoop() {
     if (frame) return;
-    last = 0; // resets dt so the first frame back is not a giant leap
     frame = window.requestAnimationFrame(step);
   }
-  function stop() {
+  function stopLoop() {
     if (!frame) return;
     window.cancelAnimationFrame(frame);
     frame = 0;
@@ -244,15 +199,15 @@
 
   if ("IntersectionObserver" in window) {
     new window.IntersectionObserver(function (entries) {
-      if (entries[entries.length - 1].isIntersecting) start();
-      else stop();
+      if (entries[entries.length - 1].isIntersecting) startLoop();
+      else stopLoop();
     }).observe(board);
   } else {
-    start();
+    startLoop();
   }
 
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden) stop();
-    else if (board.getBoundingClientRect().bottom > 0) start();
+    if (document.hidden) stopLoop();
+    else if (board.getBoundingClientRect().bottom > 0) startLoop();
   });
 })(window, document);

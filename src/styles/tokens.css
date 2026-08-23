@@ -36,10 +36,24 @@
      page stays on the v2 dark palette above until its own phase lands. */
   --fig-black: #000000;
   --fig-ink: #1A1A1A;
+  /* Figma "fills/primary" — the hairline around the hero's expertise pill. */
+  --fig-pill-edge: rgba(120, 120, 120, 0.2);
   --fig-gray: #727272;
   --fig-elevated: #F2F2F7;
   --fig-rule-soft: rgba(0, 0, 0, 0.12);
   --fig-rule-strong: rgba(0, 0, 0, 0.16);
+  /* The same two rules inverted, for the black My Work band. Kept as their own
+     primitives rather than reusing the light pair at some opacity: white on
+     black does not read at the same weight as black on white, so the values are
+     tuned rather than derived. */
+  --fig-rule-soft-on-dark: rgba(255, 255, 255, 0.12);
+  --fig-rule-strong-on-dark: rgba(255, 255, 255, 0.16);
+  /* Grays/Gray 2 in Figma — the secondary text colour on the dark band. */
+  --fig-gray-on-dark: #AEAEB2;
+  /* Figma "labels / vibrant / controls / tertiary". A second grey-on-dark, and
+     deliberately not a reuse of the one above: the footer sets it against pure
+     black where #AEAEB2 sits too low, so the comp lifts it. 275:57809. */
+  --fig-gray-tertiary-on-dark: #BFBFBF;
 
   /* ---- 2. SEMANTICS -------------------------------------------------------
      What components actually reference. Retheme by repointing these. */
@@ -93,6 +107,11 @@
      (An earlier pass used Roboto here, from the M3 variables in the original
      Figma; the comp has since moved to Figtree and the two now agree.) */
   --font-outline: "Ribeye Marrow", Georgia, serif;
+  /* The hero's handwritten "Pull a card out to read". Figma sets it in Figma
+     Hand (367:42807), which ships inside the Figma app and is not licensable as
+     a webfont; Caveat is the nearest free hand face. If a licensed Figma Hand
+     file ever lands, changing the family here is the whole swap. */
+  --font-hand: "Caveat", "Bradley Hand", "Segoe Script", cursive;
 
   /* M3 static type scale, values straight from the Figma variables. Each size
      carries its own line-height and tracking because M3 pairs them — using one
@@ -113,9 +132,20 @@
   --m3-body-lg-leading: 24px;
   --m3-body-lg-tracking: 0.5px;
 
+  /* 452:58558 — the footer copyright, and so far the only user of this step. */
+  --m3-body-sm: 12px;
+  --m3-body-sm-leading: 16px;
+  --m3-body-sm-tracking: 0.4px;
+
   /* Added for About Me — these three steps of the M3 scale were not needed by
      the header or hero, so they were never declared. Values are the same Figma
      variables the rest of this block came from. */
+  /* Added for My Work — the card titles. Same Figma variable set as the steps
+     around it; it had no consumer until this section. */
+  --m3-display-md: 45px;
+  --m3-display-md-leading: 52px;
+  --m3-display-md-tracking: 0;
+
   --m3-headline-lg: 32px;
   --m3-headline-lg-leading: 40px;
   --m3-headline-lg-tracking: 0;
@@ -147,6 +177,10 @@
   --leading-tight: 1.1;
   --leading-snug: 1.3;
   --leading-normal: 1.55;
+  /* 452:57540 — the footer column titles are 20px at exactly 1.5 (30px). Close
+     enough to --leading-normal to look like a rounding, which is why it is its
+     own token: 1.55 would put them a pixel off the comp. */
+  --leading-half: 1.5;
 
   --tracking-tight: -0.02em;
   --tracking-wide: 0.08em;
@@ -155,6 +189,8 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  /* 432:11655 — the hero's "My Expertise" pill is 12, between md and lg. */
+  --radius-pill-sm: 12px;
   --radius-pill: 999px;
   --border-width: 1px;
   --border-hairline: 0.6px;
@@ -212,9 +248,18 @@
      per-layer lerp with no list-length padding to depend on. */
   --duration-hover: 160ms;
   --hover-lift: -4px;
-  --hero-card-shadow-rest: 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0);
-  --hero-card-shadow-hover: 0 2px 4px -1px rgb(0 0 0 / 0.06),
-    0 10px 24px -6px rgb(0 0 0 / 0.16);
+  /* M3 ELEVATION, the two steps the hero cards move between. Figma binds the
+     resting card to style "M3/Elevation Light/2" (434:11718); step 4 is the
+     hover. Both are two-layer shadows with the same layer COUNT, which is what
+     lets the hover interpolate cleanly rather than popping. */
+  --shadow-2: 0 1px 2px rgb(0 0 0 / 0.30), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --shadow-4: 0 2px 3px rgb(0 0 0 / 0.30), 0 6px 10px 4px rgb(0 0 0 / 0.15);
+
+  /* The cards used to rest on a transparent pair (i.e. no shadow at all) and
+     fade to a soft custom one. The comp has them sitting on elevation 2 from
+     the start, so rest is now a real shadow and hover is a real step up. */
+  --hero-card-shadow-rest: var(--shadow-2);
+  --hero-card-shadow-hover: var(--shadow-4);
 
   /* Idle peek — the one-time invitation. A few seconds after load the frontmost
      card nudges up and settles back, so the cards announce that they move
@@ -243,11 +288,17 @@
   /* Roaming tool icons — see scripts/hero-icons.js. Speeds are px/s, JITTER is
      px/s^2 of random acceleration, EDGE-* describe the soft cushion the icons
      curve away from instead of bouncing off. */
-  --roam-speed-min: 10;
-  --roam-speed-max: 30;
-  --roam-jitter: 40;
-  --roam-edge-margin: 48;
-  --roam-edge-force: 1.5;
+  /* ICON WIGGLE — replaces the roaming physics. Each mark drifts inside a small
+     circle around its Figma resting centre and never leaves it, so the board's
+     composition is fixed and the motion is texture rather than travel.
+
+     TWO FREQUENCIES PER AXIS, not one. A single sine on each axis traces a
+     straight line or a perfect ellipse — both read as machinery. Summing a
+     second, slower wave at an unrelated ratio gives a path that never quite
+     repeats, which is what makes it read as idle drift. The sum is clamped to
+     --wiggle-radius so the guarantee holds however the waves line up. */
+  --wiggle-radius: 20px;
+  --wiggle-period: 7s;
 
   /* Keep-out ellipse. The icons are margin furniture: the centre of the board
      belongs to the folder, the cards (including their expanded lift) and the
@@ -271,10 +322,6 @@
 
      A hard positional projection was tried instead and rejected: it pins icons
      exactly on the boundary and they slide along it, which reads as a wall. */
-  --roam-keepout-x: 0.26;
-  --roam-keepout-y: 0.45;
-  --roam-keepout-force: 500;
-  --roam-keepout-falloff: 0.5;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
@@ -310,10 +357,55 @@
   --about-figure-w: 528;        /* the exported frame + figure coordinate space */
   --about-figure-h: 622;
 
-  --header-height: 92px;
+  /* ---- 3e-ter. MY WORK GEOMETRY ------------------------------------------
+     Figma 184:13749. The section is the same 1272 container as the header,
+     hero and about, so only what is INTERNAL to it lives here.
+
+     Two of these are off the 4px scale and are named rather than rounded to a
+     neighbour, for the same reason --about-head-top is: rounding them breaks
+     the geometry match with the comp.
+
+     --work-row-inset is the 160px band above and below each row's content;
+     --work-band-pad is the 60px above the heading and below the last rule.
+
+     The column ratio is expressed as two unitless numbers fed straight into
+     grid-template-columns as fr, so the 594:574 split from the comp is exact at
+     any width instead of being frozen in pixels. */
+  --work-row-inset: 160px;
+  --work-band-pad: 60px;
+  --work-media-w: 594;
+  --work-media-h: 476;
+  /* The WHOLE track list, not two separate numbers. `fr` is a flex unit and is
+     not valid inside calc(), and `var(--x)fr` does not concatenate either — so
+     the only way to keep these numbers in the token layer is to hold the
+     finished value here and let the component substitute it verbatim. */
+  --work-columns: 594fr 574fr;
+
+  --header-height: 88px; /* 446:37196 — both variants are 1512x88. */
+  /* 367:42670 — the mark is 40 square inside a 40-tall Logo frame. */
+  --header-mark: 40px;
+  /* 410:66313/19/25 — each Nav_item is 71 wide, three of them 32 apart across
+     the 277px Nav Links frame. Applied as a MIN width, not a fixed one. */
+  --header-item-w: 71px;
+
+  /* FOOTER — 275:57838. The menu items and the copyright both sit at 70% in the
+     comp; hover takes an item to full. One token because they are the same
+     decision (recede against the black), not a coincidence of two values. */
+  --footer-dim: 0.7;
   --hero-board-w: 1272;
-  --hero-board-h: 668;
-  --hero-folder-width: 56.6038%;  /* 720 of 1272 */
+  --hero-board-h: 897; /* 457:58676 — the rebuilt hero board is 1272 x 897. */
+  --hero-folder-width: 67.9245%;  /* 864 of 1272 — re-solved from 457:58676 */
+  /* The handwritten arrow line. Figma's text box is 195 x 24 at 15px in Figma
+     Hand; Caveat runs small for its point size, so 18px matches the drawn
+     width rather than the nominal one. */
+  --hero-hand-size: 18px;
+  /* EXPANDED-STATE OFFSETS, in cqw so they are the same absolute distance for
+     every card. They were ±10% / -30% of each card's own box, which only worked
+     while all three shared one size; these are those exact values measured on
+     that box (23.4621 x 19.8979 cqw), now pinned to the board instead. */
+  --tuck-step: 2.3462cqw;
+  --tuck-rise: -5.9694cqw;
+
   --hero-card-base: 0.845cqw;     /* ≈10.75px at a 1272px board */
 
   /* ---- 3f. Z-INDEX --------------------------------------------------------
@@ -377,7 +469,108 @@
    single commit — that is the whole point of routing through the aliases
    instead of hardcoding the Figma hexes into _hero.css and _nav.css.
    --------------------------------------------------------------------------- */
+/* MY WORK — the one dark band in the redesign. It redefines the SAME semantic
+   aliases as the light block below and nothing else, which is the whole point
+   of the token layer: _work.css never names a colour, so this block is the only
+   place the inversion exists. */
+.work {
+  --surface: var(--fig-black);
+  /* Button hover only. A lift off black has to be a white wash, not a darker
+     grey, or it reads as a hole rather than a raise. */
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--white);
+  --text-secondary: var(--fig-gray-on-dark);
+  --text-muted: var(--fig-gray-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  --accent: var(--white);
+
+  font-family: var(--font-sans);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+/* FOOTER — 275:57838. A second dark band, but NOT the same palette as .work,
+   which is why it gets its own block rather than joining the selector above.
+   The comp pitches its text one step off the My Work band: headings are gray-6
+   (#F2F2F7) rather than pure white, and the body grey is #BFBFBF rather than
+   #AEAEB2. Pure white is reserved for the menu items, which is what makes them
+   read as the only interactive thing down there. */
+.site-footer {
+  --surface: var(--fig-black);
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--fig-elevated);
+  --text-secondary: var(--fig-gray-tertiary-on-dark);
+  --text-muted: var(--fig-gray-tertiary-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  /* The menu items and their hover rules. Pure white against the headings'
+     off-white is the comp's own hierarchy, not an approximation of it. */
+  --accent: var(--white);
+
+  font-family: var(--font-sans);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   THE HEADER OWNS BOTH PALETTES — Figma 446:37196.
+
+   Every other block here is keyed to a section, because a section's colour is
+   fixed by what it is. The header's is not: it is one sticky element that
+   passes over light and dark sections in turn, so its palette is a function of
+   POSITION rather than identity. scripts/header-theme.js sets data-theme from
+   whichever section is under it.
+
+   BARE `.site-header` IS LIGHT, deliberately, and the light block repeats
+   itself in the attribute selector below rather than relying on inheritance.
+   Without JS the attribute never changes and the header stays light over the
+   hero, which is where the page opens — a static-but-correct header rather
+   than a black bar that never flips. The header was previously grouped with
+   .work, which is why its black logo went invisible on a black bar.
+
+   Only the aliases are redefined here. _nav.css names no colour, so this is the
+   only place the inversion exists — same contract as .work above.
+   --------------------------------------------------------------------------- */
 .site-header,
+.site-header[data-theme="light"] {
+  --surface: var(--white);
+  --surface-raised: var(--fig-elevated);
+
+  --text-primary: var(--fig-black);
+  --text-secondary: var(--fig-gray);
+  --text-muted: var(--fig-gray);
+  --text-inverse: var(--white);
+
+  --border-subtle: var(--fig-rule-soft);
+  --border-strong: var(--fig-rule-strong);
+
+  --accent: var(--fig-black);
+}
+
+.site-header[data-theme="dark"] {
+  --surface: var(--fig-black);
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--white);
+  --text-secondary: var(--fig-gray-on-dark);
+  --text-muted: var(--fig-gray-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  --accent: var(--white);
+}
+
 .hero,
 .about {
   --surface: var(--white);

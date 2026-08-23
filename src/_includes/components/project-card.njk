@@ -1,45 +1,118 @@
 {#
-  PROJECT CARD — takes one entry from _data/projects.js.
+  PROJECT CARD — one row of the My Work section (Figma 184:13749).
 
-  The WHOLE card is the click target, so the "Explore X" line renders as a
-  <span> via link(as="span") — nesting an <a> inside an <a> is invalid HTML and
-  browsers unnest it, which silently shrinks the hit area to just that line.
+  A ROW, NOT A CARD, despite the name: screenshot on the left, details on the
+  right, the two separated by a rule from the row above. The name is kept
+  because it is the projects.js entry it renders, and because a v2 component of
+  the same name occupied this slot before the cleanup sweep — that one was a
+  fixed-width carousel slide and shares no markup with this.
 
-  A project with no case study yet (url: null) renders as a non-interactive
-  <div>: no href, no pointer, no keyboard stop. The old markup used href="#",
-  which put a dead link in the tab order that scrolled the page to the top when
-  activated.
+  THE NUMBER IS PRESENTATIONAL. It is the position in the section, not a
+  property of the project, so it is passed in rather than stored in projects.js
+  — reordering the array renumbers the cards with no data edit. It is
+  aria-hidden for the same reason: "01" read aloud before the title adds
+  nothing a sighted user gets from it.
 
-  The image slot is intentionally EMPTY when `thumb` is null — thumbnails were
-  removed from the design, and the fixed slot height is what keeps every card
-  the same height so the carousel never jumps mid-scroll.
+  The whole row is NOT one link. Only the pill is, because the screenshot has
+  no accessible name and wrapping both in a single anchor would put the image
+  inside the link's text alternative for no benefit.
+
+  THE MEDIA SLOT IS EITHER A LOOP OR A STILL, decided by whether projects.js
+  found encodes on disk. Both branches carry .work-card__image so _work.css
+  sizes them with one rule and the box keeps its own aspect-ratio either way.
+
+  `loop` IS CONDITIONAL. ONTON's source animation does not return to its first
+  frame, so looping it snaps; it plays once and holds instead. See the MOTION
+  table in projects.js.
+
+  NO `autoplay` ATTRIBUTE ON THE VIDEO, deliberately. scripts/work-motion.js
+  owns playback so it can check prefers-reduced-motion BEFORE anything moves or
+  is fetched; `autoplay` would start the loop the moment the file was parsed and
+  a reduced-motion visitor would catch a frame of movement before JS could pause
+  it. The cost is that a no-JS visitor gets the poster and no loop, which is the
+  right way round for a decorative thumbnail.
+
+  READ MORE IS CONDITIONAL, and stays that way even though all three rows
+  currently have a `url`. button.njk silently degrades a missing href to
+  <button type=button> — a control that looks live and does nothing — so the
+  guard is what stops a future carded-but-unlinked project from shipping one.
+  A url pointing at an unbuilt page is a different case and renders normally.
 
   PROPS
-    project  one object from projects.js (required)
-    class    extra classes
+    project  a projects.js entry — needs .card {title, body}, .title; .url and
+             .motion may both be null
+    index    1-based position; rendered as 01/02/03 and used for the alt text
 #}
 
-{% from "components/link.njk" import link %}
+{% from "components/button.njk" import button %}
 
-{% macro projectCard(project, class="") %}
-  {%- set interactive = project.url -%}
-  {%- set tag = "a" if interactive else "div" -%}
-  <{{ tag }}
-    class="project-card{% if not interactive %} project-card--soon{% endif %}{% if class %} {{ class }}{% endif %}"
-    {%- if interactive %} href="{{ project.url }}"{% endif %}
-    data-project="{{ project.slug }}">
-    <div class="project-card-media"{% if not project.thumb %} aria-hidden="true"{% endif %}>
-      {%- if project.thumb %}
-        <img src="{{ project.thumb }}" alt="{{ project.title }}" loading="lazy" />
-      {%- endif %}
-    </div>
-    <div class="project-card-meta">
-      <p class="project-card-caption">{{ project.caption }}</p>
-      {%- if interactive %}
-        {{ link("Explore " + project.title, as="span", class="project-card-link") }}
+{% macro projectCard(project, index) %}
+  <article class="work-card">
+    <div class="work-card__media">
+      {#
+        The exported fill is 692 wide against a 594 box, so `cover` crops 49px
+        from each side — which is exactly what the comp does. Do not export the
+        594-wide frame instead: that bakes the crop in and the art no longer
+        reflows if the column ratio ever changes. The loops follow the same
+        rule at their own native widths.
+      #}
+      {%- if project.motion %}
+        {#
+          `poster` IS DEFERRED VIA data-poster, not set here. The attribute has
+          no lazy counterpart, so a real `poster=` downloads on first paint for
+          a section most visitors never scroll to — work-motion.js assigns it
+          once the row is within 400px of the viewport. The cost is that a
+          no-JS visitor gets the media box's background instead of the still;
+          for a decorative thumbnail that is the right side of the trade.
+        #}
+        <video
+          class="work-card__image"
+          data-work-motion
+          data-poster="{{ project.motion.poster }}"
+          width="{{ project.motion.w }}"
+          height="{{ project.motion.h }}"
+          role="img"
+          aria-label="{{ project.title }} — interface screens"
+          {% if project.motion.loop %}loop{% endif %}
+          muted
+          playsinline
+          preload="none"
+          disablepictureinpicture
+          draggable="false"
+        >
+          {%- if project.motion.webm %}<source src="{{ project.motion.webm }}" type="video/webm" />{% endif %}
+          {%- if project.motion.mp4 %}<source src="{{ project.motion.mp4 }}" type="video/mp4" />{% endif %}
+        </video>
       {%- else %}
-        <span class="project-card-link project-card-link--muted">Coming soon</span>
+        <img
+          class="work-card__image"
+          src="/Assets/images/work/{{ project.slug }}-card.jpg"
+          alt="{{ project.title }} — interface screens"
+          width="{{ 692 }}"
+          height="{{ 476 }}"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
       {%- endif %}
     </div>
-  </{{ tag }}>
+
+    <div class="work-card__details">
+      <div class="work-card__text">
+        <p class="work-card__number" aria-hidden="true">{{ "0" + index }}</p>
+        <h3 class="work-card__title">{{ project.card.title }}</h3>
+        <p class="work-card__body">{{ project.card.body }}</p>
+      </div>
+
+      {%- if project.url %}
+        {{ button(
+          label="Read more",
+          href=project.url,
+          iconName="arrow-right",
+          variant="solid",
+          aria="Read more about " + project.title
+        ) }}
+      {%- endif %}
+    </div>
+  </article>
 {% endmacro %}

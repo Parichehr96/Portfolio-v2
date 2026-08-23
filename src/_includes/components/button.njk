@@ -12,6 +12,11 @@
     href      renders an <a>; without it you get a <button type=button>
     iconName  key from components/icon.njk
     iconOnly  true → no label element at all, `aria` becomes the accessible name
+    variant   "" (default dashed outline) | "solid" — a filled pill whose icon
+              sits in a circular badge, used by the My Work cards. A VARIANT
+              PROP RATHER THAN A CALLER-SUPPLIED CLASS on purpose: `class` is
+              for placement only, so a second look has to be declared here where
+              _button.css can own it and every caller gets the same one.
     rotate    passed to the icon (arrows reuse the chevron)
     aria      accessible name — REQUIRED when iconOnly, ignored otherwise
     class     extra classes for placement (never for restyling — see COMPONENTS.md)
@@ -26,10 +31,10 @@
 
 {% from "components/icon.njk" import icon %}
 
-{% macro button(label="", href="", iconName="", iconOnly=false, rotate=0, aria="", class="", attrs="", download="") %}
+{% macro button(label="", href="", iconName="", iconOnly=false, variant="", rotate=0, aria="", class="", attrs="", download="") %}
   {%- set tag = "a" if href else "button" -%}
   <{{ tag }}
-    class="btn-primary{% if iconName %} show-icon{% endif %}{% if iconOnly %} btn-primary--icon{% endif %}{% if class %} {{ class }}{% endif %}"
+    class="btn-primary{% if iconName %} show-icon{% endif %}{% if iconOnly %} btn-primary--icon{% endif %}{% if variant %} btn-primary--{{ variant }}{% endif %}{% if class %} {{ class }}{% endif %}"
     {%- if href %} href="{{ href }}"{% else %} type="button"{% endif %}
     {%- if download %} download="{{ download }}" target="_blank" rel="noopener noreferrer"{% endif %}
     {%- if aria %} aria-label="{{ aria }}"{% endif %}

@@ -1,14 +1,20 @@
 {#
   RIGHT PANEL — the Snake board mount.
 
-  Structure only; scripts/snake.js owns all behaviour. The board div is an
-  in-flow spacer that decides how much vertical room the game gets and publishes
-  the grid metrics — the canvas and overlay are positioned over it and bled to
-  the panel edges so cells sit in phase with the background grid.
+  THE GAME NO LONGER RUNS. scripts/snake.js was deleted in the cleanup sweep,
+  so this renders as inert furniture: a board, a score reading 00, and controls
+  that do nothing. It had already been dead well before that — the script
+  guarded on `.layout-right--home`, an id the Phase 0 scaffold renamed to
+  `.panel--right` without updating it, so it returned at its first line on
+  every page it ever loaded on.
 
-  The transport and D-pad buttons are declarative: the script binds by
-  data-snake-action / data-snake-dir, never by DOM order, so these can be
-  reordered or restyled without touching JS.
+  This markup survives only because /projects still includes this partial. It
+  goes when that page is redesigned; the module is on main's history if the
+  game is ever wanted back.
+
+  The transport and D-pad buttons were declarative — bound by
+  data-snake-action / data-snake-dir rather than DOM order — so they are safe
+  to reorder or restyle, and equally safe to delete wholesale.
 #}
 
 {% from "components/icon.njk" import icon %}

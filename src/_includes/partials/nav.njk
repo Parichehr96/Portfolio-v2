@@ -1,29 +1,38 @@
+{% from "components/icon.njk" import icon %}
 {#
   SITE HEADER — Figma 184:13318. Driven by _data/hero.js.
 
   Replaces the v2 floating bottom nav. That bar was a scroll-spy driven by
-  scripts/nav.js; this is plain anchors with no JS at all, so nav.js now finds
-  no .bottom-nav and returns at its first guard. Deleting it belongs to the §9
-  sweep, not here.
+  scripts/nav.js; this is plain anchors with no JS at all. nav.js has since been
+  deleted in the cleanup sweep, along with the site.nav array that fed it —
+  that data is still in _data/site.js and is now unused.
 
   Hrefs are absolute (/#id) rather than bare fragments so the header behaves
   identically on /work/* and /projects, where those sections don't exist.
 
+  TWO OF THE THREE POINT AT NOTHING RIGHT NOW. /#featured-works and /#contact
+  were ids on the old Projects and Footer blocks, both removed in the sweep;
+  they come back when Testimonials (187:2301) and Footer (289:2233) are built.
+  /#about-me was repointed off the timeline's old #all-about-me at the same
+  time and does resolve.
+
   The rule below the header and the rules either side of the container are
   three separate 1px borders in Figma at two different opacities — see
   _nav.css, where they are the only thing the two --fig-rule-* tokens exist for.
+
+  data-theme IS THE LIGHT/DARK VARIANT of 446:37196, rewritten by
+  scripts/header-theme.js as the header passes over each section. It ships as
+  "light" rather than empty so the no-JS render is the correct one for the top
+  of the page rather than a default that happens to be wrong.
+
+  THE LOGO IS AN INLINE SVG, not an <img>, because it has to recolour with that
+  variant and an <img> cannot inherit currentColor — see components/icon.njk.
 #}
 
-<header class="site-header">
+<header class="site-header" data-theme="light">
   <div class="site-header__inner">
     <a class="site-header__logo" href="/">
-      <img
-        class="site-header__mark"
-        src="{{ hero.assetPath }}/{{ hero.header.logo.file }}"
-        alt=""
-        width="{{ hero.header.logo.size }}"
-        height="{{ hero.header.logo.size }}"
-      />
+      {{ icon("logo-mark", size=hero.header.logo.size, class="site-header__mark") }}
       <span class="site-header__name"
         ><strong class="site-header__name-lead">{{ hero.header.name.lead }}</strong
         >{{ hero.header.name.rest }}</span
@@ -33,10 +42,21 @@
     <nav class="site-header__nav" aria-label="Primary">
       <ul class="site-header__links">
         {%- for item in hero.header.links %}
-          <li><a class="site-header__link" href="{{ item.href }}">{{ item.label }}</a></li>
+          <li>
+            {#
+              data-spy carries the bare id so header-theme.js does not have to
+              parse the href — these are absolute (/#id) so the header works on
+              /work/* and /projects, where the sections do not exist and nothing
+              should ever be marked current.
+            #}
+            <a
+              class="site-header__link"
+              href="{{ item.href }}"
+              data-spy="{{ item.href | replace("/#", "") }}"
+            >{{ item.label }}</a>
+          </li>
         {%- endfor %}
       </ul>
-      <a class="site-header__cta" href="{{ hero.header.cta.href }}">{{ hero.header.cta.label }}</a>
     </nav>
   </div>
 </header>

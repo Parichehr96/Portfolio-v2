@@ -4,9 +4,13 @@
   Persists across every section of the homepage. Hidden below 768px, where
   each section renders its own compact identity header instead.
 
-  The canvas is Snake's left-half render target: the game is ONE logical grid
-  whose right half lives in the right panel, so the snake appears to teleport
-  across the middle column. scripts/snake.js owns its size and position.
+  The canvas WAS Snake's left-half render target — the game was one logical
+  grid spanning both panels, so the snake appeared to teleport across the middle
+  column. scripts/snake.js was deleted in the cleanup sweep, so nothing draws
+  into it now and it renders as an empty element. See panel-right.njk.
+
+  The clock markup below is likewise unpopulated: clock.js was rewired to the
+  About section's data-clock-* hooks and no longer looks for #panel-clock.
 #}
 
 <aside class="panel panel--left">

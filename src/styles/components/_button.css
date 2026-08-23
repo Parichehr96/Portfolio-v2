@@ -36,3 +36,52 @@
   opacity: 0.35;
   pointer-events: none;
 }
+
+/* SOLID — Figma 184:13749's "Read more" pill. A filled lozenge whose icon sits
+ * in a circular badge of the OPPOSITE colour.
+ *
+ * Every value here is a semantic token, so the variant inverts with whatever
+ * scope it lands in and is not a dark-section special case: on the black My
+ * Work band --text-primary is white and --surface is black, giving a white pill
+ * with a black badge; drop the same button on a light section and it flips to
+ * black-on-white with no extra rule. That is the entire reason it is written
+ * against --surface/--text-primary rather than against --white/--fig-black.
+ *
+ * NO BORDER, unlike the outline variant. The comp's pill is exactly 48 tall
+ * around a 32px badge, which leaves 8px of padding and nothing left over — a
+ * 1px border either side would make it 50 and put every row's button 2px out.
+ * The fill is the edge here, so there is nothing for a border to contribute. */
+.btn-primary--solid {
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  background-color: var(--text-primary);
+  border: 0;
+  color: var(--surface);
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+}
+
+/* Hover reverses the wash: the pill is already the bright element, so raising
+ * it further is not available — it dims instead, which reads as a press. */
+.btn-primary--solid:hover {
+  background-color: var(--text-secondary);
+}
+
+/* The badge. 32px is the comp's, and the icon inside it is 20px — both fixed
+ * rather than em-derived, because a circle that scales with the label stops
+ * being a circle the moment the type step changes. */
+.btn-primary--solid .btn-primary-icon {
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+.btn-primary--solid .btn-primary-icon svg {
+  width: var(--space-4h);
+  height: var(--space-4h);
+}

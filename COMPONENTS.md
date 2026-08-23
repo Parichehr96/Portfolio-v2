@@ -44,18 +44,19 @@ All components are Nunjucks **macros**. Import, then call:
 | Component | Macro(s) | Key props |
 |---|---|---|
 | `icon.njk` | `icon` | `name`, `size`, `rotate`, `title` |
-| `button.njk` | `button` | `label`, `href`, `iconName`, `iconOnly`, `aria` |
+| `button.njk` | `button` | `label`, `href`, `iconName`, `iconOnly`, `variant`, `aria` |
 | `link.njk` | `link` | `text`, `href`, `as`, `external`, `download` |
 | `chip.njk` | `chip`, `chipList` | `text` / `items` |
 | `section-header.njk` | `sectionHeader` | `label`, `id` |
-| `stat-card.njk` | `statCard` | `label`, `value` |
-| `education-card.njk` | `educationCard` | `field`, `credential`, `institution` |
-| `project-card.njk` | `projectCard` | `project` (a `projects.js` entry) |
-| `testimonial-card.njk` | `testimonialCard` | `t`, `clamp` |
-| `milestone-item.njk` | `milestoneYear`, `milestonePanel` | `m`, `index`, `active` |
-| `skill-item.njk` | `skillRow`, `skillCategory` | `s` / `category` |
-| `contrast-pair.njk` | `contrastHead`, `contrastPair` | `pair`, `index` |
-| `carousel.njk` | `carousel` (call block) | `id`, `label`, `loop`, `dots` |
+| `stat.njk` | `stat` | `value`, `label` |
+| `project-card.njk` | `projectCard` | `project` (a `projects.js` entry), `index` |
+
+The cleanup sweep deleted eight components with the v2 homepage —
+`stat-card`, `education-card`, `testimonial-card`, `milestone-item`,
+`skill-item`, `contrast-pair`, `carousel`, and the old fixed-width
+`project-card`. The `project-card.njk` above is a NEW component of the same
+name: a full-width My Work row, sharing no markup with the carousel slide it
+replaced. Both are recoverable from main's history.
 
 Each file's header comment is the authoritative prop list. Three contracts are
 easy to get wrong and worth repeating here:
@@ -66,9 +67,11 @@ easy to get wrong and worth repeating here:
 - **`icon`** — the only place raw `<svg>` is allowed. The chevron is drawn on a
   28-unit viewBox and everything else on 24; the macro handles that, callers
   never should.
-- **`carousel`** — invoked with `{% call %}`, one child element per slide.
-  `loop=true` clones the edge slides; `loop=false` clamps and hides the arrows
-  when nothing overflows.
+- **`button(variant="solid")`** — a FILLED pill with a circular icon badge,
+  used by the My Work rows. A variant prop rather than a caller-supplied class,
+  because `class` is for placement only; a second look belongs in `_button.css`
+  where every caller gets the same one. `scripts/button-fill.js` skips it — the
+  dashed overlay has nothing to draw on a filled edge.
 
 ### Adding a component
 
@@ -103,23 +106,28 @@ animation in one place rather than per component.
 
 | File | Shape | Notes |
 |---|---|---|
-| `site.js` | object | identity, SEO, socials, contact, nav, analytics |
-| `projects.js` | array | `featured` drives the homepage subset |
-| `testimonials.js` | array | full quote text; the card clamps it |
-| `milestones.js` | array | order = chronology; length drives the scroll runway |
-| `skills.js` | array of groups | |
-| `stats.js` | array | exactly three — the grid is 3-up |
-| `education.js` | array | |
-| `principles.js` | array | "How I Think"; numbering derived from index |
+| `site.js` | object | identity, SEO, socials, contact, analytics |
+| `hero.js` | object | header + hero copy and board geometry |
+| `about.js` | object | About Me copy; re-maps `stats.js` rather than restating it |
+| `work.js` | object | the My Work heading, and nothing else |
+| `projects.js` | array | `featured` drives the subset; `card` drives My Work |
+| `stats.js` | array | exactly three — consumed by `about.js` |
+| `testimonials.js` | array | kept for the 187:2301 rebuild; nothing renders it today |
 
-Two ordering contracts you can break by accident:
+Four data files are currently ORPHANED — `milestones.js`, `skills.js`,
+`education.js`, `principles.js`. Their sections were removed with the v2
+homepage and no template reads them. They are content rather than code, so the
+sweep left them in place; delete them once it is clear none of the copy is
+being reused.
 
-- **`site.nav` must stay in document order.** `scripts/nav.js` highlights the
-  last target whose top has crossed the line. Reordering the array without
-  reordering the page breaks the highlight silently.
-- **`milestones.js` order is chronology**, and its `length` sets `--tl-count`
-  on the runway. Adding a milestone lengthens the scroll automatically — that
-  number is never hardcoded again.
+Ordering contracts:
+
+- **`projects.js` order is display order.** The `workCards` collection filters
+  it but never sorts, so My Work renumbers 01/02/03 from array position. The
+  number is passed to the component rather than stored on the project, which is
+  what keeps reordering a one-line data edit.
+- **`site.nav` no longer has one.** It fed `scripts/nav.js`, which the cleanup
+  sweep deleted along with the bottom nav; the array is now unused.
 
 ---
 

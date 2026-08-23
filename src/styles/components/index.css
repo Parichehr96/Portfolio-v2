@@ -6,22 +6,22 @@
  *
  * One @import per component keeps the mapping to _includes/components/ exact —
  * if you add foo.njk, add _foo.css here and nowhere else.
+ *
+ * TWO ENTRIES HAVE NO COMPONENT and are correct anyway: _panel.css and
+ * _snake.css style partials/panel-left.njk and panel-right.njk, which the
+ * homepage dropped in the cleanup sweep but /projects still includes. They go
+ * when that page is redesigned, not before.
  */
 @import "_button.css";
 @import "_link.css";
 @import "_chip.css";
 @import "_section-header.css";
-@import "_stat-card.css";
 @import "_project-card.css";
-@import "_testimonial-card.css";
-@import "_milestone-item.css";
-@import "_skill-item.css";
-@import "_contrast-pair.css";
-@import "_carousel.css";
 @import "_panel.css";
 @import "_nav.css";
 @import "_footer.css";
 @import "_hero.css";
+@import "_work.css";
 @import "_about.css";
 @import "_snake.css";
 @import "_case-study.css";

@@ -1,0 +1,33 @@
+{#
+  MY WORK — Figma 184:13749. The comp's three rows: ONTON, Challenquiz,
+  Connect2WOW.
+
+  THE ONE DARK BAND on the page, and the inversion lives entirely in the .work
+  scope in tokens.css — this file and _work.css never name a colour.
+
+  Renders the FEATURED projects that have card copy — `card`, not `status`, is
+  what puts a project here. THOSE ARE NOT THE SAME SET: row 03 is Connect2WOW,
+  which has no case study, while Ezam Part has a published one and no row. The
+  comp decides this section; the filter follows the comp rather than second-
+  guessing it, and a project moves in or out by gaining or losing a `card`.
+
+  The heading is the site's two-tone pattern — regular word, bold word — the
+  same shape as the hero's "I'm Pari." and About's "About Me".
+#}
+
+{% from "components/project-card.njk" import projectCard %}
+
+<section class="work" id="featured-works" data-header-theme="dark">
+  <div class="work__inner">
+    <h2 class="work__heading">
+      <span class="work__heading-lead">{{ work.heading.lead }}</span>
+      <span class="work__heading-rest">{{ work.heading.rest }}</span>
+    </h2>
+
+    <div class="work__rows">
+      {%- for p in collections.workCards %}
+        {{ projectCard(p, loop.index) }}
+      {%- endfor %}
+    </div>
+  </div>
+</section>

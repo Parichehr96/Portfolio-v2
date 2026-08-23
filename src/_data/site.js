@@ -115,14 +115,47 @@ module.exports = {
   // ---- Third party ----------------------------------------------------------
   analytics: { ga4: "G-JXCBH3PH93", vercel: true },
   /* Figtree everywhere, DM Mono for the Snake readout, Ribeye Marrow for the
-     single word "Designer" in the hero.
+     single word "Designer" in the hero, Caveat for the hero's handwritten
+     "Pull a card out to read".
+
+     CAVEAT STANDS IN FOR FIGMA HAND. The comp sets that line in Figma Hand
+     (367:42807), which ships inside the Figma app and is not licensable as a
+     webfont — so the exported arrow-pull.svg is the arrow ONLY and the words
+     are live HTML. Caveat is the nearest freely-available hand face at a
+     similar weight and slant. Swap the family in --font-hand if a licensed
+     Figma Hand file ever arrives; nothing else has to change.
 
      WEIGHT 700 IS LOAD-BEARING: the hero sets "Pari.", "Product" and the folder
      card titles bold. Without it in this list the browser synthesises a faux
      bold, which is visibly wrong next to the real 600. Roboto was dropped here
      when the comp moved to Figtree — nothing references it any more. */
   fonts:
-    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=DM+Mono:wght@400&family=Ribeye+Marrow&display=swap",
+    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Caveat:wght@400;500&family=DM+Mono:wght@400&family=Ribeye+Marrow&display=swap",
+
+  // ---- Footer — Figma 275:57838 ---------------------------------------------
+  // The two link columns the comp does NOT already have data for. "Case
+  // studies" is not here on purpose: it is collections.workCards, so the footer
+  // and the My Work section can never list a different three.
+  footer: {
+    heading: "You made it to the end!",
+    tagline: "If this sparked something, tell me. I'd love to talk.",
+    siteName: "Pari\u2019s Portfolio",
+    titles: {
+      caseStudies: "Case studies",
+      moreWorks: "More works",
+      getInTouch: "Get in touch",
+    },
+    // Behance and Dribbble reuse the URLs already in contactGroups rather than
+    // restating them. MEDIUM HAS NO URL: the comp lists it but no Medium
+    // account appears anywhere in this file or in `sameAs`, so it renders as
+    // plain text rather than a link to a guess. Add the url and it becomes a
+    // link with no template change.
+    moreWorks: [
+      { name: "Behance", url: "https://behance.net/pariuxd", external: true },
+      { name: "Dribbble", url: "https://dribbble.com/pariuxd", external: true },
+      { name: "Medium", url: null },
+    ],
+  },
 
   copyrightYear: 2026,
 };
