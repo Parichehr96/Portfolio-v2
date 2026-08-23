@@ -27,8 +27,10 @@
  *               yet — see Connect2WOW below. null omits the My Work row's Read
  *               more button entirely, which is the right render only when there
  *               is no intended destination at all, not merely no page yet.
- *   motion      { webm, mp4, w, h } looping thumbnail, or null when the encodes
- *               are not on disk. Built by motionFor() below, never hand-written.
+ *   motion      { webm, mp4, poster, loop, w, h } for the animated thumbnail, or
+ *               null when the encodes are not on disk. Built by motionFor()
+ *               below, never hand-written. `loop` is false where the source
+ *               animation does not return to its first frame.
  *   featured    shows in the homepage carousel
  *   status      "live" (case study published) | "soon" (placeholder card)
  *   thumb       card image; null renders the tinted empty Info Section, which is
@@ -54,9 +56,16 @@ const path = require("path");
  * Assets/images/work/README.md.
  */
 const MOTION = {
-  onton: { node: "417:66339", w: 1104, h: 714, durationMs: 6832 },
-  challenquiz: { node: "314:54396", w: 1038, h: 714, durationMs: 19997 },
-  connect2wow: { node: "432:11086", w: 1190, h: 714, durationMs: 6000 },
+  // ONTON DOES NOT LOOP, and that is a property of the animation rather than a
+  // preference. Its keyframes end where they did not begin — the phone finishes
+  // upright, scaled 1.15 and scrolled 462px on, with the star faded out — so
+  // repeating it snaps the whole frame back every 6.8s. Measured, the wrap
+  // changes ~5x more than an ordinary frame step. It is a reveal, so it plays
+  // once and holds its final frame; see scripts/work-motion.js. Set this true
+  // once closing keyframes are added in Figma.
+  onton: { node: "417:66339", w: 1104, h: 714, durationMs: 6832, loop: false },
+  challenquiz: { node: "314:54396", w: 1038, h: 714, durationMs: 19997, loop: true },
+  connect2wow: { node: "432:11086", w: 1190, h: 714, durationMs: 6000, loop: true },
 };
 
 // Repo-root Assets/, not src/Assets — see the note in .eleventy.js on why the
@@ -77,6 +86,8 @@ function motionFor(slug) {
   return {
     webm: has.webm ? webm : null,
     mp4: has.mp4 ? mp4 : null,
+    poster: "/Assets/images/work/" + slug + "-card.jpg",
+    loop: spec.loop,
     w: spec.w,
     h: spec.h,
   };

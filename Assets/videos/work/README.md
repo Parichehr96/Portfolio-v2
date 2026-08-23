@@ -10,12 +10,16 @@ Drop the encodes in, rebuild, and the loops appear — no code change.
 
 | Slug | Figma node | Native | Duration | Encode |
 |---|---|---|---|---|
-| `onton` | `417:66339` Thumbnail_ONTON | 1210 × 782 | 6.832s | 1104 × 714 |
+| `onton` | `417:66339` Thumbnail_ONTON | 1210 × 782 | 6.832s | 1104 × 714 |ᴬ
 | `challenquiz` | `314:54396` Thumbnail_Challenquiz | 1270 × 874 | 19.997s | 1038 × 714 |
 | `connect2wow` | `432:11086` Thumbnail_WOW | 1270 × 762 | 6.000s | 1190 × 714 |
 
+ᴬ **ONTON does not loop.** Its keyframes end where they did not begin, so it is
+rendered as a play-once reveal that holds its last frame — see the MOTION table
+in `src/_data/projects.js`. Add closing keyframes in Figma and flip `loop` back.
+
 Each produces three files: `<slug>-card.webm`, `<slug>-card.mp4`, and
-`<slug>-card.png` (the poster, which lands in `Assets/images/work/`).
+`<slug>-card.jpg` (the poster, which lands in `Assets/images/work/`).
 
 ## Producing them
 

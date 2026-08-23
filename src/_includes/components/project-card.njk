@@ -21,6 +21,10 @@
   found encodes on disk. Both branches carry .work-card__image so _work.css
   sizes them with one rule and the box keeps its own aspect-ratio either way.
 
+  `loop` IS CONDITIONAL. ONTON's source animation does not return to its first
+  frame, so looping it snaps; it plays once and holds instead. See the MOTION
+  table in projects.js.
+
   NO `autoplay` ATTRIBUTE ON THE VIDEO, deliberately. scripts/work-motion.js
   owns playback so it can check prefers-reduced-motion BEFORE anything moves or
   is fetched; `autoplay` would start the loop the moment the file was parsed and
@@ -52,17 +56,24 @@
         reflows if the column ratio ever changes. The loops follow the same
         rule at their own native widths.
       #}
-      {%- set poster = "/Assets/images/work/" + project.slug + "-card.png" %}
       {%- if project.motion %}
+        {#
+          `poster` IS DEFERRED VIA data-poster, not set here. The attribute has
+          no lazy counterpart, so a real `poster=` downloads on first paint for
+          a section most visitors never scroll to — work-motion.js assigns it
+          once the row is within 400px of the viewport. The cost is that a
+          no-JS visitor gets the media box's background instead of the still;
+          for a decorative thumbnail that is the right side of the trade.
+        #}
         <video
           class="work-card__image"
           data-work-motion
-          poster="{{ poster }}"
+          data-poster="{{ project.motion.poster }}"
           width="{{ project.motion.w }}"
           height="{{ project.motion.h }}"
           role="img"
           aria-label="{{ project.title }} — interface screens"
-          loop
+          {% if project.motion.loop %}loop{% endif %}
           muted
           playsinline
           preload="none"
@@ -75,7 +86,7 @@
       {%- else %}
         <img
           class="work-card__image"
-          src="{{ poster }}"
+          src="/Assets/images/work/{{ project.slug }}-card.jpg"
           alt="{{ project.title }} — interface screens"
           width="{{ 692 }}"
           height="{{ 476 }}"

@@ -1,25 +1,31 @@
-/* MY WORK — the looping case-study thumbnails.
+/* MY WORK — the animated case-study thumbnails.
  *
- * Each row's <video> ships with preload="none" and, deliberately, NO autoplay
- * attribute. This file is the only thing that ever starts one. That inversion
- * is the whole design: `autoplay` fires as soon as the element is parsed, which
- * is before any script can read prefers-reduced-motion, so a reduced-motion
- * visitor would see a frame or two of movement and a wasted megabyte before we
- * could pause it. Owning playback here means the reduced-motion path never
- * starts a request at all — the poster is simply what the page is.
+ * Each row's <video> ships with preload="none", no poster attribute and,
+ * deliberately, no autoplay. This file is the only thing that ever starts one
+ * or fetches a byte for one. That inversion is the whole design: `autoplay`
+ * fires as soon as the element is parsed, which is before any script can read
+ * prefers-reduced-motion, so a reduced-motion visitor would see a frame or two
+ * of movement and a wasted megabyte before we could pause it. Owning playback
+ * here means the reduced-motion path never starts a request at all.
  *
- * OFF-SCREEN ROWS ARE PAUSED, not left spinning. Three loops decoding at once
- * for a section that shows one row at a time is work the visitor's battery pays
- * for and never sees. The observer's 25% threshold means a row commits to
- * playing only once a quarter of it is actually on screen, so a fast scroll
- * past the section does not start-and-stop all three in sequence.
+ * TWO OBSERVERS, because loading and playing want different moments. The
+ * poster should already be there when the row arrives, so it loads on a 400px
+ * margin — early, while the row is still below the fold. Playback should start
+ * only once the row is actually being looked at, so it waits for a quarter of
+ * it to be on screen. One observer cannot be both without either fetching too
+ * late or playing to nobody.
  *
- * EVERY play() IS CAUGHT. It rejects for reasons that are all normal here — the
- * encode is missing (projects.js gates on the file existing, but a half-copied
- * Assets/ dir would still get through), the tab is backgrounded, or the browser
- * declined the gesture-free start. In every one of those the poster is already
- * on screen and is the correct thing to leave there, so there is nothing to
- * handle and nothing worth logging.
+ * NOT EVERY ROW LOOPS. ONTON's animation is a reveal whose keyframes end
+ * somewhere different from where they began, so repeating it snaps the frame
+ * back; it carries no `loop` attribute and must hold its final frame instead.
+ * That needs an explicit guard, because HTMLMediaElement.play() on an ended
+ * video seeks back to zero and starts again — exactly the restart we are
+ * avoiding. See the MOTION table in _data/projects.js.
+ *
+ * EVERY play() IS CAUGHT. It rejects for reasons that are all normal here — a
+ * missing encode, a backgrounded tab, a browser declining a gesture-free start.
+ * In each case the poster is already on screen and is the right thing to leave
+ * there, so there is nothing to handle and nothing worth logging.
  */
 (function (window, document) {
   "use strict";
@@ -29,24 +35,55 @@
   );
   if (!videos.length) return;
 
-  // Reduced motion: leave every poster where it is and touch neither the
-  // network nor the decoder. Checked once, like hero-icons.js — a visitor who
-  // flips the OS setting mid-page gets it on the next load.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var hasIO = "IntersectionObserver" in window;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- Poster --------------------------------------------------------------
+  // Runs for everyone, reduced motion included: the still IS the reduced-motion
+  // presentation, so it is the one thing that must load either way.
+  function showPoster(video) {
+    var src = video.getAttribute("data-poster");
+    if (src && !video.poster) video.poster = src;
+  }
+
+  if (hasIO) {
+    var posterObserver = new window.IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          showPoster(entry.target);
+          posterObserver.unobserve(entry.target); // one fetch per row, ever
+        });
+      },
+      { rootMargin: "400px 0px" }
+    );
+    videos.forEach(function (video) {
+      posterObserver.observe(video);
+    });
+  } else {
+    videos.forEach(showPoster);
+  }
+
+  // ---- Playback ------------------------------------------------------------
+  // Reduced motion stops here: posters are in place above, and no video byte is
+  // ever requested. Checked once, like hero-icons.js — a visitor who flips the
+  // OS setting mid-page gets it on the next load.
+  if (reduced) return;
 
   function play(video) {
+    // A non-looping row that has finished is done. Calling play() here would
+    // rewind it to the start, which is the snap the missing `loop` avoids.
+    if (!video.loop && video.ended) return;
     var started = video.play();
     if (started && started.catch) started.catch(function () {});
   }
 
-  // No IntersectionObserver: play all three rather than none. The pause
-  // optimisation is a nicety; the loops themselves are the feature.
-  if (!("IntersectionObserver" in window)) {
+  if (!hasIO) {
     videos.forEach(play);
     return;
   }
 
-  var observer = new window.IntersectionObserver(
+  var playObserver = new window.IntersectionObserver(
     function (entries) {
       entries.forEach(function (entry) {
         var video = entry.target;
@@ -58,7 +95,7 @@
   );
 
   videos.forEach(function (video) {
-    observer.observe(video);
+    playObserver.observe(video);
   });
 
   // A hidden tab already throttles rAF, but a paused <video> stops decoding

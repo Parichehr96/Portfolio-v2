@@ -50,7 +50,7 @@ SCALE="scale=-2:${HEIGHT}:flags=lanczos"
 
 WEBM="$VID_DIR/${SLUG}-card.webm"
 MP4="$VID_DIR/${SLUG}-card.mp4"
-POSTER="$IMG_DIR/${SLUG}-card.png"
+POSTER="$IMG_DIR/${SLUG}-card.jpg"
 
 echo "→ $SLUG"
 
@@ -74,9 +74,14 @@ ffmpeg -hide_banner -loglevel error -y -i "$SRC" \
   -c:v libx264 -crf 25 -preset slow -profile:v high -level 4.0 \
   -vf "$SCALE" -pix_fmt yuv420p -an -movflags +faststart "$MP4"
 
-# Poster: first frame, at the same scale.
+# Poster: first frame, at the same scale. JPEG, not PNG — these frames are
+# photographic (gradients, device mockups, UI screenshots) and PNG stores them
+# at 3-7x the size for no visible gain: ONTON's was 573 KB as PNG against 78 KB
+# here. It matters more than a normal thumbnail would because `poster` has no
+# lazy attribute of its own, so without the deferral in work-motion.js every
+# byte would land on first paint.
 ffmpeg -hide_banner -loglevel error -y -i "$SRC" \
-  -vf "$SCALE" -frames:v 1 "$POSTER"
+  -vf "$SCALE" -frames:v 1 -q:v 4 "$POSTER"
 
 printf '  %-28s %s\n' "$(basename "$WEBM")" "$(du -h "$WEBM" | cut -f1)"
 printf '  %-28s %s\n' "$(basename "$MP4")" "$(du -h "$MP4" | cut -f1)"

@@ -9,9 +9,16 @@ which is why the box holds its aspect-ratio rather than being sized by the image
 
 | File | Source | Encode |
 |---|---|---|
-| `onton-card.png` | frame 0 of `onton-card.mp4` | 1104 × 714 |
-| `challenquiz-card.png` | frame 0 of `challenquiz-card.mp4` | 1038 × 714 |
-| `connect2wow-card.png` | frame 0 of `connect2wow-card.mp4` | 1190 × 714 |
+| `onton-card.jpg` | frame 0 of `onton-card.mp4` | 1104 × 714 |
+| `challenquiz-card.jpg` | frame 0 of `challenquiz-card.mp4` | 1038 × 714 |
+| `connect2wow-card.jpg` | frame 0 of `connect2wow-card.mp4` | 1190 × 714 |
+
+**JPEG, not PNG.** These frames are photographic — gradients, device mockups,
+UI screenshots — and PNG stored them at 3–7× the size for no visible gain
+(ONTON: 573 KB as PNG, 78 KB here; 980 KB → 211 KB across the three). It matters
+more than for a normal thumbnail because `poster` has no lazy attribute, which
+is why work-motion.js assigns it from `data-poster` on approach rather than the
+markup carrying a real `poster=`.
 
 **These come out of the video, not out of a separate Figma export.** The poster
 has to be the exact frame the loop begins on, or the thumbnail visibly jumps the
