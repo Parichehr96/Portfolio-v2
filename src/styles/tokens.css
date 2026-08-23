@@ -48,6 +48,10 @@
   --fig-rule-strong-on-dark: rgba(255, 255, 255, 0.16);
   /* Grays/Gray 2 in Figma — the secondary text colour on the dark band. */
   --fig-gray-on-dark: #AEAEB2;
+  /* Figma "labels / vibrant / controls / tertiary". A second grey-on-dark, and
+     deliberately not a reuse of the one above: the footer sets it against pure
+     black where #AEAEB2 sits too low, so the comp lifts it. 275:57809. */
+  --fig-gray-tertiary-on-dark: #BFBFBF;
 
   /* ---- 2. SEMANTICS -------------------------------------------------------
      What components actually reference. Retheme by repointing these. */
@@ -121,6 +125,11 @@
   --m3-body-lg-leading: 24px;
   --m3-body-lg-tracking: 0.5px;
 
+  /* 452:58558 — the footer copyright, and so far the only user of this step. */
+  --m3-body-sm: 12px;
+  --m3-body-sm-leading: 16px;
+  --m3-body-sm-tracking: 0.4px;
+
   /* Added for About Me — these three steps of the M3 scale were not needed by
      the header or hero, so they were never declared. Values are the same Figma
      variables the rest of this block came from. */
@@ -161,6 +170,10 @@
   --leading-tight: 1.1;
   --leading-snug: 1.3;
   --leading-normal: 1.55;
+  /* 452:57540 — the footer column titles are 20px at exactly 1.5 (30px). Close
+     enough to --leading-normal to look like a rounding, which is why it is its
+     own token: 1.55 would put them a pixel off the comp. */
+  --leading-half: 1.5;
 
   --tracking-tight: -0.02em;
   --tracking-wide: 0.08em;
@@ -354,6 +367,11 @@
   /* 410:66313/19/25 — each Nav_item is 71 wide, three of them 32 apart across
      the 277px Nav Links frame. Applied as a MIN width, not a fixed one. */
   --header-item-w: 71px;
+
+  /* FOOTER — 275:57838. The menu items and the copyright both sit at 70% in the
+     comp; hover takes an item to full. One token because they are the same
+     decision (recede against the black), not a coincidence of two values. */
+  --footer-dim: 0.7;
   --hero-board-w: 1272;
   --hero-board-h: 668;
   --hero-folder-width: 56.6038%;  /* 720 of 1272 */
@@ -438,6 +456,33 @@
   --border-subtle: var(--fig-rule-soft-on-dark);
   --border-strong: var(--fig-rule-strong-on-dark);
 
+  --accent: var(--white);
+
+  font-family: var(--font-sans);
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+/* FOOTER — 275:57838. A second dark band, but NOT the same palette as .work,
+   which is why it gets its own block rather than joining the selector above.
+   The comp pitches its text one step off the My Work band: headings are gray-6
+   (#F2F2F7) rather than pure white, and the body grey is #BFBFBF rather than
+   #AEAEB2. Pure white is reserved for the menu items, which is what makes them
+   read as the only interactive thing down there. */
+.site-footer {
+  --surface: var(--fig-black);
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --text-primary: var(--fig-elevated);
+  --text-secondary: var(--fig-gray-tertiary-on-dark);
+  --text-muted: var(--fig-gray-tertiary-on-dark);
+  --text-inverse: var(--fig-black);
+
+  --border-subtle: var(--fig-rule-soft-on-dark);
+  --border-strong: var(--fig-rule-strong-on-dark);
+
+  /* The menu items and their hover rules. Pure white against the headings'
+     off-white is the comp's own hierarchy, not an approximation of it. */
   --accent: var(--white);
 
   font-family: var(--font-sans);

@@ -124,5 +124,30 @@ module.exports = {
   fonts:
     "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=DM+Mono:wght@400&family=Ribeye+Marrow&display=swap",
 
+  // ---- Footer — Figma 275:57838 ---------------------------------------------
+  // The two link columns the comp does NOT already have data for. "Case
+  // studies" is not here on purpose: it is collections.workCards, so the footer
+  // and the My Work section can never list a different three.
+  footer: {
+    heading: "You made it to the end!",
+    tagline: "If this sparked something, tell me. I'd love to talk.",
+    siteName: "Pari\u2019s Portfolio",
+    titles: {
+      caseStudies: "Case studies",
+      moreWorks: "More works",
+      getInTouch: "Get in touch",
+    },
+    // Behance and Dribbble reuse the URLs already in contactGroups rather than
+    // restating them. MEDIUM HAS NO URL: the comp lists it but no Medium
+    // account appears anywhere in this file or in `sameAs`, so it renders as
+    // plain text rather than a link to a guess. Add the url and it becomes a
+    // link with no template change.
+    moreWorks: [
+      { name: "Behance", url: "https://behance.net/pariuxd", external: true },
+      { name: "Dribbble", url: "https://dribbble.com/pariuxd", external: true },
+      { name: "Medium", url: null },
+    ],
+  },
+
   copyrightYear: 2026,
 };

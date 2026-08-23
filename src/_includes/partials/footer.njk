@@ -1,58 +1,108 @@
 {#
-  FOOTER → CONTACT — ONE element with two states.
+  SITE FOOTER — Figma 275:57838. The last section on the page.
 
-  .footer-stage is a fixed-height scroll runway so the card can expand without
-  reflowing the document; #footer-cta is the single card that morphs between its
-  default (a short link row) and expanded (full contact directory) state.
-  #contact wraps it as the anchor target for every "Contact" link.
+  REPLACES THE v2 EXPANDING CONTACT CARD that stood here. That was one element
+  with two states, driven by initFooterContact() in scripts/app.js and a
+  fixed-height scroll runway; the comp has neither. The JS guards on
+  #footer-stage / #footer-cta and returns at its first line now that those ids
+  are gone, so it degrades without an edit — deleting it belongs to the sweep
+  that removes the rest of the v2 leftovers, not here.
 
-  Both states read from site.js: contactPrimary for the collapsed row,
-  contactGroups for the expanded directory. They cannot drift apart, which they
-  had in the old markup — the collapsed row linked linkedin.com/in/... while the
-  expanded row used a different casing of the same URL.
+  #contact LIVES ON THIS ELEMENT. It is what every "Contact" link in the header
+  has pointed at since the redesign started, and until now it resolved to
+  nothing on the homepage — scripts/header-theme.js skips links whose target is
+  missing, so the header's Contact item has never been able to show its selected
+  state. It can from here on, with no change to that script: it was written to
+  observe whichever targets actually exist.
+
+  data-header-theme="dark" for the same reason .work carries it — the header
+  passes over this band and has to invert while it does.
+
+  THE THREE COLUMNS ARE NOT THREE HARDCODED LISTS. Case studies is
+  collections.workCards, so the footer cannot list a different three than the My
+  Work section; Get in touch is site.contactPrimary, the same array the old
+  footer's collapsed row used. Only More works is footer-specific data.
+
+  A LINK OR PLAIN TEXT, per item. Medium appears in the comp but no Medium
+  account exists in site.js, so its url is null and it renders as a <span>.
+  button.njk's habit of degrading a missing href to a dead <button> is exactly
+  what is being avoided — a menu item that looks live and goes nowhere is worse
+  than one that plainly is not a link.
 #}
 
-{% from "components/section-header.njk" import sectionHeader %}
+<footer class="site-footer" id="contact" data-header-theme="dark">
+  <div class="site-footer__inner">
+    <div class="site-footer__row">
 
-<div id="contact">
-  <div class="footer-stage" id="footer-stage">
-    <div class="footer-card" id="footer-cta">
+      {# Left half: the sign-off at the top, the copyright pinned to the bottom.
+         The comp's `justify-between` over a full-height column is what puts the
+         copyright on the baseline of the tallest link column rather than a
+         fixed distance below the tagline. #}
+      <div class="site-footer__intro">
+        <div class="site-footer__intro-text">
+          <h2 class="site-footer__heading">{{ site.footer.heading }}</h2>
+          <p class="site-footer__tagline">{{ site.footer.tagline }}</p>
+        </div>
 
-      <div class="footer-default">
-        <div class="footer-row">
-          <span class="footer-title">Contact Me</span>
-          <div class="footer-links">
-            {%- for l in site.contactPrimary %}
-              <a class="footer-link" href="{{ l.url }}"{% if l.external %} target="_blank" rel="noopener"{% endif %}>{{ l.name }}</a>
+        <p class="site-footer__copyright">
+          <span>&copy; {{ site.copyrightYear }},</span>
+          <span>{{ site.footer.siteName }}</span>
+        </p>
+      </div>
+
+      {# Right half: three equal columns. #}
+      <div class="site-footer__columns">
+
+        <nav class="site-footer__column" aria-label="{{ site.footer.titles.caseStudies }}">
+          <h3 class="site-footer__column-title">{{ site.footer.titles.caseStudies }}</h3>
+          <ul class="site-footer__list">
+            {%- for p in collections.workCards %}
+              <li>
+                {%- if p.url %}
+                  <a class="site-footer__item" href="{{ p.url }}">{{ p.title }}</a>
+                {%- else %}
+                  <span class="site-footer__item">{{ p.title }}</span>
+                {%- endif %}
+              </li>
             {%- endfor %}
-          </div>
-        </div>
+          </ul>
+        </nav>
+
+        <nav class="site-footer__column" aria-label="{{ site.footer.titles.moreWorks }}">
+          <h3 class="site-footer__column-title">{{ site.footer.titles.moreWorks }}</h3>
+          <ul class="site-footer__list">
+            {%- for l in site.footer.moreWorks %}
+              <li>
+                {%- if l.url %}
+                  <a
+                    class="site-footer__item"
+                    href="{{ l.url }}"
+                    {%- if l.external %} target="_blank" rel="noopener noreferrer"{% endif %}
+                  >{{ l.name }}</a>
+                {%- else %}
+                  <span class="site-footer__item">{{ l.name }}</span>
+                {%- endif %}
+              </li>
+            {%- endfor %}
+          </ul>
+        </nav>
+
+        <nav class="site-footer__column" aria-label="{{ site.footer.titles.getInTouch }}">
+          <h3 class="site-footer__column-title">{{ site.footer.titles.getInTouch }}</h3>
+          <ul class="site-footer__list">
+            {%- for l in site.contactPrimary %}
+              <li>
+                <a
+                  class="site-footer__item"
+                  href="{{ l.url }}"
+                  {%- if l.external %} target="_blank" rel="noopener noreferrer"{% endif %}
+                >{{ l.name }}</a>
+              </li>
+            {%- endfor %}
+          </ul>
+        </nav>
+
       </div>
-
-      <div class="footer-expanded" aria-hidden="true">
-        <div class="contact-groups">
-          {%- for group in site.contactGroups %}
-            <div class="contact-group">
-              {{ sectionHeader(group.label) }}
-              <div class="contact-list">
-                {%- for l in group.links %}
-                  <a class="contact-row" href="{{ l.url }}"{% if l.external %} target="_blank" rel="noopener"{% endif %}>
-                    <span class="contact-name">{{ l.name }}</span>
-                    <span class="contact-leader" aria-hidden="true"></span>
-                    <span class="contact-value">{{ l.value }}</span>
-                  </a>
-                {%- endfor %}
-              </div>
-            </div>
-          {%- endfor %}
-        </div>
-
-        <div class="contact-bottom">
-          <span class="contact-copy">© {{ site.copyrightYear }}, {{ site.name }}</span>
-          <span class="contact-updated" id="last-updated"></span>
-        </div>
-      </div>
-
     </div>
   </div>
-</div>
+</footer>
