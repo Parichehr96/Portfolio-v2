@@ -78,7 +78,14 @@ module.exports = {
   /* Cards, in DOM order = z-order (1 backmost, 3 frontmost), matching the Figma
      layer stack inside 390:469.
 
-     x/y are each card's CENTRE as a percentage of the 475 x 263 cards frame,
+     x/y are each card's CENTRE, and w/h its SIZE, both as a percentage of the
+     cards frame. The three are genuinely different sizes in the comp — card 2
+     is shorter and narrower than the two it sits between — and the CSS drove
+     one shared box until now, which left the outer pair ~49px short. Size rides
+     the same custom-property seam as x/y/rotate, so there is still exactly one
+     rule for all three cards.
+
+     x/y are a percentage of the 475 x 263 cards frame,
      derived from the Figma ROTATION BOUNDING BOX (centre = x + w/2, y + h/2) —
      not the box's top-left, which is what makes the ±rotation fan around a
      stable pivot. Verified against fresh figma-dev-mode metadata; every value
@@ -93,6 +100,8 @@ module.exports = {
       // centres genuinely differ. These are back on the comp as instructed.
       x: 23.9615,
       y: 65.5741,
+      w: 47.9091,
+      h: 100.0,
       rotate: -11.31,
     },
     {
@@ -113,6 +122,8 @@ module.exports = {
       ],
       x: 50.0788,
       y: 43.0600,
+      w: 40.1613,
+      h: 86.0927,
       rotate: 0,
     },
     {
@@ -120,6 +131,8 @@ module.exports = {
       body: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales.",
       x: 84.4549,
       y: 49.8618,
+      w: 47.7418,
+      h: 99.7020,
       rotate: 11.02,
     },
   ],

@@ -351,8 +351,12 @@
   position: absolute;
   left: var(--card-x);
   top: var(--card-y);
-  width: 49.9402%;
-  height: 83.8084%;
+  /* PER-CARD SIZE, on the same seam as --card-x/--card-y/--card-rot. The comp
+     gives all three different boxes (card 2 is the short one); one shared size
+     left the outer pair ~49px short. Percentages of the cards frame, so they
+     scale with the board like everything else. */
+  width: var(--card-w, 49.9402%);
+  height: var(--card-h, 83.8084%);
   display: flex;
   flex-direction: column;
   gap: 1.25em;
@@ -374,6 +378,15 @@
      hover lift without touching the peek, and the peek settles without having
      to know whether a hover is also in play. Pure translates commute, so their
      order relative to each other carries no meaning.
+
+     --tuck-x/--tuck-y ARE LENGTHS, NOT PERCENTAGES, and that is what makes
+     per-card sizing safe. A percentage in translate() resolves against the
+     element's OWN border box, so once the three cards stopped sharing a size,
+     `-30%` would have lifted each by a different number of pixels and the
+     expanded row would have stepped instead of aligning. Expressed in cqw —
+     1% of the board, the same basis every other measurement here uses — the
+     offsets stay identical for all three at any board size, and they are the
+     same absolute values the old percentages produced on the shared box.
 
      --tuck-rot is a DELTA, not an absolute angle: --card-rot is written inline
      per card by hero.js, and inline styles outrank stylesheet rules, so the
@@ -424,20 +437,20 @@
  * from inside the folder rather than floating free of it. Lift much further and
  * the illusion breaks. */
 .hero-folder.is-expanded .hero-folder__card--1 {
-  --tuck-x: -10%;
-  --tuck-y: -30%;
+  --tuck-x: calc(var(--tuck-step) * -1);
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: -3deg;
   --card-delay: 0ms;
 }
 .hero-folder.is-expanded .hero-folder__card--2 {
-  --tuck-x: 0%;
-  --tuck-y: -30%;
+  --tuck-x: 0;
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: 0deg;
   --card-delay: var(--stagger-folder);
 }
 .hero-folder.is-expanded .hero-folder__card--3 {
-  --tuck-x: 10%;
-  --tuck-y: -30%;
+  --tuck-x: var(--tuck-step);
+  --tuck-y: var(--tuck-rise);
   --tuck-rot: 3deg;
   --card-delay: calc(var(--stagger-folder) * 2);
 }

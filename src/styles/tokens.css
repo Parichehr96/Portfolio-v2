@@ -399,6 +399,13 @@
      Hand; Caveat runs small for its point size, so 18px matches the drawn
      width rather than the nominal one. */
   --hero-hand-size: 18px;
+  /* EXPANDED-STATE OFFSETS, in cqw so they are the same absolute distance for
+     every card. They were ±10% / -30% of each card's own box, which only worked
+     while all three shared one size; these are those exact values measured on
+     that box (23.4621 x 19.8979 cqw), now pinned to the board instead. */
+  --tuck-step: 2.3462cqw;
+  --tuck-rise: -5.9694cqw;
+
   --hero-card-base: 0.845cqw;     /* ≈10.75px at a 1272px board */
 
   /* ---- 3f. Z-INDEX --------------------------------------------------------
