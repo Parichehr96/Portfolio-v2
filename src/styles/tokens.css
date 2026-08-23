@@ -36,6 +36,8 @@
      page stays on the v2 dark palette above until its own phase lands. */
   --fig-black: #000000;
   --fig-ink: #1A1A1A;
+  /* Figma "fills/primary" — the hairline around the hero's expertise pill. */
+  --fig-pill-edge: rgba(120, 120, 120, 0.2);
   --fig-gray: #727272;
   --fig-elevated: #F2F2F7;
   --fig-rule-soft: rgba(0, 0, 0, 0.12);
@@ -105,6 +107,11 @@
      (An earlier pass used Roboto here, from the M3 variables in the original
      Figma; the comp has since moved to Figtree and the two now agree.) */
   --font-outline: "Ribeye Marrow", Georgia, serif;
+  /* The hero's handwritten "Pull a card out to read". Figma sets it in Figma
+     Hand (367:42807), which ships inside the Figma app and is not licensable as
+     a webfont; Caveat is the nearest free hand face. If a licensed Figma Hand
+     file ever lands, changing the family here is the whole swap. */
+  --font-hand: "Caveat", "Bradley Hand", "Segoe Script", cursive;
 
   /* M3 static type scale, values straight from the Figma variables. Each size
      carries its own line-height and tracking because M3 pairs them — using one
@@ -182,6 +189,8 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  /* 432:11655 — the hero's "My Expertise" pill is 12, between md and lg. */
+  --radius-pill-sm: 12px;
   --radius-pill: 999px;
   --border-width: 1px;
   --border-hairline: 0.6px;
@@ -239,9 +248,18 @@
      per-layer lerp with no list-length padding to depend on. */
   --duration-hover: 160ms;
   --hover-lift: -4px;
-  --hero-card-shadow-rest: 0 0 0 0 rgb(0 0 0 / 0), 0 0 0 0 rgb(0 0 0 / 0);
-  --hero-card-shadow-hover: 0 2px 4px -1px rgb(0 0 0 / 0.06),
-    0 10px 24px -6px rgb(0 0 0 / 0.16);
+  /* M3 ELEVATION, the two steps the hero cards move between. Figma binds the
+     resting card to style "M3/Elevation Light/2" (434:11718); step 4 is the
+     hover. Both are two-layer shadows with the same layer COUNT, which is what
+     lets the hover interpolate cleanly rather than popping. */
+  --shadow-2: 0 1px 2px rgb(0 0 0 / 0.30), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --shadow-4: 0 2px 3px rgb(0 0 0 / 0.30), 0 6px 10px 4px rgb(0 0 0 / 0.15);
+
+  /* The cards used to rest on a transparent pair (i.e. no shadow at all) and
+     fade to a soft custom one. The comp has them sitting on elevation 2 from
+     the start, so rest is now a real shadow and hover is a real step up. */
+  --hero-card-shadow-rest: var(--shadow-2);
+  --hero-card-shadow-hover: var(--shadow-4);
 
   /* Idle peek — the one-time invitation. A few seconds after load the frontmost
      card nudges up and settles back, so the cards announce that they move
@@ -270,11 +288,17 @@
   /* Roaming tool icons — see scripts/hero-icons.js. Speeds are px/s, JITTER is
      px/s^2 of random acceleration, EDGE-* describe the soft cushion the icons
      curve away from instead of bouncing off. */
-  --roam-speed-min: 10;
-  --roam-speed-max: 30;
-  --roam-jitter: 40;
-  --roam-edge-margin: 48;
-  --roam-edge-force: 1.5;
+  /* ICON WIGGLE — replaces the roaming physics. Each mark drifts inside a small
+     circle around its Figma resting centre and never leaves it, so the board's
+     composition is fixed and the motion is texture rather than travel.
+
+     TWO FREQUENCIES PER AXIS, not one. A single sine on each axis traces a
+     straight line or a perfect ellipse — both read as machinery. Summing a
+     second, slower wave at an unrelated ratio gives a path that never quite
+     repeats, which is what makes it read as idle drift. The sum is clamped to
+     --wiggle-radius so the guarantee holds however the waves line up. */
+  --wiggle-radius: 20px;
+  --wiggle-period: 7s;
 
   /* Keep-out ellipse. The icons are margin furniture: the centre of the board
      belongs to the folder, the cards (including their expanded lift) and the
@@ -298,10 +322,6 @@
 
      A hard positional projection was tried instead and rejected: it pins icons
      exactly on the boundary and they slide along it, which reads as a wall. */
-  --roam-keepout-x: 0.26;
-  --roam-keepout-y: 0.45;
-  --roam-keepout-force: 500;
-  --roam-keepout-falloff: 0.5;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
@@ -373,8 +393,12 @@
      decision (recede against the black), not a coincidence of two values. */
   --footer-dim: 0.7;
   --hero-board-w: 1272;
-  --hero-board-h: 668;
-  --hero-folder-width: 56.6038%;  /* 720 of 1272 */
+  --hero-board-h: 897; /* 457:58676 — the rebuilt hero board is 1272 x 897. */
+  --hero-folder-width: 67.9245%;  /* 864 of 1272 — re-solved from 457:58676 */
+  /* The handwritten arrow line. Figma's text box is 195 x 24 at 15px in Figma
+     Hand; Caveat runs small for its point size, so 18px matches the drawn
+     width rather than the nominal one. */
+  --hero-hand-size: 18px;
   --hero-card-base: 0.845cqw;     /* ≈10.75px at a 1272px board */
 
   /* ---- 3f. Z-INDEX --------------------------------------------------------

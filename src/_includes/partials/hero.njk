@@ -14,7 +14,7 @@
   the structure the open/drag phase animates. Flattening it to a single export
   would look identical at rest and be impossible to animate afterwards.
 
-  The board is a fixed 1272 × 668 frame in Figma. Everything inside is
+  The board is a fixed 1272 × 897 frame in Figma. Everything inside is
   positioned in PERCENT of that frame (see hero.js), and aspect-ratio holds the
   proportions, so the whole composition scales as one piece.
 
@@ -48,8 +48,39 @@
         {% if not icon.label %}aria-hidden="true"{% endif %}
         draggable="false"
         style="--icon-x: {{ icon.x }}%; --icon-y: {{ icon.y }}%; --icon-size: {{ icon.size }}%"
+        data-hero-icon
       />
     {%- endfor %}
+
+    {#
+      STATIC DECORATION. Nothing here wiggles, drags or animates — hero-icons.js
+      binds only [data-hero-icon], so these are invisible to it. They are pure
+      artwork: the drawn arrow, the small cursor mark, and the two product
+      mockups. alt="" + aria-hidden because none of them carries meaning a
+      screen-reader user is missing; the words beside the arrow do, and those
+      are real text below.
+    #}
+    {%- for d in hero.decor %}
+      <img
+        class="hero__decor hero__decor--{{ d.slug }}"
+        src="{{ hero.assetPath }}/{{ d.file }}"
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+        loading="lazy"
+        decoding="async"
+        style="--decor-x: {{ d.x }}%; --decor-y: {{ d.y }}%; --decor-w: {{ d.w }}%"
+      />
+    {%- endfor %}
+
+    {#
+      THE ARROW'S WORDS ARE LIVE HTML, not part of arrow-pull.svg. Figma sets
+      them in Figma Hand, which cannot be licensed as a webfont, so the export
+      is the arrow alone and this is Caveat standing in. Being real text also
+      means it is selectable and readable by a screen reader, which a baked-in
+      outline would not be.
+    #}
+    <p class="hero__arrow-text" style="--arrow-x: {{ hero.arrowText.x }}%; --arrow-y: {{ hero.arrowText.y }}%">{{ hero.arrow.text }}</p>
 
     {#
       THE FLAP IS THE BUTTON. It cannot wrap the whole folder: the cards are
@@ -79,7 +110,18 @@
             style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-rot: {{ card.rotate }}deg"
           >
             <h2 class="hero-folder__card-title">{{ card.title }}</h2>
-            <p class="hero-folder__card-body">{{ card.body }}</p>
+            {#- Card 2's body is two toned spans (434:11721); the others are one
+                plain string. Rendering both shapes here keeps the split in the
+                data rather than hardcoding a second template branch per card. -#}
+            <p class="hero-folder__card-body">
+              {%- if card.body is string -%}
+                {{ card.body }}
+              {%- else -%}
+                {%- for part in card.body -%}
+                  <span class="hero-folder__card-body--{{ part.tone }}">{{ part.text }}</span>
+                {%- endfor -%}
+              {%- endif -%}
+            </p>
           </article>
         {%- endfor %}
       </div>
@@ -96,11 +138,28 @@
           aria-hidden="true"
           draggable="false"
         />
+        {#
+          TWO SPANS, AND THEY ARE NOT INTERCHANGEABLE.
+
+          [data-folder-label] stays visually hidden and stays the BUTTON'S
+          ACCESSIBLE NAME — hero-folder.js swaps it between "Pull the cards out"
+          and "Put the cards back" on every toggle, so it has to describe the
+          action, not the section.
+
+          The visible pill is "My Expertise" (432:11655), which never changes.
+          Putting the two on one element would have the toggle relabel the
+          artwork to "Put the cards back" the first time it is clicked. It is
+          aria-hidden because the button already has its name from the span
+          above, and it sits INSIDE the button so the pill is part of the
+          toggle's hit area rather than a dead patch in the middle of it.
+        #}
         <span class="hero-folder__label" data-folder-label>Pull the cards out</span>
+        <span
+          class="hero-folder__expertise"
+          aria-hidden="true"
+          style="--label-x: {{ hero.expertisePos.x }}%; --label-y: {{ hero.expertisePos.y }}%"
+        >{{ hero.expertise.label }}</span>
       </button>
     </div>
-
-    <p class="hero__years">{{ hero.caption.years }}</p>
-    <p class="hero__hint">{{ hero.caption.hint }}</p>
   </div>
 </section>
