@@ -107,7 +107,7 @@
         {%- for card in hero.cards %}
           <article
             class="hero-folder__card hero-folder__card--{{ loop.index }}"
-            style="--card-x: {{ card.x }}%; --card-y: {{ hero.cardCentreY }}%; --card-rot: {{ card.rotate }}deg"
+            style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-rot: {{ card.rotate }}deg"
           >
             <h2 class="hero-folder__card-title">{{ card.title }}</h2>
             {#- Every card's body is two toned spans in Figma — an opening

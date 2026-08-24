@@ -86,22 +86,21 @@ module.exports = {
      w' = w·cosθ + h·sinθ reproduces both to 0.02px from 240 x 260 at the
      angles below. Rotation belongs in the transform chain, never in the size.
 
-     y IS SHARED, x IS PER-CARD. With one uniform size, a single centre-Y
-     top-aligns all three (unrotated tops all land on 267.24 board px). The
-     file staggers card 1 some 68px lower, which breaks the mirror the fan is
-     built on — this is the same call an earlier pass made and recorded as
-     "levelled for symmetry". Only the horizontal placement is per-card.
+     x AND y ARE BOTH PER-CARD, and y follows the comp's stagger rather than
+     levelling it. The three do not share a top edge: card 2 sits highest, card
+     3 some 20px below it and card 1 some 68px below that. A previous pass
+     levelled them for symmetry and this deliberately undoes that — the fan as
+     drawn is the design.
 
-     x is a percentage of the cards frame,
+     THIS IS NOT THE SIZE BUG RETURNING. Per-card *size* was wrong because
+     Figma reports rotated bounding boxes; per-card *position* is real, and the
+     two are independent. Size stays uniform in the CSS; only x/y/rotate vary.
+
+     x and y are percentages of the cards frame,
      derived from the Figma ROTATION BOUNDING BOX (centre = x + w/2, y + h/2) —
      not the box's top-left, which is what makes the ±rotation fan around a
      stable pivot. Verified against fresh figma-dev-mode metadata; every value
      below is within 0.05 board units of the comp. */
-  // The shared centre-Y for every card, as a percentage of the cards frame.
-  // 130 / 302.0045 — the middle of a 260-tall card whose top sits at 0, which
-  // is what top-aligns all three once they are one size.
-  cardCentreY: 43.0457,
-
   cards: [
     {
       title: "Interaction and UX Design",
@@ -116,6 +115,8 @@ module.exports = {
         },
       ],
       x: 23.9558,
+      // 465.29 board px — the lowest of the three, as the comp draws it.
+      y: 65.5791,
       rotate: -11.31,
     },
     {
@@ -135,6 +136,9 @@ module.exports = {
         },
       ],
       x: 50.0870,
+      // 397.24 board px — the highest; the only card whose top is the
+      // frame's own top, because it is the one that is not rotated.
+      y: 43.0457,
       rotate: 0,
     },
     {
@@ -150,6 +154,8 @@ module.exports = {
         },
       ],
       x: 84.4478,
+      // 417.78 board px — between the other two.
+      y: 49.8472,
       rotate: 11.02,
     },
   ],
