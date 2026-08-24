@@ -107,12 +107,12 @@
         {%- for card in hero.cards %}
           <article
             class="hero-folder__card hero-folder__card--{{ loop.index }}"
-            style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-w: {{ card.w }}%; --card-h: {{ card.h }}%; --card-rot: {{ card.rotate }}deg"
+            style="--card-x: {{ card.x }}%; --card-y: {{ hero.cardCentreY }}%; --card-rot: {{ card.rotate }}deg"
           >
             <h2 class="hero-folder__card-title">{{ card.title }}</h2>
-            {#- Card 2's body is two toned spans (434:11721); the others are one
-                plain string. Rendering both shapes here keeps the split in the
-                data rather than hardcoding a second template branch per card. -#}
+            {#- Every card's body is two toned spans in Figma — an opening
+                sentence in ink, the remainder muted. A plain string is still
+                accepted so a future single-tone card needs no new branch. -#}
             <p class="hero-folder__card-body">
               {%- if card.body is string -%}
                 {{ card.body }}

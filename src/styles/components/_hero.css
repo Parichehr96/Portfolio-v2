@@ -351,12 +351,13 @@
   position: absolute;
   left: var(--card-x);
   top: var(--card-y);
-  /* PER-CARD SIZE, on the same seam as --card-x/--card-y/--card-rot. The comp
-     gives all three different boxes (card 2 is the short one); one shared size
-     left the outer pair ~49px short. Percentages of the cards frame, so they
-     scale with the board like everything else. */
-  width: var(--card-w, 49.9402%);
-  height: var(--card-h, 83.8084%);
+  /* ONE SIZE FOR ALL THREE — 240 x 260 in the comp, as a percentage of the
+     cards frame. There is deliberately no per-card override: Figma reports the
+     ROTATED BOUNDING BOX for cards 1 and 3 (286x302, 285x301), and a previous
+     pass wrote those in as real dimensions, stretching both. Size is uniform;
+     only rotation differs, and rotation lives in the transform below. */
+  width: 40.1615%;
+  height: 86.0914%;
   display: flex;
   flex-direction: column;
   gap: 1.25em;

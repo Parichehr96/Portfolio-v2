@@ -78,38 +78,52 @@ module.exports = {
   /* Cards, in DOM order = z-order (1 backmost, 3 frontmost), matching the Figma
      layer stack inside 390:469.
 
-     x/y are each card's CENTRE, and w/h its SIZE, both as a percentage of the
-     cards frame. The three are genuinely different sizes in the comp — card 2
-     is shorter and narrower than the two it sits between — and the CSS drove
-     one shared box until now, which left the outer pair ~49px short. Size rides
-     the same custom-property seam as x/y/rotate, so there is still exactly one
-     rule for all three cards.
+     ALL THREE CARDS ARE 240 x 260. There is no per-card size and there must not
+     be one: an earlier pass read Figma's w/h for cards 1 and 3 as their own
+     dimensions and hardcoded 286x302 and 285x301, which stretched them ~19%
+     wide and ~16% tall. Those numbers are ROTATED BOUNDING BOXES —
+     get_metadata reports the axis-aligned box for a rotated node, and
+     w' = w·cosθ + h·sinθ reproduces both to 0.02px from 240 x 260 at the
+     angles below. Rotation belongs in the transform chain, never in the size.
 
-     x/y are a percentage of the 475 x 263 cards frame,
+     y IS SHARED, x IS PER-CARD. With one uniform size, a single centre-Y
+     top-aligns all three (unrotated tops all land on 267.24 board px). The
+     file staggers card 1 some 68px lower, which breaks the mirror the fan is
+     built on — this is the same call an earlier pass made and recorded as
+     "levelled for symmetry". Only the horizontal placement is per-card.
+
+     x is a percentage of the cards frame,
      derived from the Figma ROTATION BOUNDING BOX (centre = x + w/2, y + h/2) —
      not the box's top-left, which is what makes the ±rotation fan around a
      stable pivot. Verified against fresh figma-dev-mode metadata; every value
      below is within 0.05 board units of the comp. */
+  // The shared centre-Y for every card, as a percentage of the cards frame.
+  // 130 / 302.0045 — the middle of a 260-tall card whose top sits at 0, which
+  // is what top-aligns all three once they are one size.
+  cardCentreY: 43.0457,
+
   cards: [
     {
       title: "Interaction and UX Design",
-      body: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
-      // 457:58676 centres, converted from board % to cards-frame %. NOTE: the
-      // previous pass levelled this card with card 3 because the comp's own
-      // fan is uneven — card 1 is 302 tall against card 2's 260, so their
-      // centres genuinely differ. These are back on the comp as instructed.
-      x: 23.9615,
-      y: 65.5741,
-      w: 47.9091,
-      h: 100.0,
+      body: [
+        {
+          text: "I design the flows, states, and micro-decisions that make complex products feel obvious.",
+          tone: "lead",
+        },
+        {
+          text: " Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
+          tone: "muted",
+        },
+      ],
+      x: 23.9558,
       rotate: -11.31,
     },
     {
       title: "Product Redesign",
-      // TWO SPANS, not one string. 434:11721 splits this card's body: the first
-      // sentence sits at #1a1a1a and the remainder drops to #727272. The other
-      // two cards are a single colour, so `body` stays a plain string there and
-      // the template renders whichever shape it is given.
+      // TWO SPANS, like all three. Every card splits its body the same way in
+      // Figma — an opening sentence at #1a1a1a, the remainder at #727272 — and
+      // only this one was built that way at first. The template still accepts a
+      // plain string, so a future single-tone card needs no new branch.
       body: [
         {
           text: "I take products that grew organically, inconsistent patterns, bloated flows, unclear hierarchy, and rebuild them around how people actually use them. ",
@@ -120,19 +134,22 @@ module.exports = {
           tone: "muted",
         },
       ],
-      x: 50.0788,
-      y: 43.0600,
-      w: 40.1613,
-      h: 86.0927,
+      x: 50.0870,
       rotate: 0,
     },
     {
       title: "Strategic Design",
-      body: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales.",
-      x: 84.4549,
-      y: 49.8618,
-      w: 47.7418,
-      h: 99.7020,
+      body: [
+        {
+          text: "I connect design decisions to product and business goals.",
+          tone: "lead",
+        },
+        {
+          text: " I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales.",
+          tone: "muted",
+        },
+      ],
+      x: 84.4478,
       rotate: 11.02,
     },
   ],
