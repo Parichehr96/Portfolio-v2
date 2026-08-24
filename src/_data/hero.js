@@ -86,11 +86,16 @@ module.exports = {
      w' = w·cosθ + h·sinθ reproduces both to 0.02px from 240 x 260 at the
      angles below. Rotation belongs in the transform chain, never in the size.
 
-     x AND y ARE BOTH PER-CARD, and y follows the comp's stagger rather than
-     levelling it. The three do not share a top edge: card 2 sits highest, card
-     3 some 20px below it and card 1 some 68px below that. A previous pass
-     levelled them for symmetry and this deliberately undoes that — the fan as
-     drawn is the design.
+     THE FAN IS SYMMETRIC, AND IT IS MATCHED BY EYE, NOT BY COORDINATE. Card 2
+     sits upright and highest; cards 1 and 3 drop the same ~20px below it and
+     tilt equal-and-opposite either side. Card 1 is placed as card 3's mirror.
+
+     Figma's metadata disagrees: it puts card 1 some 47px below card 3. That
+     reading is an artefact of how rotated nodes report their position — the
+     same class of error that made cards 1 and 3 appear to be different SIZES
+     — and the rendered comp plainly shows the two outer cards at nearly the
+     same height. Where the numbers and the picture disagree here, the picture
+     wins. Do not "correct" these back to the reported centres.
 
      THIS IS NOT THE SIZE BUG RETURNING. Per-card *size* was wrong because
      Figma reports rotated bounding boxes; per-card *position* is real, and the
@@ -114,10 +119,20 @@ module.exports = {
           tone: "muted",
         },
       ],
+      // HEIGHT AND TILT MIRROR CARD 3; X DOES NOT. Figma's reported centre-Y
+      // sinks this card ~47px below card 3, which the rendered comp plainly
+      // contradicts — the two outer cards sit at nearly the same height there.
+      // So y and rotate are taken as card 3's mirror.
+      //
+      // X IS THE FILE'S OWN VALUE and was already right. Mirroring it too
+      // (15.73%) pushed the card left until its title cleared card 2 entirely;
+      // in the comp that title is half-hidden behind card 2, which is what
+      // 23.96% reproduces. The fan is symmetric in height and tilt, and
+      // deliberately tighter on the left — matched against the render, not
+      // read off the coordinates.
       x: 23.9558,
-      // 465.29 board px — the lowest of the three, as the comp draws it.
-      y: 65.5791,
-      rotate: -11.31,
+      y: 49.8472,
+      rotate: -11.02,
     },
     {
       title: "Product Redesign",
