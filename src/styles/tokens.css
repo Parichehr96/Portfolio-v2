@@ -399,6 +399,12 @@
      Hand; Caveat runs small for its point size, so 18px matches the drawn
      width rather than the nominal one. */
   --hero-hand-size: 18px;
+  /* The two mockup filename captions (450:37859 / 392:14769). The comp sets
+     them at 12.8px on its 1272 board; expressed in cqw so each label keeps its
+     proportion to the mockup directly above it however wide the board gets — a
+     fixed px size would grow and shrink against its own artwork. Same model as
+     --hero-card-base below. */
+  --hero-caption-size: 1.0063cqw;
   /* EXPANDED-STATE OFFSETS, in cqw so they are the same absolute distance for
      every card. They were ±10% / -30% of each card's own box, which only worked
      while all three shared one size; these are those exact values measured on

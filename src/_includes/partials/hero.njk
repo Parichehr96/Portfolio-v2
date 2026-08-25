@@ -55,8 +55,10 @@
     {#
       STATIC DECORATION. Nothing here wiggles, drags or animates — hero-icons.js
       binds only [data-hero-icon], so these are invisible to it. They are pure
-      artwork: the drawn arrow, the small cursor mark, and the two product
-      mockups. alt="" + aria-hidden because none of them carries meaning a
+      artwork: the drawn arrow and the two product mockups. There is no cursor
+      mark here — the board's live CSS cursor is the comp's arrow, and a static
+      copy beside it would be a frozen duplicate (see hero.js).
+      alt="" + aria-hidden because none of them carries meaning a
       screen-reader user is missing; the words beside the arrow do, and those
       are real text below.
     #}
@@ -71,6 +73,26 @@
         decoding="async"
         style="--decor-x: {{ d.x }}%; --decor-y: {{ d.y }}%; --decor-w: {{ d.w }}%"
       />
+    {%- endfor %}
+
+    {#
+      THE MOCKUP FILENAMES (450:37859, 392:14769). The comp writes each mockup's
+      source filename under it. They were skipped once as Figma annotations —
+      they are not; they are text nodes in the board and they render.
+
+      LIVE TEXT, NOT BAKED INTO THE PNGs. Keeping them out of the artwork means
+      they stay crisp at every board size, cost nothing to correct, and leave
+      the mockup exports untouched.
+
+      aria-hidden, like the mockups they sit under: the name of an asset file is
+      not something a screen-reader user is missing.
+    #}
+    {%- for c in hero.captions %}
+      <p
+        class="hero__caption hero__caption--{{ c.slug }}"
+        aria-hidden="true"
+        style="--caption-x: {{ c.x }}%; --caption-y: {{ c.y }}%; --caption-w: {{ c.w }}%"
+      >{{ c.text }}</p>
     {%- endfor %}
 
     {#

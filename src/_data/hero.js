@@ -182,13 +182,7 @@ module.exports = {
      THESE ARE CENTRES, NOT TOP-LEFTS, which changed with this rebuild. The CSS
      now pulls each icon back by half its own box, so the wiggle orbits the
      Figma position rather than starting from its corner — and an icon's
-     resting point stays put whatever its size.
-
-     THE CURSOR ARROW IS BACK. It was dropped in 7a1425b to avoid a frozen
-     second arrow next to the board's live CSS cursor. The comp wants both, and
-     they no longer collide: this one renders at 0.3x (14.4px against the
-     cursor's 48px native), which reads as a small drawn mark rather than a
-     duplicate pointer. */
+     resting point stays put whatever its size. */
   icons: [
     { slug: "notion", label: "Notion", file: "icon-notion.svg", x: 13.76, y: 11.48, size: pctX(56) },
     { slug: "figma", label: "Figma", file: "icon-figma.svg", x: 83.02, y: 10.81, size: pctX(56) },
@@ -198,6 +192,16 @@ module.exports = {
 
   /* Static decoration. None of this wiggles, drags or animates — it is artwork
      the composition needs and the interaction layer must not touch.
+
+     THERE IS NO CURSOR MARK IN THIS LIST, AND ONE MUST NOT BE ADDED. A static
+     arrow has been put here twice on the reading that the comp draws one —
+     dropped in 7a1425b, reinstated, and now dropped again. 457:58676 has no
+     such element: its only arrow is arrow-pull.svg, the drawn one with the
+     handwritten line beside it. What the comp does show is the POINTER as an
+     arrow, and _hero.css supplies that by swapping the OS cursor inside
+     .hero__board. That is why icon-cursor stays on disk with no entry here —
+     it is the source for the live cursor image, not for a decoration. Drawing
+     both puts a frozen arrow on the board next to the one that moves.
 
      THE TWO MOCKUPS ARE PNG, NOT SVG. Pari's exports embed rasters: the phone
      was a 9.7 MB SVG for a 95 x 207 slot. Rendered to PNG at 3x they are 105 KB
@@ -212,13 +216,6 @@ module.exports = {
       w: pctX(59.66),
     },
     {
-      slug: "cursor",
-      file: "icon-cursor.svg",
-      x: 71.31,
-      y: 47.38,
-      w: pctX(14.4),
-    },
-    {
       slug: "campaign",
       file: "campaign_landing.png",
       x: 9.94,
@@ -231,6 +228,44 @@ module.exports = {
       x: 84.21,
       y: 85.02,
       w: pctX(242.41),
+    },
+  ],
+
+  /* MOCKUP CAPTIONS — 450:37859 and 392:14769. The comp writes each mockup's
+     source filename under it. An earlier pass read these as Figma annotations
+     and skipped them; they are drawn text nodes inside 457:58676 like any other
+     label in the board, and they render.
+
+     x IS A CENTRE, y IS A TOP, and the mismatch is deliberate. Every other
+     floating element here is centred on its Figma point, and x still is —
+     each caption's centre-x is exactly its mockup's own centre-x (126.5 and
+     1071.21 board px), which is what keeps the label under the artwork at any
+     board width. But a Figma text node is TOP-aligned inside its box: these
+     sit in fixed 20px boxes carrying a 19.2px line, so centring the two boxes
+     on each other drops the text ~0.4px below where the comp draws it.
+     Anchoring by the top removes that, and makes y literally the node's own
+     reported y — 214.496 inside a Phone Mockup at 392, and 145.280 inside a
+     Container at 694 — which is a value anyone can check against the file.
+
+     Each box top clears the artwork above it by exactly 8px.
+
+     PURELY DECORATIVE. A caption that names an asset file is not information a
+     screen-reader user is missing — the mockups themselves are aria-hidden for
+     the same reason, and these are rendered the same way. */
+  captions: [
+    {
+      slug: "campaign",
+      text: "campaign_landing.svg",
+      x: pctX(126.5), // centre-x — the campaign mockup's own
+      y: pctY(606.496), // top — 392 (Phone Mockup) + 214.496 (450:37859)
+      w: pctX(131),
+    },
+    {
+      slug: "website",
+      text: "website_landing.svg",
+      x: pctX(1071.2052), // centre-x — the website mockup's own
+      y: pctY(839.28), // top — 694 (Container) + 145.280 (392:14769)
+      w: pctX(242.4104),
     },
   ],
 
