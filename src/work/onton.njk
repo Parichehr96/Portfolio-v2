@@ -1,20 +1,282 @@
 ---
-layout: layouts/case-study.njk
+layout: layouts/case-onton.njk
 title: "ONTON · Case Study"
-description: "Every other user was dropping at the exact same point. A Web3 consumer product on Telegram, grown from 87 to 1,500 daily active users."
+description: "Every other user was dropping at the same point. Cutting Telegram Mini App event creation from four steps to two, without losing the on-chain edge."
 project: onton
 permalink: /work/onton/
 ---
 {#
-  CONTENT NOT YET PORTED.
+  ONTON — Figma 193:4660. Nine bands between the site header and the site
+  footer. Every string comes from _data/onton.js; this file decides only
+  structure and order.
 
-  The written case study currently lives in the repo-root onton.html (plus
-  onton.js for its interactions). This file is the Eleventy shell it moves into:
-  front matter, layout and metadata are wired and correct — only the prose and
-  figures below still need to come across.
+  THE BAND IS ONE SHAPE, REPEATED. Each <section> is full-bleed with a top rule,
+  120px gutters and a 1272 inner column carrying the side rules — the same page
+  frame the homepage and the statement section use, continued down a second
+  page. Content sits 32px inside those rules. Three bands deviate on padding and
+  each says so where it does; the comp is deliberate about those seams, not
+  sloppy.
 
-  Port it as semantic HTML into this block; the layout supplies the header, the
-  progress bar, the meta list and the footer, so paste ONLY the body sections.
-  Images already resolve: /Assets/images/onton/... is passthrough-copied.
+  HEADINGS ARE A REAL OUTLINE. The cover line is the h1, each band title is an
+  h2, and the four facet labels and the persona key sit at h3 under them.
+  Nothing here is a heading for its size alone.
 #}
-<p class="case-placeholder">Case study content to be ported from <code>onton.html</code>.</p>
+
+{% from "components/media-slot.njk" import mediaSlot, markSlot %}
+
+{# ---- 1. COVER — 193:4672 ------------------------------------------------ #}
+<section class="case-band case-band--cover" aria-labelledby="onton-title">
+  <div class="case-band__inner">
+    <p class="case-eyebrow">
+      {{ markSlot(onton.cover.mark) }}
+      <span class="case-eyebrow__label">{{ onton.cover.eyebrow }}</span>
+    </p>
+
+    {#- The cover runs the full width of the ruled column, not inset 32 like the
+        prose. It is the only element on the page that touches both rules. -#}
+    {{ mediaSlot(onton.cover.media) }}
+
+    <div class="case-cover__row">
+      <h1 class="case-cover__headline" id="onton-title">{{ onton.cover.headline }}</h1>
+      <p class="case-cover__intro">
+        {%- for part in onton.cover.intro -%}
+          <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+        {%- endfor -%}
+      </p>
+    </div>
+  </div>
+</section>
+
+{# ---- 2. CHALLENGE / OBJECTIVE / ROLE / OUTCOME — 193:4689 --------------- #}
+{#
+  NO BAND PADDING HERE. The four cells carry their own 60px, so adding the
+  band's would double it at the top and bottom of the grid.
+#}
+<section class="case-band case-band--facets" aria-label="Project summary">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="case-facets">
+      {%- for f in onton.facets %}
+        <div class="case-facet">
+          <h3 class="case-facet__label">{{ f.label }}</h3>
+          <p class="case-facet__body">
+            {%- if f.body is string -%}
+              {{ f.body }}
+            {%- else -%}
+              {%- for part in f.body -%}
+                <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+              {%- endfor -%}
+            {%- endif -%}
+          </p>
+        </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---- 3. COMPETITOR ANALYSIS — 193:5341 --------------------------------- #}
+<section class="case-band" aria-labelledby="onton-competitors">
+  <div class="case-band__inner">
+    <div class="case-headrow">
+      <h2 class="case-heading" id="onton-competitors">{{ onton.competitors.heading }}</h2>
+      <p class="case-deck">
+        {%- for part in onton.competitors.deck -%}
+          {%- if part.em -%}<strong>{{ part.text }}</strong>{%- else -%}{{ part.text }}{%- endif -%}
+        {%- endfor -%}
+      </p>
+    </div>
+
+    <div class="case-panel">
+      <table class="case-table">
+        <thead>
+          <tr>
+            {%- for col in onton.competitors.columns %}
+              <th scope="col">
+                {#- The comp's first header cell is blank — see the note in
+                    onton.js. Blank on screen, named for a screen reader. -#}
+                {%- if col %}{{ col }}{% else %}<span class="case-table__hidden">Product</span>{% endif -%}
+              </th>
+            {%- endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for row in onton.competitors.rows %}
+            <tr{% if row.highlight %} class="is-subject"{% endif %}>
+              <th scope="row" class="case-table__product">
+                {{ markSlot(row.mark) }}
+                <span>{{ row.name }}</span>
+              </th>
+              {%- for cell in row.cells %}
+                <td>{{ cell }}</td>
+              {%- endfor %}
+            </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="case-note">{{ onton.competitors.takeaway }}</p>
+  </div>
+</section>
+
+{# ---- 4. THE OLD FLOW — 193:5389 ---------------------------------------- #}
+<section class="case-band" aria-labelledby="onton-oldflow">
+  <div class="case-band__inner">
+    <div class="case-split">
+      {{ mediaSlot(onton.oldFlow.media) }}
+      <div class="case-split__text">
+        <h2 class="case-heading" id="onton-oldflow">{{ onton.oldFlow.heading }}</h2>
+        <p class="case-deck">{{ onton.oldFlow.body }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 5. THE REAL PROBLEM — 193:5395 ------------------------------------ #}
+{# Flush like the facets: both halves run the full height of the band. #}
+<section class="case-band case-band--problem" aria-labelledby="onton-problem">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="case-problem">
+      <div class="case-problem__text">
+        <h2 class="case-heading" id="onton-problem">{{ onton.problem.heading }}</h2>
+        <div class="case-problem__body">
+          <p class="case-problem__lead">{{ onton.problem.lead }}</p>
+          {%- for half in onton.problem.halves %}
+            <p class="case-problem__half">{{ half }}</p>
+          {%- endfor %}
+        </div>
+      </div>
+
+      <div class="case-problem__clusters">
+        {%- for c in onton.problem.clusters %}
+          <figure class="case-cluster">
+            <p class="case-cluster__label">{{ c.label }}</p>
+            <blockquote class="case-cluster__quote">
+              {{ c.quote }}<cite>{{ c.attribution }}</cite>
+            </blockquote>
+            <figcaption class="case-cluster__takeaway">{{ c.takeaway }}</figcaption>
+          </figure>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 6. WHAT CHANGED — 271:42681 --------------------------------------- #}
+{# The diagram runs to the band's bottom edge — no closing padding in the comp. #}
+<section class="case-band case-band--flush-end" aria-labelledby="onton-changed">
+  <div class="case-band__inner">
+    <div class="case-headrow">
+      <h2 class="case-heading" id="onton-changed">{{ onton.changed.heading }}</h2>
+      <p class="case-deck">{{ onton.changed.deck }}</p>
+    </div>
+    {{ mediaSlot(onton.changed.media) }}
+  </div>
+</section>
+
+{# ---- 7. HOW — 193:5401 -------------------------------------------------- #}
+{# One line of copy against a full-height phone. The media is the argument. #}
+<section class="case-band" aria-labelledby="onton-how">
+  <div class="case-band__inner">
+    <div class="case-showcase">
+      <div class="case-showcase__text">
+        <h2 class="case-heading" id="onton-how">{{ onton.how.heading }}</h2>
+      </div>
+      <div class="case-showcase__media">
+        {{ mediaSlot(onton.how.media) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 8. ...AND WHY — 271:42680 ----------------------------------------- #}
+{#
+  NO DECK, and no top padding. The comp repeats section 6's line here word for
+  word — a copy-paste left in the file — and it appears once, on section 6.
+  The band opens flush against section 7's closing padding.
+#}
+<section class="case-band case-band--flush-start" aria-labelledby="onton-why">
+  <div class="case-band__inner">
+    <div class="case-headrow">
+      <h2 class="case-heading" id="onton-why">{{ onton.why.heading }}</h2>
+    </div>
+
+    <div class="case-why">
+      <div class="case-panel">
+        <table class="case-table case-table--why">
+          <thead>
+            <tr>
+              {%- for col in onton.why.columns %}
+                <th scope="col">{{ col }}</th>
+              {%- endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {#- data-persona is the hover cross-highlight's hook, and it is the
+                same value that picks the dot's colour — one identity, used by
+                both. See the cross-highlight block in _case-onton.css. -#}
+            {%- for row in onton.why.rows %}
+              <tr data-persona="{{ row.persona }}">
+                <th scope="row">{{ row.change }}</th>
+                <td>{{ row.quote }}</td>
+                {#-
+                  A DOT AND NOTHING ELSE, which is what the comp shows. The
+                  strings Figma holds in these cells are all opacity 0.
+
+                  The persona's name rides along visually hidden: on screen the
+                  colour carries the mapping, but a screen-reader user would
+                  otherwise get an empty cell, and "which persona" is the entire
+                  point of the column.
+                -#}
+                <td class="case-table__persona">
+                  <span class="case-dot case-dot--{{ row.persona }}" aria-hidden="true"></span>
+                  <span class="case-table__hidden">
+                    {%- for p in onton.why.personas -%}
+                      {%- if p.slug == row.persona %}{{ p.name | trim | replace(":", "") }}{% endif -%}
+                    {%- endfor -%}
+                  </span>
+                </td>
+              </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="case-personas">
+        <h3 class="case-personas__heading">{{ onton.why.personaKeyHeading }}</h3>
+        <ul class="case-personas__list">
+          {%- for p in onton.why.personas %}
+            <li class="case-personas__item" data-persona="{{ p.slug }}">
+              <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
+              <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
+            </li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 9. REFLECTION — 193:5407 ------------------------------------------ #}
+<section class="case-band" aria-labelledby="onton-reflection">
+  <div class="case-band__inner">
+    <div class="case-headrow case-headrow--stacked">
+      <h2 class="case-heading" id="onton-reflection">{{ onton.reflection.heading }}</h2>
+      <p class="case-deck">{{ onton.reflection.deck }}</p>
+    </div>
+
+    <dl class="case-stats">
+      {%- for s in onton.reflection.stats %}
+        <div class="case-stat">
+          <dt class="case-stat__value">{{ s.value }}</dt>
+          <dd class="case-stat__label">{{ s.label }}</dd>
+        </div>
+      {%- endfor %}
+    </dl>
+
+    <div class="case-closing">
+      {%- for para in onton.reflection.closing %}
+        <p class="case-closing__para">{{ para }}</p>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,123 @@
+{#
+  MEDIA SLOT — one figure that is either the real asset or a labelled stand-in.
+
+  WHY IT SWITCHES ON `present` RATHER THAN ON A FLAG SOMEBODY MAINTAINS.
+  _data/onton.js resolves `present` by looking for the file on disk, so the only
+  thing that turns a placeholder into artwork is the artwork arriving. There is
+  no second edit to forget, and no state where the page claims an image exists
+  and 404s. Same contract the My Work thumbnails already use.
+
+  THE BOX IS THE SAME SIZE EITHER WAY. Both branches sit inside one figure
+  carrying the Figma box as an aspect-ratio, so a placeholder reserves exactly
+  the space its asset will occupy and dropping the file in shifts nothing on the
+  page. That is the whole point of sizing these from the comp rather than from
+  whatever the eventual export happens to be.
+
+  VIDEO IS WIRED FOR work-motion.js AND NOTHING ELSE. data-work-motion is the
+  attribute that script already binds site-wide: poster deferred via data-poster
+  and fetched 400px before the slot arrives, playback started only at 25%
+  visibility, paused off-screen and on a hidden tab, and — the reason there is
+  no `autoplay` here — never started at all under prefers-reduced-motion, where
+  the poster is the presentation. Adding autoplay would defeat that, since it
+  fires before any script can read the media query.
+
+  `loop` IS PER SLOT. A clip that ends where it started should loop; one that
+  draws itself in and finishes somewhere else must not, or the finished frame
+  snaps back to an empty one. The second kind pairs `loop: false` with
+  data-motion-replay so it holds its last frame and runs again on re-entry —
+  see the note in work-motion.js for why the replay is opt-in.
+
+  macros:
+    mediaSlot(m)  m is an image()/video() entry from _data/onton.js
+    markSlot(m)   m is a mark() entry — small inline logos and persona markers
+#}
+
+{% macro mediaSlot(m, modifier="") %}
+  <figure
+    class="case-media{% if modifier %} case-media--{{ modifier }}{% endif %}"
+    style="--media-w: {{ m.w }}; --media-h: {{ m.h }}"
+  >
+    {%- if m.present and m.kind == "image" %}
+      <img
+        class="case-media__asset"
+        src="{{ m.url }}"
+        alt="{{ m.alt }}"
+        width="{{ m.w | round }}"
+        height="{{ m.h | round }}"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+    {%- elif m.present and m.kind == "video" %}
+      <video
+        class="case-media__asset"
+        data-work-motion
+        {% if m.posterPresent %}data-poster="{{ m.poster }}"{% endif %}
+        width="{{ m.w | round }}"
+        height="{{ m.h | round }}"
+        role="img"
+        aria-label="{{ m.alt }}"
+        {% if m.loop %}loop{% endif %}
+        {%- if m.replayOnEnter %} data-motion-replay{% endif %}
+        muted
+        playsinline
+        preload="none"
+        disablepictureinpicture
+        draggable="false"
+      >
+        <source src="{{ m.webm }}" type="video/webm" />
+        <source src="{{ m.mp4 }}" type="video/mp4" />
+      </video>
+    {%- else %}
+      {#
+        THE STAND-IN. Deliberately plain and deliberately loud: it names the
+        type and the exact path the asset must land at, so the page itself is
+        the drop-in instruction. It is aria-hidden with a role-less wrapper —
+        a screen-reader user gains nothing from hearing a filename that does not
+        exist yet, and the surrounding prose already carries the meaning.
+      #}
+      <div class="case-media__slot" aria-hidden="true">
+        <p class="case-media__label">{{ m.label }}</p>
+        <p class="case-media__path">
+          {%- if m.kind == "video" -%}
+            {{ m.webm }}<br />{{ m.mp4 }}
+          {%- else -%}
+            {{ m.url }}
+          {%- endif -%}
+        </p>
+        <p class="case-media__dims">{{ m.w }} × {{ m.h }}</p>
+      </div>
+    {%- endif %}
+  </figure>
+{% endmacro %}
+
+{#
+  Small marks — the ONTON lockup, the five competitor logos, the persona
+  markers. Same present/placeholder switch, but these sit inline in a line of
+  text rather than in a ratio box, so the stand-in is a square outline at the
+  mark's own size with a title for anyone inspecting it. No initials, no drawn
+  glyph, nothing that could be mistaken for the real logo.
+#}
+{% macro markSlot(m) %}
+  {%- if m.present %}
+    <img
+      class="case-mark"
+      src="{{ m.url }}"
+      alt=""
+      aria-hidden="true"
+      width="{{ m.size }}"
+      height="{{ m.size }}"
+      loading="lazy"
+      decoding="async"
+      draggable="false"
+      style="--mark-size: {{ m.size }}px"
+    />
+  {%- else %}
+    <span
+      class="case-mark case-mark--slot"
+      aria-hidden="true"
+      title="{{ m.label }} — {{ m.url }}"
+      style="--mark-size: {{ m.size }}px"
+    ></span>
+  {%- endif %}
+{% endmacro %}

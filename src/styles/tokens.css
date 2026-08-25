@@ -48,6 +48,18 @@
      tuned rather than derived. */
   --fig-rule-soft-on-dark: rgba(255, 255, 255, 0.12);
   --fig-rule-strong-on-dark: rgba(255, 255, 255, 0.16);
+  /* THE PERSONA ACCENTS — Figma's accents/* variables, used by the ONTON case
+     study's persona key and the dots that tie each row of its Why table to a
+     persona. Named after the Figma variable rather than the persona so they
+     stay recognisable if a second page ever reaches for the same set; the
+     persona-to-colour mapping lives in _case-onton.css, which is the only
+     place that has to change if a persona is recoloured. */
+  --fig-accent-purple: #CB30E0;
+  --fig-accent-orange: #FF8D28;
+  --fig-accent-red: #FF383C;
+  --fig-accent-blue: #0088FF;
+  --fig-accent-green: #34C759;
+
   /* Grays/Gray 2 in Figma — the secondary text colour on the dark band. */
   --fig-gray-on-dark: #AEAEB2;
   /* Figma "labels / vibrant / controls / tertiary". A second grey-on-dark, and
@@ -145,6 +157,14 @@
   --m3-display-md: 45px;
   --m3-display-md-leading: 52px;
   --m3-display-md-tracking: 0;
+
+  /* Added for the case-study cover headline (193:4939). Figma binds it to
+     Static/Display Small for size and leading but takes its tracking from
+     Display MEDIUM — which is 0, the same as this step's own, so the two agree
+     and no separate token is needed to record the oddity. */
+  --m3-display-sm: 36px;
+  --m3-display-sm-leading: 44px;
+  --m3-display-sm-tracking: 0;
 
   --m3-headline-lg: 32px;
   --m3-headline-lg-leading: 40px;
@@ -381,6 +401,14 @@
      finished value here and let the component substitute it verbatim. */
   --work-columns: 594fr 574fr;
 
+  /* ---- 3e-quater. CASE STUDY GEOMETRY ------------------------------------
+     193:4660. Every band on a case study pads 60px top and bottom inside the
+     ruled column. 60 is off the 4px scale — it sits between --space-9 (64) and
+     --space-8 (48) — so it is named here rather than rounded to a neighbour,
+     for the same reason --work-band-pad and --about-head-top are. The 32px
+     content inset either side is --space-6 and needs no token of its own. */
+  --case-band-pad: 60px;
+
   --header-height: 88px; /* 446:37196 — both variants are 1512x88. */
   /* 367:42670 — the mark is 40 square inside a 40-tall Logo frame. */
   --header-mark: 40px;
@@ -579,6 +607,7 @@
 
 .hero,
 .statement,
+.case,
 .about {
   --surface: var(--white);
   --surface-raised: var(--fig-elevated);
