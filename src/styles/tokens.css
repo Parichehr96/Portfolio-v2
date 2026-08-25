@@ -578,6 +578,7 @@
 }
 
 .hero,
+.statement,
 .about {
   --surface: var(--white);
   --surface-raised: var(--fig-elevated);

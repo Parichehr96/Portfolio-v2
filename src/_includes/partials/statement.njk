@@ -1,0 +1,30 @@
+{#
+  STATEMENT — Figma 6:25758. Copy from _data/statement.js.
+
+  THE PAGE FRAME CONTINUES THROUGH THIS SECTION. 185:1994 carries left and
+  right borders, so the 1272 column runs unbroken from the hero above into My
+  Work below. They are pseudo-elements on the section rather than borders on
+  the inner box, exactly as .hero, .about and .work draw theirs — see
+  _statement.css for why.
+
+  data-header-theme="light" because this is a white band: the header has to
+  stay on its light palette while this is the section under it, the same as the
+  hero above and About below.
+
+  NO REVEAL-ON-SCROLL. None of the redesign sections animate in — reveal.js is
+  a v2 leftover at the repo root that base.njk does not load — so this one does
+  not either.
+
+  ONE <p> PER AUTHORED LINE. The break between them is in the comp; the second
+  line's wrap onto a third visual line is not (see statement.js).
+#}
+
+<section class="statement" data-header-theme="light">
+  <div class="statement__inner">
+    <div class="statement__text">
+      {%- for line in statement.lines %}
+        <p class="statement__line">{{ line }}</p>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
