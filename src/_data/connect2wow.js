@@ -57,9 +57,21 @@ function embed(file, w, h, title, natW, natH) {
   };
 }
 
+/* A BRAND MARK — the round logo beside a product name in a table, or the one in
+   the cover eyebrow. Every one of these is drawn inside a circle in the comp,
+   so `shape` says so once here rather than at each of the call sites. The
+   artwork is this case study's, so it lives under this case study. */
 function mark(file, size, label) {
-  const url = "/Assets/images/connect2wow/" + file;
-  return { kind: "mark", url, file, size, label, present: onDisk(url) };
+  const url = "/Assets/images/connect2wow/logos/" + file;
+  return { kind: "mark", url, file, size, label, shape: "circle", present: onDisk(url) };
+}
+
+/* A UI ICON, NOT A LOGO. Square, contained rather than cropped, and identical
+   on every page that has a back link — so it sits in the site's shared icon
+   folder instead of being copied into each case study's. */
+function icon(file, size, label) {
+  const url = "/Assets/images/icons/" + file;
+  return { kind: "mark", url, file, size, label, shape: "icon", present: onDisk(url) };
 }
 
 module.exports = {
@@ -73,7 +85,7 @@ module.exports = {
   cover: {
     backLabel: "Back to home",
     backHref: "/",
-    chevron: mark("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
+    chevron: icon("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
     mark: mark("mark-connect2wow.svg", 32, "SVG — Connect2WOW logo mark, 32×32"),
     eyebrow: "Connect2WOW",
     /* A 2× EXPORT, NOT THE HOMEPAGE CARD. 296:11476 is a monitor mockup on a

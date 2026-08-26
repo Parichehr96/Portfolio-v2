@@ -49,14 +49,33 @@ function video(base, w, h, label, alt, opts) {
    same way the media is, so a missing document shows a labelled slot rather
    than a blank inline frame — which is worse, because a blank iframe looks like
    a broken embed rather than an unfinished one. */
-function embed(file, w, h, title) {
+function embed(file, w, h, title, natW, natH) {
   const url = "/Assets/embeds/challenquiz/" + file;
-  return { kind: "embed", url, w, h, title, present: onDisk(url) };
+  return {
+    kind: "embed", url, w, h, title,
+    // The document's own content size. Defaults to the slot, which means "it
+    // already fits" — see the note in media-slot.njk.
+    natW: natW || w,
+    natH: natH || h,
+    present: onDisk(url),
+  };
 }
 
+/* A BRAND MARK — the round logo beside a product name in a table, or the one in
+   the cover eyebrow. Every one of these is drawn inside a circle in the comp,
+   so `shape` says so once here rather than at each of the call sites. The
+   artwork is this case study's, so it lives under this case study. */
 function mark(file, size, label) {
-  const url = "/Assets/images/challenquiz/" + file;
-  return { kind: "mark", url, file, size, label, present: onDisk(url) };
+  const url = "/Assets/images/challenquiz/logos/" + file;
+  return { kind: "mark", url, file, size, label, shape: "circle", present: onDisk(url) };
+}
+
+/* A UI ICON, NOT A LOGO. Square, contained rather than cropped, and identical
+   on every page that has a back link — so it sits in the site's shared icon
+   folder instead of being copied into each case study's. */
+function icon(file, size, label) {
+  const url = "/Assets/images/icons/" + file;
+  return { kind: "mark", url, file, size, label, shape: "icon", present: onDisk(url) };
 }
 
 module.exports = {
@@ -70,7 +89,7 @@ module.exports = {
   cover: {
     backLabel: "Back to home",
     backHref: "/",
-    chevron: mark("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
+    chevron: icon("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
     mark: mark("mark-challenquiz.svg", 32, "SVG — Challenquiz logo mark, 32×32"),
     eyebrow: "Challenquiz",
     /* THE COVER IS A MARQUEE, which is why it is a video slot and not a still.

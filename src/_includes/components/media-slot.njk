@@ -102,13 +102,28 @@
   still four bands above it.
 #}
 {% macro embedSlot(e, allowfullscreen=false) %}
-  <div class="case-embed" style="--embed-w: {{ e.w }}; --embed-h: {{ e.h }}">
+  {#-
+    THE SLOT IS FIXED; THE DOCUMENT IS SCALED TO FIT IT. An iframe cannot size
+    to its content, so a document even slightly taller than its slot gets an
+    internal scrollbar — which is a scrollbar inside a diagram, and reads as
+    broken. Instead the iframe is given the document's NATURAL size, so nothing
+    inside it ever needs to scroll, and the whole frame is then scaled down to
+    contain within the slot. Nothing is cropped and nothing scrolls.
+
+    natW/natH default to the slot, so an embed that already fits gets scale 1
+    and is untouched — which is every Challenquiz embed and one of these three.
+  -#}
+  <div
+    class="case-embed"
+    style="--embed-w: {{ e.w }}; --embed-h: {{ e.h }}; --nat-w: {{ e.natW }}; --nat-h: {{ e.natH }}"
+  >
     {%- if e.present %}
       <iframe
         class="case-embed__frame"
         src="{{ e.url }}"
         title="{{ e.title }}"
         loading="lazy"
+        scrolling="no"
         {% if allowfullscreen %}allowfullscreen{% endif %}
       ></iframe>
     {%- else %}
@@ -121,16 +136,23 @@
 {% endmacro %}
 
 {#
-  Small marks — the ONTON lockup, the five competitor logos, the persona
-  markers. Same present/placeholder switch, but these sit inline in a line of
-  text rather than in a ratio box, so the stand-in is a square outline at the
+  Small marks — the cover lockups, the competitor and design-system logos, the
+  back chevron. Same present/placeholder switch, but these sit inline in a line
+  of text rather than in a ratio box, so the stand-in is an outline at the
   mark's own size with a title for anyone inspecting it. No initials, no drawn
   glyph, nothing that could be mistaken for the real logo.
+
+  `shape` CARRIES THE COMP'S TREATMENT, and it is the mark's own property rather
+  than the caller's: a brand logo is round in every table and eyebrow across the
+  three case studies, and the back chevron is square in both that have one. It
+  applies to the placeholder as much as to the artwork, so the stand-in reserves
+  the right silhouette and dropping the file in changes nothing but the pixels.
 #}
 {% macro markSlot(m) %}
+  {%- set shape = m.shape | default("circle") %}
   {%- if m.present %}
     <img
-      class="case-mark"
+      class="case-mark case-mark--{{ shape }}"
       src="{{ m.url }}"
       alt=""
       aria-hidden="true"
@@ -143,7 +165,7 @@
     />
   {%- else %}
     <span
-      class="case-mark case-mark--slot"
+      class="case-mark case-mark--{{ shape }} case-mark--slot"
       aria-hidden="true"
       title="{{ m.label }} — {{ m.url }}"
       style="--mark-size: {{ m.size }}px"

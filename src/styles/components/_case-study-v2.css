@@ -69,7 +69,15 @@
 }
 
 /* The three padding exceptions, each matching a seam the comp draws. */
-.case-band__inner--flush { padding-block: 0; }
+/* FLUSH MEANS THE BAND ADDS NOTHING — no padding AND no gap. The gap went
+   unnoticed for two pages because every flush band there had a single child;
+   Connect2WOW is the first with two, and 32px appeared between them that the
+   comp does not draw. A band whose blocks pad themselves has to rule its own
+   seams too. */
+.case-band__inner--flush {
+  padding-block: 0;
+  gap: 0;
+}
 .case-band--flush-end .case-band__inner { padding-bottom: 0; }
 .case-band--flush-start .case-band__inner { padding-top: 0; }
 
@@ -752,11 +760,33 @@
   height: var(--mark-size);
 }
 
+/* A BRAND MARK IS A CIRCLE, and the container is what makes it one. Every logo
+   in these tables and eyebrows sits in a round 20 or 32 box in the comp, but
+   the exports behind them will not all be round: some are a glyph on a coloured
+   ground, some a glyph on nothing. Clipping here rather than trusting the
+   artwork means both land as the comp draws them — and `cover` rather than
+   `contain`, because a mark drawn to fill its circle must not be inset inside
+   it. Square sources only, which every one of these is. */
+.case-mark--circle {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* THE BACK CHEVRON IS NOT ONE. It is a Material Symbols glyph on the line of
+   the link, and glyphs carry their own padding inside the 24 box — so it keeps
+   its square and is contained rather than cropped, or the crop would eat the
+   very padding that sets it off from the words. */
+.case-mark--icon {
+  object-fit: contain;
+}
+
+/* THE STAND-IN TAKES THE SAME SILHOUETTE, so a placeholder reserves the shape
+   its artwork will have and not merely its area. Dashed either way: no logo has
+   a dashed edge, so nothing here can be mistaken for a finished mark. */
 .case-mark--slot {
   display: inline-block;
   vertical-align: middle;
   border: var(--border-width) dashed var(--border-strong);
-  border-radius: 50%;
   background-color: var(--surface-raised);
 }
 
@@ -789,20 +819,48 @@
 /* ---- Prototype embed ----------------------------------------------------- */
 /* Sized from the comp's frame so the band holds its height whether the iframe
    is live or the slot is still waiting for a share link. */
+/* THE SLOT IS THE FIXED OUTER BOX and it clips. Its size is the comp's; what
+   goes inside is scaled to fit rather than the other way round. */
 .case-embed {
+  position: relative;
   width: 100%;
   max-width: calc(var(--embed-w) * 1px);
   aspect-ratio: var(--embed-w) / var(--embed-h);
+  overflow: hidden;
 }
 
-/* The document fills the slot exactly. No border: these two carry their own
-   dark backgrounds and rounded device frames, so a frame around them would be
-   drawing a second edge inside the first. */
+/* CONTAIN, NOT COVER, AND ENTIRELY DERIVED. The iframe is given the document's
+   natural size — so the document itself never scrolls — and the whole frame is
+   then scaled by whichever axis runs out first. Everything below is computed
+   from --embed-* and --nat-*, so a re-measured document is one number to
+   change and no scale to recompute by hand.
+
+   The translate centres what is left over on the axis that did not constrain:
+   scale first, then shift by half the slack. transform-origin is top left so
+   that arithmetic is about the box's own corner rather than its middle.
+
+   An embed whose natural size equals its slot lands on scale 1 and a zero
+   translate — a no-op, which is what keeps this from touching the pages that
+   were already fitting. */
 .case-embed__frame {
+  --scale: min(
+    calc(var(--embed-w) / var(--nat-w)),
+    calc(var(--embed-h) / var(--nat-h))
+  );
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: calc(var(--nat-w) * 1px);
+  height: calc(var(--nat-h) * 1px);
   border: 0;
+  transform-origin: top left;
+  transform:
+    translate(
+      calc((var(--embed-w) - var(--nat-w) * var(--scale)) * 0.5px),
+      calc((var(--embed-h) - var(--nat-h) * var(--scale)) * 0.5px)
+    )
+    scale(var(--scale));
 }
 
 /* Only shown when the document is missing. */

@@ -90,9 +90,13 @@ function video(base, w, h, label, alt, opts) {
    at first, but the comp draws them as plain filled circles in five Figma
    accents/* colours — nothing to export. They are CSS dots now; only the ONTON
    lockup and the five competitor logos are still real files awaiting export. */
+/* A BRAND MARK — the round logo beside a product name in a table, or the one in
+   the cover eyebrow. Every one of these is drawn inside a circle in the comp,
+   so `shape` says so once here rather than at each of the call sites. The
+   artwork is this case study's, so it lives under this case study. */
 function mark(file, size, label) {
-  const url = "/Assets/images/onton/" + file;
-  return { kind: "mark", url, file, size, label, present: onDisk(url) };
+  const url = "/Assets/images/onton/logos/" + file;
+  return { kind: "mark", url, file, size, label, shape: "circle", present: onDisk(url) };
 }
 
 module.exports = {

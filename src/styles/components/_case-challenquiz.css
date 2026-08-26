@@ -21,10 +21,15 @@
   padding-inline: var(--space-6);
 }
 
+/* NO GAP, AND THAT IS THE COMP: the chevron's 24 box ends at 56 and the words
+   start at 56. A Material Symbols glyph carries its own padding inside that
+   box, so the space between them is the icon's, not the layout's — adding 8
+   here would double it. It reads tight only while the icon is a placeholder
+   square, which has no padding of its own to give. */
 .case-back__link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0;
   font-size: var(--m3-body-md);
   line-height: var(--m3-body-md-leading);
   letter-spacing: var(--m3-body-md-tracking);
