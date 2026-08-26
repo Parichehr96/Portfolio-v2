@@ -52,13 +52,27 @@
      study's persona key and the dots that tie each row of its Why table to a
      persona. Named after the Figma variable rather than the persona so they
      stay recognisable if a second page ever reaches for the same set; the
-     persona-to-colour mapping lives in _case-onton.css, which is the only
+     persona-to-colour mapping lives in _case-study-v2.css, which is the only
      place that has to change if a persona is recoloured. */
   --fig-accent-purple: #CB30E0;
   --fig-accent-orange: #FF8D28;
   --fig-accent-red: #FF383C;
   --fig-accent-blue: #0088FF;
   --fig-accent-green: #34C759;
+
+  /* Figma "grays/gray" — the axis labels on the Challenquiz friction chart.
+     A step lighter than --fig-gray, and distinct from it: this one labels a
+     chart's furniture, where --fig-gray is body copy. */
+  --fig-gray-mid: #8E8E93;
+  /* Figma "labels/secondary" — the previous-flow series on that chart. It is
+     an alpha grey rather than a solid one, which is what lets the gridlines
+     read through the dashes. */
+  --fig-label-secondary: rgba(60, 60, 67, 0.6);
+  /* THE ONE RAW HEX IN THE COMP. Challenquiz's brand navy, used for the
+     redesign series, its annotation ring and the "Wallet gate" label. It is not
+     bound to a Figma variable there — it is typed in — so there is no variable
+     name to inherit and it is named for what it is. */
+  --fig-plum: #2D195D;
 
   /* Grays/Gray 2 in Figma — the secondary text colour on the dark band. */
   --fig-gray-on-dark: #AEAEB2;
@@ -139,6 +153,12 @@
   --m3-title-md: 16px;
   --m3-title-md-leading: 24px;
   --m3-title-md-tracking: 0.15px;
+
+  /* Added for the Challenquiz friction chart's legend. Same Figma variable set
+     as the steps around it; it had no consumer until that chart. */
+  --m3-title-sm: 14px;
+  --m3-title-sm-leading: 20px;
+  --m3-title-sm-tracking: 0.1px;
 
   --m3-body-lg: 16px;
   --m3-body-lg-leading: 24px;

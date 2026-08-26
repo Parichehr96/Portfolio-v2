@@ -1,4 +1,7 @@
-/* ONTON CASE STUDY — Figma 193:4660.
+/* CASE STUDY, NEW DESIGN — the shell shared by every write-up built to it:
+ * ONTON (Figma 193:4660) and Challenquiz (281:64068) so far. Pairs with
+ * layouts/case-study-v2.njk; anything bespoke to one write-up lives in its own
+ * file beside this one.
  *
  * Colours come from the .case scope in tokens.css, the same light block the
  * header, hero, statement and About use, so no Figma hex appears here.
@@ -339,6 +342,14 @@
 .case-dot--first-timer        { background-color: var(--fig-accent-blue); }
 .case-dot--power-user         { background-color: var(--fig-accent-green); }
 
+/* Challenquiz — a different cast on the same five accents. Two pages, one
+   palette; no new colour was needed for either. */
+.case-dot--crypto-native-competitor { background-color: var(--fig-accent-purple); }
+.case-dot--casual-trivia-fan        { background-color: var(--fig-accent-orange); }
+.case-dot--first-timer              { background-color: var(--fig-accent-red); }
+.case-dot--competitive-quizzer      { background-color: var(--fig-accent-blue); }
+.case-dot--skeptic                  { background-color: var(--fig-accent-green); }
+
 /* ---- Persona key --------------------------------------------------------- */
 .case-why {
   display: flex;
@@ -430,20 +441,63 @@
 
 }
 
-/* ---- 4. Split (media + text) --------------------------------------------- */
-/* 640px square hard against the left rule, text filling what is left, 32
-   between them and both centred on the same axis. */
+/* ---- Split (media + text) ------------------------------------------------ */
+/* Two columns, both centred on the same axis. The ratio and the gutter vary by
+   band — ONTON puts a 640 square against the left rule with 32 beside it,
+   Challenquiz runs 635/635 edge to edge in one band and 651/587 in another — so
+   both are custom properties and each band names its own rather than every
+   variant redeclaring grid-template-columns. */
 .case-split {
   display: grid;
-  grid-template-columns: 640fr 598fr;
-  gap: var(--space-6);
+  grid-template-columns: var(--split-cols, 640fr 598fr);
+  gap: var(--split-gap, var(--space-6));
   align-items: center;
+}
+/* Text in the first column, media in the second, halves edge to edge. */
+.case-split--text-first {
+  --split-cols: 1fr 1fr;
+  --split-gap: 0px;
+}
+/* The text column takes the extra room; 32 between it and the media. */
+.case-split--wide-text {
+  --split-cols: 651fr 587fr;
+  --split-gap: var(--space-6);
+}
+.case-split__media {
+  display: flex;
+  justify-content: center;
+}
+
+/* PINNED BY HEIGHT, NOT WIDTH — the same trade as the showcase phone. The
+   comp's slot is 635 x 730; the export is 620 x 730, a slightly narrower ratio.
+   Letting the video fill the column's width would make it 749 tall and push the
+   band 19px past the comp. Fixing the HEIGHT at 730 keeps the band exactly as
+   tall as the comp draws it and lets the width settle at the clip's own ratio,
+   so nothing is cropped and nothing is letterboxed. */
+.case-split__media--tall .case-media {
+  width: auto;
+  height: 730px;
+  max-width: 100%;
 }
 
 .case-split__text {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+/* THE INSET BELONGS TO WHICHEVER COLUMN TOUCHES THE GUTTER RULE, and only that
+   one. Where the text runs first it sits against the rule and needs the page's
+   standard 32, the same as every other heading on a case study; where it runs
+   second — ONTON's old-flow band — it sits against the media instead and the
+   grid's own gutter already separates them, so adding it there would push the
+   text off the comp.
+
+   Inline, not just left: the comp insets both sides. It gives the text column
+   571 of its 635 in Challenquiz's §3 and 587 of its 651 in §5, which are the
+   two body widths 281:64068 actually draws. */
+.case-split--text-first .case-split__text {
+  padding-inline: var(--space-6);
 }
 
 /* ---- 5. Problem ---------------------------------------------------------- */
@@ -538,9 +592,17 @@
   grid-template-columns: 513fr 757fr;
 }
 
+/* A COLUMN, NOT A ROW. ONTON's showcase band holds a heading and nothing else,
+   so a row flex centred it correctly by accident; Challenquiz puts a paragraph
+   under the heading and the two then sat side by side, overlapping. Stacking
+   them centres the pair as a group, which is what both comps actually draw.
+   The 20 is the comp's 19 rounded onto the scale. */
 .case-showcase__text {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-4h);
   padding-inline: var(--space-6);
 }
 
@@ -698,6 +760,150 @@
   background-color: var(--surface-raised);
 }
 
+/* ---- A cover that opens with a back link --------------------------------- */
+/* THE BACK LINK CHANGES THE BAND'S RHYTHM, so it is a modifier rather than
+   something bolted onto .case-band--cover. Challenquiz opens its cover 32 from
+   the top and closes it 32 from the bottom, where ONTON — which has no back
+   link — uses the standard 60. Both are the comp's own numbers; the shorter one
+   exists because a 24px link needs less air above it than a 36px lockup does. */
+.case-band--has-back .case-band__inner {
+  padding-block: var(--space-6);
+}
+
+/* ---- A band whose own blocks carry the padding --------------------------- */
+/* Like --flush, but for a band whose children pad themselves ASYMMETRICALLY:
+   the heading row opens with 60 and closes with 32, and the closing line opens
+   with 24 and closes with 60. A single padding-block on the inner cannot
+   express that, and a uniform gap would put the wrong space in both places. */
+.case-band__inner--tight {
+  padding-block: 0;
+  gap: 0;
+}
+.case-band__inner--tight > .case-headrow {
+  padding-block: var(--case-band-pad) var(--space-6);
+}
+.case-band__inner--tight > .case-insight {
+  padding-block: var(--space-5) var(--case-band-pad);
+}
+
+/* ---- Prototype embed ----------------------------------------------------- */
+/* Sized from the comp's frame so the band holds its height whether the iframe
+   is live or the slot is still waiting for a share link. */
+.case-embed {
+  width: 100%;
+  max-width: calc(var(--embed-w) * 1px);
+  aspect-ratio: var(--embed-w) / var(--embed-h);
+}
+
+/* The document fills the slot exactly. No border: these two carry their own
+   dark backgrounds and rounded device frames, so a frame around them would be
+   drawing a second edge inside the first. */
+.case-embed__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Only shown when the document is missing. */
+.case-embed__slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-5);
+  border: 2px dashed var(--border-strong);
+  background-color: var(--surface-raised);
+  text-align: center;
+}
+
+.case-embed__path {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.case-embed__label {
+  margin: 0;
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-semibold);
+  color: var(--fig-ink);
+}
+
+/* ---- TODO marker --------------------------------------------------------- */
+/* AN UNFINISHED PAGE SHOULD LOOK UNFINISHED. Where copy or a value is still
+   outstanding this paints instead of the content, rather than an empty element
+   nobody notices in review. It is not in the comp and is not meant to ship —
+   every one of these is a build-report line item. */
+.case-todo {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) dashed #b7791f;
+  border-radius: var(--space-1);
+  background-color: #fffaf0;
+  color: #975a16;
+  font-family: var(--font-mono);
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+}
+
+/* ---- Stats with a delta chip --------------------------------------------- */
+/* Challenquiz puts a change figure beside each value, which lifts the row from
+   ONTON's 104 to 134 and the value's line box from 28 to 36. */
+.case-stats--chipped {
+  min-height: 134px;
+}
+.case-stats--chipped .case-stat {
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+}
+.case-stats--chipped .case-stat__value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+}
+
+/* OUTLINED, NOT FILLED, and neutral on purpose. The comp draws a hairline pill
+   with no fill — 1px of --border-subtle at a 31px radius, which on a 24-tall
+   chip is simply "fully round". No colour is carried: two of these four deltas
+   are improvements because the number went UP and one because it went DOWN, so
+   a red/green treatment would have to encode which direction is good per stat.
+   The comp declines to, and states the figure instead; `direction` stays on the
+   element in case that decision is ever made. */
+.case-stat__chip {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: 999px;
+  background-color: transparent;
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  letter-spacing: var(--m3-body-sm-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--fig-ink);
+}
+
+/* ---- Closing paragraphs, spaced ------------------------------------------ */
+/* Two blocks rather than one flow. The comp sets the second 84 down from the
+   first's top, which with a 72-tall first block is 12 of clear space — wider
+   than a line, narrower than a section break. */
+.case-closing--spaced {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 /* ---- Narrow -------------------------------------------------------------- */
 /* Figma specifies desktop only. The gutters and their rules collapse together,
    every two-column band stacks, and the tables scroll rather than crush — the
@@ -781,6 +987,25 @@
   }
   .case-table {
     min-width: 720px;
+  }
+
+  .case-split--text-first,
+  .case-split--wide-text {
+    --split-cols: 1fr;
+    --split-gap: var(--space-7);
+  }
+  /* A fixed 730 is a two-column fact; stacked, it should fit the column. */
+  .case-split__media--tall .case-media {
+    width: 100%;
+    max-width: 620px;
+    height: auto;
+  }
+  .case-band--has-back .case-band__inner {
+    padding-block: var(--space-9);
+  }
+  .case-band__inner--tight > .case-headrow,
+  .case-band__inner--tight > .case-insight {
+    padding-block: var(--space-9) var(--space-6);
   }
 
   .case-stats {

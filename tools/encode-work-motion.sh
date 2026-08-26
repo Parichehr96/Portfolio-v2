@@ -28,16 +28,19 @@
 #          the box height: sharp on a 2x display without paying for a full 2x
 #          encode on a thumbnail.
 #
-#   onton  Native size, no scaling. These four clips were exported at the size
-#          their slot renders at (1270x874, 640x640, 1270x670, 390x838), so
-#          there is nothing to scale down to and upscaling for a 2x display
-#          would only invent pixels and inflate the file. Pass --height to
-#          override if a future export comes in oversized.
+#   case   Native size, no scaling. These clips are exported at the size their
+#          slot renders at, so there is nothing to scale down to and upscaling
+#          for a 2x display would only invent pixels and inflate the file. Pass
+#          --height to override if an export comes in oversized.
 #
 # USAGE
 #   tools/encode-work-motion.sh <slug> <source.mp4> [options]
 #
-#   --dest work|onton     output set (default: work)
+#   --dest work|<slug>    output set (default: work). "work" is the My Work
+#                         thumbnails and their -card naming; any other value is
+#                         a case-study slug and writes Assets/{videos,images}/
+#                         <slug>/ — onton, challenquiz, and whatever comes next,
+#                         with no edit here.
 #   --height N|native     scale to this height, width follows (default: per dest)
 #   --fps N               resample frame rate (default: keep the source's)
 #   --crf-vp9 N           VP9 quality, higher is smaller (default: 34)
@@ -52,8 +55,8 @@
 # OUTPUTS
 #   work   Assets/videos/work/<slug>-card.{webm,mp4}
 #          Assets/images/work/<slug>-card.jpg
-#   onton  Assets/videos/onton/<slug>.{webm,mp4}
-#          Assets/images/onton/<slug>-poster.jpg
+#   case   Assets/videos/<dest>/<slug>.{webm,mp4}
+#          Assets/images/<dest>/<slug>-poster.jpg
 
 set -euo pipefail
 
@@ -81,7 +84,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$SLUG" || -z "$SRC" ]]; then
-  echo "usage: $0 <slug> <source.mp4> [--dest work|onton] [--height N|native]" >&2
+  echo "usage: $0 <slug> <source.mp4> [--dest work|<slug>] [--height N|native]" >&2
   echo "       [--fps N] [--crf-vp9 N] [--crf-h264 N] [--poster first|last]" >&2
   exit 64
 fi
@@ -101,15 +104,17 @@ case "$DEST" in
     POSTER="$IMG_DIR/${SLUG}-card.jpg"
     [[ -z "$HEIGHT" ]] && HEIGHT=714
     ;;
-  onton)
-    VID_DIR="$ROOT/Assets/videos/onton"
-    IMG_DIR="$ROOT/Assets/images/onton"
+  # Any other value is a case-study slug. Guarded so a typo creates a clearly
+  # wrong directory name rather than something that looks plausible.
+  [a-z0-9-]*)
+    VID_DIR="$ROOT/Assets/videos/${DEST}"
+    IMG_DIR="$ROOT/Assets/images/${DEST}"
     WEBM="$VID_DIR/${SLUG}.webm"
     MP4="$VID_DIR/${SLUG}.mp4"
     POSTER="$IMG_DIR/${SLUG}-poster.jpg"
     [[ -z "$HEIGHT" ]] && HEIGHT="native"
     ;;
-  *) echo "error: --dest must be work or onton" >&2; exit 64 ;;
+  *) echo "error: --dest must be 'work' or a lower-case case-study slug" >&2; exit 64 ;;
 esac
 
 mkdir -p "$VID_DIR" "$IMG_DIR"

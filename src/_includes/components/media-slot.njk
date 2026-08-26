@@ -92,6 +92,35 @@
 {% endmacro %}
 
 {#
+  A SELF-CONTAINED HTML DOCUMENT IN AN IFRAME. Same present/placeholder switch
+  as the media above: an iframe with no document behind it renders as a blank
+  inline frame, which reads as broken rather than unfinished.
+
+  Sized from the comp's slot, so the band holds its height either way. `loading`
+  is lazy because these are below the fold on every page that uses them, and a
+  document that runs its own script should not be doing so while the reader is
+  still four bands above it.
+#}
+{% macro embedSlot(e, allowfullscreen=false) %}
+  <div class="case-embed" style="--embed-w: {{ e.w }}; --embed-h: {{ e.h }}">
+    {%- if e.present %}
+      <iframe
+        class="case-embed__frame"
+        src="{{ e.url }}"
+        title="{{ e.title }}"
+        loading="lazy"
+        {% if allowfullscreen %}allowfullscreen{% endif %}
+      ></iframe>
+    {%- else %}
+      <div class="case-embed__slot" aria-hidden="true">
+        <p class="case-embed__label">EMBED — {{ e.title }}</p>
+        <p class="case-embed__path">{{ e.url }}</p>
+      </div>
+    {%- endif %}
+  </div>
+{% endmacro %}
+
+{#
   Small marks — the ONTON lockup, the five competitor logos, the persona
   markers. Same present/placeholder switch, but these sit inline in a line of
   text rather than in a ratio box, so the stand-in is a square outline at the

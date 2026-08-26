@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Challenquiz — Prototype</title>
+<style>
+:root{
+  /* ---- design tokens (tune against Figma) ---- */
+  --bg:#1b1443; --bg2:#150f36; --hero:#140f34;
+  --card:#2c2666; --card2:#372f80; --sel:#6b4ee6; --line:#443c92;
+  --gold:#f5b12a; --gold-ink:#1a1440;
+  --ink:#f3f1fb; --sub:#aba4d6; --mut:#736caa;
+  --greenfill:#8fe0a8; --greenink:#123a22;
+  --redfill:#f2a3a9; --redink:#4a1418;
+  --stage:#050510;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+/* The ground the device sits on, set to the case-study band's
+   --surface-raised (#F2F2F7 / --fig-elevated in tokens.css). A literal, because
+   this file is standalone and cannot read the site's custom properties.
+   DELIBERATELY NOT --bg: that token also mixes into .app's screen gradient
+   below, so recolouring it would repaint the phone's UI rather than the field
+   behind it. */
+body{background:#F2F2F7;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100dvh;overflow:hidden}
+
+/* ---------- device frame (desktop) ---------- */
+.device{position:relative;width:390px;height:844px;border-radius:54px;background:#0a0a0d;
+  padding:12px;box-shadow:0 40px 120px rgba(0,0,0,.6), inset 0 0 0 2px #222;}
+.island{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:118px;height:34px;
+  background:#000;border-radius:20px;z-index:60}
+.app{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;
+  background:linear-gradient(180deg,var(--hero) 0%, var(--bg2) 34%, var(--bg) 100%);
+  display:flex;flex-direction:column}
+@media (max-width:460px){
+  body{background:#F2F2F7}
+  .device{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}
+  .app{border-radius:0}
+  .island{display:none}
+}
+
+/* ---------- status bar (sticky, covers island) ---------- */
+.status{position:relative;z-index:55;height:54px;flex:0 0 auto;display:flex;align-items:flex-end;
+  justify-content:space-between;padding:0 26px 8px;font-size:15px;font-weight:600;color:#fff;background:transparent}
+.status .r{display:flex;gap:7px;align-items:center}
+.status svg{display:block}
+
+/* ---------- generic ---------- */
+.appbar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:10px 18px 14px}
+.iconbtn{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:transparent;
+  color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.logo{width:38px;height:38px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#fff;font-size:15px;letter-spacing:.5px}
+.grow{flex:1}
+.screen{flex:1;min-height:0;display:flex;flex-direction:column;position:absolute;inset:0;
+  transition:opacity .28s ease, transform .28s ease}
+.hidden{opacity:0;pointer-events:none;transform:translateY(6px)}
+button{font-family:inherit}
+
+/* ---------- CHALLENGES ---------- */
+#view-challenges{display:flex;flex-direction:column}
+.ch-top{flex:0 0 auto;padding:0 18px}
+.ringbg{position:absolute;top:60px;right:-40px;width:260px;height:260px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.05);box-shadow:0 0 0 30px rgba(255,255,255,.02);pointer-events:none}
+.h-sec{font-size:20px;font-weight:700;margin:2px 0 12px}
+.carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;
+  scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.hero-card{scroll-snap-align:start;flex:0 0 88%;background:linear-gradient(180deg,#3a2f7a,#332a70);
+  border:1px solid var(--line);border-radius:18px;padding:26px 20px;min-height:150px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.hero-card .muted{color:#cfc9ef;font-size:15px}
+.circ{width:30px;height:30px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.btn-outline{border:1px solid var(--gold);color:var(--gold);background:transparent;border-radius:24px;
+  padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer}
+.dots{display:flex;gap:7px;justify-content:center;margin:12px 0 4px}
+.dot{width:7px;height:7px;border-radius:50%;background:#4a4285;transition:.2s}
+.dot.on{background:var(--gold);width:8px;height:8px}
+
+.ch-list-head{flex:0 0 auto;padding:14px 18px 0}
+.chips{display:flex;gap:9px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--sub);
+  border-radius:20px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.chip.on{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+
+.ch-scroll{flex:1;min-height:0;overflow-y:auto;padding:6px 18px 16px;scrollbar-width:none}
+.ch-scroll::-webkit-scrollbar{display:none}
+.game-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px}
+.gc-top{display:flex;align-items:center;justify-content:space-between}
+.gc-cat{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.gc-price{font-size:13px;color:#efe9ff;display:flex;align-items:center;gap:8px}
+.up{width:26px;height:26px;border:1px solid var(--gold);border-radius:8px;color:var(--gold);
+  display:flex;align-items:center;justify-content:center}
+.gc-players{display:flex;align-items:center;justify-content:space-between;background:#241d55;
+  border-radius:12px;padding:9px 12px;margin:14px 0}
+.avatars{display:flex}
+.av{width:30px;height:30px;border-radius:50%;border:2px solid #241d55;margin-left:-9px;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a1440}
+.av:first-child{margin-left:0}
+.gc-players .n{font-size:13px;color:var(--sub)}
+.btn-join{width:100%;border:1px solid var(--gold);color:var(--gold);background:transparent;
+  border-radius:26px;padding:14px;font-weight:700;font-size:15px;cursor:pointer;transition:.15s}
+.btn-join:active{background:rgba(245,177,42,.12)}
+
+/* ---------- bottom nav ---------- */
+.nav{flex:0 0 auto;display:flex;justify-content:space-around;align-items:center;padding:10px 8px 20px;
+  border-top:1px solid rgba(68,60,146,.5);background:rgba(20,15,52,.6)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--mut);font-size:11px;font-weight:600;
+  background:none;border:none;cursor:pointer}
+.nav-item .ic{width:44px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:14px}
+.nav-item.on{color:var(--gold)}
+.nav-item.on .ic{background:var(--sel);color:#fff}
+
+/* ---------- QUESTION ---------- */
+#view-question{display:flex;flex-direction:column}
+.q-head{flex:0 0 auto;padding:0 16px}
+.q-panel{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:4px}
+.q-nature{text-align:center;color:var(--gold);font-weight:700;font-size:15px;margin-bottom:10px}
+.opp{display:flex;justify-content:space-between;gap:4px;margin-bottom:12px}
+.opp .o{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.opp .oav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#1a1440;border:2px solid transparent}
+.opp .oav.me{background:#000;color:#fff;border-color:var(--gold)}
+.opp .os{font-size:11px;color:#d7d1f5;font-variant-numeric:tabular-nums}
+.ticks{display:flex;gap:5px;margin:2px 0 12px}
+.tk{flex:1;height:7px;border-radius:4px;background:#2a2360;transition:.25s}
+.tk.correct{background:var(--greenfill)} .tk.wrong{background:var(--redfill)} .tk.cur{background:var(--gold)}
+.timer{position:relative}
+.timer .num{font-size:13px;color:var(--sub);margin-bottom:5px;font-variant-numeric:tabular-nums}
+.timer .bar{height:7px;border-radius:4px;background:#2a2360;overflow:hidden}
+.timer .bar i{display:block;height:100%;background:var(--gold);width:100%;transition:width 1s linear}
+.q-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px 0}
+.q-text{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px}
+.q-badge{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--gold);color:var(--gold-ink);
+  font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px}
+.q-text h3{margin:3px 0;font-size:17px;font-weight:700;line-height:1.3}
+.opts{flex:1;display:flex;flex-direction:column;gap:12px;padding-bottom:12px}
+.opt{position:relative;flex:0 0 auto;min-height:60px;border-radius:14px;background:var(--card);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;cursor:pointer;overflow:hidden;transition:background .2s,border-color .2s;color:var(--ink)}
+.opt .lbl{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;z-index:2}
+.opt .pct{font-size:13px;color:#cfc9ef;z-index:2;font-variant-numeric:tabular-nums}
+.opt .fillbar{position:absolute;left:0;bottom:0;height:100%;width:0;background:rgba(255,255,255,.06);
+  transition:width .5s ease;z-index:1}
+.opt.sel{border-color:var(--gold);background:var(--card2)}
+.opt.sel .hint{color:var(--gold);font-size:12px;font-weight:700}
+.opt.correct{background:var(--greenfill);border-color:var(--greenfill);color:var(--greenink)}
+.opt.correct .pct{color:var(--greenink)}
+.opt.wrong{background:var(--redfill);border-color:var(--redfill);color:var(--redink)}
+.opt.wrong .pct{color:var(--redink)}
+.opt .mk{font-weight:800}
+.q-foot{flex:0 0 auto;padding:8px 16px 22px}
+.btn-primary{width:100%;border:none;border-radius:28px;padding:16px;font-weight:700;font-size:16px;cursor:pointer;
+  background:var(--gold);color:var(--gold-ink);transition:.15s}
+.btn-primary[disabled]{background:#3a336f;color:#6f68a0;cursor:default}
+
+/* ---------- RESULT ---------- */
+#view-result{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 26px;text-align:center;gap:6px}
+.r-art{width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:70px;margin-bottom:8px}
+.r-title{font-size:24px;font-weight:800}
+.r-sub{font-size:16px;font-weight:700;color:var(--ink);margin-top:2px}
+.r-stat{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);width:100%;color:#e7e2ff;font-size:14px;font-variant-numeric:tabular-nums}
+.r-actions{margin-top:24px;width:100%;display:flex;flex-direction:column;gap:12px}
+.btn-soft{background:var(--sel);color:#fff;border:none;border-radius:26px;padding:14px;font-weight:700;font-size:15px;cursor:pointer}
+.link{background:none;border:none;color:var(--sub);font-size:14px;cursor:pointer;padding:6px}
+.win .r-title{color:#7fe3a3}.lose .r-title{color:#f28f97}.wait .r-title{color:var(--ink)}
+
+/* ---------- sheets / modal ---------- */
+.scrim{position:absolute;inset:0;background:rgba(6,4,20,.62);z-index:70;opacity:0;pointer-events:none;transition:.25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:71;background:linear-gradient(180deg,#241d55,var(--bg));
+  border-top-left-radius:26px;border-top-right-radius:26px;border-top:1px solid var(--line);
+  padding:18px 22px 30px;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.sheet.on{transform:translateY(0)}
+.sheet .x{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pill{display:inline-flex;align-items:center;gap:7px;background:var(--sel);color:#fff;border-radius:20px;
+  padding:7px 14px;font-size:13px;font-weight:700;margin:14px 0 12px}
+.sheet h2{font-size:23px;font-weight:800;margin:0 0 12px}
+.sheet p{color:#cfc9ef;font-size:15px;line-height:1.5;margin:0 0 20px}
+.hot{color:#ff8a8a;font-weight:700}.cool{color:#7fe3a3;font-weight:700}
+.reduced *{transition:none!important}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="island"></div>
+  <div class="app" id="app">
+
+    <!-- status bar -->
+    <div class="status">
+      <span id="clock">9:41</span>
+      <span class="r">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.6c2.3 0 4.4.9 6 2.3l1.4-1.5A11 11 0 0 0 8.5.5 11 11 0 0 0 1 3.4l1.4 1.5a8.9 8.9 0 0 1 6.1-2.3Zm0 4c1.2 0 2.3.5 3.1 1.3l1.4-1.5a7 7 0 0 0-9 0l1.4 1.5A4.4 4.4 0 0 1 8.5 6.6Zm0 3.9L10 8.9a2.2 2.2 0 0 0-3 0l1.5 1.6Z"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="1" y="1" width="21" height="11" rx="3" stroke="#fff" opacity=".5"/><rect x="3" y="3" width="17" height="7" rx="1.5" fill="#fff"/><rect x="23" y="4" width="2" height="5" rx="1" fill="#fff" opacity=".6"/></svg>
+      </span>
+    </div>
+
+    <!-- app bar -->
+    <div class="appbar" id="appbar">
+      <button class="iconbtn" id="btn-close" title="Close" style="display:none">✕</button>
+      <div class="logo">CQ</div>
+      <div class="grow"></div>
+    </div>
+
+    <div style="position:relative;flex:1;min-height:0">
+
+      <!-- ============ CHALLENGES ============ -->
+      <section class="screen" id="view-challenges">
+        <div class="ringbg"></div>
+        <div class="ch-top">
+          <div class="h-sec">Your game</div>
+          <div class="carousel" id="hero">
+            <div class="hero-card">
+              <div class="muted">There is no game created</div>
+              <div class="circ">↓</div>
+              <button class="btn-outline">create new game</button>
+            </div>
+            <div class="hero-card" style="align-items:stretch;justify-content:flex-start;text-align:left">
+              <div class="gc-top"><div class="gc-cat">🍃 Nature</div><div class="gc-price">Featured</div></div>
+              <div class="gc-players"><div class="avatars"></div><div class="n">6/10 players</div></div>
+              <button class="btn-outline" style="align-self:stretch">view</button>
+            </div>
+          </div>
+          <div class="dots" id="dots"><span class="dot on"></span><span class="dot"></span></div>
+        </div>
+        <div class="ch-list-head">
+          <div class="h-sec" style="margin-bottom:0">Today's challenges</div>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="ch-scroll" id="games"></div>
+      </section>
+
+      <!-- ============ QUESTION ============ -->
+      <section class="screen hidden" id="view-question">
+        <div class="q-head">
+          <div class="q-panel">
+            <div class="q-nature" id="qnature">🍃 Nature</div>
+            <div class="opp" id="opp"></div>
+            <div class="ticks" id="ticks"></div>
+            <div class="timer"><div class="num"><span id="tsec">20</span>s</div><div class="bar"><i id="tbar"></i></div></div>
+          </div>
+        </div>
+        <div class="q-body">
+          <div class="q-text"><div class="q-badge">?</div><h3 id="qtext"></h3></div>
+          <div class="opts" id="opts"></div>
+        </div>
+        <div class="q-foot"><button class="btn-primary" id="btn-next" disabled>Next →</button></div>
+      </section>
+
+      <!-- ============ RESULT ============ -->
+      <section class="screen hidden" id="view-result"></section>
+
+    </div>
+
+    <!-- bottom nav -->
+    <div class="nav" id="nav"></div>
+
+    <!-- sheets + modal (anchored to app so they hide fully off-screen) -->
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet-start">
+      <button class="x" id="start-x">✕</button>
+      <div class="pill" id="start-pill">🍃 Start a game in <b style="color:var(--gold)">Nature</b></div>
+      <h2>Are you ready to start?</h2>
+      <p id="start-stakes">By starting this game, you pay <span class="hot">100 CQ</span>. If you win, you get <span class="cool">198 CQ</span> in return!</p>
+      <button class="btn-primary" id="start-go">Let's go</button>
+    </div>
+    <div class="sheet" id="sheet-leave">
+      <button class="x" id="leave-x">✕</button>
+      <div class="pill" style="background:#5a2340">Leave the game</div>
+      <h2>Are you sure you want to leave?</h2>
+      <p>If you leave now, you'll lose your <span class="hot">100 CQ</span> stake.</p>
+      <button class="btn-primary" id="leave-confirm">Leave anyway</button>
+      <button class="link" id="leave-cancel" style="display:block;width:100%;margin-top:6px">Keep playing</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const OPP = [
+  {n:'Zylo',c:'#e06b6b'},{n:'Ky',c:'#8b7fe8'},{n:'Vex',c:'#5fd0e8'},
+  {n:'Ora',c:'#6fc98a'},{n:'Nix',c:'#e88bc2'},{n:'Rok',c:'#f0b45f'},
+  {n:'Ash',c:'#f0d15f'},{n:'Juno',c:'#7fd0b0'},{n:'Bex',c:'#c98be8'}
+];
+/* categories (chip key -> emoji) */
+const CATS={Nature:'🍃', web3:'🪙', Animal:'🐾', cinema:'🎬', Sport:'⚽'};
+const CHIPS=['All', ...Object.keys(CATS)];
+
+/* varied game list: category, stake (CQ/player), joined, max */
+const GAMES=[
+ {cat:'Nature', stake:100, joined:6,  max:10},
+ {cat:'Sport',  stake:50,  joined:4,  max:6 },
+ {cat:'web3',   stake:200, joined:8,  max:10},
+ {cat:'cinema', stake:100, joined:1,  max:2 },
+ {cat:'Animal', stake:50,  joined:3,  max:4 },
+ {cat:'Nature', stake:500, joined:2,  max:2 },
+ {cat:'Sport',  stake:100, joined:5,  max:10},
+ {cat:'cinema', stake:150, joined:9,  max:10},
+ {cat:'web3',   stake:100, joined:2,  max:6 },
+ {cat:'Animal', stake:100, joined:6,  max:10},
+];
+
+/* question banks per category — {q, o:[4], a:correctIndex} */
+const BANK={
+ Nature:[
+  {q:"What is the tallest mountain in Canada?",o:["Mont Tremblant","Whistler Mountain","Mount Logan","Blue Mountain"],a:2},
+  {q:"What is the largest ocean on Earth?",o:["Atlantic","Indian","Arctic","Pacific"],a:3},
+  {q:"Which is the largest rainforest?",o:["Congo","Amazon","Daintree","Taiga"],a:1},
+  {q:"Which river is generally considered the longest?",o:["Nile","Amazon","Yangtze","Mississippi"],a:0},
+  {q:"What is the largest hot desert?",o:["Gobi","Sahara","Arabian","Kalahari"],a:1},
+  {q:"What is the tallest waterfall in the world?",o:["Niagara","Angel Falls","Victoria","Iguazu"],a:1},
+  {q:"Where is the largest coral reef system?",o:["Belize","Great Barrier Reef","Red Sea","Maldives"],a:1},
+  {q:"What is the deepest ocean trench?",o:["Java","Mariana","Tonga","Puerto Rico"],a:1},
+  {q:"What is the world's largest island?",o:["Greenland","New Guinea","Borneo","Madagascar"],a:0},
+  {q:"Which is the hottest planet in the solar system?",o:["Mercury","Venus","Mars","Jupiter"],a:1},
+ ],
+ Sport:[
+  {q:"How many players from one soccer team are on the field?",o:["9","10","11","12"],a:2},
+  {q:"Which country has won the most FIFA World Cups?",o:["Germany","Brazil","Italy","Argentina"],a:1},
+  {q:"In tennis, what is a score of zero called?",o:["Love","Nil","Duck","Blank"],a:0},
+  {q:"How many rings are on the Olympic flag?",o:["4","5","6","7"],a:1},
+  {q:"Which sport uses a shuttlecock?",o:["Squash","Badminton","Tennis","Cricket"],a:1},
+  {q:"A marathon is approximately how long?",o:["26.2 mi","24 mi","30 mi","21 mi"],a:0},
+  {q:"In basketball, how many points is a free throw?",o:["1","2","3","4"],a:0},
+  {q:"Which country hosts the Tour de France?",o:["Italy","Spain","France","Belgium"],a:2},
+  {q:"How many players per volleyball team are on court?",o:["5","6","7","8"],a:1},
+  {q:"Which card sends a soccer player off the pitch?",o:["Red","Yellow","Blue","Green"],a:0},
+ ],
+ cinema:[
+  {q:"Who directed the 1975 film 'Jaws'?",o:["Spielberg","Lucas","Scorsese","Nolan"],a:0},
+  {q:"Which film won the Best Picture Oscar for 2019?",o:["Parasite","1917","Joker","Roma"],a:0},
+  {q:"Who played Jack in 'Titanic'?",o:["DiCaprio","Pitt","Damon","Depp"],a:0},
+  {q:"'May the Force be with you' is from?",o:["Star Wars","Star Trek","Dune","Alien"],a:0},
+  {q:"Which studio produced 'Toy Story'?",o:["Pixar","DreamWorks","Ghibli","Blue Sky"],a:0},
+  {q:"Who directed 'Inception'?",o:["Nolan","Villeneuve","Fincher","Cameron"],a:0},
+  {q:"Which animated film features Simba?",o:["The Lion King","Bambi","Madagascar","Tarzan"],a:0},
+  {q:"Which actor plays Iron Man in the MCU?",o:["Downey Jr.","Evans","Hemsworth","Ruffalo"],a:0},
+  {q:"In 'The Matrix', Neo is offered which two pills?",o:["Red & Blue","Green & Red","Blue & Black","Red & Gold"],a:0},
+  {q:"Who directed 'Pulp Fiction'?",o:["Tarantino","Coen","Anderson","Ritchie"],a:0},
+ ],
+ Animal:[
+  {q:"What is the largest land animal?",o:["Elephant","Rhino","Giraffe","Hippo"],a:0},
+  {q:"What is the fastest land animal?",o:["Cheetah","Lion","Horse","Gazelle"],a:0},
+  {q:"Which mammal is capable of true flight?",o:["Bat","Squirrel","Lemur","Colugo"],a:0},
+  {q:"A group of lions is called a?",o:["Pride","Pack","Herd","Flock"],a:0},
+  {q:"What is the largest animal to have ever lived?",o:["Blue whale","Elephant","Megalodon","Argentinosaurus"],a:0},
+  {q:"How many hearts does an octopus have?",o:["3","1","2","4"],a:0},
+  {q:"Which of these birds cannot fly?",o:["Penguin","Eagle","Sparrow","Robin"],a:0},
+  {q:"Which is the slowest mammal?",o:["Sloth","Koala","Panda","Manatee"],a:0},
+  {q:"Which animal is known for black-and-white stripes?",o:["Zebra","Tiger","Skunk","Lemur"],a:0},
+  {q:"What do bees primarily collect to make honey?",o:["Nectar","Water","Sap","Pollen"],a:0},
+ ],
+ web3:[
+  {q:"What does NFT stand for?",o:["Non-Fungible Token","New Fund Transfer","Net File Type","None"],a:0},
+  {q:"Which was the first cryptocurrency?",o:["Bitcoin","Ethereum","Litecoin","Ripple"],a:0},
+  {q:"What is Ethereum's native currency?",o:["Ether","Bit","Sol","Ada"],a:0},
+  {q:"A public, shared transaction ledger is a?",o:["Blockchain","Database","Spreadsheet","Server"],a:0},
+  {q:"Storing keys offline uses a?",o:["Cold wallet","Hot wallet","Bank app","Browser"],a:0},
+  {q:"On Ethereum, 'gas' refers to a?",o:["Transaction fee","Token","Wallet","Exchange"],a:0},
+  {q:"Self-executing on-chain agreements are?",o:["Smart contracts","Macros","Scripts","Cookies"],a:0},
+  {q:"What does DAO stand for?",o:["Decentralized Autonomous Org","Digital Asset Order","Data Access Object","None"],a:0},
+  {q:"Telegram's associated blockchain token is?",o:["TON","BNB","SOL","DOT"],a:0},
+  {q:"A seed phrase is used to?",o:["Recover a wallet","Send email","Mine coins","Buy an NFT"],a:0},
+ ],
+};
+const QTIME=20;
+/* deterministic answer distribution so % stay stable per question */
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h;}
+function pct4(seed,correct){
+  const r=n=>{let x=(seed*9301+49297*(n+3))%233280;return x/233280;};
+  let cp=45+Math.floor(r(0)*23);           // correct: 45–67%
+  let rest=100-cp, w=[r(1)+.2,r(2)+.2,r(3)+.2], ws=w[0]+w[1]+w[2];
+  let o=w.map(x=>Math.max(4,Math.round(rest*x/ws)));
+  o[0]+=rest-(o[0]+o[1]+o[2]);
+  let out=[],k=0; for(let i=0;i<4;i++)out[i]=(i===correct)?cp:o[k++]; return out;
+}
+
+/* ---------------- helpers ---------------- */
+const $=s=>document.querySelector(s), el=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+if(matchMedia('(prefers-reduced-motion: reduce)').matches) document.body.classList.add('reduced');
+(function clock(){const d=new Date();$('#clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');})();
+
+/* nav */
+const NAVICON={
+ Profile:'<circle cx="12" cy="8" r="3.4"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+ Challenges:'<rect x="4" y="7" width="16" height="11" rx="4"/><circle cx="9" cy="12.5" r="1.3" fill="#1a1440"/><circle cx="15" cy="12.5" r="1.3" fill="#1a1440"/><rect x="11" y="3.5" width="2" height="3.5" rx="1"/>',
+ wallet:'<rect x="3" y="6" width="18" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="12.5" r="1.4"/>',
+ Leaderboard:'<path d="M7 21V10M12 21V4M17 21v-7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+};
+(function buildNav(){
+  const nav=$('#nav'); nav.innerHTML='';
+  ['Profile','Challenges','wallet','Leaderboard'].forEach((k,i)=>{
+    const b=el('button','nav-item'+(k==='Challenges'?' on':''));
+    b.innerHTML=`<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">${NAVICON[k]}</svg></span>${k}`;
+    nav.appendChild(b);
+  });
+})();
+
+/* hero avatars + dots */
+(function hero(){
+  const av=document.querySelector('#hero .avatars');
+  OPP.forEach(o=>{const a=el('div','av');a.style.background=o.c;a.textContent=o.n[0];av.appendChild(a);});
+  const hero=$('#hero');
+  hero.addEventListener('scroll',()=>{
+    const i=Math.round(hero.scrollLeft/hero.clientWidth);
+    document.querySelectorAll('#dots .dot').forEach((d,k)=>d.classList.toggle('on',k===i));
+  });
+})();
+
+/* chips + filtering */
+let activeCat='All';
+(function chips(){
+  const c=$('#chips');
+  CHIPS.forEach(t=>{const b=el('button','chip'+(t==='All'?' on':''));
+    b.innerHTML=(t==='All'?'✓ All':`${CATS[t]} ${t}`);
+    b.onclick=()=>{activeCat=t;document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderGames();};
+    c.appendChild(b);});
+})();
+
+/* data-driven game cards (filtered by active category) */
+function renderGames(){
+  const g=$('#games'); g.innerHTML='';
+  const list=GAMES.filter(x=>activeCat==='All'||x.cat===activeCat);
+  if(!list.length){ g.innerHTML='<div style="color:var(--sub);text-align:center;padding:34px 0">No games in this category yet.</div>'; return; }
+  list.forEach(game=>{
+    const shown=Math.min(game.joined,6);
+    const avs=OPP.slice(0,shown).map(o=>`<div class="av" style="background:${o.c}">${o.n[0]}</div>`).join('');
+    const card=el('div','game-card');
+    card.innerHTML=`
+      <div class="gc-top"><div class="gc-cat">${CATS[game.cat]} ${game.cat}</div>
+        <div class="gc-price">${game.stake} CQ per player <span class="up">↑</span></div></div>
+      <div class="gc-players"><div class="avatars">${avs}</div><div class="n">${game.joined}/${game.max} players</div></div>
+      <button class="btn-join">join</button>`;
+    card.querySelector('.btn-join').onclick=()=>openStart(game);
+    g.appendChild(card);
+  });
+}
+renderGames();
+
+/* ---------------- router ---------------- */
+function show(id){
+  ['view-challenges','view-question','view-result'].forEach(v=>{
+    $('#'+v).classList.toggle('hidden', v!==id);
+  });
+  const inGame = id!=='view-challenges';
+  $('#nav').style.display = inGame?'none':'flex';
+  $('#btn-close').style.display = inGame?'flex':'none';
+}
+function openSheet(id){ $('#scrim').classList.add('on'); $('#'+id).classList.add('on'); }
+function closeSheets(){ $('#scrim').classList.remove('on'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on')); }
+
+/* start sheet (dynamic per game) */
+let pendingGame=null;
+function winAmount(g){ return Math.round(g.stake*1.98); }
+function openStart(game){
+  pendingGame=game;
+  $('#start-pill').innerHTML=`${CATS[game.cat]} Start a game in <b style="color:var(--gold)">${game.cat}</b>`;
+  $('#start-stakes').innerHTML=`By starting this game, you pay <span class="hot">${game.stake} CQ</span>. If you win, you get <span class="cool">${winAmount(game)} CQ</span> in return!`;
+  openSheet('sheet-start');
+}
+$('#start-x').onclick=closeSheets;
+$('#scrim').onclick=()=>{ if($('#sheet-leave').classList.contains('on')){ resumeFromLeave(); } else closeSheets(); };
+$('#start-go').onclick=()=>{ closeSheets(); startQuiz(pendingGame); };
+
+/* ---------------- quiz engine ---------------- */
+const S={qi:0,score:0,results:[],sel:null,locked:false,left:QTIME,timer:null,t0:0,oppScore:[],qs:[],QN:0,opps:[],game:null};
+function opponentsFor(g){ const n=Math.max(1,Math.min((g.joined-1)||1,6)); return OPP.slice(0,n); }
+
+function startQuiz(game){
+  S.game=game; S.qs=BANK[game.cat]; S.QN=S.qs.length;
+  S.opps=opponentsFor(game); S.oppScore=S.opps.map(()=>0);
+  S.qi=0;S.score=0;S.results=Array(S.QN).fill(null);S.t0=Date.now();
+  $('#qnature').textContent=`${CATS[game.cat]} ${game.cat}`;
+  buildTicks();show('view-question');renderQ();
+}
+function buildTicks(){ const t=$('#ticks');t.innerHTML=''; for(let i=0;i<S.QN;i++)t.appendChild(el('div','tk')); }
+function renderOpp(){
+  const o=$('#opp');o.innerHTML='';
+  S.opps.forEach((p,i)=>{
+    const d=el('div','o');
+    d.innerHTML=`<div class="oav" style="background:${p.c}">${p.n[0]}</div><div class="os">${S.oppScore[i]}/${S.QN}</div>`;
+    o.appendChild(d);
+  });
+  const me=el('div','o');
+  me.innerHTML=`<div class="oav me">CQ</div><div class="os">${S.score}/${S.QN}</div>`;
+  o.appendChild(me);
+}
+function updateTicks(){
+  document.querySelectorAll('#ticks .tk').forEach((t,i)=>{
+    t.className='tk'+(S.results[i]===true?' correct':S.results[i]===false?' wrong':i===S.qi?' cur':'');
+  });
+}
+function renderQ(){
+  S.sel=null;S.locked=false;S.left=QTIME;
+  renderOpp();updateTicks();
+  const Q=S.qs[S.qi];
+  $('#qtext').textContent=Q.q;
+  const box=$('#opts');box.innerHTML='';
+  Q.o.forEach((txt,idx)=>{
+    const b=el('div','opt');
+    b.innerHTML=`<span class="fillbar"></span><span class="lbl"><span class="mk"></span>${txt}</span><span class="pct hint"></span>`;
+    b.onclick=()=>pick(idx,b);
+    box.appendChild(b);
+  });
+  $('#btn-next').disabled=true;
+  $('#btn-next').textContent = S.qi===S.QN-1?'See result →':'Next →';
+  $('#tsec').textContent=S.left;
+  const bar=$('#tbar');bar.style.transition='none';bar.style.width='100%';
+  requestAnimationFrame(()=>{bar.style.transition='width 1s linear';});
+  startTimer();
+}
+function startTimer(){
+  clearInterval(S.timer);
+  tickBar();
+  S.timer=setInterval(()=>{
+    S.left--; $('#tsec').textContent=Math.max(S.left,0); tickBar();
+    if(S.left<=0){clearInterval(S.timer);lock(null);}
+  },1000);
+}
+function tickBar(){ $('#tbar').style.width=(Math.max(S.left,0)/QTIME*100)+'%'; }
+function pauseTimer(){ clearInterval(S.timer); }
+
+function pick(idx,node){
+  if(S.locked)return;
+  if(S.sel===idx){ lock(idx); return; }               // second tap = lock
+  S.sel=idx;
+  document.querySelectorAll('#opts .opt').forEach(o=>{o.classList.remove('sel');o.querySelector('.pct').textContent='';});
+  node.classList.add('sel');
+  node.querySelector('.pct').textContent='Tap to lock';
+}
+function lock(idx){                                     // idx null = timeout
+  if(S.locked)return; S.locked=true; clearInterval(S.timer);
+  const Q=S.qs[S.qi], correctIdx=Q.a, isCorrect=idx===correctIdx;
+  S.results[S.qi]=isCorrect; if(isCorrect)S.score++;
+  const pcts=pct4(hash(Q.q)+S.qi, correctIdx);
+  S.oppScore=S.oppScore.map(v=>Math.min(S.QN, v + (Math.random()<0.5?1:0)));
+  document.querySelectorAll('#opts .opt').forEach((o,i)=>{
+    o.style.pointerEvents='none';
+    const p=o.querySelector('.pct'); p.textContent='('+pcts[i]+'%)'; p.classList.remove('hint');
+    o.querySelector('.fillbar').style.width=pcts[i]+'%';
+    o.classList.remove('sel');
+    if(i===correctIdx){o.classList.add('correct');o.querySelector('.mk').textContent='✓ ';}
+    else if(i===idx){o.classList.add('wrong');o.querySelector('.mk').textContent='✕ ';}
+  });
+  updateTicks(); renderOpp(); $('#btn-next').disabled=false;
+}
+$('#btn-next').onclick=()=>{
+  if(!S.locked)return;
+  if(S.qi<S.QN-1){ S.qi++; renderQ(); }
+  else finish();
+};
+
+/* leave flow */
+$('#btn-close').onclick=()=>{ pauseTimer(); openSheet('sheet-leave'); };
+$('#leave-x').onclick=resumeFromLeave;
+$('#leave-cancel').onclick=resumeFromLeave;
+$('#leave-confirm').onclick=()=>{ closeSheets(); show('view-challenges'); };
+function resumeFromLeave(){ closeSheets(); if(!S.locked) startTimer(); }
+
+/* result */
+function finish(){
+  clearInterval(S.timer);
+  const PASS=Math.ceil(S.QN*0.6), win=S.score>=PASS, reward=winAmount(S.game);
+  const secs=Math.round((Date.now()-S.t0)/1000);
+  const mmss=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
+  const v=$('#view-result');
+  v.className='screen '+(win?'win':'lose');
+  v.innerHTML=`
+    <div class="r-art">${win?'🏆':'🎯'}</div>
+    <div class="r-title">${win?'You earned +'+reward+' CQ':'Better luck next time!'}</div>
+    <div class="r-sub">${win?'Congratulations! You won this game':'Keep trying to win other ones'}</div>
+    <div class="r-stat">${S.score}/${S.QN} correct · ${mmss} · ${CATS[S.game.cat]} ${S.game.cat}</div>
+    <div class="r-actions">
+      <button class="btn-primary" id="r-rematch">Rematch</button>
+      <button class="link" id="r-home">Back to home</button>
+    </div>`;
+  show('view-result');
+  $('#r-rematch').onclick=()=>startQuiz(S.game);
+  $('#r-home').onclick=()=>show('view-challenges');
+}
+
+show('view-challenges');
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+{#
+  FRICTION CHART — Figma 349:17196, built as SVG rather than shipped as a
+  picture. It is two series over five stages: a line chart. As SVG it stays
+  sharp at any width, takes its colours from the page's own tokens, and can
+  carry a description a screen reader can actually use — none of which a PNG of
+  a chart can do.
+
+  THE VIEWBOX IS THE COMP'S PLOT BOX. 1206 x 384 with six gridlines 72 apart, so
+  the geometry below is the comp's and not a re-invention of it. Each gridline
+  row in the comp is a 24-tall instance holding a 10px-wide y label at x=0 and a
+  rule that starts at x=22 — which is why the rules here start at 22 and the
+  labels sit centred on x=5, rather than the plot running edge to edge.
+
+  Y MAPS 5 AT THE TOP TO 0 AT THE BOTTOM — "higher = more friction", as the
+  comp's own note says. That is the opposite of the usual "up is good", which is
+  why the note is on the chart rather than left implicit.
+
+  BOTH SERIES ARE DASHED in the comp, and that is doing work: the two lines
+  cross at Join, and dashes let the one underneath stay readable through the one
+  on top. The previous flow is an alpha grey for the same reason — the gridlines
+  read through it.
+
+  ACCESSIBILITY: the <svg> carries role="img" and a <title>/<desc> pair, and the
+  numbers are ALSO in a visually-hidden table below it. A line chart is a picture
+  of a table; anyone who cannot see the picture should still get the table rather
+  than a one-line summary of it.
+#}
+
+{%- set c = challenquiz.why.chart -%}
+{%- set W = 1206 -%}
+{%- set H = 384 -%}
+{%- set STEP = 72 -%}
+{%- set AXIS = 22 -%}
+
+{# x centres: the comp spaces five stages across the plot at 241.2 apart,
+   starting half a step in, which puts them at 121, 362, 603, 844, 1085. #}
+{%- macro px(i) %}{{ (121 + (i * 241.2)) | round(1) }}{% endmacro %}
+{%- macro py(v) %}{{ (12 + ((5 - v) * STEP)) | round(1) }}{% endmacro %}
+
+<figure class="case-chart">
+  <figcaption class="case-chart__head">
+    <ul class="case-chart__legend">
+      {%- for l in c.legend %}
+        <li class="case-chart__legend-item">
+          <span class="case-chart__swatch case-chart__swatch--{{ l.key }}" aria-hidden="true"></span>
+          {{ l.label }}
+        </li>
+      {%- endfor %}
+    </ul>
+    <p class="case-chart__note">{{ c.note }}</p>
+  </figcaption>
+
+  <svg
+    class="case-chart__svg"
+    viewBox="0 0 {{ W }} {{ H }}"
+    role="img"
+    aria-labelledby="cq-chart-title cq-chart-desc"
+  >
+    <title id="cq-chart-title">Friction across the five stages of a game, before and after the redesign</title>
+    <desc id="cq-chart-desc">
+      A 0 to 5 friction index over five stages. The previous flow peaks at Start
+      and Result; the redesign is lower at every stage, and closest to the old
+      flow at Join, where the wallet gate remains.
+    </desc>
+
+    {#- Gridlines and their y labels. The rule starts clear of the label. -#}
+    <g class="case-chart__grid">
+      {%- for v in [5, 4, 3, 2, 1, 0] %}
+        <line x1="{{ AXIS }}" x2="{{ W }}" y1="{{ py(v) }}" y2="{{ py(v) }}" />
+      {%- endfor %}
+    </g>
+    <g class="case-chart__ylabels">
+      {%- for v in [5, 4, 3, 2, 1, 0] %}
+        {#- +6 puts the baseline on the rule rather than the cap-height. -#}
+        <text x="5" y="{{ py(v) | float + 6 }}" text-anchor="middle">{{ v }}</text>
+      {%- endfor %}
+    </g>
+
+    {#- One dashed polyline plus its points per series. Previous first, so the
+        redesign sits on top where they cross at Join. -#}
+    {%- for key in ["previous", "redesign"] %}
+      {%- set data = c.series[key] %}
+      <polyline
+        class="case-chart__line case-chart__line--{{ key }}"
+        points="{%- for v in data %}{{ px(loop.index0) }},{{ py(v) }} {% endfor -%}"
+      />
+      {%- for v in data %}
+        <circle
+          class="case-chart__dot case-chart__dot--{{ key }}"
+          cx="{{ px(loop.index0) }}" cy="{{ py(v) }}" r="6"
+        />
+      {%- endfor %}
+    {%- endfor %}
+
+    {#- The annotation: a dashed ring around the point the redesign could not
+        fix, and its label centred under it — 26px across in the comp, so r=13
+        against the dot's r=6. -#}
+    {%- set av = c.series[c.annotation.series][c.annotation.stage] %}
+    <circle
+      class="case-chart__ring"
+      cx="{{ px(c.annotation.stage) }}" cy="{{ py(av) }}" r="13"
+    />
+    <text
+      class="case-chart__annotation"
+      x="{{ px(c.annotation.stage) }}" y="{{ py(av) | float + 37 }}"
+      text-anchor="middle"
+    >{{ c.annotation.label }}</text>
+  </svg>
+
+  {#- The x axis sits outside the SVG so its type is real text at the page's own
+      size rather than SVG text that scales with the viewBox. Numbered, as the
+      comp has it — an ordered list, because the five stages are a sequence. -#}
+  <ol class="case-chart__axis">
+    {%- for s in c.stages %}
+      <li>{{ loop.index }}. {{ s }}</li>
+    {%- endfor %}
+  </ol>
+
+  {#- The same numbers, for anyone not reading the picture. -#}
+  <table class="case-chart__data">
+    <caption>Friction index by stage, 0–5</caption>
+    <thead>
+      <tr>
+        <th scope="col">Stage</th>
+        {%- for l in c.legend %}<th scope="col">{{ l.label }}</th>{% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {%- for s in c.stages %}
+        <tr>
+          <th scope="row">{{ s }}</th>
+          {%- for l in c.legend %}<td>{{ c.series[l.key][loop.parent.loop.index0] }}</td>{% endfor %}
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+
+  <p class="case-chart__caption">{{ c.caption }}</p>
+</figure>

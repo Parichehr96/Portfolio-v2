@@ -57,7 +57,7 @@ function image(file, w, h, label, alt) {
    nothing to crop — take the Figma box instead and the phone loses ~46px off
    its height, which on a UI walkthrough is the status bar or the button. The
    band keeps the comp's height either way; see the showcase rule in
-   _case-onton.css, which pins that slot by height and lets width follow. */
+   _case-study-v2.css, which pins that slot by height and lets width follow. */
 function video(base, w, h, label, alt, opts) {
   opts = opts || {};
   const webm = "/Assets/videos/onton/" + base + ".webm";
@@ -397,7 +397,7 @@ module.exports = {
     personaKeyHeading: "Persona key",
     /* THE MARKERS ARE SOLID COLOURED DOTS, not artwork — that is what the comp
        draws, and the colour is the only thing linking a table row above to a
-       persona here. `slug` selects the colour in _case-onton.css.
+       persona here. `slug` selects the colour in _case-study-v2.css.
 
        THE BOLD SPLIT IS NOT UNIFORM, and it is copied rather than tidied: the
        comp puts the colon inside the bold for three of these and outside for
