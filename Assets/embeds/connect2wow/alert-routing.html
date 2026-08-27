@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Every alert has a home — routing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#fff;}
+  body{font-family:"Roboto",-apple-system,BlinkMacSystemFont,sans-serif;}
+  .card{display:flex;flex-direction:column;gap:16px;padding:32px;width:647px;max-width:100%;margin:0 auto;}
+  .sec{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .lbl{font-weight:500;font-size:14px;line-height:20px;letter-spacing:0.1px;color:#727272;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{border:1px dashed #8e8e93;border-radius:222px;padding:8px 16px;
+    font-weight:500;font-size:14px;line-height:20px;letter-spacing:0.1px;color:#727272;
+    white-space:nowrap;cursor:pointer;transition:.16s;background:transparent;}
+  .chip:hover{color:#1a1a1a;}
+  .chip.on{border-style:solid;border-color:#007AFF;color:#1a1a1a;}
+
+  .axes{display:flex;align-items:stretch;width:100%;}
+  .ax{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:center;padding:16px 0;}
+  .ax .an{font-weight:500;font-size:12px;line-height:16px;letter-spacing:0.5px;color:#727272;}
+  .ax .av{font-weight:500;font-size:14px;line-height:20px;letter-spacing:0.1px;color:#1a1a1a;}
+  .axdiv{width:1px;background:#e5e5ea;align-self:stretch;flex:none;}
+
+  .tiles{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .trow{display:flex;flex-wrap:wrap;gap:8px;width:100%;}
+  .tile{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:2px;align-items:flex-start;
+    border:1px solid #e5e5ea;border-radius:8px;padding:8px 12px;transition:.2s;background:transparent;}
+  .tile .hn{font-weight:500;font-size:14px;line-height:20px;letter-spacing:0.1px;color:#727272;opacity:.9;}
+  .tile .ha{font-weight:500;font-size:12px;line-height:16px;letter-spacing:0.5px;color:#727272;opacity:.7;}
+  .tiles.active .tile:not(.lit){opacity:.5;}
+  .tile.lit{border-color:#007AFF;background:rgba(0,122,255,0.07);}
+  .tile.lit .hn{color:#007AFF;opacity:1;}
+  .tile.lit .ha{color:#007AFF;opacity:.85;}
+
+  .divider{height:2px;width:100%;background:rgba(120,120,120,0.2);}
+  .cap{font-weight:400;font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;width:100%;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="sec">
+      <div class="lbl">An alert arrives:</div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="sec">
+      <div class="lbl">Axes:</div>
+      <div class="axes" id="axes"></div>
+    </div>
+    <div class="sec">
+      <div class="lbl">Component:</div>
+      <div class="tiles" id="tiles"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="cap">Every alert has a home, and the classification chooses the component, not anyone’s taste. Hover an alert to see the component</div>
+  </div>
+
+<script>
+  const AX=['Actionable','Priority','Source','Status'];
+  const HOMES=[
+    ['Modal','High Attention'],['Banner','System-level'],
+    ['Toast','Medium Attention'],['Inline','Contextual'],
+    ['Badge','Low Attention'],['Panel','Collected']
+  ];
+  const SCEN=[
+    {t:'“Saved Successfully”', ax:['No','Medium','Task','Success'], home:'Toast'},
+    {t:'“Invalid field”',      ax:['Yes','High','Task','Error'],    home:'Inline'},
+    {t:'“Delete this record?”',ax:['Yes','High','User','Warning'],  home:'Modal'},
+    {t:'“Scheduled maintenance”',ax:['No','Medium','System','Warning'], home:'Banner'},
+    {t:'“3 unread”',           ax:['No','Low','System','Info'],     home:'Badge'},
+    {t:'“New report ready”',   ax:['No','Low','System','Success'],  home:'Panel'}
+  ];
+  const chips=document.getElementById('chips'), axes=document.getElementById('axes'), tiles=document.getElementById('tiles');
+
+  // axes
+  AX.forEach((a,i)=>{
+    if(i>0){const d=document.createElement('div');d.className='axdiv';axes.appendChild(d);}
+    const col=document.createElement('div');col.className='ax';
+    col.innerHTML=`<div class="an">${a}</div><div class="av" data-ax="${i}">-</div>`;
+    axes.appendChild(col);
+  });
+  // tiles (3 rows × 2)
+  let row;
+  HOMES.forEach((h,i)=>{
+    if(i%2===0){row=document.createElement('div');row.className='trow';tiles.appendChild(row);}
+    const t=document.createElement('div');t.className='tile';t.dataset.home=h[0];
+    t.innerHTML=`<div class="hn">${h[0]}</div><div class="ha">${h[1]}</div>`;
+    row.appendChild(t);
+  });
+  const avs=[...axes.querySelectorAll('.av')], tls=[...tiles.querySelectorAll('.tile')];
+  // chips
+  SCEN.forEach((s,i)=>{
+    const c=document.createElement('div');c.className='chip';c.textContent=s.t;c.dataset.i=i;
+    c.addEventListener('mouseenter',()=>sel(i));
+    chips.appendChild(c);
+  });
+  const cps=[...chips.children];
+  function sel(i){
+    const s=SCEN[i];
+    cps.forEach((c,j)=>c.classList.toggle('on',j===i));
+    avs.forEach((a,j)=>a.textContent=s.ax[j]);
+    tiles.classList.add('active');
+    tls.forEach(t=>t.classList.toggle('lit',t.dataset.home===s.home));
+  }
+  function reset(){
+    cps.forEach(c=>c.classList.remove('on'));
+    avs.forEach(a=>a.textContent='-');
+    tiles.classList.remove('active');
+    tls.forEach(t=>t.classList.remove('lit'));
+  }
+  chips.addEventListener('mouseleave',reset);
+</script>
+</body>
+</html>

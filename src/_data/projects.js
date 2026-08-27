@@ -177,16 +177,14 @@ module.exports = function () {
       // moment it could be renamed without leaving a stale filename behind.
       title: "Connect2WOW",
       caption: "Case Study Coming Soon",
-      // POINTS AT A PAGE THAT DOES NOT EXIST YET, DELIBERATELY. The case
-      // studies are their own epic and none has been rebuilt in the new design,
-      // so this 404s until /work/connect2wow/ is written. That is preferable to
-      // a placeholder page, which would be a real URL saying nothing and would
-      // enter the sitemap as if it were finished. This does not: the sitemap is
-      // generated from collections.all — pages that actually built — so an
-      // unbuilt path here is invisible to it.
+      // RESOLVES NOW. This 404'd for a long time on purpose — the case studies
+      // are their own epic and none had been rebuilt in the new design, and an
+      // unbuilt path was preferable to a placeholder page that would enter the
+      // sitemap looking finished. src/work/connect2wow.njk exists as of the
+      // new-design rebuild, so the link lands.
       url: "/work/connect2wow/",
       featured: true,
-      status: "soon",
+      status: "live",
       thumb: null,
       year: "2021–2022",
       role: "Product Designer",

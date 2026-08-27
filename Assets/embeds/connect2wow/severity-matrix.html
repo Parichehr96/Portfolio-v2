@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Severity is a system — matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#fff;}
+  body{font-family:"Roboto",-apple-system,BlinkMacSystemFont,sans-serif;}
+  .card{background:#fff;display:flex;flex-direction:column;gap:16px;padding:32px;width:647px;max-width:100%;margin:0 auto;}
+
+  .head{display:flex;gap:8px;align-items:flex-start;justify-content:center;
+    font-weight:500;font-size:12px;line-height:16px;letter-spacing:0.4px;color:#727272;}
+  .head .tok{width:92px;flex:none;}
+  .head .col{flex:1 1 0;min-width:0;text-align:center;color:#727272;transition:color .2s;}
+  .card.active .head .col{color:#1a1a1a;}
+
+  .rows{display:flex;flex-direction:column;gap:12px;}
+  .row{display:flex;gap:8px;height:58px;align-items:center;justify-content:center;
+    border-radius:6px;transition:background .2s,opacity .2s,padding .2s;}
+  .rows.active .row{opacity:.7;}
+  .rows.active .row.sel{opacity:1;background:var(--tint);padding:8px;}
+
+  .chip{width:92px;flex:none;display:flex;gap:4px;align-items:center;padding:8px;
+    border:1px solid var(--bd);border-radius:6px;transition:border-color .2s;}
+  .chip .ic{width:16px;height:16px;flex:none;color:var(--c);display:block;}
+  .chip .ic svg{display:block;width:100%;height:100%;}
+  .chip .lb{font-size:14px;line-height:20px;letter-spacing:0.25px;color:var(--c);font-weight:400;transition:font-weight .1s;}
+  .row.sel .chip{border-color:var(--bdsel);}
+  .row.sel .chip .lb{font-weight:700;}
+
+  .cell{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;}
+  .toast,.banner{transition:transform .2s;transform-origin:center;}
+  .row.sel .toast,.row.sel .banner{transform:scale(1.2);}
+
+  /* Toast (Alert) — Dark/Main/10 #212327 */
+  .toast{background:#212327;display:flex;flex-direction:column;gap:2.52px;padding:3.36px;width:113.61px;
+    box-shadow:0 5.04px 7.98px rgba(8,9,13,.5),0 1.89px 9.66px rgba(0,0,0,.12),0 2.31px 3.15px rgba(0,0,0,.2);}
+  .toast .r1{display:flex;gap:3.36px;align-items:flex-start;}
+  .toast .tic{width:6.72px;height:6.72px;flex:none;color:var(--c);}
+  .toast .tic svg{display:block;width:100%;height:100%;}
+  .toast .ttx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1.68px;color:#f9fafb;line-height:1.4;}
+  .toast .tt{font-weight:700;font-size:4.2px;}
+  .toast .tl{font-weight:400;font-size:3.36px;}
+  .toast .tx{width:5.04px;height:5.04px;flex:none;color:#f9fafb;}
+  .toast .tx svg{display:block;width:100%;height:100%;}
+  .toast .r2{display:flex;align-items:center;justify-content:flex-end;}
+  .toast .vm{font-size:2.94px;line-height:4.116px;letter-spacing:0.25px;color:#85bcff;}
+  .toast .hr{height:0;border-top:0.42px solid rgba(255,255,255,.14);width:100%;}
+
+  /* Banner (trial) */
+  .banner{display:flex;align-items:center;justify-content:space-between;gap:4px;
+    width:128px;padding:2.16px 4.32px;border-radius:0.36px;overflow:hidden;
+    background:var(--bnbg);border-bottom:0.36px solid var(--bnbd);}
+  .banner .bl{flex:1;min-width:0;display:flex;gap:1.44px;align-items:flex-start;}
+  .banner .bic{width:3.96px;height:3.96px;flex:none;color:var(--btn);}
+  .banner .bic svg{display:block;width:100%;height:100%;}
+  .banner .btx{font-size:3.24px;line-height:1.15;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .banner .br{display:flex;align-items:center;gap:2.88px;flex:none;}
+  .banner .bbtn{background:var(--btn);border-radius:2px;padding:1.44px 2.88px;}
+  .banner .bbtn span{font-size:2.52px;line-height:3.528px;letter-spacing:0.25px;color:#f9fafb;white-space:nowrap;}
+  .banner .bx{width:3.96px;height:3.96px;flex:none;color:#000;}
+  .banner .bx svg{display:block;width:100%;height:100%;}
+
+  .cell.inline{}
+  .divider{height:2px;width:100%;background:rgba(120,120,120,0.2);}
+  .cap{font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;font-weight:400;}
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="head">
+      <div class="tok">Token</div>
+      <div class="col">Toast</div>
+      <div class="col">Banner</div>
+      <div class="col">Inline</div>
+    </div>
+    <div class="rows" id="rows"></div>
+    <div class="divider"></div>
+    <div class="cap">Left column shows definitions. Hover a row to see components in inline, toast, banner, and modal.</div>
+  </div>
+
+<script>
+  const IC={
+    infofill:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="currentColor"/><circle cx="8" cy="4.5" r="1.05" fill="#fff"/><rect x="7" y="6.6" width="2" height="5.6" rx="1" fill="#fff"/></svg>',
+    checkfill:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M4.6 8.3l2.2 2.2 4.6-4.8" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    timesfill:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="currentColor"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    circleinfo:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="4.7" r="0.95" fill="currentColor"/><rect x="7.1" y="6.7" width="1.8" height="5.3" rx="0.9" fill="currentColor"/></svg>',
+    times:'<svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
+  };
+  const SEV=[
+    {k:'Info',    c:'#3374f5', bd:'#316fe8', bdsel:'#3374f5', tint:'rgba(152,186,255,0.24)',
+     icon:'infofill', rot:false, bnbg:'rgba(0,133,255,0.13)', bnbd:'#66b6ff', btn:'#1563ad'},
+    {k:'Success', c:'#16cf4b', bd:'#16cf4b', bdsel:'#16cf4b', tint:'rgba(182,245,201,0.24)',
+     icon:'checkfill', rot:false, bnbg:'rgba(22,207,75,0.13)', bnbd:'#90f0ac', btn:'#0b6a27'},
+    {k:'Warning', c:'#ffa600', bd:'#ffa600', bdsel:'#ffa600', tint:'rgba(255,229,182,0.24)',
+     icon:'infofill', rot:true, bnbg:'rgba(237,164,3,0.13)', bnbd:'#fdce68', btn:'#a16f02'},
+    {k:'Error',   c:'#e82b32', bd:'#e82b32', bdsel:'#e82b32', tint:'rgba(254,146,150,0.24)',
+     icon:'timesfill', rot:false, bnbg:'rgba(204,22,28,0.13)', bnbd:'#f47176', btn:'#931013'}
+  ];
+  const rows=document.getElementById('rows'), card=document.getElementById('card');
+  function toastHTML(s){
+    const ic=`<span class="tic"${s.rot?' style="transform:rotate(180deg)"':''}>${IC[s.icon]}</span>`;
+    return `<div class="toast">
+      <div class="r1">${ic}
+        <div class="ttx"><div class="tt">Title</div><div class="tl">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been ...</div></div>
+        <span class="tx">${IC.times}</span></div>
+      <div class="r2"><span class="vm">View more</span></div>
+      <div class="hr"></div></div>`;
+  }
+  function bannerHTML(s){
+    return `<div class="banner">
+      <div class="bl"><span class="bic">${IC.circleinfo}</span><span class="btx">your trial will be expiered in two weeks.</span></div>
+      <div class="br"><span class="bbtn"><span>go to payment process</span></span><span class="bx">${IC.times}</span></div>
+    </div>`;
+  }
+  SEV.forEach((s,i)=>{
+    const row=document.createElement('div');
+    row.className='row'; row.dataset.i=i;
+    row.style.setProperty('--c',s.c); row.style.setProperty('--bd',s.bd);
+    row.style.setProperty('--bdsel',s.bdsel); row.style.setProperty('--tint',s.tint);
+    row.style.setProperty('--bnbg',s.bnbg); row.style.setProperty('--bnbd',s.bnbd); row.style.setProperty('--btn',s.btn);
+    const icon=`<span class="ic"${s.rot?' style="transform:rotate(180deg)"':''}>${IC[s.icon]}</span>`;
+    row.innerHTML=`<div class="chip">${icon}<span class="lb">${s.k}</span></div>
+      <div class="cell">${toastHTML(s)}</div>
+      <div class="cell">${bannerHTML(s)}</div>
+      <div class="cell inline"></div>`;
+    rows.appendChild(row);
+  });
+  const allRows=[...rows.children];
+  allRows.forEach(r=>{
+    r.addEventListener('mouseenter',()=>{
+      rows.classList.add('active'); card.classList.add('active');
+      allRows.forEach(x=>x.classList.toggle('sel',x===r));
+    });
+  });
+  rows.addEventListener('mouseleave',()=>{
+    rows.classList.remove('active'); card.classList.remove('active');
+    allRows.forEach(x=>x.classList.remove('sel'));
+  });
+</script>
+</body>
+</html>
