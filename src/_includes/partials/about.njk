@@ -18,11 +18,10 @@
   <div class="about__inner">
     <div class="about__figure-col">
       {#
-        THREE LAYERS, frame behind the figure — the same order Figma draws them.
+        TWO LAYERS, frame behind the figure — the same order Figma draws them.
         The frame is an exported open path (see about.js); the figure is a
         transparent PNG that overhangs it at the bottom, so the arms read as
-        crossing the line rather than sitting inside a box. The eyes sit on top;
-        see the note on the overlay itself.
+        crossing the line rather than sitting inside a box.
       #}
       <div class="about__figure">
         <img
@@ -38,76 +37,6 @@
           alt="{{ about.illustration.alt }}"
           draggable="false"
         />
-
-        {#
-          THE EYES, REDRAWN SO THEY CAN MOVE.
-
-          The illustration is a raster — illustration-pari.svg is a wrapper
-          around the very same PNG — and inside it the pupil is one dark blob
-          FUSED to the lash line above it: no gap, no eye-white, no lower lid.
-          Nothing in the file can be transformed, so each eye is rebuilt here in
-          two parts: a face-coloured patch that takes the baked pupil out, and a
-          fresh pupil that scripts/about-eyes.js translates.
-
-          THE PATCH AND THE PUPIL ARE THE SAME ELLIPSE, one painted in the
-          face's white and one in the drawing's ink, and only the second moves.
-          At rest they sit on top of each other and neither is visible; slide
-          the pupil and the patch behind it becomes the white of an eye looking
-          sideways. See about.js for why they must be identical rather than the
-          patch being the safer, bigger one.
-
-          THE PATCH IS CLIPPED TO BELOW THE LASH, per-eye, because the lash's
-          underside is level over the pupil and then dives at the outer corner.
-          The clip is what keeps the patch off the lash; it is not what sizes
-          it. Both polygons are measured — see about.js.
-
-          The pupil is deliberately NOT clipped: its top half sits over the lash
-          and merges into it, which is how the original reads and what keeps it
-          from looking like a dot resting below an eye.
-
-          #FDFDFD IS THE ARTWORK'S OWN WHITE, sampled off the rendered page —
-          the face is 253,253,253 at full alpha, not #fff, and a pure white
-          patch shows up as a bright disc against it.
-
-          The coordinates are the 528x622 space the figure already uses, and
-          they are post-mirror: .about__illustration is flipped with scale:-1 1,
-          so the viewer's left eye is the one with the larger x.
-        #}
-        <svg
-          class="about__eyes"
-          viewBox="0 0 528 622"
-          aria-hidden="true"
-          focusable="false"
-          data-about-eyes
-        >
-          <defs>
-            {%- for eye in about.illustration.eyes %}
-              <clipPath id="about-eye-clip-{{ loop.index }}">
-                <polygon points="{{ eye.clip }}" />
-              </clipPath>
-            {%- endfor %}
-          </defs>
-          {%- for eye in about.illustration.eyes %}
-            <ellipse
-              class="about__eye-patch"
-              clip-path="url(#about-eye-clip-{{ loop.index }})"
-              cx="{{ eye.cx }}"
-              cy="{{ eye.cy }}"
-              rx="{{ eye.rx }}"
-              ry="{{ eye.ry }}"
-            />
-          {%- endfor %}
-          {%- for eye in about.illustration.eyes %}
-            <ellipse
-              class="about__pupil"
-              data-pupil
-              cx="{{ eye.cx }}"
-              cy="{{ eye.cy }}"
-              rx="{{ eye.rx }}"
-              ry="{{ eye.ry }}"
-            />
-          {%- endfor %}
-        </svg>
       </div>
     </div>
 

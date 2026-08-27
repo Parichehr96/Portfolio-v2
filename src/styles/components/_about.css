@@ -84,44 +84,6 @@
   scale: -1 1;
 }
 
-/* ---- The eyes ------------------------------------------------------------ */
-/* AN OVERLAY, BECAUSE THE ILLUSTRATION IS A RASTER. Nothing inside the PNG can
-   be moved, so each eye is rebuilt in SVG over the top — see the note in
-   about.njk for the anatomy. It spans the whole figure rather than the raster's
-   inset box, which is what lets it use the plain 528x622 coordinates the comp
-   is drawn in and skip the mirror the image needs.
-
-   HIDDEN BY DEFAULT, and that is the mobile story. A phone gets the artwork
-   exactly as it was — not a redrawn copy of it sitting still — because the
-   overlay never renders unless the device has a pointer that can drive it. */
-.about__eyes {
-  display: none;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .about__eyes {
-    display: block;
-  }
-}
-
-/* The face's own white, sampled off the rendered page: the artwork is 253 at
-   full alpha, and #fff patches read as bright discs against it. */
-.about__eye-patch {
-  fill: #fdfdfd;
-}
-
-/* The line-art's ink, sampled off the baked pupil the same way — 12,17,20, a
-   cool near-black rather than the page's #1a1a1a. The new pupil merges into the
-   lash above it, so any difference would show as a seam across the eye. */
-.about__pupil {
-  fill: #0c1114;
-}
-
 /* ---- Right: copy + clock ------------------------------------------------- */
 .about__body {
   display: flex;
