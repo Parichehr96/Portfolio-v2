@@ -15,12 +15,24 @@
  * it to be on screen. One observer cannot be both without either fetching too
  * late or playing to nobody.
  *
- * NOT EVERY ROW LOOPS. ONTON's animation is a reveal whose keyframes end
+ * NOT EVERY CLIP LOOPS. ONTON's homepage row is a reveal whose keyframes end
  * somewhere different from where they began, so repeating it snaps the frame
  * back; it carries no `loop` attribute and must hold its final frame instead.
  * That needs an explicit guard, because HTMLMediaElement.play() on an ended
  * video seeks back to zero and starts again — exactly the restart we are
  * avoiding. See the MOTION table in _data/projects.js.
+ *
+ * AND ONE OF THOSE WANTS TO RUN AGAIN. The ONTON case study's flow map is the
+ * same shape of animation — it draws itself in from an empty frame and the
+ * finished diagram is the point — but it should replay when the reader scrolls
+ * back to it rather than staying frozen for the rest of the session. That is
+ * opt-in through data-motion-replay, NOT the default, because the homepage row
+ * deliberately holds forever and giving every non-looping clip a rewind would
+ * change it without anyone asking.
+ *
+ * The replay is scoped to viewport re-entry only. Coming back to a tab is not
+ * re-entry — the clip never left the screen — and restarting it there would
+ * replay the animation at a moment the reader did not act.
  *
  * EVERY play() IS CAUGHT. It rejects for reasons that are all normal here — a
  * missing encode, a backgrounded tab, a browser declining a gesture-free start.
@@ -70,10 +82,15 @@
   // OS setting mid-page gets it on the next load.
   if (reduced) return;
 
-  function play(video) {
+  function play(video, reentry) {
     // A non-looping row that has finished is done. Calling play() here would
-    // rewind it to the start, which is the snap the missing `loop` avoids.
-    if (!video.loop && video.ended) return;
+    // rewind it to the start, which is the snap the missing `loop` avoids —
+    // unless it asked to replay AND this is a fresh arrival in the viewport,
+    // in which case rewinding is the whole point.
+    if (!video.loop && video.ended) {
+      if (!(reentry && video.hasAttribute("data-motion-replay"))) return;
+      video.currentTime = 0;
+    }
     var started = video.play();
     if (started && started.catch) started.catch(function () {});
   }
@@ -87,7 +104,7 @@
     function (entries) {
       entries.forEach(function (entry) {
         var video = entry.target;
-        if (entry.isIntersecting) play(video);
+        if (entry.isIntersecting) play(video, true);
         else if (!video.paused) video.pause();
       });
     },

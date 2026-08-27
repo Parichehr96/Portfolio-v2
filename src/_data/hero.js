@@ -78,14 +78,30 @@ module.exports = {
   /* Cards, in DOM order = z-order (1 backmost, 3 frontmost), matching the Figma
      layer stack inside 390:469.
 
-     x/y are each card's CENTRE, and w/h its SIZE, both as a percentage of the
-     cards frame. The three are genuinely different sizes in the comp — card 2
-     is shorter and narrower than the two it sits between — and the CSS drove
-     one shared box until now, which left the outer pair ~49px short. Size rides
-     the same custom-property seam as x/y/rotate, so there is still exactly one
-     rule for all three cards.
+     ALL THREE CARDS ARE 240 x 260. There is no per-card size and there must not
+     be one: an earlier pass read Figma's w/h for cards 1 and 3 as their own
+     dimensions and hardcoded 286x302 and 285x301, which stretched them ~19%
+     wide and ~16% tall. Those numbers are ROTATED BOUNDING BOXES —
+     get_metadata reports the axis-aligned box for a rotated node, and
+     w' = w·cosθ + h·sinθ reproduces both to 0.02px from 240 x 260 at the
+     angles below. Rotation belongs in the transform chain, never in the size.
 
-     x/y are a percentage of the 475 x 263 cards frame,
+     THE FAN IS SYMMETRIC, AND IT IS MATCHED BY EYE, NOT BY COORDINATE. Card 2
+     sits upright and highest; cards 1 and 3 drop the same ~20px below it and
+     tilt equal-and-opposite either side. Card 1 is placed as card 3's mirror.
+
+     Figma's metadata disagrees: it puts card 1 some 47px below card 3. That
+     reading is an artefact of how rotated nodes report their position — the
+     same class of error that made cards 1 and 3 appear to be different SIZES
+     — and the rendered comp plainly shows the two outer cards at nearly the
+     same height. Where the numbers and the picture disagree here, the picture
+     wins. Do not "correct" these back to the reported centres.
+
+     THIS IS NOT THE SIZE BUG RETURNING. Per-card *size* was wrong because
+     Figma reports rotated bounding boxes; per-card *position* is real, and the
+     two are independent. Size stays uniform in the CSS; only x/y/rotate vary.
+
+     x and y are percentages of the cards frame,
      derived from the Figma ROTATION BOUNDING BOX (centre = x + w/2, y + h/2) —
      not the box's top-left, which is what makes the ±rotation fan around a
      stable pivot. Verified against fresh figma-dev-mode metadata; every value
@@ -93,23 +109,37 @@ module.exports = {
   cards: [
     {
       title: "Interaction and UX Design",
-      body: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
-      // 457:58676 centres, converted from board % to cards-frame %. NOTE: the
-      // previous pass levelled this card with card 3 because the comp's own
-      // fan is uneven — card 1 is 302 tall against card 2's 260, so their
-      // centres genuinely differ. These are back on the comp as instructed.
-      x: 23.9615,
-      y: 65.5741,
-      w: 47.9091,
-      h: 100.0,
-      rotate: -11.31,
+      body: [
+        {
+          text: "I design the flows, states, and micro-decisions that make complex products feel obvious.",
+          tone: "lead",
+        },
+        {
+          text: " Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
+          tone: "muted",
+        },
+      ],
+      // HEIGHT AND TILT MIRROR CARD 3; X DOES NOT. Figma's reported centre-Y
+      // sinks this card ~47px below card 3, which the rendered comp plainly
+      // contradicts — the two outer cards sit at nearly the same height there.
+      // So y and rotate are taken as card 3's mirror.
+      //
+      // X IS THE FILE'S OWN VALUE and was already right. Mirroring it too
+      // (15.73%) pushed the card left until its title cleared card 2 entirely;
+      // in the comp that title is half-hidden behind card 2, which is what
+      // 23.96% reproduces. The fan is symmetric in height and tilt, and
+      // deliberately tighter on the left — matched against the render, not
+      // read off the coordinates.
+      x: 23.9558,
+      y: 49.8472,
+      rotate: -11.02,
     },
     {
       title: "Product Redesign",
-      // TWO SPANS, not one string. 434:11721 splits this card's body: the first
-      // sentence sits at #1a1a1a and the remainder drops to #727272. The other
-      // two cards are a single colour, so `body` stays a plain string there and
-      // the template renders whichever shape it is given.
+      // TWO SPANS, like all three. Every card splits its body the same way in
+      // Figma — an opening sentence at #1a1a1a, the remainder at #727272 — and
+      // only this one was built that way at first. The template still accepts a
+      // plain string, so a future single-tone card needs no new branch.
       body: [
         {
           text: "I take products that grew organically, inconsistent patterns, bloated flows, unclear hierarchy, and rebuild them around how people actually use them. ",
@@ -120,19 +150,27 @@ module.exports = {
           tone: "muted",
         },
       ],
-      x: 50.0788,
-      y: 43.0600,
-      w: 40.1613,
-      h: 86.0927,
+      x: 50.0870,
+      // 397.24 board px — the highest; the only card whose top is the
+      // frame's own top, because it is the one that is not rotated.
+      y: 43.0457,
       rotate: 0,
     },
     {
       title: "Strategic Design",
-      body: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales.",
-      x: 84.4549,
-      y: 49.8618,
-      w: 47.7418,
-      h: 99.7020,
+      body: [
+        {
+          text: "I connect design decisions to product and business goals.",
+          tone: "lead",
+        },
+        {
+          text: " I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales.",
+          tone: "muted",
+        },
+      ],
+      x: 84.4478,
+      // 417.78 board px — between the other two.
+      y: 49.8472,
       rotate: 11.02,
     },
   ],
@@ -144,13 +182,7 @@ module.exports = {
      THESE ARE CENTRES, NOT TOP-LEFTS, which changed with this rebuild. The CSS
      now pulls each icon back by half its own box, so the wiggle orbits the
      Figma position rather than starting from its corner — and an icon's
-     resting point stays put whatever its size.
-
-     THE CURSOR ARROW IS BACK. It was dropped in 7a1425b to avoid a frozen
-     second arrow next to the board's live CSS cursor. The comp wants both, and
-     they no longer collide: this one renders at 0.3x (14.4px against the
-     cursor's 48px native), which reads as a small drawn mark rather than a
-     duplicate pointer. */
+     resting point stays put whatever its size. */
   icons: [
     { slug: "notion", label: "Notion", file: "icon-notion.svg", x: 13.76, y: 11.48, size: pctX(56) },
     { slug: "figma", label: "Figma", file: "icon-figma.svg", x: 83.02, y: 10.81, size: pctX(56) },
@@ -160,6 +192,16 @@ module.exports = {
 
   /* Static decoration. None of this wiggles, drags or animates — it is artwork
      the composition needs and the interaction layer must not touch.
+
+     THERE IS NO CURSOR MARK IN THIS LIST, AND ONE MUST NOT BE ADDED. A static
+     arrow has been put here twice on the reading that the comp draws one —
+     dropped in 7a1425b, reinstated, and now dropped again. 457:58676 has no
+     such element: its only arrow is arrow-pull.svg, the drawn one with the
+     handwritten line beside it. What the comp does show is the POINTER as an
+     arrow, and _hero.css supplies that by swapping the OS cursor inside
+     .hero__board. That is why icon-cursor stays on disk with no entry here —
+     it is the source for the live cursor image, not for a decoration. Drawing
+     both puts a frozen arrow on the board next to the one that moves.
 
      THE TWO MOCKUPS ARE PNG, NOT SVG. Pari's exports embed rasters: the phone
      was a 9.7 MB SVG for a 95 x 207 slot. Rendered to PNG at 3x they are 105 KB
@@ -174,13 +216,6 @@ module.exports = {
       w: pctX(59.66),
     },
     {
-      slug: "cursor",
-      file: "icon-cursor.svg",
-      x: 71.31,
-      y: 47.38,
-      w: pctX(14.4),
-    },
-    {
       slug: "campaign",
       file: "campaign_landing.png",
       x: 9.94,
@@ -193,6 +228,44 @@ module.exports = {
       x: 84.21,
       y: 85.02,
       w: pctX(242.41),
+    },
+  ],
+
+  /* MOCKUP CAPTIONS — 450:37859 and 392:14769. The comp writes each mockup's
+     source filename under it. An earlier pass read these as Figma annotations
+     and skipped them; they are drawn text nodes inside 457:58676 like any other
+     label in the board, and they render.
+
+     x IS A CENTRE, y IS A TOP, and the mismatch is deliberate. Every other
+     floating element here is centred on its Figma point, and x still is —
+     each caption's centre-x is exactly its mockup's own centre-x (126.5 and
+     1071.21 board px), which is what keeps the label under the artwork at any
+     board width. But a Figma text node is TOP-aligned inside its box: these
+     sit in fixed 20px boxes carrying a 19.2px line, so centring the two boxes
+     on each other drops the text ~0.4px below where the comp draws it.
+     Anchoring by the top removes that, and makes y literally the node's own
+     reported y — 214.496 inside a Phone Mockup at 392, and 145.280 inside a
+     Container at 694 — which is a value anyone can check against the file.
+
+     Each box top clears the artwork above it by exactly 8px.
+
+     PURELY DECORATIVE. A caption that names an asset file is not information a
+     screen-reader user is missing — the mockups themselves are aria-hidden for
+     the same reason, and these are rendered the same way. */
+  captions: [
+    {
+      slug: "campaign",
+      text: "campaign_landing.svg",
+      x: pctX(126.5), // centre-x — the campaign mockup's own
+      y: pctY(606.496), // top — 392 (Phone Mockup) + 214.496 (450:37859)
+      w: pctX(131),
+    },
+    {
+      slug: "website",
+      text: "website_landing.svg",
+      x: pctX(1071.2052), // centre-x — the website mockup's own
+      y: pctY(839.28), // top — 694 (Container) + 145.280 (392:14769)
+      w: pctX(242.4104),
     },
   ],
 

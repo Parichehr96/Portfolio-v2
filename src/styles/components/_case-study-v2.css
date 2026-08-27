@@ -1,0 +1,1116 @@
+/* CASE STUDY, NEW DESIGN — the shell shared by every write-up built to it:
+ * ONTON (Figma 193:4660) and Challenquiz (281:64068) so far. Pairs with
+ * layouts/case-study-v2.njk; anything bespoke to one write-up lives in its own
+ * file beside this one.
+ *
+ * Colours come from the .case scope in tokens.css, the same light block the
+ * header, hero, statement and About use, so no Figma hex appears here.
+ *
+ * ONE BAND SHAPE, REPEATED NINE TIMES. Every section is full-bleed with a top
+ * rule, 120px gutters, and a 1272 inner column carrying the side rules —
+ * the page frame from the homepage, continued down a second page. Content sits
+ * 32px inside those rules; the cover image and the two table panels are the
+ * only things that run all the way to them.
+ *
+ * THE RULES SPLIT THEIR WEIGHTS, and that is the one approved departure from
+ * the comp. 193:4660 draws every rule at rgba(0,0,0,0.12). The VERTICALS here
+ * are --border-strong (0.16) instead, so the column reads continuously with the
+ * header and every other page; the HORIZONTALS — band tops, table rows, stat
+ * dividers — stay --border-subtle (0.12), which is both the comp's own value
+ * and what the header already uses for its bottom rule. Verticals strong,
+ * horizontals subtle, the same pairing _nav.css established.
+ *
+ * PADDING IS 60 EXCEPT WHERE THE COMP SAYS OTHERWISE, and it says otherwise
+ * three times. The facet grid and the problem band are flush because their own
+ * cells carry the 60; "What changed" drops its closing padding so the diagram
+ * meets the next band; "...and Why" drops its opening padding for the same
+ * seam. Those are deliberate joins in the comp, not rounding, so each gets a
+ * named modifier rather than being averaged away.
+ */
+
+/* ---- Band ---------------------------------------------------------------- */
+.case-band {
+  position: relative;
+  width: 100%;
+  border-top: var(--border-width) solid var(--border-subtle);
+  background-color: var(--surface);
+}
+
+/* THE FIRST BAND HAS NO TOP RULE. .site-header already closes itself with one
+   at --border-subtle; drawing this one too would stack two hairlines into a
+   2px line under the header, which no other page has. */
+.case-band--cover {
+  border-top: 0;
+}
+
+/* Side rules. Pseudo-elements rather than a border-inline on the inner column,
+   for the reason .hero and .about give: a real border eats 1px from each side
+   of the content box and pulls every measured inset off by one. */
+.case-band::before,
+.case-band::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+.case-band::before { left: var(--space-11); }
+.case-band::after { right: var(--space-11); }
+
+.case-band__inner {
+  position: relative;
+  margin-inline: var(--space-11);
+  padding-block: var(--case-band-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* The three padding exceptions, each matching a seam the comp draws. */
+/* FLUSH MEANS THE BAND ADDS NOTHING — no padding AND no gap. The gap went
+   unnoticed for two pages because every flush band there had a single child;
+   Connect2WOW is the first with two, and 32px appeared between them that the
+   comp does not draw. A band whose blocks pad themselves has to rule its own
+   seams too. */
+.case-band__inner--flush {
+  padding-block: 0;
+  gap: 0;
+}
+.case-band--flush-end .case-band__inner { padding-bottom: 0; }
+.case-band--flush-start .case-band__inner { padding-top: 0; }
+
+/* ---- Shared type --------------------------------------------------------- */
+/* Band titles: M3 headline-medium, weight 400, in the page's ink. Every one of
+   the nine sits at this step — the comp never varies it. */
+.case-heading {
+  margin: 0;
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+/* The line beside or under a title: M3 body-large, secondary. `strong` inside
+   is the comp's own emphasis — it bolds the phrase that carries the point and
+   leaves the colour alone. */
+.case-deck {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+.case-deck strong {
+  font-weight: var(--weight-bold);
+  color: inherit;
+}
+
+/* TWO-TONE BODY COPY, the pattern this whole comp runs on: a paragraph opens in
+   ink and drops to secondary partway through. Same device as the hero cards. */
+.case-tone--lead { color: var(--fig-ink); }
+.case-tone--muted { color: var(--text-secondary); }
+
+/* Title-row: heading and deck on one line, 40px apart, centred on each other.
+   THE TITLE MUST NOT WRAP. Both children are flex items with the default
+   `min-width: auto`, so without this they shrink in proportion and a two-word
+   title breaks across two lines while the deck still wraps anyway — the row
+   doubles in height for nothing. Pinning the title to one line hands the whole
+   remainder to the deck, which is the comp's own division of the row. */
+.case-headrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+  padding-inline: var(--space-6);
+}
+.case-headrow .case-heading {
+  white-space: nowrap;
+}
+/* Reflection stacks its pair instead, 12px apart. */
+.case-headrow--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* A closing paragraph on white, under a panel. */
+.case-note {
+  margin: 0;
+  padding-inline: var(--space-6);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- 1. Cover ------------------------------------------------------------ */
+.case-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline: var(--space-6);
+}
+
+/* Headline-medium, matching the 36px box the comp gives it — the mark beside it
+   is 32, so the lockup reads as one unit rather than as a label with an icon. */
+.case-eyebrow__label {
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+  color: var(--text-primary);
+}
+
+/* Headline left, intro right, equal halves, vertically centred. The 60px here
+   is the row's own — it sits inside the band's 60, which is what the comp
+   draws and why there is more air above this row than beside it. */
+.case-cover__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+  align-items: center;
+  padding: var(--case-band-pad) var(--space-6);
+}
+
+.case-cover__headline {
+  margin: 0;
+  font-size: var(--m3-display-sm);
+  line-height: var(--m3-display-sm-leading);
+  letter-spacing: var(--m3-display-sm-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.case-cover__intro {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- 2. Facets ----------------------------------------------------------- */
+/* Four cells, 2x2, each carrying its own 60px. The dividers are drawn from
+   position rather than declared per cell: odd cells close on the right, the
+   second row opens with a rule above it. */
+.case-facets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.case-facet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--case-band-pad) var(--space-6);
+}
+.case-facet:nth-child(odd) {
+  border-right: var(--border-width) solid var(--border-subtle);
+}
+.case-facet:nth-child(n + 3) {
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.case-facet__label {
+  margin: 0;
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.case-facet__body {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Tables -------------------------------------------------------------- */
+/* The panel is the tinted block the table sits in — it runs the full width of
+   the ruled column and pads 32 on every side, which is what puts the row rules
+   at the same 32px inset as the prose above and below it. */
+.case-panel {
+  background-color: var(--surface-raised);
+  padding: var(--space-6);
+}
+
+.case-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+}
+
+.case-table th,
+.case-table td {
+  font-weight: var(--weight-regular);
+  vertical-align: top;
+}
+
+/* Header cells carry the bottom half of their 20px gutter; the row rule below
+   supplies the line, and the first data row carries the top half. */
+.case-table thead th {
+  padding-bottom: var(--space-4h);
+  color: var(--text-secondary);
+}
+
+.case-table tbody tr {
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+.case-table tbody th,
+.case-table tbody td {
+  padding-block: var(--space-4h);
+  color: var(--fig-ink);
+}
+/* The last row closes against the panel's own 32px rather than adding to it. */
+.case-table tbody tr:last-child th,
+.case-table tbody tr:last-child td {
+  padding-bottom: 0;
+}
+
+/* Visually hidden, locally — there is no utility layer in this codebase and
+   _hero.css does the same thing for the folder button's label. The comp leaves
+   the product column's header blank (it holds an invisible word purely to size
+   the column); a screen reader still needs to know what the column is. */
+.case-table__hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Competitor table ---------------------------------------------------- */
+/* Six equal columns, exactly as the comp divides its 1206 into 201s. */
+.case-table thead th { width: 16.6667%; }
+
+/* Written against `tbody th` so it outranks the generic ink colour above on
+   specificity rather than on source order. */
+.case-table tbody th.case-table__product {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+}
+
+/* THE SUBJECT ROW IS BOLD. ONTON is the product being benchmarked, so the comp
+   sets its whole row heavier and lets the four competitors read as context. */
+.case-table tbody tr.is-subject td {
+  font-weight: var(--weight-bold);
+}
+
+/* ---- Why table ----------------------------------------------------------- */
+/* Three columns, taken from the comp's ROW geometry (560 / 603 / 43 of 1206).
+   Figma places the "Persona" header 25px left of the dots beneath it — an
+   artefact of hand-positioned frames that a real table cannot reproduce and
+   should not: a column header belongs over its own column. The label sits with
+   its data here, which is the 25px difference against the comp. */
+.case-table--why thead th:nth-child(1) { width: 46.43%; }
+.case-table--why thead th:nth-child(2) { width: 50%; }
+.case-table--why thead th:nth-child(3) { width: 3.57%; }
+
+/* This table inverts the competitor one's emphasis — the comp sets its headers
+   in ink and its rows secondary, where the competitor table does the reverse. */
+.case-table--why thead th { color: var(--text-primary); }
+.case-table--why tbody th,
+.case-table--why tbody td { color: var(--text-secondary); }
+
+.case-table__persona {
+  white-space: nowrap;
+}
+
+/* ---- Persona dots -------------------------------------------------------- */
+/* THE PERSONA KEY IS A COLOUR KEY. Each of the five personas owns one of
+   Figma's accents/* colours, and that colour is the only thing tying a row of
+   the Why table to the description underneath it — so these are solid filled
+   circles, exactly as the comp draws them, not placeholders standing in for an
+   asset that was never going to exist.
+
+   The mapping lives here and only here: tokens.css names the colours after
+   their Figma variables, and these five rules are what decide which persona
+   wears which. Recolouring a persona is a one-line change. */
+.case-dot {
+  flex: none;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.case-dot--dao-steward        { background-color: var(--fig-accent-purple); }
+.case-dot--trading-group-admin { background-color: var(--fig-accent-orange); }
+.case-dot--campaign-manager   { background-color: var(--fig-accent-red); }
+.case-dot--first-timer        { background-color: var(--fig-accent-blue); }
+.case-dot--power-user         { background-color: var(--fig-accent-green); }
+
+/* Challenquiz — a different cast on the same five accents. Two pages, one
+   palette; no new colour was needed for either. */
+.case-dot--crypto-native-competitor { background-color: var(--fig-accent-purple); }
+.case-dot--casual-trivia-fan        { background-color: var(--fig-accent-orange); }
+.case-dot--first-timer              { background-color: var(--fig-accent-red); }
+.case-dot--competitive-quizzer      { background-color: var(--fig-accent-blue); }
+.case-dot--skeptic                  { background-color: var(--fig-accent-green); }
+
+/* ---- Persona key --------------------------------------------------------- */
+.case-why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.case-personas {
+  padding-inline: var(--space-6);
+}
+
+.case-personas__heading {
+  margin: 0 0 var(--space-3);
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.case-personas__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.case-personas__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+/* The persona's name is the only bold thing in the list — it is what the table
+   above points at, so it has to be findable at a glance. */
+.case-personas__item strong {
+  font-weight: var(--weight-bold);
+  color: var(--fig-ink);
+}
+
+/* ---- Persona cross-highlight --------------------------------------------- */
+/* Hovering a row of the Why table lifts out the persona it points at: that
+   persona's key entry stays full, and so do any OTHER rows sharing it — which
+   is the point, because two personas appear twice and the grouping is
+   invisible otherwise. Everything else drops to 50%.
+ *
+ * NO JAVASCRIPT, AND NO CLASS TOGGLING. Both halves live inside .case-why and
+ * both carry the same data-persona, so one :has() rule per persona covers rows
+ * and key entries at once — five rules against a listener, a class, an
+ * active-persona attribute and the teardown that goes with them. CSS cannot
+ * loop, so the five slugs are written out; they are already written out
+ * directly above for the dot colours, so this adds no new place to forget one.
+ *
+ * :has() IS THE PROGRESSIVE ENHANCEMENT. Where it is unsupported the whole
+ * block is dropped as invalid and every row and key entry simply stays at full
+ * opacity — which is exactly the intended fallback, not a broken state.
+ *
+ * The hover/pointer query is what keeps this off touch. A coarse pointer has no
+ * hover state to leave, so a tapped row would dim the rest of the table and
+ * stay that way; gating it means mobile renders everything full, always.
+ *
+ * REDUCED MOTION NEEDS NOTHING HERE. base.css already forces every transition
+ * on the page to 0.01ms under prefers-reduced-motion, and with !important, so a
+ * local `transition: none` could not win even if it were wanted. The dimming
+ * lands instantly and the opacity change itself still happens — which is the
+ * right call: it is information about the table, not decoration. */
+@media (hover: hover) and (pointer: fine) {
+  .case-why [data-persona] {
+    transition: opacity 0.18s ease;
+  }
+
+  .case-why:has(tbody tr[data-persona="dao-steward"]:hover)
+    [data-persona]:not([data-persona="dao-steward"]),
+  .case-why:has(tbody tr[data-persona="trading-group-admin"]:hover)
+    [data-persona]:not([data-persona="trading-group-admin"]),
+  .case-why:has(tbody tr[data-persona="campaign-manager"]:hover)
+    [data-persona]:not([data-persona="campaign-manager"]),
+  .case-why:has(tbody tr[data-persona="first-timer"]:hover)
+    [data-persona]:not([data-persona="first-timer"]),
+  .case-why:has(tbody tr[data-persona="power-user"]:hover)
+    [data-persona]:not([data-persona="power-user"]) {
+    opacity: 0.5;
+  }
+
+}
+
+/* ---- Split (media + text) ------------------------------------------------ */
+/* Two columns, both centred on the same axis. The ratio and the gutter vary by
+   band — ONTON puts a 640 square against the left rule with 32 beside it,
+   Challenquiz runs 635/635 edge to edge in one band and 651/587 in another — so
+   both are custom properties and each band names its own rather than every
+   variant redeclaring grid-template-columns. */
+.case-split {
+  display: grid;
+  grid-template-columns: var(--split-cols, 640fr 598fr);
+  gap: var(--split-gap, var(--space-6));
+  align-items: center;
+}
+/* Text in the first column, media in the second, halves edge to edge. */
+.case-split--text-first {
+  --split-cols: 1fr 1fr;
+  --split-gap: 0px;
+}
+/* The text column takes the extra room; 32 between it and the media. */
+.case-split--wide-text {
+  --split-cols: 651fr 587fr;
+  --split-gap: var(--space-6);
+}
+.case-split__media {
+  display: flex;
+  justify-content: center;
+}
+
+/* PINNED BY HEIGHT, NOT WIDTH — the same trade as the showcase phone. The
+   comp's slot is 635 x 730; the export is 620 x 730, a slightly narrower ratio.
+   Letting the video fill the column's width would make it 749 tall and push the
+   band 19px past the comp. Fixing the HEIGHT at 730 keeps the band exactly as
+   tall as the comp draws it and lets the width settle at the clip's own ratio,
+   so nothing is cropped and nothing is letterboxed. */
+.case-split__media--tall .case-media {
+  width: auto;
+  height: 730px;
+  max-width: 100%;
+}
+
+.case-split__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* THE INSET BELONGS TO WHICHEVER COLUMN TOUCHES THE GUTTER RULE, and only that
+   one. Where the text runs first it sits against the rule and needs the page's
+   standard 32, the same as every other heading on a case study; where it runs
+   second — ONTON's old-flow band — it sits against the media instead and the
+   grid's own gutter already separates them, so adding it there would push the
+   text off the comp.
+
+   Inline, not just left: the comp insets both sides. It gives the text column
+   571 of its 635 in Challenquiz's §3 and 587 of its 651 in §5, which are the
+   two body widths 281:64068 actually draws. */
+.case-split--text-first .case-split__text {
+  padding-inline: var(--space-6);
+}
+
+/* ---- 5. Problem ---------------------------------------------------------- */
+/* 596 IS THE COMP'S OWN HEIGHT AND HAS TO BE STATED. Nothing in this band's
+   content produces it — the quote cards are short — so left to itself the band
+   collapses to about half. The comp gives it 596 deliberately: that is what
+   opens the gap between each quote and its takeaway, and what lets the left
+   half's four lines sit in the middle of a tall column rather than crowding the
+   band. A min-height rather than a height, so a longer quote can still grow it. */
+.case-problem {
+  display: grid;
+  grid-template-columns: 804fr 466fr;
+  min-height: 596px;
+}
+
+.case-problem__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-3);
+  padding-inline: var(--space-6);
+}
+
+.case-problem__body {
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+.case-problem__lead {
+  margin: 0;
+}
+/* THE BLANK LINES ARE MARGIN, NOT EMPTY PARAGRAPHS. The comp sets a five-line
+   block from three lines of copy, with a blank between each. One line-height of
+   margin reproduces the rhythm without putting empty elements in the document
+   for a screen reader to walk through. */
+.case-problem__half {
+  margin: var(--m3-body-lg-leading) 0 0;
+  font-weight: var(--weight-bold);
+}
+
+.case-problem__clusters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-left: var(--border-width) solid var(--border-subtle);
+}
+
+.case-cluster {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-4);
+}
+.case-cluster:first-child {
+  border-right: var(--border-width) solid var(--border-subtle);
+}
+
+.case-cluster__label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* The quote takes the space, which is what pushes the takeaway to the foot of
+   the card — the comp aligns those two lines across both cards regardless of
+   how long the quotes are. */
+.case-cluster__quote {
+  flex: 1;
+  margin: 0;
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--fig-ink);
+}
+/* The speaker, italic in the comp — not part of what they said. */
+.case-cluster__quote cite {
+  font-style: italic;
+}
+
+.case-cluster__takeaway {
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- 7. Showcase --------------------------------------------------------- */
+.case-showcase {
+  display: grid;
+  grid-template-columns: 513fr 757fr;
+}
+
+/* A COLUMN, NOT A ROW. ONTON's showcase band holds a heading and nothing else,
+   so a row flex centred it correctly by accident; Challenquiz puts a paragraph
+   under the heading and the two then sat side by side, overlapping. Stacking
+   them centres the pair as a group, which is what both comps actually draw.
+   The 20 is the comp's 19 rounded onto the scale. */
+.case-showcase__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-4h);
+  padding-inline: var(--space-6);
+}
+
+/* The phone is centred in its half with 42px of air above and below, which is
+   what gives this band its height.
+   PINNED BY HEIGHT, NOT WIDTH, and that is the whole point. The comp's box is
+   434x886; the export is 390x838, a slightly narrower ratio. Fixing the width
+   at 434 would make `object-fit: cover` shave ~46px off the phone's height —
+   the status bar at one end or the primary button at the other. Fixing the
+   HEIGHT at the comp's 886 keeps the band exactly as tall as 193:5401 draws it
+   and lets the width settle at whatever the clip's own ratio gives (412), so
+   nothing is cropped and nothing is letterboxed. */
+.case-showcase__media {
+  display: flex;
+  justify-content: center;
+  padding-block: 42px;
+  border-left: var(--border-width) solid var(--border-subtle);
+}
+.case-showcase__media .case-media {
+  width: auto;
+  height: 886px;
+  max-width: 100%;
+}
+
+/* ---- 9. Reflection ------------------------------------------------------- */
+/* Four cells across a 104px band, ruled above and below and divided between. */
+/* 104 IS THE COMP'S BAND HEIGHT. Value (28) plus label (24) plus the 16px
+   padding either side comes to 84, so the row would otherwise sit 20 short and
+   the four figures would read cramped against their rules. min-height, not
+   height, so a label that wraps at a narrower column grows the row instead of
+   spilling out of it. */
+.case-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  min-height: 104px;
+  margin: 0;
+  border-block: var(--border-width) solid var(--border-subtle);
+}
+
+.case-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-4) var(--space-6);
+  overflow: hidden;
+}
+.case-stat:not(:last-child) {
+  border-right: var(--border-width) solid var(--border-subtle);
+}
+
+.case-stat__value {
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-medium);
+  color: var(--fig-ink);
+}
+
+.case-stat__label {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+.case-closing {
+  padding-inline: var(--space-6);
+}
+.case-closing__para {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Media --------------------------------------------------------------- */
+/* One figure, one aspect-ratio, whether it currently holds artwork or a
+   stand-in. That is what makes dropping an asset in a no-op for layout: the box
+   was already the right size. */
+.case-media {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: var(--media-w) / var(--media-h);
+}
+
+.case-media__asset {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* THE STAND-IN IS MEANT TO LOOK LIKE ONE. Dashed, tinted, and carrying the type
+   and the exact path the file has to land at — the page is its own drop-in
+   instruction, and nobody can mistake it for finished artwork in a screenshot. */
+.case-media__slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-5);
+  border: 2px dashed var(--border-strong);
+  background-color: var(--surface-raised);
+  text-align: center;
+}
+
+.case-media__label {
+  margin: 0;
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-semibold);
+  color: var(--fig-ink);
+}
+
+/* The path in DM Mono, because it is a filename and reads as one. */
+.case-media__path {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.case-media__dims {
+  margin: 0;
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  letter-spacing: var(--m3-body-sm-tracking);
+  color: var(--text-muted);
+}
+
+/* ---- Marks --------------------------------------------------------------- */
+/* The small inline logos and persona markers, at whatever size the comp gives
+   them. The stand-in is an empty dashed square — no initials, no drawn glyph,
+   nothing that could be mistaken for the real mark. Its title carries the type
+   and path for anyone inspecting it. */
+.case-mark {
+  flex: none;
+  width: var(--mark-size);
+  height: var(--mark-size);
+}
+
+/* A BRAND MARK IS A CIRCLE, and the container is what makes it one. Every logo
+   in these tables and eyebrows sits in a round 20 or 32 box in the comp, but
+   the exports behind them will not all be round: some are a glyph on a coloured
+   ground, some a glyph on nothing. Clipping here rather than trusting the
+   artwork means both land as the comp draws them — and `cover` rather than
+   `contain`, because a mark drawn to fill its circle must not be inset inside
+   it. Square sources only, which every one of these is. */
+.case-mark--circle {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* THE BACK CHEVRON IS NOT ONE. It is a Material Symbols glyph on the line of
+   the link, and glyphs carry their own padding inside the 24 box — so it keeps
+   its square and is contained rather than cropped, or the crop would eat the
+   very padding that sets it off from the words. */
+.case-mark--icon {
+  object-fit: contain;
+}
+
+/* THE STAND-IN TAKES THE SAME SILHOUETTE, so a placeholder reserves the shape
+   its artwork will have and not merely its area. Dashed either way: no logo has
+   a dashed edge, so nothing here can be mistaken for a finished mark. */
+.case-mark--slot {
+  display: inline-block;
+  vertical-align: middle;
+  border: var(--border-width) dashed var(--border-strong);
+  background-color: var(--surface-raised);
+}
+
+/* ---- Back to home -------------------------------------------------------- */
+/* Above the eyebrow, at the very top of the cover. Its own 24-tall row, 32 down
+   from the band's top edge, on all three comps. */
+/* FLEX, SO THE ROW IS THE LINK'S OWN HEIGHT. The link is inline-flex around a
+   24px icon and 14/20 text; left in a line box it is baseline-aligned inside
+   it, and the box comes out 30 rather than 24 — which pushed the eyebrow and
+   the cover 6px down the page on every case study that has a back link. Taking
+   the anchor out of the line box removes the descent that was never the comp's. */
+.case-back {
+  display: flex;
+  margin: 0;
+  padding-inline: var(--space-6);
+}
+
+/* NO GAP, AND THAT IS THE COMP: the chevron's 24 box ends at 56 and the words
+   start at 56. A Material Symbols glyph carries its own padding inside that
+   box, so the space between them is the icon's, not the layout's — adding 8
+   here would double it. It reads tight only while the icon is a placeholder
+   square, which has no padding of its own to give. */
+.case-back__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.case-back__link:hover,
+.case-back__link:focus-visible {
+  color: var(--text-primary);
+}
+
+/* ---- A cover that opens with a back link --------------------------------- */
+/* THE BACK LINK CHANGES THE BAND'S RHYTHM, so it is a modifier rather than
+   something bolted onto .case-band--cover. A cover that opens with one is 32
+   from the top and 32 from the bottom rather than the standard 60 — a 24px link
+   needs less air above it than a 36px lockup does. All three comps draw it that
+   way; ONTON simply had not been given the row yet. */
+.case-band--has-back .case-band__inner {
+  padding-block: var(--space-6);
+}
+
+/* ---- A band whose own blocks carry the padding --------------------------- */
+/* Like --flush, but for a band whose children pad themselves ASYMMETRICALLY:
+   the heading row opens with 60 and closes with 32, and the closing line opens
+   with 24 and closes with 60. A single padding-block on the inner cannot
+   express that, and a uniform gap would put the wrong space in both places. */
+.case-band__inner--tight {
+  padding-block: 0;
+  gap: 0;
+}
+.case-band__inner--tight > .case-headrow {
+  padding-block: var(--case-band-pad) var(--space-6);
+}
+.case-band__inner--tight > .case-insight {
+  padding-block: var(--space-5) var(--case-band-pad);
+}
+
+/* ---- Prototype embed ----------------------------------------------------- */
+/* Sized from the comp's frame so the band holds its height whether the iframe
+   is live or the slot is still waiting for a share link. */
+/* THE SLOT IS THE FIXED OUTER BOX and it clips. Its size is the comp's; what
+   goes inside is scaled to fit rather than the other way round. */
+.case-embed {
+  position: relative;
+  width: 100%;
+  max-width: calc(var(--embed-w) * 1px);
+  aspect-ratio: var(--embed-w) / var(--embed-h);
+  overflow: hidden;
+}
+
+/* CONTAIN, NOT COVER, AND ENTIRELY DERIVED. The iframe is given the document's
+   natural size — so the document itself never scrolls — and the whole frame is
+   then scaled by whichever axis runs out first. Everything below is computed
+   from --embed-* and --nat-*, so a re-measured document is one number to
+   change and no scale to recompute by hand.
+
+   The translate centres what is left over on the axis that did not constrain:
+   scale first, then shift by half the slack. transform-origin is top left so
+   that arithmetic is about the box's own corner rather than its middle.
+
+   An embed whose natural size equals its slot lands on scale 1 and a zero
+   translate — a no-op, which is what keeps this from touching the pages that
+   were already fitting. */
+.case-embed__frame {
+  --scale: min(
+    calc(var(--embed-w) / var(--nat-w)),
+    calc(var(--embed-h) / var(--nat-h))
+  );
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: calc(var(--nat-w) * 1px);
+  height: calc(var(--nat-h) * 1px);
+  border: 0;
+  transform-origin: top left;
+  transform:
+    translate(
+      calc((var(--embed-w) - var(--nat-w) * var(--scale)) * 0.5px),
+      calc((var(--embed-h) - var(--nat-h) * var(--scale)) * 0.5px)
+    )
+    scale(var(--scale));
+}
+
+/* Only shown when the document is missing. */
+.case-embed__slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-5);
+  border: 2px dashed var(--border-strong);
+  background-color: var(--surface-raised);
+  text-align: center;
+}
+
+.case-embed__path {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.case-embed__label {
+  margin: 0;
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-semibold);
+  color: var(--fig-ink);
+}
+
+/* ---- TODO marker --------------------------------------------------------- */
+/* AN UNFINISHED PAGE SHOULD LOOK UNFINISHED. Where copy or a value is still
+   outstanding this paints instead of the content, rather than an empty element
+   nobody notices in review. It is not in the comp and is not meant to ship —
+   every one of these is a build-report line item. */
+.case-todo {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) dashed #b7791f;
+  border-radius: var(--space-1);
+  background-color: #fffaf0;
+  color: #975a16;
+  font-family: var(--font-mono);
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+}
+
+/* ---- Stats with a delta chip --------------------------------------------- */
+/* Challenquiz puts a change figure beside each value, which lifts the row from
+   ONTON's 104 to 134 and the value's line box from 28 to 36. */
+.case-stats--chipped {
+  min-height: 134px;
+}
+.case-stats--chipped .case-stat {
+  gap: var(--space-2);
+  padding-block: var(--space-6);
+}
+.case-stats--chipped .case-stat__value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+}
+
+/* OUTLINED, NOT FILLED, and neutral on purpose. The comp draws a hairline pill
+   with no fill — 1px of --border-subtle at a 31px radius, which on a 24-tall
+   chip is simply "fully round". No colour is carried: two of these four deltas
+   are improvements because the number went UP and one because it went DOWN, so
+   a red/green treatment would have to encode which direction is good per stat.
+   The comp declines to, and states the figure instead; `direction` stays on the
+   element in case that decision is ever made. */
+.case-stat__chip {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: 999px;
+  background-color: transparent;
+  font-size: var(--m3-body-sm);
+  line-height: var(--m3-body-sm-leading);
+  letter-spacing: var(--m3-body-sm-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--fig-ink);
+}
+
+/* ---- Closing paragraphs, spaced ------------------------------------------ */
+/* Two blocks rather than one flow. The comp sets the second 84 down from the
+   first's top, which with a 72-tall first block is 12 of clear space — wider
+   than a line, narrower than a section break. */
+.case-closing--spaced {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* Figma specifies desktop only. The gutters and their rules collapse together,
+   every two-column band stacks, and the tables scroll rather than crush — the
+   same breakpoint and the same reasoning as .about and .work. */
+@media (max-width: 900px) {
+  .case-band::before,
+  .case-band::after {
+    display: none;
+  }
+  .case-band__inner {
+    margin-inline: 0;
+    padding-block: var(--space-9);
+  }
+
+  .case-back {
+    padding-inline: var(--space-7);
+  }
+
+  .case-cover__row,
+  .case-facets,
+  .case-split,
+  .case-problem,
+  .case-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .case-cover__row {
+    padding: var(--space-8) var(--space-7);
+  }
+  .case-cover__headline {
+    font-size: var(--m3-headline-lg);
+    line-height: var(--m3-headline-lg-leading);
+  }
+
+  .case-facet:nth-child(odd) {
+    border-right: 0;
+  }
+  .case-facet:nth-child(n + 2) {
+    border-top: var(--border-width) solid var(--border-subtle);
+  }
+  .case-facet,
+  .case-problem__text,
+  .case-headrow,
+  .case-note,
+  .case-personas,
+  .case-closing {
+    padding-inline: var(--space-7);
+  }
+
+  .case-headrow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  /* Stacked, the title has the full width and wrapping is correct again. */
+  .case-headrow .case-heading {
+    white-space: normal;
+  }
+
+  /* The 596 is a two-column composition's height; stacked, it is just a gap. */
+  .case-problem {
+    min-height: 0;
+  }
+  .case-problem__clusters {
+    border-left: 0;
+    border-top: var(--border-width) solid var(--border-subtle);
+  }
+
+  .case-showcase__media {
+    border-left: 0;
+    border-top: var(--border-width) solid var(--border-subtle);
+  }
+  /* Stacked, the phone should fit the column rather than hold a desktop height. */
+  .case-showcase__media .case-media {
+    width: 100%;
+    max-width: 390px;
+    height: auto;
+  }
+
+  /* The tables keep their column proportions and scroll inside the panel; the
+     alternative is 6 columns at 40px each, which is unreadable. */
+  .case-panel {
+    padding: var(--space-5);
+    overflow-x: auto;
+  }
+  .case-table {
+    min-width: 720px;
+  }
+
+  .case-split--text-first,
+  .case-split--wide-text {
+    --split-cols: 1fr;
+    --split-gap: var(--space-7);
+  }
+  /* A fixed 730 is a two-column fact; stacked, it should fit the column. */
+  .case-split__media--tall .case-media {
+    width: 100%;
+    max-width: 620px;
+    height: auto;
+  }
+  .case-band--has-back .case-band__inner {
+    padding-block: var(--space-9);
+  }
+  .case-band__inner--tight > .case-headrow,
+  .case-band__inner--tight > .case-insight {
+    padding-block: var(--space-9) var(--space-6);
+  }
+
+  .case-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .case-stat:nth-child(2n) {
+    border-right: 0;
+  }
+  .case-stat:nth-child(n + 3) {
+    border-top: var(--border-width) solid var(--border-subtle);
+  }
+}

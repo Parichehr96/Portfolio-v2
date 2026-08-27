@@ -129,14 +129,30 @@
 }
 
 /* ---- Live cursor --------------------------------------------------------- */
-/* The board swaps the OS pointer for the same arrow the comp draws, so the
-   canvas announces itself as interactive. The comp's static arrow is not
-   rendered as an element (see hero.js) — this replaces it, and drawing both
-   would leave a frozen duplicate on screen.
+/* The board swaps the OS pointer for the arrow the comp draws, so the canvas
+   announces itself as interactive. This is the ONLY arrow of its kind on the
+   board: there is no static copy in the artwork and there must not be one (see
+   the `decor` note in hero.js), because a frozen arrow sitting beside the one
+   that moves reads as a rendering fault rather than as decoration.
  *
- * Hotspot 8 7 is the arrow's tip, measured off a 48x48 render of the file
- * rather than guessed. The `auto` fallback is load-bearing: Safari does not
- * support SVG cursor images and lands there, showing the normal system arrow.
+ * A PNG, AND THAT IS THE WHOLE SIZING MECHANISM. A CSS cursor takes its size
+ * from the image's own pixel dimensions — there is no `background-size` for
+ * cursors, and `width` on the SVG is not consulted — so the only way to draw a
+ * smaller pointer is to ship a smaller file. icon-cursor.png is
+ * icon-cursor.svg rendered at 14x14 with rsvg-convert, 0.3x the SVG's 48px
+ * native size. Regenerate it, do not scale it here:
+ *
+ *     rsvg-convert -w 14 -h 14 icon-cursor.svg -o icon-cursor.png
+ *
+ * The SVG stays on disk as the source and is no longer referenced by the page.
+ * PNG is the safer format here anyway: Safari does not accept an SVG cursor at
+ * all and used to fall through to `auto`, showing the system arrow instead of
+ * this one. A PNG it renders.
+ *
+ * Hotspot 2 2 is the arrow's tip, not a guess and not a copy — it is the 8 7
+ * measured off the old 48px render carried across by the same 14/48, and it
+ * matches the top-most opaque pixel of the shipped 14px file. The `auto`
+ * fallback is still load-bearing for anything that declines the image.
  *
  * The hover/pointer query keeps this off touch devices, where there is no
  * cursor to swap. Descendants inherit rather than restate the url, so the arrow
@@ -144,7 +160,7 @@
  * revert to its UA default — and stays put for the whole of a drag. */
 @media (hover: hover) and (pointer: fine) {
   .hero__board {
-    cursor: url("/Assets/images/hero/icon-cursor.svg") 8 7, auto;
+    cursor: url("/Assets/images/hero/icon-cursor.png") 2 2, auto;
   }
   .hero__board * {
     cursor: inherit;
@@ -351,12 +367,13 @@
   position: absolute;
   left: var(--card-x);
   top: var(--card-y);
-  /* PER-CARD SIZE, on the same seam as --card-x/--card-y/--card-rot. The comp
-     gives all three different boxes (card 2 is the short one); one shared size
-     left the outer pair ~49px short. Percentages of the cards frame, so they
-     scale with the board like everything else. */
-  width: var(--card-w, 49.9402%);
-  height: var(--card-h, 83.8084%);
+  /* ONE SIZE FOR ALL THREE — 240 x 260 in the comp, as a percentage of the
+     cards frame. There is deliberately no per-card override: Figma reports the
+     ROTATED BOUNDING BOX for cards 1 and 3 (286x302, 285x301), and a previous
+     pass wrote those in as real dimensions, stretching both. Size is uniform;
+     only rotation differs, and rotation lives in the transform below. */
+  width: 40.1615%;
+  height: 86.0914%;
   display: flex;
   flex-direction: column;
   gap: 1.25em;
@@ -590,9 +607,9 @@
 }
 
 /* ---- Static decoration --------------------------------------------------- */
-/* The arrow, the small cursor mark and the two product mockups. Centred on
-   their Figma points exactly like the icons, but that is where the similarity
-   ends: these carry no [data-hero-icon], so hero-icons.js never sees them and
+/* The arrow and the two product mockups — no cursor mark; that arrow is the
+   live pointer above, not an element. Centred on their Figma points exactly
+   like the icons, but that is where the similarity ends: these carry no [data-hero-icon], so hero-icons.js never sees them and
    they can neither wiggle nor be dragged.
 
    BELOW THE FOLDER in z-order. They are background furniture; the folder, its
@@ -637,6 +654,51 @@
 /* .hero__years and .hero__hint are GONE. They sat below the folder — "(2021 -
    2026)" and a pull hint — and 457:58676 replaces both: the instruction moved
    onto the arrow, and the label moved onto the flap itself. */
+
+/* THE MOCKUP FILENAMES — 450:37859 and 392:14769. Horizontally centred on their
+   Figma point like .hero__decor, which is what puts each one squarely under the
+   mockup it names: in the comp both boxes share their mockup's centre-x, so one
+   coordinate does the pairing and there is no second number to keep in sync.
+   Vertically they are anchored by their TOP — see the transform below.
+
+   FIGTREE, NOT ROBOTO. The Figma node reports Roboto Medium because it is bound
+   to the M3 `static/title-medium/font` variable, which still points at the face
+   the original M3 import used; the comp itself moved to Figtree and tokens.css
+   records that swap. Everything else here is the node's own: 12.8/19.2, weight
+   500, #727272, +0.12px tracking.
+
+   SIZED IN cqw, WITH em MULTIPLES HANGING OFF IT. The mockup above each caption
+   is a percentage of the board, so a px-fixed label would drift in size against
+   its own artwork as the board scales. --hero-caption-size carries the comp's
+   12.8px; line-height and tracking are em multiples of that one number, so the
+   label scales as a single piece — the same model as --hero-card-base.
+
+   Not pointer-events:none. Like .hero__arrow-text this is text rather than
+   artwork, and there is no reason to make it unselectable. */
+.hero__caption {
+  position: absolute;
+  left: var(--caption-x);
+  top: var(--caption-y);
+  width: var(--caption-w);
+  /* X ONLY. --caption-x is a centre and is pulled back by half the box like
+     everything else on the board; --caption-y is the Figma text node's TOP,
+     because that is where Figma puts the line inside its box (see hero.js).
+     Pulling back on Y as well would sink the text ~0.4px. */
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--hero-caption-size);
+  line-height: 1.5; /* 19.2 / 12.8 */
+  letter-spacing: 0.009375em; /* 0.12px at 12.8px */
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  text-align: center;
+  /* The comp sets both on one line and the campaign box is only 131 wide, which
+     Figtree can fill. Centring distributes any overflow to both sides, so the
+     label stays centred on its mockup either way. */
+  white-space: nowrap;
+  z-index: var(--z-content);
+}
 
 /* ---- Narrow -------------------------------------------------------------- */
 /* Figma specifies desktop only. The board keeps scaling proportionally, which

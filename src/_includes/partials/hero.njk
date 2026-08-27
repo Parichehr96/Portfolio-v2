@@ -55,8 +55,10 @@
     {#
       STATIC DECORATION. Nothing here wiggles, drags or animates — hero-icons.js
       binds only [data-hero-icon], so these are invisible to it. They are pure
-      artwork: the drawn arrow, the small cursor mark, and the two product
-      mockups. alt="" + aria-hidden because none of them carries meaning a
+      artwork: the drawn arrow and the two product mockups. There is no cursor
+      mark here — the board's live CSS cursor is the comp's arrow, and a static
+      copy beside it would be a frozen duplicate (see hero.js).
+      alt="" + aria-hidden because none of them carries meaning a
       screen-reader user is missing; the words beside the arrow do, and those
       are real text below.
     #}
@@ -71,6 +73,26 @@
         decoding="async"
         style="--decor-x: {{ d.x }}%; --decor-y: {{ d.y }}%; --decor-w: {{ d.w }}%"
       />
+    {%- endfor %}
+
+    {#
+      THE MOCKUP FILENAMES (450:37859, 392:14769). The comp writes each mockup's
+      source filename under it. They were skipped once as Figma annotations —
+      they are not; they are text nodes in the board and they render.
+
+      LIVE TEXT, NOT BAKED INTO THE PNGs. Keeping them out of the artwork means
+      they stay crisp at every board size, cost nothing to correct, and leave
+      the mockup exports untouched.
+
+      aria-hidden, like the mockups they sit under: the name of an asset file is
+      not something a screen-reader user is missing.
+    #}
+    {%- for c in hero.captions %}
+      <p
+        class="hero__caption hero__caption--{{ c.slug }}"
+        aria-hidden="true"
+        style="--caption-x: {{ c.x }}%; --caption-y: {{ c.y }}%; --caption-w: {{ c.w }}%"
+      >{{ c.text }}</p>
     {%- endfor %}
 
     {#
@@ -107,12 +129,12 @@
         {%- for card in hero.cards %}
           <article
             class="hero-folder__card hero-folder__card--{{ loop.index }}"
-            style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-w: {{ card.w }}%; --card-h: {{ card.h }}%; --card-rot: {{ card.rotate }}deg"
+            style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-rot: {{ card.rotate }}deg"
           >
             <h2 class="hero-folder__card-title">{{ card.title }}</h2>
-            {#- Card 2's body is two toned spans (434:11721); the others are one
-                plain string. Rendering both shapes here keeps the split in the
-                data rather than hardcoding a second template branch per card. -#}
+            {#- Every card's body is two toned spans in Figma — an opening
+                sentence in ink, the remainder muted. A plain string is still
+                accepted so a future single-tone card needs no new branch. -#}
             <p class="hero-folder__card-body">
               {%- if card.body is string -%}
                 {{ card.body }}

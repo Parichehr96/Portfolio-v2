@@ -1,0 +1,206 @@
+/* CONNECT2WOW — Figma 296:11457. The parts of this write-up the shared case
+ * shell (_case-study-v2.css) does not already cover.
+ *
+ * Colours come from the .case scope in tokens.css, so no Figma hex appears here.
+ *
+ * THREE THINGS ARE NEW: a five-column research table, the numbered design
+ * principles, and an Outcome band whose spec sheets deliberately clip.
+ */
+
+/* ---- Research table ------------------------------------------------------ */
+/* FIVE COLUMNS, AND THEY ARE NOT EQUAL. The comp lays the row out as a flex
+   line: a 116px product column, four 260.5px columns, and 12px between each.
+   A table has no `gap`, so the 12 is carried as padding-right on every cell but
+   the last and folded into the percentages — which is why these do not look
+   like round numbers. They sum to the comp's 1206 exactly.
+
+   Cells here run to four and five lines where the other pages' tables were
+   single-line, so everything is top-aligned rather than centred. */
+.case-table--research th,
+.case-table--research td {
+  vertical-align: top;
+}
+.case-table--research thead th:not(:last-child),
+.case-table--research tbody th,
+.case-table--research tbody td:not(:last-child) {
+  padding-right: var(--space-3);
+}
+.case-table--research thead th:nth-child(1) { width: 10.6136%; }
+.case-table--research thead th:nth-child(2),
+.case-table--research thead th:nth-child(3),
+.case-table--research thead th:nth-child(4) { width: 22.5954%; }
+.case-table--research thead th:nth-child(5) { width: 21.6003%; }
+
+/* ---- Design principles --------------------------------------------------- */
+/* The band is flush and its blocks rule themselves, so the horizontal lines are
+   real borders between list items rather than gaps. */
+.c2w-principles__head {
+  padding: var(--space-6);
+}
+
+.c2w-principles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: principle;
+}
+
+/* Text left, visualization right, split at 622 of the 1272 column — and the
+   rule between them is the comp's, not a border on either child. */
+.c2w-principle {
+  display: grid;
+  grid-template-columns: 622fr 650fr;
+  align-items: center;
+  border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.c2w-principle__text {
+  padding-inline: var(--space-6);
+}
+
+.c2w-principle__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: calc(var(--principle-pad, 28) * 1px);
+  border-left: var(--border-width) solid var(--border-subtle);
+}
+
+/* THE NUMERAL IS A COUNTER, not part of the copy — the comp sets these as an
+   ordered list and the text nodes carry no digits. It hangs in the margin so
+   the claim and its elaboration share one left edge. */
+.c2w-principle__body {
+  position: relative;
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+.c2w-principle__body::before {
+  counter-increment: principle;
+  content: counter(principle) ".";
+  position: absolute;
+  left: 0;
+  font-weight: var(--weight-bold);
+  color: var(--fig-ink);
+}
+
+/* The claim in ink, the elaboration behind it — the two-tone split this whole
+   design family uses, here separated by a line break rather than mid-sentence. */
+.c2w-principle__body strong {
+  font-weight: var(--weight-bold);
+  color: var(--fig-ink);
+}
+
+/* ---- Outcome ------------------------------------------------------------- */
+.c2w-outcome__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+}
+
+/* FIXED HEIGHT, AND THE CONTENT NOW MEETS IT EXACTLY. 60 of top padding plus a
+   467-tall group is the band's 527 to the pixel — nothing overflows any more.
+   The clip that used to happen here has moved into the second sheet's export
+   (405:45360 is a 467-tall frame over 838 of content in Figma). The height
+   stays fixed and the overflow hidden all the same: the band is a banner, and a
+   line of type that reflows at a narrow width must not push it taller. */
+.c2w-panels {
+  height: calc(var(--panels-h) * 1px);
+  overflow: hidden;
+}
+
+/* THE TWO COLUMNS ARE NOT THE SAME WIDTH — 451.5 and 451, per 405:46246. Half a
+   pixel of difference that only matters because it is what makes the group 934.5
+   rather than 935, and 934.5 centred in the 1270 column lands on the comp's
+   167.75 either side. */
+.c2w-panels__group {
+  display: grid;
+  grid-template-columns: 451.5px 451px;
+  gap: var(--space-6);
+  width: 934.5px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding-top: var(--case-band-pad);
+}
+
+.c2w-panel {
+  min-width: 0;
+}
+
+/* 40 between the title block and the sheet below it — the comp's own gap
+   (405:45325 sits at y=147 under a 107-tall head), and wider than a paragraph
+   break because the sheet is a separate artefact. */
+.c2w-panel__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-7);
+}
+
+/* 32 ON 36 — headline-large's size against headline-medium's leading, which is
+   the pairing 405:46244 actually sets rather than either token's own. It is
+   also what makes the head 107 tall, and therefore what makes the column land
+   on 467 alongside the sheet beside it. */
+.c2w-panel__heading {
+  margin: 0;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.c2w-panel__subtitle {
+  margin: 0;
+  font-size: var(--m3-body-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ---- Reflection ---------------------------------------------------------- */
+/* One line-height between paragraphs — the comp separates them with blank
+   lines, and a full line is what a blank line is. Margin rather than empty
+   <p>s, so a screen reader is not walked through three empty paragraphs. */
+.c2w-reflection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m3-body-lg-leading);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .c2w-principle {
+    grid-template-columns: 1fr;
+  }
+  .c2w-principle__media {
+    border-left: 0;
+    border-top: var(--border-width) solid var(--border-subtle);
+  }
+  .c2w-principles__head,
+  .c2w-principle__text,
+  .c2w-outcome__head {
+    padding-inline: var(--space-7);
+  }
+
+  /* The clip is a two-column composition's fact. Stacked, the sheets get their
+     own height back rather than being cut off one under the other. */
+  .c2w-panels {
+    height: auto;
+    overflow: visible;
+  }
+  .c2w-panels__group {
+    grid-template-columns: 1fr;
+    width: auto;
+    padding: var(--space-9) var(--space-7);
+  }
+
+  /* The research table keeps its proportions and scrolls, like the others. */
+  .case-table--research {
+    min-width: 900px;
+  }
+}

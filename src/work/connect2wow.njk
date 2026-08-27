@@ -1,0 +1,188 @@
+---
+layout: layouts/case-study-v2.njk
+pageId: connect2wow
+title: "Connect2WOW · Case Study"
+description: "How an ERP decides what deserves your attention. A design system for an enterprise ERP, told through its notification subsystem."
+project: connect2wow
+permalink: /work/connect2wow/
+---
+{#
+  CONNECT2WOW — Figma 296:11457. Six bands on the shared new-design shell; see
+  src/work/onton.njk for the band model.
+
+  WHAT IS NEW HERE:
+    · a five-column research table with multi-line cells and a logo per row —
+      denser than either previous table
+    · three numbered design principles, each pairing a claim with a live
+      visualization, split by rules
+    · an Outcome band of two spec sheets, the second of them pre-clipped
+
+  WHAT IS ABSENT, and deliberately: no stats row, no delta chips, no persona
+  system. The page ends on one long paragraph because the project shut down
+  before launch and there are no numbers to end on.
+#}
+
+{% from "components/media-slot.njk" import mediaSlot, markSlot, embedSlot %}
+
+{# ---- 1. COVER — 296:11471 ----------------------------------------------- #}
+<section class="case-band case-band--cover case-band--has-back" aria-labelledby="c2w-title">
+  <div class="case-band__inner">
+    <p class="case-back">
+      <a class="case-back__link" href="{{ connect2wow.cover.backHref }}">
+        {{ markSlot(connect2wow.cover.chevron) }}
+        <span>{{ connect2wow.cover.backLabel }}</span>
+      </a>
+    </p>
+
+    <p class="case-eyebrow">
+      {{ markSlot(connect2wow.cover.mark) }}
+      <span class="case-eyebrow__label">{{ connect2wow.cover.eyebrow }}</span>
+    </p>
+
+    {{ mediaSlot(connect2wow.cover.media) }}
+
+    <div class="case-cover__row">
+      <h1 class="case-cover__headline" id="c2w-title">{{ connect2wow.cover.headline }}</h1>
+      <p class="case-cover__intro">
+        {%- for part in connect2wow.cover.intro -%}
+          <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+        {%- endfor -%}
+      </p>
+    </div>
+  </div>
+</section>
+
+{# ---- 2. CHALLENGE / OBJECTIVE / ROLE / OUTCOME — 296:11482 -------------- #}
+<section class="case-band case-band--facets" aria-label="Project summary">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="case-facets">
+      {%- for f in connect2wow.facets %}
+        <div class="case-facet">
+          <h3 class="case-facet__label">{{ f.label }}</h3>
+          <p class="case-facet__body">{{ f.body }}</p>
+        </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---- 3. RESEARCH INSIGHTS — 296:11503 ----------------------------------- #}
+<section class="case-band" aria-labelledby="c2w-research">
+  <div class="case-band__inner">
+    {#- A full-width paragraph before the heading, unique to this band. -#}
+    <p class="case-note">{{ connect2wow.research.lead }}</p>
+
+    <div class="case-headrow">
+      <h2 class="case-heading" id="c2w-research">{{ connect2wow.research.heading }}</h2>
+      <p class="case-deck">{{ connect2wow.research.deck }}</p>
+    </div>
+
+    <div class="case-panel">
+      <table class="case-table case-table--research">
+        <thead>
+          <tr>
+            {%- for col in connect2wow.research.columns %}
+              <th scope="col">
+                {#- The comp's first header holds an invisible spacer; nothing
+                    is rendered there but the column still needs a name. -#}
+                {%- if col %}{{ col }}{% else %}<span class="case-table__hidden">Design system</span>{% endif -%}
+              </th>
+            {%- endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for row in connect2wow.research.rows %}
+            <tr>
+              <th scope="row" class="case-table__product">
+                {{ markSlot(row.mark) }}
+                <span>{{ row.name }}</span>
+              </th>
+              {%- for cell in row.cells %}
+                <td>{{ cell }}</td>
+              {%- endfor %}
+            </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="case-note">{{ connect2wow.research.anchor }}</p>
+  </div>
+</section>
+
+{# ---- 4. DESIGN PRINCIPLES — 296:11568 ----------------------------------- #}
+{#
+  Flush: the heading block and each principle carry their own padding, and the
+  rules between them are the band's own structure rather than gaps.
+#}
+<section class="case-band case-band--principles" aria-labelledby="c2w-principles">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="c2w-principles__head">
+      <h2 class="case-heading" id="c2w-principles">{{ connect2wow.principles.heading }}</h2>
+    </div>
+
+    {#- An ordered list, because the numerals are the comp's list markers and
+        the three principles are a sequence, not three unrelated claims. -#}
+    <ol class="c2w-principles">
+      {%- for p in connect2wow.principles.items %}
+        <li class="c2w-principle">
+          <div class="c2w-principle__text">
+            <p class="c2w-principle__body">
+              <strong>{{ p.lead }}</strong><br />{{ p.rest }}
+            </p>
+          </div>
+          <div class="c2w-principle__media" style="--principle-pad: {{ p.pad }}">
+            {{ embedSlot(p.embed) }}
+          </div>
+        </li>
+      {%- endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ---- 5. OUTCOME — 296:11776 --------------------------------------------- #}
+<section class="case-band case-band--outcome" aria-labelledby="c2w-outcome">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="c2w-outcome__head">
+      <h2 class="case-heading" id="c2w-outcome">{{ connect2wow.outcome.heading }}</h2>
+      <p class="case-deck">{{ connect2wow.outcome.body }}</p>
+    </div>
+
+    {#-
+      A FIXED-HEIGHT BANNER. 60 of padding plus a 467-tall group is this band's
+      527 exactly, so nothing spills — the cut in the second sheet is baked into
+      its export, not made here. Keep the height fixed regardless.
+    -#}
+    <div class="c2w-panels" style="--panels-h: {{ connect2wow.outcome.panelsHeight }}">
+      <div class="c2w-panels__group">
+        {%- for panel in connect2wow.outcome.panels %}
+          <div class="c2w-panel">
+            {%- if panel.heading %}
+              <div class="c2w-panel__head">
+                <h3 class="c2w-panel__heading">{{ panel.heading }}</h3>
+                <p class="c2w-panel__subtitle">{{ panel.subtitle }}</p>
+              </div>
+            {%- endif %}
+            {{ mediaSlot(panel.media) }}
+          </div>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 6. REFLECTION — 296:12041 ------------------------------------------ #}
+<section class="case-band" aria-labelledby="c2w-reflection">
+  <div class="case-band__inner">
+    <div class="case-headrow case-headrow--stacked">
+      <h2 class="case-heading" id="c2w-reflection">{{ connect2wow.reflection.heading }}</h2>
+      {#- One line of space between paragraphs, as the comp's blank lines set
+          it — margin rather than empty elements. -#}
+      <div class="c2w-reflection">
+        {%- for para in connect2wow.reflection.body %}
+          <p class="case-deck">{{ para }}</p>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>

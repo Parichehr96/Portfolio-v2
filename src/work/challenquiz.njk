@@ -1,10 +1,234 @@
 ---
-layout: layouts/case-study.njk
+layout: layouts/case-study-v2.njk
+pageId: challenquiz
 title: "Challenquiz · Case Study"
-description: "A blank waiting screen was reading as a broken app. Restructuring navigation, profile and in-game states for a quiz game."
+description: "A multiplayer game that everyone played alone. Rebuilding the in-game experience of a Telegram trivia app so the competition is visible and the result lands."
 project: challenquiz
 permalink: /work/challenquiz/
 ---
-{# CONTENT NOT YET PORTED — see src/work/onton.njk for the porting note.
-   Source: repo-root challenquiz.html. Images: /Assets/images/challenquiz/... #}
-<p class="case-placeholder">Case study content to be ported from <code>challenquiz.html</code>.</p>
+{#
+  CHALLENQUIZ — Figma 281:64068. Eight bands on the shared new-design case
+  shell; see src/work/onton.njk for the band model, which is identical.
+
+  WHAT IS NEW HERE, and why each earns its own markup rather than bending an
+  ONTON component:
+    · a back-to-home link above the eyebrow
+    · three-up quote cards whose speaker is the LABEL line, not an italic tail
+      inside the quote
+    · an insight line in its own sub-band under those cards
+    · a live prototype embed where ONTON had a phone video
+    · a "decision I'm proudest of" block inside the Why band
+    · a friction chart, built as SVG from real numbers
+    · delta chips beside the reflection stats
+
+  TODOs RENDER. Anything still unresolved comes through _data/challenquiz.js as
+  a todo() object and paints a visible amber chip. That is deliberate: a blank
+  where copy should be is invisible in review, and this page has six open items.
+#}
+
+{% from "components/media-slot.njk" import mediaSlot, markSlot, embedSlot %}
+
+{% macro todo(t) %}
+  <span class="case-todo" role="note">TODO — {{ t.what }}</span>
+{% endmacro %}
+
+{# ---- 1. COVER — 281:64082 ------------------------------------------------ #}
+<section class="case-band case-band--cover case-band--has-back" aria-labelledby="cq-title">
+  <div class="case-band__inner">
+    <p class="case-back">
+      <a class="case-back__link" href="{{ challenquiz.cover.backHref }}">
+        {{ markSlot(challenquiz.cover.chevron) }}
+        <span>{{ challenquiz.cover.backLabel }}</span>
+      </a>
+    </p>
+
+    <p class="case-eyebrow">
+      {{ markSlot(challenquiz.cover.mark) }}
+      <span class="case-eyebrow__label">{{ challenquiz.cover.eyebrow }}</span>
+    </p>
+
+    {{ mediaSlot(challenquiz.cover.media) }}
+
+    <div class="case-cover__row">
+      <h1 class="case-cover__headline" id="cq-title">{{ challenquiz.cover.headline }}</h1>
+      <p class="case-cover__intro">{{ challenquiz.cover.intro }}</p>
+    </div>
+  </div>
+</section>
+
+{# ---- 2. CHALLENGE / OBJECTIVE / ROLE / OUTCOME — 281:64392 -------------- #}
+<section class="case-band case-band--facets" aria-label="Project summary">
+  <div class="case-band__inner case-band__inner--flush">
+    <div class="case-facets">
+      {%- for f in challenquiz.facets %}
+        <div class="case-facet">
+          <h3 class="case-facet__label">{{ f.label }}</h3>
+          <p class="case-facet__body">{{ f.body }}</p>
+        </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---- 3. THE OLD FLOW — 281:64478 --------------------------------------- #}
+{# Text left, timeline right — mirrored from ONTON's equivalent band. #}
+<section class="case-band" aria-labelledby="cq-oldflow">
+  <div class="case-band__inner">
+    <div class="case-split case-split--text-first">
+      <div class="case-split__text">
+        <h2 class="case-heading" id="cq-oldflow">{{ challenquiz.oldFlow.heading }}</h2>
+        <p class="case-deck">{{ challenquiz.oldFlow.body }}</p>
+      </div>
+      <div class="case-split__media case-split__media--tall">
+        {{ mediaSlot(challenquiz.oldFlow.media) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 4. THE REAL PROBLEM — 281:64486 ----------------------------------- #}
+<section class="case-band" aria-labelledby="cq-problem">
+  <div class="case-band__inner case-band__inner--tight">
+    <div class="case-headrow">
+      <h2 class="case-heading" id="cq-problem">{{ challenquiz.problem.heading }}</h2>
+      <p class="case-deck">{{ challenquiz.problem.deck }}</p>
+    </div>
+
+    {#- Three cards: speaker on top, quote in the middle, takeaway at the foot.
+        The quote takes the free space so the takeaways line up across all
+        three however long the quotes run. -#}
+    <div class="case-quotes">
+      {%- for c in challenquiz.problem.cards %}
+        <figure class="case-quote">
+          <p class="case-quote__attribution">{{ c.attribution }}</p>
+          <blockquote class="case-quote__body">{{ c.quote }}</blockquote>
+          <figcaption class="case-quote__takeaway">{{ c.takeaway }}</figcaption>
+        </figure>
+      {%- endfor %}
+    </div>
+
+    <p class="case-insight">{{ challenquiz.problem.insight }}</p>
+  </div>
+</section>
+
+{# ---- 5. WHAT CHANGED — 281:64505 --------------------------------------- #}
+<section class="case-band" aria-labelledby="cq-changed">
+  <div class="case-band__inner">
+    <div class="case-split case-split--text-first case-split--wide-text">
+      <div class="case-split__text">
+        <h2 class="case-heading" id="cq-changed">{{ challenquiz.changed.heading }}</h2>
+        <p class="case-deck">{{ challenquiz.changed.body }}</p>
+      </div>
+      <div class="case-split__media">
+        {{ embedSlot(challenquiz.changed.embed) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 6. HOW — 281:64686 ------------------------------------------------- #}
+<section class="case-band" aria-labelledby="cq-how">
+  <div class="case-band__inner">
+    <div class="case-showcase">
+      <div class="case-showcase__text">
+        <h2 class="case-heading" id="cq-how">{{ challenquiz.how.heading }}</h2>
+        <p class="case-deck">{{ challenquiz.how.body }}</p>
+      </div>
+      <div class="case-showcase__media">
+        {{ embedSlot(challenquiz.how.embed, allowfullscreen=true) }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---- 7. ...AND WHY — 281:64615 ----------------------------------------- #}
+<section class="case-band" aria-labelledby="cq-why">
+  <div class="case-band__inner">
+    <div class="case-headrow">
+      <h2 class="case-heading" id="cq-why">{{ challenquiz.why.heading }}</h2>
+    </div>
+
+    <div class="case-why">
+      <div class="case-panel">
+        <table class="case-table case-table--why">
+          <thead>
+            <tr>
+              {%- for col in challenquiz.why.columns %}
+                <th scope="col">{{ col }}</th>
+              {%- endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {%- for row in challenquiz.why.rows %}
+              <tr>
+                <th scope="row">{{ row.change }}</th>
+                <td>{{ row.quote }}</td>
+                {#- A dot and nothing else, as the comp shows; the persona's
+                    name rides along visually hidden so the column still says
+                    something to a screen reader. -#}
+                <td class="case-table__persona">
+                  <span class="case-dot case-dot--{{ row.persona }}" aria-hidden="true"></span>
+                  <span class="case-table__hidden">
+                    {%- for p in challenquiz.why.personas -%}
+                      {%- if p.slug == row.persona %}{{ p.name | trim | replace(":", "") }}{% endif -%}
+                    {%- endfor -%}
+                  </span>
+                </td>
+              </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="case-personas">
+        <h3 class="case-personas__heading">{{ challenquiz.why.personaKeyHeading }}</h3>
+        <ul class="case-personas__list">
+          {%- for p in challenquiz.why.personas %}
+            <li class="case-personas__item">
+              <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
+              <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
+            </li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+
+    {# An extra block inside this band; ONTON has no equivalent. #}
+    <div class="case-proudest">
+      <h3 class="case-proudest__heading">{{ challenquiz.why.proudest.heading }}</h3>
+      <p class="case-proudest__body">{{ challenquiz.why.proudest.body }}</p>
+    </div>
+
+    {% include "partials/challenquiz-chart.njk" %}
+  </div>
+</section>
+
+{# ---- 8. REFLECTION — 281:64951 ----------------------------------------- #}
+<section class="case-band" aria-labelledby="cq-reflection">
+  <div class="case-band__inner">
+    <div class="case-headrow case-headrow--stacked">
+      <h2 class="case-heading" id="cq-reflection">{{ challenquiz.reflection.heading }}</h2>
+      <p class="case-deck">{{ challenquiz.reflection.deck }}</p>
+    </div>
+
+    <dl class="case-stats case-stats--chipped">
+      {%- for s in challenquiz.reflection.stats %}
+        <div class="case-stat">
+          <dt class="case-stat__value">
+            <span>{{ s.value }}</span>
+            <span class="case-stat__chip case-stat__chip--{{ s.direction }}">{{ s.chip }}</span>
+          </dt>
+          <dd class="case-stat__label">{{ s.label }}</dd>
+        </div>
+      {%- endfor %}
+    </dl>
+
+    {#- Two blocks, not one flowing pair: the comp sets them 84px apart, which
+        is wider than a paragraph break and reads as two separate thoughts. -#}
+    <div class="case-closing case-closing--spaced">
+      {%- for para in challenquiz.reflection.closing %}
+        <p class="case-closing__para">{{ para }}</p>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

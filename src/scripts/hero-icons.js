@@ -32,8 +32,8 @@
  * motion the page decided to play.
  *
  * Only [data-hero-icon] is bound. The static decoration in the same board
- * (arrow, cursor mark, the two product mockups) carries no such attribute, so
- * it can neither wiggle nor be dragged.
+ * (the arrow and the two product mockups) carries no such attribute, so it can
+ * neither wiggle nor be dragged.
  */
 (function (window, document) {
   "use strict";

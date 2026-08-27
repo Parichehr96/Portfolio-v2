@@ -1,0 +1,282 @@
+/* CHALLENQUIZ — Figma 281:64068. The parts of this write-up that the shared
+ * case shell (_case-study-v2.css) does not already cover.
+ *
+ * Colours come from the .case scope in tokens.css, like everything else on a
+ * case study, so no Figma hex appears here.
+ *
+ * WHAT IS HERE AND WHY. Most of this page is the shared shell — same bands,
+ * same 1272 column, same tables, same stats. These are the six components the
+ * comp adds: a back link, three-up quote cards with a different anatomy, an
+ * insight line, a prototype embed, a "proudest decision" block, delta chips on
+ * the stats, and the friction chart. Anything that a second case study would
+ * plausibly want lives in the shared file instead; only the chart is bespoke
+ * enough to sit here on its own.
+ */
+
+/* ---- Three-up quote cards ------------------------------------------------ */
+/* A DIFFERENT SHAPE FROM ONTON'S PAIR. There the card opened with a cluster
+   name and buried the speaker italic at the tail of the quote; here the speaker
+   IS the opening line and the quote follows it. Three across rather than two,
+   divided by the same subtle rules as everything else. */
+.case-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: var(--border-width) solid var(--border-subtle);
+}
+
+.case-quote {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-4);
+}
+.case-quote:not(:last-child) {
+  border-right: var(--border-width) solid var(--border-subtle);
+}
+
+.case-quote__attribution {
+  margin: 0 0 var(--space-2);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* The quote takes the slack, which is what lines the three takeaways up along
+   the foot of the row however unevenly the quotes run. */
+.case-quote__body {
+  flex: 1;
+  margin: 0;
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--fig-ink);
+}
+
+.case-quote__takeaway {
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Insight ------------------------------------------------------------- */
+/* The line that reads all three cards at once. Its own sub-band under them. */
+.case-insight {
+  margin: 0;
+  padding-inline: var(--space-6);
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Proudest decision --------------------------------------------------- */
+.case-proudest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2); /* 8 in the comp, where the facet cells use 12 */
+  padding-inline: var(--space-6);
+}
+
+.case-proudest__heading {
+  margin: 0;
+  font-size: var(--m3-headline-md);
+  line-height: var(--m3-headline-md-leading);
+  letter-spacing: var(--m3-headline-md-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.case-proudest__body {
+  margin: 0;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* ---- Friction chart ------------------------------------------------------ */
+/* THE ONE BESPOKE COMPONENT. Built from the numbers rather than exported as a
+   picture, so it stays sharp, follows the page's colours and carries a real
+   data table underneath for anyone not reading the graphic.
+
+   EVERY VALUE HERE IS THE COMP'S. The two series colours, the dashed strokes,
+   the numbered axis, the y labels and the annotation are 349:17196's own; the
+   only thing matched by eye rather than read out of the file is the dash
+   pattern, because a dashed vector's stroke array is not in the node tree. */
+.case-chart {
+  margin: 0;
+  padding: var(--space-6);
+  background-color: var(--surface-raised);
+}
+
+.case-chart__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+}
+
+.case-chart__legend {
+  display: flex;
+  gap: var(--space-4h);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--m3-title-sm);
+  line-height: var(--m3-title-sm-leading);
+  letter-spacing: var(--m3-title-sm-tracking);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.case-chart__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+/* The old flow is an ALPHA grey, not a solid one — that is what lets the
+   gridlines read through its dashes where the two series cross. */
+.case-chart__swatch--previous { background-color: var(--fig-label-secondary); }
+.case-chart__swatch--redesign { background-color: var(--fig-plum); }
+
+.case-chart__note {
+  margin: 0;
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+  color: var(--fig-ink);
+}
+
+.case-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.case-chart__grid line {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+}
+
+/* The y labels live inside the SVG because they have to sit ON their gridline;
+   the x labels do not, so those are real text outside it. */
+.case-chart__ylabels text {
+  fill: var(--fig-gray-mid);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--m3-title-md-tracking);
+}
+
+/* BOTH SERIES ARE DASHED. They cross at Join, and dashes are what keep the line
+   underneath readable through the one on top. */
+.case-chart__line {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+}
+.case-chart__line--previous { stroke: var(--fig-label-secondary); }
+.case-chart__line--redesign { stroke: var(--fig-plum); }
+
+.case-chart__dot--previous { fill: var(--fig-label-secondary); }
+.case-chart__dot--redesign { fill: var(--fig-plum); }
+
+/* The wallet gate: the one point the redesign could not bring down. Dashed, to
+   read as a call-out rather than as a third data mark. */
+.case-chart__ring {
+  fill: none;
+  stroke: var(--fig-plum);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.case-chart__annotation {
+  fill: var(--fig-plum);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--m3-title-md-tracking);
+}
+
+/* The x axis sits outside the SVG so its type is real text at the page's own
+   size rather than SVG text that scales with the viewBox. Numbered in the copy
+   rather than by list-style, so the number centres with the label instead of
+   hanging off its left. */
+.case-chart__axis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  font-weight: var(--weight-medium);
+  color: var(--fig-gray-mid);
+}
+
+/* The numbers, for anyone not reading the picture. Visually hidden rather than
+   absent — a line chart IS a table, and the table is the accessible form of it. */
+.case-chart__data {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* pre-wrap because the comp's caption carries a double space after "modeled"
+   and HTML would otherwise collapse it. The line reads awkwardly and is
+   verbatim on purpose — see the note in challenquiz.js. */
+.case-chart__caption {
+  margin: var(--space-5) 0 0;
+  text-align: center;
+  white-space: pre-wrap;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--fig-black);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .case-quotes {
+    grid-template-columns: 1fr;
+  }
+  .case-quote:not(:last-child) {
+    border-right: 0;
+    border-bottom: var(--border-width) solid var(--border-subtle);
+  }
+  .case-insight,
+  .case-proudest {
+    padding-inline: var(--space-7);
+  }
+  .case-chart {
+    padding: var(--space-5);
+  }
+  .case-chart__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  /* The axis labels stop fitting side by side long before the chart does. */
+  .case-chart__axis {
+    font-size: var(--m3-body-sm);
+    line-height: var(--m3-body-sm-leading);
+  }
+}

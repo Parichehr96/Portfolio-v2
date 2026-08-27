@@ -1,0 +1,96 @@
+/* STATEMENT — Figma 6:25758.
+ *
+ * Colours come from the .statement scope in tokens.css, the same light block
+ * the header, hero and About use, so no Figma hex appears here.
+ *
+ * THE PAGE FRAME CONTINUES THROUGH THIS SECTION. The comp's 185:1994 carries
+ * left and right borders at the same x as every band above and below it, and
+ * this is the section that keeps the column unbroken between the hero and My
+ * Work. As in .hero and .about they are painted as pseudo-elements rather than
+ * a real border-inline: a border would eat 1px from each side of the content
+ * box and pull the text off the 32px inset below.
+ *
+ * ONE DELIBERATE DEPARTURE FROM THE COMP. 6:25758 strokes those two rules at
+ * rgba(0,0,0,0.12) — --border-subtle — where the header, hero, About and My
+ * Work all use --border-strong (0.16). Matching the comp literally would make
+ * the page's vertical rules go one step lighter for 320px and then back, which
+ * reads as a rendering fault rather than as a decision. Continuity of the
+ * column wins; this uses --border-strong. Approved, and recorded here so it is
+ * not "corrected" back to 0.12 by a later diff against the comp.
+ *
+ * THE TEXT IS --fig-ink, NOT --text-primary. The comp sets it to Figma's
+ * Labels-Vibrant/Primary, #1a1a1a, while --text-primary in this palette is
+ * --fig-black (#000000). Those are different colours and the softer one is the
+ * comp's. _hero.css consumes --fig-ink the same way for its card lead-in.
+ */
+
+.statement {
+  position: relative;
+  width: 100%;
+  background-color: var(--surface);
+}
+
+/* Outer gutter rules — same x positions as the header, hero, work and about. */
+.statement::before,
+.statement::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+.statement::before { left: var(--space-11); }
+.statement::after { right: var(--space-11); }
+
+/* 80px above and below in the comp (185:1994's padding-block), with the row
+   inside adding 20 more — so 100px of clear space either side of the text.
+   Split the way Figma splits it rather than collapsed to one 100px value: the
+   32px inset below belongs to the same inner box as the 20px, and keeping the
+   two boxes distinct is what makes both numbers checkable against the node. */
+.statement__inner {
+  margin-inline: var(--space-11);
+  padding-block: var(--space-10);
+}
+
+/* The Row, 185:2258. Its 32px inset is what holds the text off the gutter
+   rules on both sides; the 1206px text box in the comp is that inset applied
+   to the 1272 column, not an independent max-width, so none is set here. */
+.statement__text {
+  padding: var(--space-4h) var(--space-6);
+}
+
+/* Static/Headline Large — 32/40, weight 400, tracking 0. Left-aligned: the
+   comp centres the text BLOCK inside its row, but the block fills the row and
+   the type itself is ragged-right. */
+.statement__line {
+  margin: 0;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-lg-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--fig-ink);
+}
+
+/* ---- Narrow -------------------------------------------------------------- */
+/* The 120px gutter collapses here and the rules go with it — they only mean
+   anything as gutter edges. Same breakpoint and same reasoning as .about and
+   .work, so the whole page frame drops together rather than in pieces. */
+@media (max-width: 900px) {
+  .statement::before,
+  .statement::after {
+    display: none;
+  }
+  .statement__inner {
+    margin-inline: 0;
+    padding-block: var(--space-9);
+  }
+  .statement__text {
+    padding: 0 var(--space-7);
+  }
+  .statement__line {
+    font-size: var(--m3-headline-md);
+    line-height: var(--m3-headline-md-leading);
+  }
+}

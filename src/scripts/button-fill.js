@@ -58,8 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setBorders();
   window.addEventListener('resize', setBorders);
 
+  // e.target is `document` itself when the pointer enters or leaves the window,
+  // and `document` has no closest() — so this threw on every enter and leave.
   document.addEventListener('mouseenter', (e) => {
-    const btn = e.target.closest('.btn-primary');
+    const btn = e.target.closest && e.target.closest('.btn-primary');
     if (!btn || btn.classList.contains('selected')) return;
     const rect = btn.getBoundingClientRect();
     btn.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, true);
 
   document.addEventListener('mouseleave', (e) => {
-    const btn = e.target.closest('.btn-primary');
+    const btn = e.target.closest && e.target.closest('.btn-primary');
     if (!btn || btn.classList.contains('selected')) return;
     const rect = btn.getBoundingClientRect();
     btn.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
