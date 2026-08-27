@@ -13,34 +13,6 @@
  * enough to sit here on its own.
  */
 
-/* ---- Back to home -------------------------------------------------------- */
-/* Above the eyebrow, at the very top of the cover. Its own row in the comp,
-   32px down from the band's top edge. */
-.case-back {
-  margin: 0;
-  padding-inline: var(--space-6);
-}
-
-/* NO GAP, AND THAT IS THE COMP: the chevron's 24 box ends at 56 and the words
-   start at 56. A Material Symbols glyph carries its own padding inside that
-   box, so the space between them is the icon's, not the layout's — adding 8
-   here would double it. It reads tight only while the icon is a placeholder
-   square, which has no padding of its own to give. */
-.case-back__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  font-size: var(--m3-body-md);
-  line-height: var(--m3-body-md-leading);
-  letter-spacing: var(--m3-body-md-tracking);
-  color: var(--text-secondary);
-  text-decoration: none;
-}
-.case-back__link:hover,
-.case-back__link:focus-visible {
-  color: var(--text-primary);
-}
-
 /* ---- Three-up quote cards ------------------------------------------------ */
 /* A DIFFERENT SHAPE FROM ONTON'S PAIR. There the card opened with a cluster
    name and buried the speaker italic at the tail of the quote; here the speaker
@@ -290,7 +262,6 @@
     border-right: 0;
     border-bottom: var(--border-width) solid var(--border-subtle);
   }
-  .case-back,
   .case-insight,
   .case-proudest {
     padding-inline: var(--space-7);

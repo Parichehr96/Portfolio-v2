@@ -99,6 +99,14 @@ function mark(file, size, label) {
   return { kind: "mark", url, file, size, label, shape: "circle", present: onDisk(url) };
 }
 
+/* A UI ICON, NOT A LOGO. Square, contained rather than cropped, and identical
+   on every page that has a back link — so it sits in the site's shared icon
+   folder instead of being copied into each case study's. */
+function icon(file, size, label) {
+  const url = "/Assets/images/icons/" + file;
+  return { kind: "mark", url, file, size, label, shape: "icon", present: onDisk(url) };
+}
+
 module.exports = {
   /* Front-matter values live here too, so the page template carries no copy at
      all — the whole case study is this file. */
@@ -110,6 +118,11 @@ module.exports = {
 
   /* ---- 1. Cover — 193:4672 ---------------------------------------------- */
   cover: {
+    /* 193:4943 — the same row Challenquiz and Connect2WOW open with, and it was
+       missing here rather than absent from the comp. */
+    backLabel: "Back to home",
+    backHref: "/",
+    chevron: icon("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
     mark: mark("mark-onton.svg", 32, "SVG — ONTON logo mark, 32×32"),
     eyebrow: "ONTON",
     media: video(

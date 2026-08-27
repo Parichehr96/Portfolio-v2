@@ -790,12 +790,46 @@
   background-color: var(--surface-raised);
 }
 
+/* ---- Back to home -------------------------------------------------------- */
+/* Above the eyebrow, at the very top of the cover. Its own 24-tall row, 32 down
+   from the band's top edge, on all three comps. */
+/* FLEX, SO THE ROW IS THE LINK'S OWN HEIGHT. The link is inline-flex around a
+   24px icon and 14/20 text; left in a line box it is baseline-aligned inside
+   it, and the box comes out 30 rather than 24 — which pushed the eyebrow and
+   the cover 6px down the page on every case study that has a back link. Taking
+   the anchor out of the line box removes the descent that was never the comp's. */
+.case-back {
+  display: flex;
+  margin: 0;
+  padding-inline: var(--space-6);
+}
+
+/* NO GAP, AND THAT IS THE COMP: the chevron's 24 box ends at 56 and the words
+   start at 56. A Material Symbols glyph carries its own padding inside that
+   box, so the space between them is the icon's, not the layout's — adding 8
+   here would double it. It reads tight only while the icon is a placeholder
+   square, which has no padding of its own to give. */
+.case-back__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.case-back__link:hover,
+.case-back__link:focus-visible {
+  color: var(--text-primary);
+}
+
 /* ---- A cover that opens with a back link --------------------------------- */
 /* THE BACK LINK CHANGES THE BAND'S RHYTHM, so it is a modifier rather than
-   something bolted onto .case-band--cover. Challenquiz opens its cover 32 from
-   the top and closes it 32 from the bottom, where ONTON — which has no back
-   link — uses the standard 60. Both are the comp's own numbers; the shorter one
-   exists because a 24px link needs less air above it than a 36px lockup does. */
+   something bolted onto .case-band--cover. A cover that opens with one is 32
+   from the top and 32 from the bottom rather than the standard 60 — a 24px link
+   needs less air above it than a 36px lockup does. All three comps draw it that
+   way; ONTON simply had not been given the row yet. */
 .case-band--has-back .case-band__inner {
   padding-block: var(--space-6);
 }
@@ -974,6 +1008,10 @@
   .case-band__inner {
     margin-inline: 0;
     padding-block: var(--space-9);
+  }
+
+  .case-back {
+    padding-inline: var(--space-7);
   }
 
   .case-cover__row,

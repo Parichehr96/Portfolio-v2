@@ -26,8 +26,15 @@ permalink: /work/onton/
 {% from "components/media-slot.njk" import mediaSlot, markSlot %}
 
 {# ---- 1. COVER — 193:4672 ------------------------------------------------ #}
-<section class="case-band case-band--cover" aria-labelledby="onton-title">
+<section class="case-band case-band--cover case-band--has-back" aria-labelledby="onton-title">
   <div class="case-band__inner">
+    <p class="case-back">
+      <a class="case-back__link" href="{{ onton.cover.backHref }}">
+        {{ markSlot(onton.cover.chevron) }}
+        <span>{{ onton.cover.backLabel }}</span>
+      </a>
+    </p>
+
     <p class="case-eyebrow">
       {{ markSlot(onton.cover.mark) }}
       <span class="case-eyebrow__label">{{ onton.cover.eyebrow }}</span>
