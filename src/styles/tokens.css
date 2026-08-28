@@ -127,12 +127,12 @@
   --font-sans: "Figtree", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
-  /* Ribeye Marrow draws only "Designer", at its natural regular weight — the
-     hollow letterforms are the typeface, not a CSS stroke. Everything else in
-     the header and hero is Figtree, the same face the rest of the site uses.
-     (An earlier pass used Roboto here, from the M3 variables in the original
-     Figma; the comp has since moved to Figtree and the two now agree.) */
-  --font-outline: "Ribeye Marrow", Georgia, serif;
+  /* THERE IS NO ACCENT / OUTLINE FACE ANY MORE. Ribeye Marrow used to draw the
+     hero's "Designer" and the display numerals in About and My Work, under a
+     --font-outline token. It is retired: the token, the family and the Google
+     Fonts request are all gone, and every one of those places now sets in
+     --font-sans. Don't reintroduce it — display type on this site is Figtree,
+     and the only non-Figtree faces left are DM Mono and --font-hand below. */
   /* The hero's handwritten "Pull a card out to read". Figma sets it in Figma
      Hand (367:42807), which ships inside the Figma app and is not licensable as
      a webfont; Caveat is the nearest free hand face. If a licensed Figma Hand

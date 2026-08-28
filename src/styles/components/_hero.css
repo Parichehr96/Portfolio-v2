@@ -96,16 +96,19 @@
   font-weight: var(--weight-bold);
 }
 
-/* Ribeye Marrow is an inherently outlined face — the hollow letterforms are
-   drawn into the glyphs. It renders at its natural REGULAR weight here.
+/* "Designer". This was Ribeye Marrow — an inherently outlined face, with the
+   hollow letterforms drawn into the glyphs — until that face was retired; it
+   is Figtree now, like everything else outside the hero canvas.
  *
- * There was briefly a -webkit-text-stroke on this, fitted to match the Figma
- * comp (which carries ~1.75x the ink of the bare face). It was removed on
- * purpose: the lighter, unstroked face is the intended look. Do not reinstate
- * it to "match Figma" — that trade was made deliberately, and a diff against
- * the comp will show this word lighter as an expected difference, not a bug. */
+ * THE REGULAR WEIGHT IS DELIBERATE, and it is now the only thing setting this
+ * word apart from the bold "Product" beside it. Don't "fix" it to bold to
+ * match its sibling: the light/bold pairing is what carries the emphasis that
+ * the outline face used to carry. (The class name keeps the -outline suffix
+ * only because hero.njk and hero.js share it — nothing here is stroked. An
+ * early -webkit-text-stroke fitted to the Figma comp was removed on purpose
+ * back when this was Ribeye, and should not come back now either.) */
 .hero__role-outline {
-  font-family: var(--font-outline);
+  font-family: var(--font-sans);
   font-weight: var(--weight-regular);
 }
 

@@ -121,10 +121,11 @@
   gap: var(--space-2);
 }
 
-/* Ribeye Marrow, matching the hero's "Designer" — the numerals are display
-   figures, not body text. */
+/* Figtree, matching the hero's "Designer" — these were Ribeye Marrow until
+   that face was retired. The numerals are still display figures, not body
+   text: the M3 headline step and the regular weight carry that now. */
 .stat__value {
-  font-family: var(--font-outline);
+  font-family: var(--font-sans);
   font-size: var(--m3-headline-md);
   line-height: var(--m3-headline-md-leading);
   font-weight: var(--weight-regular);

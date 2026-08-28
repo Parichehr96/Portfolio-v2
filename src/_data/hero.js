@@ -50,8 +50,9 @@ module.exports = {
     greeting: "I’m",
     name: "Pari.",
     roleLead: "Product",
-    // Rendered in Ribeye Marrow, which is drawn outlined by the typeface
-    // itself — there is deliberately no CSS text-stroke on this.
+    // Was Ribeye Marrow, an outlined face; that font is retired, so this is
+    // Figtree at regular weight against the bold "Product". The key name keeps
+    // its -outline suffix to stay in step with the .hero__role-outline class.
     roleOutline: "Designer",
   },
 
