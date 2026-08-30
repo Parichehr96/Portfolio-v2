@@ -1,4 +1,21 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "_site"
+  "outputDirectory": "_site",
+  "redirects": [
+    {
+      "source": "/onton.html",
+      "destination": "/work/onton/",
+      "permanent": true
+    },
+    {
+      "source": "/challenquiz.html",
+      "destination": "/work/challenquiz/",
+      "permanent": true
+    },
+    {
+      "source": "/ezam.html",
+      "destination": "/projects/",
+      "permanent": true
+    }
+  ]
 }

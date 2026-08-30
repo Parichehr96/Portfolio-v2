@@ -2,8 +2,9 @@
  *
  * Shared across every page; which events are wired is decided by the
  * data-page attribute on <body> — "home" for index.html, or the case-study
- * slug ("onton" / "challenquiz" / "ezam"). An attribute rather than a URL
- * check, so clean URLs (/onton vs /onton.html) can't break the detection.
+ * slug ("onton" / "challenquiz" / "connect2wow"). An attribute rather than a
+ * URL check, so neither clean URLs nor the /onton.html -> /work/onton/ redirects
+ * in vercel.json can break the detection.
  *
  * Every gtag call goes through track(), which no-ops when gtag is missing —
  * blockers, offline, or consent tooling therefore cost nothing and throw

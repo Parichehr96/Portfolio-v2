@@ -144,25 +144,6 @@ module.exports = function () {
         "Quiz game where the matchmaking wait read as a crash. Restructured navigation, profile and in-game states.",
     },
     {
-      slug: "ezam",
-      title: "Ezam Part",
-      caption: "Agents Bore the Cost of Everyone Else's Convenience",
-      url: "/work/ezam/",
-      // NOT FEATURED, BUT `url` STILL POINTS AT A REAL PAGE. The comp's three
-      // rows are ONTON, Challenquiz and Connect2WOW, so Ezam leaves the
-      // homepage — but /work/ezam/ is written and published, and /projects
-      // still lists and links it. `featured` governs the homepage only; it has
-      // never meant "has a case study".
-      featured: false,
-      status: "live",
-      thumb: null,
-      year: "2022–2023",
-      role: "Product Designer",
-      domain: "Enterprise",
-      summary:
-        "B2B auto-parts ecosystem: consumer site, agent dashboard and repairman app on one shared design system.",
-    },
-    {
       slug: "connect2wow",
       card: {
         // ROW 03 OF THE COMP, AND IT WAS FILED UNDER `ezam` UNTIL NOW. Figma

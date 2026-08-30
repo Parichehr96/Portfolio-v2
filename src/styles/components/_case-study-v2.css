@@ -996,9 +996,10 @@
 
 /* .case-back__link IS GONE — the breadcrumb replaced it on all three v2 pages
    (see .case-crumbs above). `.case-back` itself stays: layouts/case-study.njk
-   still puts that class on ezam's "← All projects" link, and this rule is what
-   keeps it out of a line box there. Removing it would be a silent regression on
-   a page this batch never touched. */
+   still writes that class on its "← All projects" link, and this rule is what
+   keeps it out of a line box. No page uses that layout since Ezam was retired,
+   so nothing renders it today — but the rule is two lines and deleting it would
+   silently break the layout the moment anything is pointed back at it. */
 
 /* ---- The cover band ------------------------------------------------------ */
 /* THE BAND ADDS NOTHING; ITS THREE CHILDREN CARRY EVERYTHING. The comp stacks

@@ -6,7 +6,8 @@ layout: layouts/base.njk
   ONTON (193:4660) and Challenquiz (281:64068) so far.
 
   A SEPARATE FILE FROM layouts/case-study.njk ON PURPOSE. That one is the v2
-  shell and still renders challenquiz and ezam: a "← All projects" header, a
+  shell — it renders NOTHING now that Ezam is retired, but it is what the three
+  pages looked like before this file: a "← All projects" header, a
   <dl> of Client/Role/Year/Domain, a .progress-bar with no driver, and a "View
   All Projects" footer button. 193:4660 has none of those — no back link, no
   meta list, no sidebar, no table of contents, no reading-progress bar. It is
@@ -30,10 +31,10 @@ layout: layouts/base.njk
   view_case_study / finish_case_study with case_study: "onton" or
   "challenquiz". Setting it here would collapse every page onto one identifier.
 
-  That is precisely the bug layouts/case-study.njk still has: it hardcodes
-  `pageId: work`, so ezam reports case_study: "work" rather than its own slug,
-  contradicting analytics-events.js's own header. Left alone rather than fixed
-  silently — see the build report.
+  That was precisely the bug layouts/case-study.njk had: it hardcodes
+  `pageId: work`, so the page using it reported case_study: "work" rather than
+  its own slug. Moot since Ezam was retired — that layout has no pages left — but
+  worth knowing before anything is ever pointed at it again.
 #}
 
 <article class="case" data-header-theme="light">
