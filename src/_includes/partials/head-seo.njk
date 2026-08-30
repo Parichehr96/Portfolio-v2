@@ -14,12 +14,31 @@
 {%- set pageUrl = (page.url | absoluteUrl(site.url)) -%}
 {%- set pageImage = (ogImage or site.ogImage) | absoluteUrl(site.url) -%}
 
+{#- THE SOCIAL DESCRIPTION IS THE PAGE'S OWN, EXCEPT ON THE HOMEPAGE. Every one
+    of these tags used to resolve to site.ogDescription, so all six pages shared
+    one sentence on every share card while <meta name="description"> was already
+    unique per page — the copy existed, the social tags just were not reading it.
+    The homepage keeps site.ogDescription because that string is a deliberately
+    shorter cut of site.description written for a card, not a fallback. An
+    explicit `ogDescription` in front matter still wins over both. -#}
+{%- set pageOgDesc = ogDescription or (site.ogDescription if page.url == "/" else pageDesc) -%}
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{{ pageTitle }}</title>
 <meta name="description" content="{{ pageDesc }}" />
 <meta name="author" content="{{ site.name }}" />
+{#- NOINDEX PAGES GET NO CANONICAL. A canonical is a claim that this URL is the
+    preferred version of a real page; the 404 is not a page, it is a response,
+    and self-canonicalising it invites indexing of the very URL the robots tag is
+    trying to keep out. Guarded on a front-matter flag so every other page is
+    untouched — the default is to canonicalise, which is right for all five real
+    routes. -#}
+{%- if noindex %}
+<meta name="robots" content="noindex" />
+{%- else %}
 <link rel="canonical" href="{{ pageUrl }}" />
+{%- endif %}
 
 {# Structured data. Person on the homepage; case studies additionally describe
    the work itself, which is what lets them surface as creative work rather than
@@ -75,7 +94,7 @@
 <meta property="og:url" content="{{ pageUrl }}" />
 <meta property="og:site_name" content="{{ site.name }}" />
 <meta property="og:title" content="{{ pageTitle }}" />
-<meta property="og:description" content="{{ ogDescription or site.ogDescription }}" />
+<meta property="og:description" content="{{ pageOgDesc }}" />
 <meta property="og:image" content="{{ pageImage }}" />
 {#- THE REAL PIXELS OF THE FILE, not the 1200x630 OG convention. 628:61480
     exports 3024x1614, which halves to 1512x807 — scaling that to 1200x630 would
@@ -91,7 +110,7 @@
 <meta name="twitter:site" content="@PariUXD" />
 <meta name="twitter:creator" content="@PariUXD" />
 <meta name="twitter:title" content="{{ pageTitle }}" />
-<meta name="twitter:description" content="{{ ogDescription or site.ogDescription }}" />
+<meta name="twitter:description" content="{{ pageOgDesc }}" />
 <meta name="twitter:image" content="{{ pageImage }}" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />

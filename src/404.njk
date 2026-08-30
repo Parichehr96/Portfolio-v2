@@ -5,6 +5,13 @@ description: "That page isn't here — head back to the homepage."
 pageId: "404"
 nav: false
 permalink: /404.html
+# OUT OF collections.all, which is what src/sitemap.njk iterates — an error page
+# in the sitemap is an invitation to index it. Excluding it at the collection
+# level rather than filtering in the sitemap keeps it out of anything else that
+# ever walks the collection too.
+eleventyExcludeFromCollections: true
+# Drives the robots tag and the skipped canonical in head-seo.njk.
+noindex: true
 ---
 {#
   404 — Figma 295:11180 (1512 x 884).

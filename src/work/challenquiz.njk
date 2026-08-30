@@ -4,6 +4,10 @@ pageId: challenquiz
 title: "Challenquiz · Case Study"
 description: "A multiplayer game that everyone played alone. Rebuilding the in-game experience of a Telegram trivia app so the competition is visible and the result lands."
 project: challenquiz
+# og:type=article and the CreativeWork JSON-LD in head-seo.njk both hang off
+# this. Declared per page rather than on layouts/case-study-v2.njk so a future
+# one-off page on that layout can opt out without editing the layout.
+caseStudy: true
 permalink: /work/challenquiz/
 ---
 {#
