@@ -866,7 +866,8 @@
 .hero,
 .statement,
 .case,
-.about {
+.about,
+.fourohfour {
   --surface: var(--white);
   --surface-raised: var(--fig-elevated);
 

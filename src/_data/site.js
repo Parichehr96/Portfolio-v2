@@ -140,6 +140,14 @@ module.exports = {
   // The two link columns the comp does NOT already have data for. "Case
   // studies" is not here on purpose: it is collections.workCards, so the footer
   // and the My Work section can never list a different three.
+  // 404 — Figma 295:11180. Curly apostrophes are the comp's, not smart-quote
+  // autocorrect: the sentence is set as written in the node.
+  notFound: {
+    subtitle:
+      "Looks like this page isn\u2019t here! no problem, let\u2019s get you back ...",
+    cta: "To the homepage",
+  },
+
   footer: {
     heading: "You made it to the end!",
     tagline: "If this sparked something, tell me. I'd love to talk.",

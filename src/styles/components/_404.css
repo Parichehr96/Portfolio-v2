@@ -1,0 +1,200 @@
+/* 404 — Figma 295:11180.
+ *
+ * A 884-tall band centred in the viewport, framed by the same rules every other
+ * band on this site carries. Nothing here names a colour: the page joins the
+ * light scope in tokens.css alongside .hero/.statement/.case/.about, so --surface
+ * is #FFFFFF, --text-secondary is #727272 and --border-strong is the same
+ * rgba(0,0,0,0.16) hairline the Statement draws — all three the node's own values.
+ *
+ * THE BUTTON IS THE SHARED COMPONENT WITH NO CHANGE. button.njk's variant="solid"
+ * is written against --surface / --text-primary rather than against white and
+ * black, so on this light band it inverts by itself into the comp's black pill,
+ * white label and white circular badge. That is the variant working as designed;
+ * this file adds nothing to it.
+ */
+
+/* THE VIEWPORT CENTRING. The band is a fixed 884 in the comp and stays that way —
+ * on a shorter window it overflows and scrolls rather than compressing, because
+ * everything inside it is positioned off that height. */
+.fourohfour {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* 96 + 692 + 96. The two 96s are EMPTY in the node — no logo, no nav, no
+   footer — so they are expressed as the space above and below the hero rather
+   than as elements that would render nothing. */
+.fourohfour__band {
+  position: relative;
+  width: 100%;
+  padding-block: 96px;
+}
+
+/* The outer gutter rules — the same pair and the same x positions as the header,
+   hero, work, about and footer. Full height of the band, so they run past the
+   hero's horizontals and out to the frame's edges exactly as the node draws
+   them. */
+.fourohfour__band::before,
+.fourohfour__band::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+.fourohfour__band::before { left: var(--space-11); }
+.fourohfour__band::after { right: var(--space-11); }
+
+/* The hero band, and the two horizontals are ITS top and bottom edges. They run
+   the full 1512 rather than the container's 1272 — the node crosses them over
+   the verticals rather than stopping short of them. */
+.fourohfour__hero {
+  position: relative;
+  height: 692px;
+  border-block: var(--border-width) solid var(--border-strong);
+}
+
+/* 1272 inside 1512 — the site's 120px page margin, the same --space-11 the
+   gutter rules sit on, so the rules land on this box's edges. */
+.fourohfour__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  margin-inline: var(--space-11);
+}
+
+/* ---- Left: the message ---------------------------------------------------- */
+/* CENTRED, NOT OFFSET, and the comp is what says so. 692 less the 336 of stacked
+   content leaves 356, and half of that is the 178 the node gives the title; the
+   button's x=216 is exactly (636-204)/2. Writing those as padding would restate
+   two numbers that centring already produces, and would drift the moment the
+   type step or the label changed. */
+.fourohfour__banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+/* The middle rule — the Banner/Summary split at x=756. Unlike the outer two it
+   is bounded by the hero band, so it hangs off this column's right edge rather
+   than off .fourohfour__band. */
+.fourohfour__banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+
+/* 180 tall for a 102-tall glyph: the node's Title box is padding around the
+   artwork, not a frame it fills. 636/280 and 180/102 do not agree, which is how
+   you can tell — a box the art was fitted to would scale on both axes at once. */
+.fourohfour__title {
+  display: grid;
+  place-items: center;
+  height: 180px;
+  margin: 0;
+}
+
+.fourohfour__title img {
+  display: block;
+  width: 280px;
+  height: 102px;
+}
+
+/* Title Large, 22/28 — the node's own step and already in the scale. --space-6
+   above it is the gap the flex column provides; the 48 to the button below is
+   the one exception, added on the button itself. */
+.fourohfour__subtitle {
+  margin: 0;
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--text-secondary);
+}
+
+/* 48 from the subtitle, where every other gap in this column is 32. Declared
+   here rather than by splitting the column into two flex groups, because one
+   value in one place is easier to check against the node than a nested box
+   whose only job is to hold a different gap. */
+.fourohfour__banner .btn-primary {
+  margin-top: var(--space-4);
+}
+
+/* ---- Right: the illustration ---------------------------------------------- */
+.fourohfour__summary {
+  display: grid;
+  place-items: center;
+}
+
+/* 525.45 x 622 in a 636 x 692 column, inset 55.28/55.27 and 35/35 — centred.
+ *
+ * SIZED BY WIDTH, WITH HEIGHT AUTO, and it was the other way round for one
+ * revision: height:622 + max-width:100%. That is correct at 1512 and wrong
+ * everywhere between 769 and ~1236, because max-width clamps the WIDTH while the
+ * fixed height holds — measured at 1024, the portrait came out 392 x 622 against
+ * its true 0.845 aspect, squashed by a third. min() caps at the comp's width and
+ * lets the ratio come from the file below that. 525.45 / 0.84512 = 621.7, so the
+ * node's 622 falls out of the width rather than being asserted alongside it.
+ *
+ * The export is @3x (1577 x 1866); width/height on the element are its intrinsic
+ * pixels so the box is reserved before it decodes. */
+.fourohfour__art {
+  display: block;
+  width: min(525.45px, 100%);
+  height: auto;
+}
+
+/* ---- Mobile ---------------------------------------------------------------
+ * NOT COMP-VERIFIED. 295:11180 has no mobile variant, so everything below 768 is
+ * an interpolation of the desktop node rather than a match to a second one: one
+ * column, illustration under the message, the page margin and its rules dropped
+ * the way every other band drops them at this width. If a mobile 404 is ever
+ * drawn, this block is what it replaces. */
+@media (max-width: 768px) {
+  .fourohfour__band {
+    padding-block: var(--space-10);
+  }
+  .fourohfour__band::before,
+  .fourohfour__band::after {
+    display: none;
+  }
+  .fourohfour__hero {
+    height: auto;
+  }
+  .fourohfour__inner {
+    grid-template-columns: minmax(0, 1fr);
+    margin-inline: var(--space-5);
+    padding-block: var(--space-9);
+    gap: var(--space-9);
+  }
+  .fourohfour__banner::after {
+    display: none;
+  }
+  .fourohfour__title {
+    height: auto;
+  }
+  /* The glyph and the portrait both come down so neither can force a sideways
+     scroll on a 320 screen — the title by ratio, the art by its own box. */
+  .fourohfour__title img {
+    width: min(280px, 70vw);
+    height: auto;
+  }
+  .fourohfour__art {
+    height: auto;
+    width: min(360px, 78vw);
+  }
+}
