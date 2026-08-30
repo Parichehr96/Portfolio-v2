@@ -6,6 +6,10 @@
  * URL check, so neither clean URLs nor the /onton.html -> /work/onton/ redirects
  * in vercel.json can break the detection.
  *
+ * PAGES THAT ARE NEITHER record only the outbound-click events at the bottom of
+ * this file. /projects/ and /404.html are both in that position; see the
+ * CASE_STUDIES note below for why that is an allow-list.
+ *
  * Every gtag call goes through track(), which no-ops when gtag is missing —
  * blockers, offline, or consent tooling therefore cost nothing and throw
  * nothing. This file only listens; it never preventDefaults, rewrites an href,
@@ -27,8 +31,23 @@
   }
 
   var page = (document.body && document.body.getAttribute("data-page")) || "";
-  var isHome = page === "home";
   if (!page) return;
+
+  /* THE THREE PAGES THAT ARE CASE STUDIES, NAMED. This was `else` — anything
+     that was not "home" took the case-study branch — and that was wrong the
+     moment a third kind of page existed. /projects/ reports data-page
+     "projects" and the 404 reports "404", so both were firing view_case_study
+     with those strings as the case_study parameter and arming
+     finish_case_study behind them. Two phantom values in a dimension that is
+     supposed to have exactly three.
+     An allow-list rather than a deny-list because the failure directions are
+     not symmetrical: a page missing from this array records nothing, which is
+     recoverable, while a page wrongly included silently corrupts the dimension
+     for as long as nobody reads the reports closely. Add a slug here when a
+     fourth case study ships. */
+  var CASE_STUDIES = ["onton", "challenquiz", "connect2wow"];
+  var isHome = page === "home";
+  var isCaseStudy = CASE_STUDIES.indexOf(page) !== -1;
 
   /* ---- Scroll depth ------------------------------------------------------
      Fraction of the document the BOTTOM of the viewport has reached, so 1.0
@@ -87,14 +106,11 @@
       return got50 && got100; // both done — stop listening
     });
 
-    /* ---- 3. view_about — "All About Me" enters the viewport ---- */
-    /* #about-me is the redesigned About section. The two older ids are kept as
-       fallbacks only so this keeps firing on any page still serving the v2
-       markup; neither exists in the current build. */
-    var about =
-      document.getElementById("about-me") ||
-      document.getElementById("all-about-me") ||
-      document.getElementById("about");
+    /* ---- 3. view_about — the About section enters the viewport ---- */
+    /* #about-me only. This used to fall back to #all-about-me and #about for
+       pages still serving v2 markup; no page does, and a fallback that can
+       never match is just a claim the reader has to go and disprove. */
+    var about = document.getElementById("about-me");
     if (about && "IntersectionObserver" in window) {
       var io = new IntersectionObserver(
         function (entries) {
@@ -111,7 +127,11 @@
       io.observe(about);
     }
 
-  } else {
+  }
+
+  /* A SEPARATE `if`, NOT AN `else`. /projects/ and /404.html are neither home
+     nor a case study and must fall through both blocks recording nothing. */
+  if (isCaseStudy) {
     /* ---- 8. view_case_study — once, on load ---- */
     track("view_case_study", { case_study: page });
 
@@ -126,7 +146,7 @@
     });
   }
 
-  /* ---- 4–7. Outbound / download clicks — EVERY page ----
+  /* ---- Outbound clicks — EVERY page ----
      The contact links appear in the footer of the case studies too, so this
      sits outside the page branch; GA stamps the page path on each event, so
      homepage vs case-study clicks stay separable in the reports.
@@ -141,15 +161,22 @@
       if (!a) return;
       var href = a.getAttribute("href") || "";
 
-      // 4. download_resume — the How I Think CTA and the mobile-only copy of it
-      //    both point at the same PDF, so match the file, not the class. Only
-      //    the home page carries either link.
-      if (/Resume\.pdf(\?|#|$)/i.test(href)) track("download_resume");
-
-      // 5–7. Contact links. Mutually exclusive by host.
+      // Outbound contact and social. ONE else-if CHAIN, so exactly one of them
+      // can match a given href — that is what keeps a single click from
+      // recording twice.
+      //
+      // TWO EVENTS WERE REMOVED WITH THIS BATCH, both for the same reason: the
+      // link they matched does not exist and is not coming back. click_github
+      // had no GitHub link anywhere on the site, and download_resume matched a
+      // Resume.pdf href that no template renders — the resume was taken off the
+      // site deliberately. A branch that can never be taken is not a spare
+      // capability, it is a claim in the code that the site does something it
+      // does not; if either link returns, its line comes back with it.
       if (/^mailto:/i.test(href)) track("click_email");
+      else if (/(^|\/\/|\.)calendar\.app\.google/i.test(href)) track("click_calendar");
       else if (/(^|\/\/|\.)linkedin\.com/i.test(href)) track("click_linkedin");
-      else if (/(^|\/\/|\.)github\.com/i.test(href)) track("click_github");
+      else if (/(^|\/\/|\.)dribbble\.com/i.test(href)) track("click_dribbble");
+      else if (/(^|\/\/|\.)behance\.net/i.test(href)) track("click_behance");
     },
     true
   );
