@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#111323"/>
-  <text x="16" y="16" fill="#F9F5EB"
-        font-family="Figtree, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
-        font-size="23" font-weight="600" text-anchor="middle" dominant-baseline="central">P</text>
+<!-- FAVICON — the monogram (Figma 528:68221, the same three paths as
+     Assets/images/logo-header.svg) in cream on the brand dark.
+     Glyph covers 72% of the tile height: 62% was measurably muddier at 16px
+     and 80% crowded the tail against the edge. Opaque by design — iOS and
+     Android composite home-screen icons against an unknown background. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#111323"/>
+  <g transform="translate(130.275 71.680) scale(10.61507) translate(-8.376 -2.635)"><path d="M31.5294 14.2118C31.5294 18.8819 28.7623 22.9083 24.7793 24.7351C26.4612 23.3497 27.5322 21.248 27.5322 18.896C27.5322 14.7643 24.2259 11.4043 20.112 11.3205C20.0574 11.3167 20.0075 11.3167 19.9529 11.3167C19.8983 11.3167 19.8485 11.3167 19.7939 11.3205C18.2673 11.4033 17.0588 12.6664 17.0588 14.2108V28.6814C17.0588 33.4748 13.1699 37.3638 8.37646 37.3638V14.2118C8.37646 7.81932 13.5605 2.63531 19.9529 2.63531C26.3454 2.63531 31.5294 7.81932 31.5294 14.2118Z" fill="#F9F5EB"/><path d="M21.5 18.0001C23.1258 15.8667 23.9941 12.4878 22.7532 11.2469C21.5123 10.006 18.826 10.6804 16.7532 12.7532C14.6804 14.8261 14.2591 19.7592 15.5 21.0001C16.7409 22.2409 19.9121 20.0837 21.5 18.0001Z" fill="#F9F5EB"/><path d="M26 31.5C25.5 30.5 24.5 27.5 24.8112 25.2468C24.8112 27 25.5 29 26.5 30.5C27.6832 32.2748 30.5 34 32.0643 35C29.5 34.5 26.5 32.5 26 31.5Z" fill="#F9F5EB"/></g>
 </svg>

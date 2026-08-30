@@ -54,9 +54,20 @@
 </script>
 {%- endif %}
 
+{#- ICONS. The .ico is FIRST and unqualified because that is the one legacy
+    browsers fetch by guessing /favicon.ico regardless of markup; declaring it
+    keeps that fetch on a path we control. Everything after it is progressive:
+    an SVG for anything that takes one, then the PNG ladder for the rest.
+    All of them are the monogram (528:68221) in cream on the brand dark, and all
+    of them are OPAQUE — iOS and Android composite a home-screen icon against an
+    unknown background and an alpha channel there shows as a black or white
+    rectangle behind the glyph. -#}
+<link rel="icon" href="/Assets/favicon/favicon.ico" sizes="16x16 32x32 48x48" />
 <link rel="icon" type="image/svg+xml" href="/Assets/favicon/favicon.svg" />
+<link rel="icon" type="image/png" sizes="16x16" href="/Assets/favicon/favicon-16.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/Assets/favicon/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="/Assets/favicon/favicon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/Assets/favicon/favicon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/Assets/favicon/apple-touch-icon.png" />
 <meta name="theme-color" content="{{ site.themeColor }}" />
 
@@ -66,8 +77,13 @@
 <meta property="og:title" content="{{ pageTitle }}" />
 <meta property="og:description" content="{{ ogDescription or site.ogDescription }}" />
 <meta property="og:image" content="{{ pageImage }}" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+{#- THE REAL PIXELS OF THE FILE, not the 1200x630 OG convention. 628:61480
+    exports 3024x1614, which halves to 1512x807 — scaling that to 1200x630 would
+    squash it, and cropping to the ratio would cut the monogram. Facebook, X and
+    LinkedIn all scale to fit and only require the declared numbers to match what
+    they fetch; a mismatch is what makes a card render blank or letterboxed. -#}
+<meta property="og:image:width" content="1512" />
+<meta property="og:image:height" content="807" />
 <meta property="og:image:alt" content="{{ ogImageAlt or site.ogImageAlt }}" />
 <meta property="og:locale" content="{{ site.locale }}" />
 

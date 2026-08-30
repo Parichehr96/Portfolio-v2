@@ -20,7 +20,7 @@ module.exports = {
   description:
     "Product designer building interaction systems. Based in Amsterdam. Currently exploring roles.",
   ogDescription: "Product designer building interaction systems. Based in Amsterdam.",
-  ogImage: "/Assets/og/og-preview.png",
+  ogImage: "/Assets/images/og-image.jpg",
   ogImageAlt: "Parichehr Talebzadeh, Product Designer building interaction systems",
   themeColor: "#111323",
   locale: "en_US",
