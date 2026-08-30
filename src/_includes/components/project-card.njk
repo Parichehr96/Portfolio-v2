@@ -21,9 +21,12 @@
   found encodes on disk. Both branches carry .work-card__image so _work.css
   sizes them with one rule and the box keeps its own aspect-ratio either way.
 
-  `loop` IS CONDITIONAL. ONTON's source animation does not return to its first
-  frame, so looping it snaps; it plays once and holds instead. See the MOTION
-  table in projects.js.
+  `loop` IS STILL CONDITIONAL, even though all three rows currently set it. The
+  flag lives in projects.js's MOTION table and the attribute follows it, so a
+  future clip that does not wrap cleanly can opt out without touching this file.
+  ONTON is the one that used to: its source animation does not return to its
+  first frame and it visibly snaps, which was measured and accepted rather than
+  missed — see the note in that table.
 
   NO `autoplay` ATTRIBUTE ON THE VIDEO, deliberately. scripts/work-motion.js
   owns playback so it can check prefers-reduced-motion BEFORE anything moves or
@@ -47,7 +50,13 @@
 {% from "components/button.njk" import button %}
 
 {% macro projectCard(project, index) %}
-  <article class="work-card">
+  {#- id IS THE BREADCRUMB'S LANDING PAD. Every case study's back chevron points
+      at /#work-<slug> (see _data/<slug>.js), so this attribute is the other half
+      of that link and the two have to keep the same shape. It is on every card,
+      not only the three with case studies: the id costs nothing, and scoping it
+      to "cards that happen to have a write-up today" would break the moment one
+      more gets written. -#}
+  <article class="work-card" id="work-{{ project.slug }}">
     <div class="work-card__media">
       {#
         The exported fill is 692 wide against a 594 box, so `cover` crops 49px

@@ -1,0 +1,13 @@
+<!-- HEADER WORDMARK — Figma component 528:68221 ("logo-header").
+     Fills are currentColor, not black: the header flips between the light and
+     dark variants of 446:37196 and the mark has to flip with it. Figma keeps
+     two colour variants of this component; currentColor collapses them to one.
+     NO width/height on the root on purpose — sizing is CSS's job
+     (.site-header__mark / --header-mark). The viewBox is what must not change.
+     The third path is the swept tail that turns the P silhouette into an R;
+     the two-path mark this replaced had no tail. -->
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M31.5294 14.2118C31.5294 18.8819 28.7623 22.9083 24.7793 24.7351C26.4612 23.3497 27.5322 21.248 27.5322 18.896C27.5322 14.7643 24.2259 11.4043 20.112 11.3205C20.0574 11.3167 20.0075 11.3167 19.9529 11.3167C19.8983 11.3167 19.8485 11.3167 19.7939 11.3205C18.2673 11.4033 17.0588 12.6664 17.0588 14.2108V28.6814C17.0588 33.4748 13.1699 37.3638 8.37646 37.3638V14.2118C8.37646 7.81932 13.5605 2.63531 19.9529 2.63531C26.3454 2.63531 31.5294 7.81932 31.5294 14.2118Z" fill="currentColor"/>
+<path d="M21.5 18.0001C23.1258 15.8667 23.9941 12.4878 22.7532 11.2469C21.5123 10.006 18.826 10.6804 16.7532 12.7532C14.6804 14.8261 14.2591 19.7592 15.5 21.0001C16.7409 22.2409 19.9121 20.0837 21.5 18.0001Z" fill="currentColor"/>
+<path d="M26 31.5C25.5 30.5 24.5 27.5 24.8112 25.2468C24.8112 27 25.5 29 26.5 30.5C27.6832 32.2748 30.5 34 32.0643 35C29.5 34.5 26.5 32.5 26 31.5Z" fill="currentColor"/>
+</svg>

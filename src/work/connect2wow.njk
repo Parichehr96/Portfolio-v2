@@ -25,19 +25,37 @@ permalink: /work/connect2wow/
 {% from "components/media-slot.njk" import mediaSlot, markSlot, embedSlot %}
 
 {# ---- 1. COVER — 296:11471 ----------------------------------------------- #}
-<section class="case-band case-band--cover case-band--has-back" aria-labelledby="c2w-title">
+<section class="case-band case-band--cover" aria-labelledby="c2w-title">
   <div class="case-band__inner">
-    <p class="case-back">
-      <a class="case-back__link" href="{{ connect2wow.cover.backHref }}">
-        {{ markSlot(connect2wow.cover.chevron) }}
-        <span>{{ connect2wow.cover.backLabel }}</span>
-      </a>
-    </p>
+    {#- BREADCRUMB — 550:11647. One 100-tall row carrying what used to be two:
+        the back link and the eyebrow lockup. <nav> because it is navigation to
+        somewhere else on the site, and the aria-label is what distinguishes it
+        from the site nav in a landmark list.
 
-    <p class="case-eyebrow">
-      {{ markSlot(connect2wow.cover.mark) }}
-      <span class="case-eyebrow__label">{{ connect2wow.cover.eyebrow }}</span>
-    </p>
+        THE SEPARATOR RIDES INSIDE THE CRUMB IT FOLLOWS. Two links, two slashes,
+        none trailing — the count is structural rather than something a loop
+        index has to get right. Each is aria-hidden: it is punctuation between
+        list items, and the list already says "3 items" out loud. -#}
+    <nav class="case-crumbs" aria-label="Breadcrumb">
+      <a
+        class="case-crumbs__back"
+        href="{{ connect2wow.cover.backHref }}"
+        aria-label="{{ connect2wow.cover.backLabel }}"
+      >{{ markSlot(connect2wow.cover.chevron) }}</a>
+
+      <ol class="case-crumbs__list" role="list">
+        {%- for c in connect2wow.cover.crumbs %}
+          <li class="case-crumbs__item">
+            <a class="case-crumbs__link" href="{{ c.href }}">{{ c.label }}</a>
+            <span class="case-crumbs__sep" aria-hidden="true">/</span>
+          </li>
+        {%- endfor %}
+        <li class="case-crumbs__item">
+          {{ markSlot(connect2wow.cover.mark) }}
+          <span class="case-crumbs__current" aria-current="page">{{ connect2wow.cover.eyebrow }}</span>
+        </li>
+      </ol>
+    </nav>
 
     {{ mediaSlot(connect2wow.cover.media) }}
 
@@ -59,7 +77,18 @@ permalink: /work/connect2wow/
       {%- for f in connect2wow.facets %}
         <div class="case-facet">
           <h3 class="case-facet__label">{{ f.label }}</h3>
-          <p class="case-facet__body">{{ f.body }}</p>
+          <p class="case-facet__body">
+            {#- Same shape as the cover intro just above: one plain string, or an
+                array of {text, tone} runs. All four of these are inked in part
+                (296:11489 / 11493 / 11498 / 11502). -#}
+            {%- if f.body is string -%}
+              {{ f.body }}
+            {%- else -%}
+              {%- for part in f.body -%}
+                <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+              {%- endfor -%}
+            {%- endif -%}
+          </p>
         </div>
       {%- endfor %}
     </div>

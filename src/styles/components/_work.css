@@ -35,7 +35,17 @@
   width: var(--border-width);
   background-color: var(--border-strong);
   pointer-events: none;
-  z-index: var(--z-content);
+  /* ABOVE THE STACK, NOT IN IT — 5 clears the cards (1-3) and the heading (4).
+     This was --z-content, which is 1, and 1 is exactly the problem: the cards
+     carry z-index 1/2/3 and are later in the document, so every one of them won
+     the tie and painted over these two rules. Before chunk 1 the rows were
+     transparent and the gutters showed through them; making the rows opaque is
+     what the stack requires, and it turned both verticals into a line that
+     vanished behind each card and reappeared in the gaps between them. That
+     broken-dashes effect is the "crooked" strokes — the lines are and always
+     were at exactly x=120 and x=width-120, they were just being erased in
+     bands. pointer-events:none is why lifting them costs nothing. */
+  z-index: 5;
 }
 .work::before { left: var(--space-11); }
 .work::after { right: var(--space-11); }
@@ -50,14 +60,99 @@
    — the comp's 4px gap is the space character at this size, not a flex gap.
    Written as inline spans inside a normal heading rather than a flex row so it
    wraps as a phrase if the viewport ever forces it to. */
+/* NO PADDING OF ITS OWN. The heading frame in 184:13749 is exactly its 40px
+   text box: the 60px above it belongs to .work__inner and the 40px below it to
+   .work__rows, so a padding-block here would be a third number nothing in the
+   comp accounts for. It carried 20px for one revision and put the heading 20px
+   low and the first rule 20px late. */
+/* ---- The heading holds over the stack -------------------------------------
+   THIS IS THE SECTION PIN, RELOCATED — and the relocation is not a preference,
+   it is the only version that works. Pinning .work itself freezes the scroll the
+   card-stack runs on: measured with .work sticky, the three card tops sat at
+   228 / 944 / 1660 and were STILL at 228 / 944 / 1660 after 716px of scroll,
+   because .work__rows no longer moved relative to the viewport. The stack simply
+   stopped. Anything that pins the section kills the thing the section is for.
+
+   The heading is a separate element, so it can hold while the rows keep
+   scrolling underneath it. What that buys is what the section pin was wanted
+   for: the navbar at the top, "My Work" under it, and the pile forming below —
+   the section reads as fitted to the viewport for the whole stack, and releases
+   with it.
+
+   IT LANDS EXACTLY WHERE THE STACK ALREADY EXPECTED IT. --work-stack-top is
+   header + this heading's line box + the 40 beneath it, so the cards have been
+   resting 40px below where the heading now parks since chunk 1. Nothing moves to
+   accommodate this. */
 .work__heading {
+  position: sticky;
+  /* NOT plain --header-height. That parked the heading flush against the navbar
+     and silently ate the 60px .work__inner puts above it in flow — the comp's
+     spacing above "My Work". Adding the band back here keeps the heading looking
+     the same pinned as it does unpinned; --work-stack-top carries the same 60
+     so the rows stay 40 below the heading's line box. */
+  top: calc(var(--header-height) + var(--work-band-pad));
+  z-index: 4; /* above the three stacked cards, which run 1-3 */
+  /* THE HEADING HAS TO BE OPAQUE NOW THAT IT PARKS. .work__rows::before — the
+     rule above row 1 — is not sticky, so it scrolls up through the band the
+     heading is holding in and drew a hairline straight across "My Work". A
+     higher z-index alone did not stop it, because a transparent element
+     occludes nothing. */
+  background-color: var(--surface);
   margin: 0;
-  padding-block: var(--space-4h);
   text-align: center;
   font-size: var(--m3-headline-lg);
   line-height: var(--m3-headline-lg-leading);
   letter-spacing: var(--m3-headline-lg-tracking);
   color: var(--text-primary);
+}
+
+/* THE ROOM ABOVE THE HEADING NEEDS COVERING FOR THE SAME REASON THE ROOM BELOW
+   IT DOES. Now that the heading parks 60px down, the strip between the navbar
+   and the heading is live screen the rows pass through — and rows 1 and 2 get
+   pushed one gap ABOVE their parked position as row 3 arrives, which puts them
+   right in it. Everything above 88 is behind the header; this covers 88 to the
+   heading. bottom:100% grows it upward from the heading's own top edge, so it
+   tracks the pin instead of restating the number. */
+.work__heading::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: var(--work-band-pad);
+  background-color: var(--surface);
+  pointer-events: none;
+}
+
+/* The other half of that band. --work-stack-top is the header + this line box +
+   40, so 40px below the heading is still "behind the heading" as far as the
+   reader is concerned, and the top rule was crossing it in the clear. An
+   absolute pseudo costs no layout, which is the requirement here — the note
+   above this rule is emphatic that the heading takes no padding of its own, and
+   padding-bottom would push every row down by 40. */
+.work__heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  /* 40 IS THE DESIGN GAP; THE 2 IS AN OVERLAP, AND IT IS LOAD-BEARING.
+     Cards 1 and 2 do not stay parked at --work-stack-top forever — .work__rows
+     ends at card 3's bottom, so as card 3 arrives the two beneath it are pushed
+     up out of their parked position by one gap, to y=8. Everything from 8 to 88
+     is behind the site header (z 200, opaque) and 88 to 168 is behind this, so
+     the ONLY row that ever escapes is y=168 itself — the boundary the occluder
+     stopped exactly on. Measured, that one scanline was 188 samples of card 2's
+     title at full white, a dotted line of glyph tops under the heading.
+     The 2px swallows it, plus the half-pixel scroll offsets where a parked row
+     lands at 168.5 instead of 168. What it costs is the top 2px of a row that is
+     PARKED — i.e. its leading rule, which is redundant there anyway and which
+     card 1 never had, so hiding it makes all three parked rows read alike
+     instead of card 1 differing from 2 and 3. The rule still draws through the
+     whole slide, which is the part the reader watches. */
+  height: calc(var(--space-7) + 2px);
+  background-color: var(--surface);
+  pointer-events: none;
 }
 
 .work__heading-lead {
@@ -76,13 +171,24 @@
 .work__rows {
   position: relative;
   margin-top: var(--space-7);
+  /* flow-root, AND IT IS WHAT MAKES ROW 3's RUNWAY EXIST AT ALL. The runway is a
+     margin under the last row, and position:relative does not establish a block
+     formatting context — so that margin collapsed straight out through this box,
+     landing outside .work__rows without adding a pixel to its height. A sticky
+     box is bounded by its containing block's CONTENT box, so a margin that never
+     reached this element's height gave row 3 exactly the zero range it had
+     before. (padding-bottom here is the same trap from the other side: padding
+     sits outside the content box, so it cannot extend a sticky range either —
+     the hero pin already cost us that lesson.) flow-root makes this a BFC, the
+     margin stays in, and the height grows by it. */
+  display: flow-root;
 }
 
 /* PAINTED, NOT LAID OUT — the same argument as the gutter rules above, and it
    is measurable here: as real borders these four lines added 1px each and put
    the section 4px taller than the comp, with every row after the first
    displaced. Drawn as pseudo-elements they occupy the boundary without
-   participating in it, and the row heights land on 796 exactly. */
+   participating in it, and the row heights land on 716 exactly. */
 .work__rows::before {
   content: "";
   position: absolute;
@@ -94,23 +200,153 @@
   pointer-events: none;
 }
 
+/* SCROLL-MARGIN IS WHAT MAKES THE BREADCRUMB LAND. Each case study's back
+   chevron points at /#work-<slug> (see _data/<slug>.js and the id in
+   components/project-card.njk), and the site header is sticky at 88 — so a bare
+   hash jump parks the row's top edge underneath it. This moves the resting
+   position down past the header plus a little air. The air is not decorative:
+   landing with the row's edge flush against the header's reads as clipped even
+   when nothing is. The ≤480 block at the end of this file carries the 48px
+   header's version. */
+/* ---- The stack ------------------------------------------------------------
+   EACH ROW STICKS UNDER THE NAVBAR AND THE NEXT SCROLLS OVER IT. Three sticky
+   siblings in one relative parent is the whole mechanism — no JS, no scroll
+   listener, no transform. Each card holds its position until the following one
+   catches up and covers it, so the last ends on top of the other two.
+
+   THE OFFSET RESERVES THE HEADING'S BAND, not just the header's. 88 + 40 + 40:
+   the sticky header, the heading's own line box, and the 40 that .work__rows
+   already puts between them. Nothing pins the heading yet — that is the section
+   pin, and it is a separate chunk — so for now that band simply shows the
+   section's own black. Reserving it here means the cards do not have to move
+   when the heading does arrive.
+
+   OPAQUE, AND THAT IS NOT OPTIONAL. A sticky card with a transparent background
+   is a window onto the card beneath it: you would read two rows at once through
+   each other. --surface is the same --fig-black the section already paints, so
+   an unstacked card looks exactly as it did — this is invisible until the moment
+   it is load-bearing.
+
+   Z-INDEX IS BELT AND BRACES. Source order already paints later siblings over
+   earlier ones at equal z-index, which gives 3-over-2-over-1 for free; the
+   explicit ladder below means a future rule that touches stacking on one card
+   cannot silently invert the pile. */
 .work-card {
-  position: relative;
+  scroll-margin-top: calc(var(--header-height) + var(--space-5));
+  position: sticky;
+  top: var(--work-stack-top);
+  background-color: var(--surface);
   display: grid;
   /* 594 : 574 from the comp, as a ratio rather than two widths. */
   grid-template-columns: var(--work-columns);
   gap: var(--space-7);
-  padding: var(--work-row-inset) var(--space-6);
+  padding: var(--work-row-pad) var(--space-6);
 }
 
 /* The closing rule under each row. Spans the full container, not the padded
    content box, which is what makes the four lines align with the gutters. */
-.work-card::after {
+/* ---- Making the stack fit a laptop ----------------------------------------
+   THE VERTICAL BUDGET IS ONE SUM: header + the heading's band + the heading +
+   40 + the row itself has to land inside the window, or a stuck row is cut off
+   by the fold and the reader loses the end of a card they cannot scroll to.
+
+   IT USED TO BE DEFENDED BY SWITCHING THE STACK OFF. The guard said max-height
+   900, then 640, then 700 — each time the fixed numbers grew, the minimum window
+   grew with them, and the last move (the heading taking its 60px of comp spacing
+   back) put it above a normal laptop window with a terminal open. Turning the
+   feature off on the machines it was built for is not a fix.
+
+   SO THE BUDGET FLEXES INSTEAD, in three stages, cheapest concession first:
+     1. --work-band-pad  60 -> 24   the heading's band tightens (tokens.css)
+     2. --work-row-pad  120 -> 16   the row's own padding gives way (tokens.css)
+     3. the media box is capped     only once 1 and 2 are spent — see below
+   Stage 3 crops rather than shrinks, because the alternative is scaling type.
+   Measured, stages 1 and 2 alone carry every window from ~660 up; the cap only
+   bites below that, and by 3-4% at 680-720. 1440x780 and 1512x900 come out at
+   exactly the same numbers as before this change — nothing tall regresses. */
+
+/* ONE CARD AT A TIME — see --work-card-gap for how the number is derived and
+   why it is a max() rather than the plain remainder.
+ *
+ * MARGIN, NOT HEIGHT. The gap has to live between the rows: growing the cards
+ * instead would push their own bottom edge past the fold on a short window,
+ * which is the exact failure the padding clamp above exists to avoid.
+ *
+ * THE LAST ROW IS HANDLED SEPARATELY, BY .work__runway BELOW. Row 3's
+ * sticky range is bounded by .work__rows' bottom edge; with nothing under it
+ * that edge WAS row 3's own bottom, so its range was zero pixels and it never
+ * pinned. It rose over row 2 and kept going, and About Me was filling the
+ * viewport before it ever reached the heading. The trailing gap moves
+ * .work__rows' bottom one gap further down, which is the scroll row 3 pins
+ * through — so it now travels up, parks under the heading, fills the frame and
+ * holds a beat like the other two before the section releases. The extra scroll
+ * before About is the runway doing its job. */
+.work__rows > .work-card:not(:last-of-type) {
+  margin-bottom: var(--work-card-gap);
+}
+
+/* THE LAST ROW'S RUNWAY — the same 160, but as height in a sibling rather than
+   margin on the row, and that distinction is the whole fix. Sticky keeps a box's
+   MARGIN box inside the containing block, so a trailing margin on row 3 moved
+   the constraint down by exactly as much as it moved the row: measured range,
+   0px. This element sits after row 3's margin box, so .work__rows' content box
+   ends one gap later than row 3 does and that difference IS row 3's range.
+   Rows 1 and 2 are unaffected — their ranges were and remain container-end minus
+   their own margin-box bottoms. */
+.work__runway {
+  height: var(--work-card-gap);
+}
+
+.work__rows > .work-card:nth-child(1) { z-index: 1; }
+.work__rows > .work-card:nth-child(2) { z-index: 2; }
+.work__rows > .work-card:nth-child(3) { z-index: 3; }
+
+/* THE HAIRLINE CLOSES A ROW, so the last row has nothing to close against — and
+   once the rows stack it would be worse than redundant: the top card's divider
+   would draw across the card showing beneath it, reading as a rule belonging to
+   neither. That is the same line the un-stacked list always wanted; the stack is
+   only what made it obvious.
+
+   :last-of-TYPE, NOT :last-child, AND THE DIFFERENCE IS NOT COSMETIC. .work__rows
+   ends with .work__runway now, so row 3 stopped being the last CHILD and started
+   matching this rule — growing a closing hairline in both states, including the
+   plain-list fallback where the design has none under the final row. The rows are
+   <article> and the runway is a <div>, so :last-of-type still means "row 3"
+   however many spacers end up in this box. */
+.work-card:not(:last-of-type)::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  height: var(--border-width);
+  background-color: var(--border-strong);
+  pointer-events: none;
+}
+
+/* THE LEADING EDGE OF AN ARRIVING ROW — the one stroke the stack was missing.
+ *
+ * In the flat list every boundary between two rows is drawn, by the upper row's
+ * ::after. Stacking takes that away: the moment card 2 rises over card 1 it
+ * covers card 1 ENTIRELY, hairline included, and the edge the reader is actually
+ * watching move up the screen has no rule on it at all. Card 1's own rule is
+ * still down there closing card 1 — 160px further on now that the rows are
+ * spaced — so this is not the same line moved, it is the second boundary the
+ * stack created and never drew.
+ *
+ * Same 1px, same --border-strong, same left:0/right:0 as the closing rule, so
+ * the two are indistinguishable and both land on the gutters at each end.
+ *
+ * :first-child is excluded because nothing arrives over the first row, and the
+ * opt-out below drops this entirely: with the gap gone the rows are contiguous
+ * again, card N's ::after and card N+1's ::before would be the same pixel, and
+ * two rules stacked on one boundary is the doubling this batch is removing. */
+.work__rows > .work-card:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
   height: var(--border-width);
   background-color: var(--border-strong);
   pointer-events: none;
@@ -123,6 +359,19 @@
    it must stay on the BOX rather than on the image. */
 .work-card__media {
   aspect-ratio: var(--work-media-w) / var(--work-media-h);
+
+  /* STAGE 3 OF THE BUDGET — the last resort, and it is a crop, not a shrink.
+     This is literally what is left of the window once the heading's band, the
+     row's padding and a 24px margin off the fold are paid for. On any window
+     with room the natural aspect-ratio height is smaller than this and the
+     declaration does nothing at all; when it is not, the box goes shorter than
+     its ratio and object-fit:cover below takes the difference off the top and
+     bottom of the frame. Cropping a photograph a little is a far smaller loss
+     than the card overflowing the fold — or than the stack refusing to run,
+     which is what the old fixed budget did instead. */
+  max-height: calc(
+    100vh - var(--work-stack-top) - 2 * var(--work-row-pad) - 24px
+  );
   overflow: hidden;
   border-radius: var(--radius-lg);
 
@@ -151,22 +400,27 @@ video.work-card__image {
 }
 
 /* ---- Details ------------------------------------------------------------- */
-/* BOTTOM-ANCHORED, which is the whole trick of this row. In the comp the text
-   block starts at y=96 on cards 1 and 3 but y=116 on card 2 — not a designer's
-   inconsistency, but the consequence of card 2 having a one-line body while
-   the others wrap to two. Anchoring the column to the bottom and fixing the
-   gap above the button reproduces all three offsets exactly:
-
-       476 - 48 (button) - 120 (gap) - 212 or 192 (block)  =  96 or 116  ✓
-
-   Top-anchoring instead would need a hardcoded per-card offset and would break
-   the moment any body text changed length. */
+/* SPACE-BETWEEN: text block at the top, button on the floor. All three rows are
+   identical in 184:13749 — Details is 476 tall, the text frame sits at y=0 and
+   is 204 tall, and the button sits at y=428 and is 48 tall. 0 + 204, then
+   428 + 48 = 476, so the two children are simply pinned to the two ends.
+ *
+ * THIS REPLACES A BOTTOM-ANCHOR PLUS A FIXED 120px GAP, and that arrangement is
+ * worth recording because it was correct for the comp it was written against.
+ * That earlier comp gave card 2 a one-line body, so its text block started at
+ * y=116 where cards 1 and 3 started at y=96; anchoring to the bottom and fixing
+ * the gap reproduced all three offsets without a per-card number. The comp has
+ * since equalised them — every body now wraps to two lines and every text frame
+ * is 204 — so the offsets are gone and space-between says the same thing with
+ * nothing to keep in sync.
+ *
+ * It also degrades better: the button stays on the floor whatever the copy does,
+ * where the fixed gap would have pushed it down as soon as a body grew a line. */
 .work-card__details {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-11);
 }
 
 .work-card__text {
@@ -187,11 +441,18 @@ video.work-card__image {
   color: var(--text-secondary);
 }
 
+/* 32/48, NOT Display Medium's 45/52. 184:13749 gives the title a 96px box for
+   two lines, which is 48 per line; 96 = 32 x 1.5, and get_variable_defs returns
+   Display Medium's tracking and weight but no size or line-height, which is what
+   a node that no longer binds that step looks like. Checked against the render
+   too: line one of card 1 measures ~527px, right for 32px Figtree and impossible
+   at 45. So the size is Headline Large and the leading is --leading-body — the
+   same 150% the rest of the page standardised on, which is exactly 48 here. */
 .work-card__title {
   margin: var(--space-5) 0 0;
-  font-size: var(--m3-display-md);
-  line-height: var(--m3-display-md-leading);
-  letter-spacing: var(--m3-display-md-tracking);
+  font-size: var(--m3-headline-lg);
+  line-height: var(--leading-body);
+  letter-spacing: var(--m3-headline-lg-tracking);
   font-weight: var(--weight-regular);
   color: var(--text-primary);
 }
@@ -199,7 +460,7 @@ video.work-card__image {
 .work-card__body {
   margin: var(--space-2) 0 0;
   font-size: var(--m3-body-md);
-  line-height: var(--m3-body-md-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-md-tracking);
   font-weight: var(--weight-regular);
   color: var(--text-secondary);
@@ -209,6 +470,59 @@ video.work-card__image {
 /* Figma specifies desktop only. The section stacks to one column and the
    vertical rhythm steps down; nothing else is invented here, matching how the
    hero and about handle the same gap in the comp. */
+/* ---- When the stack stands down ------------------------------------------
+   THREE WAYS OUT, and they are three different reasons rather than one repeated.
+
+   REDUCED MOTION: base.css zeroes transitions and animations site-wide, but
+   `position: sticky` is neither — it is layout, and it survives that block
+   untouched. A stack of rows sliding over one another is exactly the kind of
+   scroll-coupled movement the preference is asking us not to do, so it has to
+   opt out by name.
+
+   NARROW: below 900 the rows are already a single column of stacked media and
+   text, the header is 48 rather than 88, and there is no width left for a
+   layered pile to read as anything but overlap.
+
+   SHORT: a height problem rather than a width one, and the threshold moved once
+   the padding was allowed to flex. A stuck card needs --work-stack-top (168) plus
+   its own height; with the block padding clamped down to 16 that bottoms out
+   around 576 once the budget above has spent all three of its stages, so 600 is
+   where even the tightest card stops fitting. Below it a
+   stuck row would be cut off while it is stuck — the reader losing the end of a
+   card they cannot scroll to, because scrolling is what covers it with the next
+   one. This was 900 until the padding could give way, which disabled the stack on
+   every laptop window; see the clamp above. */
+@media (prefers-reduced-motion: reduce), (max-width: 900px), (max-height: 600px) {
+  .work__rows > .work-card,
+  .work__heading {
+    position: static;
+  }
+  /* The gap is the stack's spacing, not the list's: with nothing sticking there
+     is no "next card below the fold" to arrange, and 160-plus pixels between
+     rows would just be holes. The hairlines divide the list, as they always did.
+     SELECTOR MATCHED DELIBERATELY — :not(:last-child) is (0,3,0) and the two
+     bare classes above are (0,2,0), so dropping it here would lose to the base
+     rule and the margin would survive the opt-out. */
+  .work__rows > .work-card:not(:last-of-type) {
+    margin-bottom: 0;
+  }
+  .work__runway {
+    height: 0;
+  }
+  /* The cap is a concession the STACK needs; a plain list has the whole page to
+     grow down into and no fold to stay inside, so the media goes back to its
+     full comp ratio, uncropped. This also covers <=900, where the media is a
+     single full-width column and a viewport-height cap would be meaningless. */
+  .work-card__media {
+    max-height: none;
+  }
+  .work__heading::before,
+  .work__heading::after,
+  .work__rows > .work-card:not(:first-child)::before {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .work::before,
   .work::after {
@@ -226,8 +540,31 @@ video.work-card__image {
   .work-card__details {
     gap: var(--space-7);
   }
-  .work-card__title {
-    font-size: var(--m3-headline-lg);
-    line-height: var(--m3-headline-lg-leading);
+  /* No title override here any more. It used to step the title down from Display
+     Medium to Headline Large for narrow screens; the title IS Headline Large now,
+     so all the rule still did was tighten the leading from 48 back to 40. */
+}
+
+/* ---- Mobile — 566:39198 --------------------------------------------------- */
+/* THE INSET IS TWO NUMBERS, AND THE COMP SPLITS THEM THAT WAY. The Project frame
+   is 390 wide with its Container at x=16 (358), and inside that each row puts its
+   image at x=32 — so 16 of page gutter plus 32 of row padding, 48 from the page
+   edge, and a 294-wide media box. The 900 tier collapses both into a single 40 on
+   .work__inner and leaves the row at 0, which lands the media at 40 and 310 wide.
+   Reproducing the split rather than one 48 keeps the gutter the same value every
+   other section uses.
+
+   The row's 80 block padding is the 900 tier's; 566:39204 is 621 tall = 32 + 236
+   image + 40 + 281 details + 32, so 32 is the comp's. */
+@media (max-width: 480px) {
+  .work__inner {
+    margin-inline: var(--space-4);
+    padding-inline: 0;
+  }
+
+  .work-card {
+    padding: var(--space-6);
+    /* The header is 48 here, not 88 — see the note on .work-card above. */
+    scroll-margin-top: calc(var(--header-height-mobile) + var(--space-4));
   }
 }

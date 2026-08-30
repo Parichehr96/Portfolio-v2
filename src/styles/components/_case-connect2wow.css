@@ -142,23 +142,34 @@
   margin-bottom: var(--space-7);
 }
 
-/* 32 ON 36 — headline-large's size against headline-medium's leading, which is
-   the pairing 405:46244 actually sets rather than either token's own. It is
-   also what makes the head 107 tall, and therefore what makes the column land
-   on 467 alongside the sheet beside it. */
+/* 18/27 — THE ONLY TWO RULES ON THIS PAGE THE .case SCALE COULD NOT REACH.
+   Both read tokens that block deliberately leaves alone: --m3-headline-lg (32)
+   and --m3-body-md (14). The heading was the worse of the two — it paired
+   headline-large's SIZE with headline-medium's LEADING, so once batch A moved
+   headline-medium to 30 it rendered 32 on 30: a line box shorter than its own
+   type.
+
+   405:46244 sets "Confirmation" in a 27-tall box and its paragraph in a 63-tall
+   one — 18/27 and 14/21 at the 1.5 these pages run on. 18 is --m3-title-lg,
+   which is where every other sub-heading on the case pages already sits
+   (.case-facet__label, .case-personas__heading), so this is the page joining the
+   scale rather than getting an exception. The subtitle moves from body-md to
+   body-lg for the same reason: same 14px, but it now tracks at 0.5 like every
+   other body on the page and follows the scale if it ever moves again. */
 .c2w-panel__heading {
   margin: 0;
-  font-size: var(--m3-headline-lg);
-  line-height: var(--m3-headline-md-leading);
-  letter-spacing: var(--m3-headline-lg-tracking);
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
   font-weight: var(--weight-regular);
   color: var(--text-primary);
 }
 
 .c2w-panel__subtitle {
   margin: 0;
-  font-size: var(--m3-body-md);
-  line-height: 1.5;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
   color: var(--text-secondary);
 }
 
@@ -169,7 +180,10 @@
 .c2w-reflection {
   display: flex;
   flex-direction: column;
-  gap: var(--m3-body-lg-leading);
+  /* PINNED — a leading read as a LENGTH, which would otherwise have followed
+     --m3-body-lg-leading from 24 to 21 with the .case scale (see tokens.css).
+     24 was the intent; space-5 says so without depending on the type. */
+  gap: var(--space-5);
 }
 
 /* ---- Narrow -------------------------------------------------------------- */

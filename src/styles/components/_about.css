@@ -46,7 +46,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-block: var(--space-11);
+  padding-block: var(--about-figure-pad);
 }
 
 /* THE FRAME IS ARTWORK, NOT A BORDER. It was a CSS rounded rect until the real
@@ -105,74 +105,140 @@
   color: var(--text-primary);
 }
 
-/* ---- Stats --------------------------------------------------------------- */
-.about__stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
-  list-style: none;
-  margin: var(--space-5) 0 0;
-  padding: 0;
-}
-
-.stat {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-}
-
-/* Figtree, matching the hero's "Designer" — these were Ribeye Marrow until
-   that face was retired. The numerals are still display figures, not body
-   text: the M3 headline step and the regular weight carry that now. */
-.stat__value {
-  font-family: var(--font-sans);
-  font-size: var(--m3-headline-md);
-  line-height: var(--m3-headline-md-leading);
-  font-weight: var(--weight-regular);
-  color: var(--text-primary);
-}
-
-.stat__label {
-  font-size: var(--m3-title-md);
-  line-height: var(--m3-title-md-leading);
-  letter-spacing: var(--m3-title-md-tracking);
-  color: var(--text-primary);
-}
-
 /* ---- Bio ----------------------------------------------------------------- */
 .about__bio {
   margin: var(--space-5) 0 0;
   font-size: var(--m3-body-lg);
-  line-height: var(--m3-body-lg-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-lg-tracking);
   color: var(--text-secondary);
 }
 
-.about__location {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: var(--space-5) 0 0;
-  font-size: var(--m3-body-lg);
-  line-height: var(--m3-body-lg-leading);
-  letter-spacing: var(--m3-body-lg-tracking);
-  color: var(--text-primary);
-}
-
-.about__flag {
-  display: block;
-  flex: 0 0 auto;
+/* EMPHASIS IS COLOUR, NOT WEIGHT. The <strong> stays because the emphasis is
+   real — a screen reader should still hear it — but it is drawn by stepping the
+   ink up from the body grey to near-black at the SAME weight, so the phrase
+   reads as darker rather than heavier.
+ *
+ * --fig-ink, NOT --text-primary. This file otherwise takes every colour from the
+   .about scope, and this is the one exception: the node sets these runs to
+   Labels-Vibrant/Primary #1a1a1a, where --text-primary in this scope is
+   --fig-black #000000. Those are different colours and the softer one is the
+   node's — _statement.css consumes --fig-ink for the same reason. */
+.about__bio strong {
+  font-weight: inherit;
+  color: var(--fig-ink);
 }
 
 /* ---- Time widget --------------------------------------------------------- */
-/* STATIC. The values are the comp's; the data-clock-* hooks in about.njk are
-   the seam for the phase that makes this live. No script reads them yet. */
+/* A ROW — 543:1139, which is 635 x 160. The band's own 40/32 padding was already
+   right; what changed is the axis. The clock box is 118 x 80 at x=32, the status
+   block 429 x 44 at x=174, and 174 - 32 - 118 = 24 is the gap. Both are centred
+   on the band's middle (clock 40..120, status 58..102 — both centred on 80). */
 .about__clock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
   border-top: var(--border-width) solid var(--border-strong);
   padding: var(--space-7) var(--space-6);
 }
 
-.about__clock-time,
+/* THE CLOCK BOX. 118 x 80 from 543:1205, fixed rather than fluid because the
+   hands are drawn in that coordinate space and the digital time is positioned
+   over them by percentage of it. flex:none so the status text takes the slack. */
+.about__clock-face {
+  position: relative;
+  flex: 0 0 auto;
+  width: 118px;
+  height: 80px;
+}
+
+.about__clock-hands {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* FACELESS, WHICH IS THE NODE. 543:1181 is a hub dot and hands with no circle
+   around them — there is deliberately nothing here drawing a ring. The hands
+   point at 12 in the markup; hour and minute are rotated about (52 30) by
+   scripts/clock.js, the second hand sweeps in CSS below.
+ *
+ * WITH NO FACE, LENGTH AND WEIGHT ARE THE ONLY THINGS THAT DISTINGUISH THEM.
+ * A dial lets you read a hand by where it points; here the three are told apart
+ * purely by how they are drawn, which is why the node bothers to make them
+ * three different shapes and why these values are not interchangeable:
+ *   hour    18 long, 3 thick, grey   — shortest and heaviest
+ *   minute  28 long, 3 thick, grey
+ *   second  36 long, 1 thin,  black  — longest and lightest, the only black one
+ * Flatten any of that and the clock stops being readable. */
+.about__clock-hand {
+  stroke: var(--text-secondary);
+  stroke-linecap: round;
+}
+
+.about__clock-hand--hour,
+.about__clock-hand--minute {
+  stroke-width: 3;
+}
+
+.about__clock-hand--second {
+  stroke: var(--text-primary);
+  stroke-width: 1;
+  /* SWEEPS IN CSS, NOT ON A JS TICK. One line moving once a second does not
+     justify a second timer on the page, and a CSS animation keeps sweeping
+     smoothly between frames instead of stepping. transform-origin is in user
+     space (transform-box defaults to view-box on SVG elements), so it is the
+     same (52 30) the markup and clock.js use.
+
+     --clock-second-offset is a NEGATIVE delay written once by clock.js from the
+     current seconds, which starts the animation part-way through its cycle so
+     the hand is in the right place on load rather than jumping to 12. */
+  transform-origin: 52px 30px;
+  animation: about-clock-sweep 60s linear infinite;
+  animation-delay: var(--clock-second-offset, 0s);
+}
+
+@keyframes about-clock-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* HIDDEN, NOT FROZEN, for anyone who asked for less motion. Stopping the
+   animation would leave the hand parked at 12 o'clock next to a digital time
+   that says otherwise, which reads as broken; dropping it leaves a clean
+   two-hand clock that still agrees with the digits. */
+@media (prefers-reduced-motion: reduce) {
+  .about__clock-hand--second {
+    display: none;
+  }
+}
+
+.about__clock-hub {
+  fill: var(--text-primary);
+}
+
+/* OVER the hands, not beside them: 568:39383 sits at x=32..83, y=36..64 inside
+   the 118 x 80 box, which is the lower middle. Expressed as percentages of that
+   box so the label tracks the face if the box is ever resized. */
+.about__clock-time {
+  position: absolute;
+  left: 48.7%;
+  top: 45%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+/* The status column beside the clock. 543:1148 stacks its two rows with no gap
+   — 24 + 20 = its full 44 — so nothing separates them here either. */
+.about__clock-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .about__clock-status {
   display: flex;
   align-items: baseline;
@@ -180,10 +246,9 @@
   margin: 0;
 }
 
-.about__clock-at,
 .about__clock-lead {
   font-size: var(--m3-body-md);
-  line-height: var(--m3-body-md-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-md-tracking);
   color: var(--text-secondary);
 }
@@ -193,10 +258,6 @@
   line-height: var(--m3-title-lg-leading);
   letter-spacing: var(--m3-title-lg-tracking);
   color: var(--text-primary);
-}
-
-.about__clock-status {
-  margin-top: var(--space-2);
 }
 
 .about__clock-headline {
@@ -255,10 +316,18 @@
   }
 }
 
+/* THE LEADING DASH is a pseudo-element, not part of the string. scripts/clock.js
+   assigns textContent here every minute, which would wipe any child node — and
+   the 40 sub-lines in that file's schedule would each have to carry the dash
+   otherwise. ::before survives the assignment and keeps the data clean. */
+.about__clock-detail::before {
+  content: "- ";
+}
+
 .about__clock-detail {
   margin: 0;
   font-size: var(--m3-body-md);
-  line-height: var(--m3-body-md-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-md-tracking);
   color: var(--text-secondary);
 }
@@ -286,8 +355,59 @@
   .about__content {
     padding: var(--space-8) var(--space-7) var(--space-7);
   }
-  .about__stats {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
+  /* The stats override went with the stats row itself. The clock band stacks
+     here instead, so the hands sit above the status text rather than beside it. */
+  .about__clock {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---- Mobile — 568:39244 --------------------------------------------------- */
+@media (max-width: 480px) {
+  /* 568:39248 starts at the container's own top and the content picks up 32
+     below it. The 900 tier's 80/80 is desktop rhythm and pushes the figure a
+     third of a screen down on a phone. */
+  .about__figure-col {
+    padding-block: 0 var(--space-6);
+  }
+
+  /* THE PAGE GUTTER. 568:39245 sits at x=16 in the 390 frame, so the section is
+     358 wide, not the full 390 the 900 tier leaves it at. Everything inside is
+     measured from that: the clock band becomes 358 rather than 390 and its status
+     block 294 rather than 326, which is what makes the sub-line wrap to the two
+     lines 571:59153 shows. The content's own 32 sits inside this, giving the
+     heading the comp's 48 from the page edge. */
+  .about__inner {
+    margin-inline: var(--space-4);
+  }
+
+  /* 568:39248 is 331 wide in the node's 356 column — 93%, where the desktop
+     --about-figure-size is 83.1% (528 of the 635 column). The token is solved for
+     the desktop column and does not transfer: at 83.1% of a 358 mobile column the
+     figure comes out ~297, a good 34 short. Overridden rather than re-tokenised
+     because the two widths are two different measurements, not one value at two
+     sizes. The frame and the PNG inside are both percentage-positioned against
+     this box, so they follow with no second edit. */
+  .about__figure {
+    width: 93%;
+  }
+
+  /* 568:39253 puts the heading at x=32, y=24 in a 356 frame — 32 inline, not
+     the 900 tier's 40, and 24 above rather than 48. */
+  .about__content {
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+
+  /* THE CLOCK CENTRES, THE STATUS DOES NOT. 571:59136 sits at x=119 in a 356
+     band — dead centre — while 571:59145 stays at x=32 and runs the full 292.
+     So the column centres its items and the status block opts out by stretching:
+     centring it too would centre its text as well, which the node does not do. */
+  .about__clock {
+    align-items: center;
+  }
+
+  .about__clock-body {
+    align-self: stretch;
   }
 }

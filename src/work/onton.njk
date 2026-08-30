@@ -26,19 +26,37 @@ permalink: /work/onton/
 {% from "components/media-slot.njk" import mediaSlot, markSlot %}
 
 {# ---- 1. COVER — 193:4672 ------------------------------------------------ #}
-<section class="case-band case-band--cover case-band--has-back" aria-labelledby="onton-title">
+<section class="case-band case-band--cover" aria-labelledby="onton-title">
   <div class="case-band__inner">
-    <p class="case-back">
-      <a class="case-back__link" href="{{ onton.cover.backHref }}">
-        {{ markSlot(onton.cover.chevron) }}
-        <span>{{ onton.cover.backLabel }}</span>
-      </a>
-    </p>
+    {#- BREADCRUMB — 550:11647. One 100-tall row carrying what used to be two:
+        the back link and the eyebrow lockup. <nav> because it is navigation to
+        somewhere else on the site, and the aria-label is what distinguishes it
+        from the site nav in a landmark list.
 
-    <p class="case-eyebrow">
-      {{ markSlot(onton.cover.mark) }}
-      <span class="case-eyebrow__label">{{ onton.cover.eyebrow }}</span>
-    </p>
+        THE SEPARATOR RIDES INSIDE THE CRUMB IT FOLLOWS. Two links, two slashes,
+        none trailing — the count is structural rather than something a loop
+        index has to get right. Each is aria-hidden: it is punctuation between
+        list items, and the list already says "3 items" out loud. -#}
+    <nav class="case-crumbs" aria-label="Breadcrumb">
+      <a
+        class="case-crumbs__back"
+        href="{{ onton.cover.backHref }}"
+        aria-label="{{ onton.cover.backLabel }}"
+      >{{ markSlot(onton.cover.chevron) }}</a>
+
+      <ol class="case-crumbs__list" role="list">
+        {%- for c in onton.cover.crumbs %}
+          <li class="case-crumbs__item">
+            <a class="case-crumbs__link" href="{{ c.href }}">{{ c.label }}</a>
+            <span class="case-crumbs__sep" aria-hidden="true">/</span>
+          </li>
+        {%- endfor %}
+        <li class="case-crumbs__item">
+          {{ markSlot(onton.cover.mark) }}
+          <span class="case-crumbs__current" aria-current="page">{{ onton.cover.eyebrow }}</span>
+        </li>
+      </ol>
+    </nav>
 
     {#- The cover runs the full width of the ruled column, not inset 32 like the
         prose. It is the only element on the page that touches both rules. -#}
@@ -208,9 +226,14 @@ permalink: /work/onton/
       <h2 class="case-heading" id="onton-why">{{ onton.why.heading }}</h2>
     </div>
 
-    <div class="case-why">
-      <div class="case-panel">
-        <table class="case-table case-table--why">
+    {#- THE PANEL WRAPS THE WHOLE ROW NOW, not just the table. 208:2923 is one
+        1270 Banner holding both halves, and its 32px padding is what the comp's
+        905 + 301 add up inside. With the panel around the table alone the two
+        could not both hit their widths. -#}
+    <div class="case-panel">
+      <div class="case-why">
+        <div class="case-why__table">
+          <table class="case-table case-table--why">
           <thead>
             <tr>
               {%- for col in onton.why.columns %}
@@ -225,10 +248,14 @@ permalink: /work/onton/
             {%- for row in onton.why.rows %}
               <tr data-persona="{{ row.persona }}">
                 <th scope="row">{{ row.change }}</th>
-                <td>{{ row.quote }}</td>
                 {#-
                   A DOT AND NOTHING ELSE, which is what the comp shows. The
                   strings Figma holds in these cells are all opacity 0.
+
+                  SECOND, NOT THIRD, as of 557:11539 — the persona sits between
+                  the two text columns now. The hidden name moves with the dot
+                  rather than staying put, so the order a screen reader reads
+                  still matches the order the header announces.
 
                   The persona's name rides along visually hidden: on screen the
                   colour carries the mapping, but a screen-reader user would
@@ -243,22 +270,24 @@ permalink: /work/onton/
                     {%- endfor -%}
                   </span>
                 </td>
+                <td>{{ row.quote }}</td>
               </tr>
             {%- endfor %}
           </tbody>
-        </table>
-      </div>
+          </table>
+        </div>
 
-      <div class="case-personas">
-        <h3 class="case-personas__heading">{{ onton.why.personaKeyHeading }}</h3>
-        <ul class="case-personas__list">
-          {%- for p in onton.why.personas %}
-            <li class="case-personas__item" data-persona="{{ p.slug }}">
-              <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
-              <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
-            </li>
-          {%- endfor %}
-        </ul>
+        <div class="case-personas">
+          <h3 class="case-personas__heading">{{ onton.why.personaKeyHeading }}</h3>
+          <ul class="case-personas__list">
+            {%- for p in onton.why.personas %}
+              <li class="case-personas__item" data-persona="{{ p.slug }}">
+                <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
+                <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
+              </li>
+            {%- endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>

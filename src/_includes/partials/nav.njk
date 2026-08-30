@@ -1,4 +1,5 @@
 {% from "components/icon.njk" import icon %}
+{% from "components/nav-item.njk" import navItem %}
 {#
   SITE HEADER — Figma 184:13318. Driven by _data/hero.js.
 
@@ -39,7 +40,33 @@
       >
     </a>
 
-    <nav class="site-header__nav" aria-label="Primary">
+    {#
+      THE MOBILE MENU BUTTON. Hidden above 480 and the only nav affordance below
+      it. aria-controls points at the SAME <nav> the desktop bar uses — see the
+      note on that element — so there is one set of links, not two.
+    #}
+    <button
+      class="site-header__burger"
+      type="button"
+      aria-label="Menu"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      data-menu-toggle
+    >{{ icon("menu-burger", size=24) }}</button>
+
+    {#
+      ONE NAV, TWO PRESENTATIONS. Below 480 this same element becomes the drop
+      panel rather than a second copy of the links, and that is deliberate:
+      scripts/header-theme.js binds the scroll-spy to
+      `.site-header__link[data-spy]`, so a duplicate list would give every
+      section two "current" items to mark and two elements to keep in sync.
+
+      is-closed IS SCOPED, NOT GLOBAL. The class only hides anything inside the
+      ≤480 block in _nav.css; above it the panel styling does not exist and the
+      bar renders exactly as it always has, class or no class. A global .hidden
+      would have hidden the desktop nav the moment the markup shipped closed.
+    #}
+    <nav class="site-header__nav is-closed" id="site-menu" aria-label="Primary" data-menu-panel>
       <ul class="site-header__links">
         {%- for item in hero.header.links %}
           <li>
@@ -49,11 +76,13 @@
               /work/* and /projects, where the sections do not exist and nothing
               should ever be marked current.
             #}
+            {# The label is navItem(), not a bare string, so the header and the
+               footer roll from one definition — see components/nav-item.njk. #}
             <a
               class="site-header__link"
               href="{{ item.href }}"
               data-spy="{{ item.href | replace("/#", "") }}"
-            >{{ item.label }}</a>
+            >{{ navItem(item.label) }}</a>
           </li>
         {%- endfor %}
       </ul>

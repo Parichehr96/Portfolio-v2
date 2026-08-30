@@ -28,6 +28,14 @@
       {%- for p in collections.workCards %}
         {{ projectCard(p, loop.index) }}
       {%- endfor %}
+      {#- THE LAST ROW'S RUNWAY. It has to be a real element in the flow: a
+          sticky box is constrained so its MARGIN box stays inside the container,
+          so a trailing margin on the last row pushes the box and the boundary
+          down together and buys it exactly nothing (measured: 0px of range).
+          padding-bottom on .work__rows fails from the other side — padding is
+          outside the content box the constraint reads. Only a sibling that takes
+          real height moves the container's end past the last row. -#}
+      <div class="work__runway" aria-hidden="true"></div>
     </div>
   </div>
 </section>

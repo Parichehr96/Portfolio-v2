@@ -83,10 +83,34 @@ module.exports = {
 
   /* ---- 1. Cover — 296:11471 --------------------------------------------- */
   cover: {
-    backLabel: "Back to home",
-    backHref: "/",
-    chevron: icon("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
-    mark: mark("mark-connect2wow.svg", 32, "SVG — Connect2WOW logo mark, 32×32"),
+    /* ---- Breadcrumb — 550:11647 / 553:55014 / 553:55050 ------------------
+       ONE ROW, REPLACING TWO. The cover used to open with a "Back to home" link
+       and then an eyebrow lockup on its own line; the comp folds both into a
+       single 100-tall trail. `eyebrow` and `mark` are the same two values they
+       always were — they render inside the trail now instead of under it, which
+       is why neither had to change shape.
+
+       THE CHEVRON DOES NOT GO WHERE "Home" GOES, and that separation is the
+       point of the row. "Home" is the site root. The chevron is *back* — it
+       returns the reader to the exact My Work row they clicked to get here, via
+       the id components/project-card.njk writes onto every card. A static
+       anchor rather than history.back() or a stored referrer, because it is
+       right on a cold arrival too — from search, or a shared link — where there
+       is no history and nothing stored to read. */
+    backHref: "/#work-connect2wow",
+    /* The chevron carries no visible text, so this is its accessible name. It
+       names the destination rather than the gesture: "back" on its own tells a
+       screen reader nothing about where back is. */
+    backLabel: "Back to Connect2WOW in My Work",
+    chevron: icon("chevron.svg", 20, "SVG — chevron_backward, 20×20"),
+    crumbs: [
+      { label: "Home", href: "/" },
+      { label: "My Work", href: "/#featured-works" },
+    ],
+    /* 96x96 so the 32px box is retina-sharp. PNG, not SVG: these are the exports
+       that exist, and the .svg the old reference named never did — which is why
+       this mark rendered as a dashed placeholder on all three pages until now. */
+    mark: mark("connect2wow-eyebrow.png", 32, "PNG — Connect2WOW logo mark, 96×96 at 32"),
     eyebrow: "Connect2WOW",
     /* A 2× EXPORT, NOT THE HOMEPAGE CARD. 296:11476 is a monitor mockup on a
        dark gradient with the ERP animating inside its bezel. The slot is the
@@ -96,8 +120,12 @@ module.exports = {
        being resampled UP to fill a 1272 column. */
     media: video(
       "cover",
+      // 1270 x 661 — the box 475:26231 / 553:55022 / 553:55058 draw, aspect
+      // 1.9213. media-slot.njk turns these two into the figure's
+      // aspect-ratio, so this is the frame the cover reserves, not the
+      // clip's own size.
       1270,
-      762,
+      661,
       "VIDEO — the ERP, with a notification panel opening",
       "The Connect2WOW ERP on a monitor, a notification panel sliding open"
     ),
@@ -119,19 +147,34 @@ module.exports = {
   facets: [
     {
       label: "Challenge",
-      body: "Notifications were where that risk cut sharpest. An ERP fires alerts constantly, approvals, equipment status, errors, and safety-critical events, and without a system, each one becomes a fresh guess about shape, urgency, and placement. Get it wrong and users either drown in noise or miss the single alert that actually mattered.",
+      body: [
+        { text: "Notifications were where that risk cut sharpest. ", tone: "muted" },
+        { text: "An ERP fires alerts constantly, approvals, equipment status, errors, and safety-critical events, and without a system, each one becomes a fresh guess about shape, urgency, and placement.", tone: "lead" },
+        { text: " Get it wrong and users either drown in noise or miss the single alert that actually mattered.", tone: "muted" },
+      ],
     },
     {
       label: "Objective",
-      body: "Build a design system complete enough to hold an entire ERP together, and rigorous enough that an alert's importance was decided by structure, not by whoever happened to design the screen. The same severity should look identical everywhere, and a critical event should be impossible to miss without being impossible to ignore. One system, four layers, no exceptions.",
+      body: [
+        { text: "Build a design system complete enough to hold an entire ERP together, and rigorous enough that an alert's importance was decided by structure, not by whoever happened to design the screen. ", tone: "lead" },
+        { text: "The same severity should look identical everywhere, and a critical event should be impossible to miss without being impossible to ignore. One system, four layers, no exceptions.", tone: "muted" },
+      ],
     },
     {
       label: "Role",
-      body: "I was one of three product designers who co-owned the system, working alongside Mobina Hosseini and Niloofar under director Amir Tavakoli. There were no clean lines of ownership; we paired, argued, and made the structural calls together, which is exactly why the system had to be airtight. A shared system was the only way three people could design as if they were one.",
+      body: [
+        { text: "I was one of three product designers who co-owned the system,", tone: "lead" },
+        { text: " working alongside Mobina Hosseini and Niloofar under director Amir Tavakoli. ", tone: "muted" },
+        { text: "There were no clean lines of ownership; we paired, argued, and made the structural calls together, which is exactly why the system had to be airtight. ", tone: "lead" },
+        { text: "A shared system was the only way three people could design as if they were one.", tone: "muted" },
+      ],
     },
     {
       label: "Outcome",
-      body: "Over six months we built a complete, documented design system of roughly 40–50 components, with the notification system as its most demanding proof: six notification types governed by a four-axis model that decided how any alert looked and behaved. It never shipped; the project was shut down before release. That taught us more than a launch might have, which is the honest note this case study ends on.",
+      body: [
+        { text: "Over six months we built a complete, documented design system of roughly 40–50 components, with the notification system as its most demanding proof: six notification types governed by a four-axis model that decided how any alert looked and behaved.", tone: "lead" },
+        { text: " It never shipped; the project was shut down before release. That taught us more than a launch might have, which is the honest note this case study ends on.", tone: "muted" },
+      ],
     },
   ],
 
@@ -155,7 +198,7 @@ module.exports = {
     rows: [
       {
         name: "Carbon",
-        mark: mark("mark-carbon.svg", 20, "SVG — Carbon mark, 20×20"),
+        mark: mark("mark-carbon.png", 20, "PNG — Carbon mark, 60×60 at 20"),
         cells: [
           "Inline, Toast, Actionable, Callout",
           "Informational · Success · Warning · Error",
@@ -165,7 +208,7 @@ module.exports = {
       },
       {
         name: "Material",
-        mark: mark("mark-material.svg", 20, "SVG — Material mark, 20×20"),
+        mark: mark("mark-material.png", 20, "PNG — Material mark, 60×60 at 20"),
         cells: [
           "Snackbar, Banner, Badge, Dialog",
           "Minimal, snackbars are largely neutral, with no built-in status colors",
@@ -175,7 +218,7 @@ module.exports = {
       },
       {
         name: "Polaris",
-        mark: mark("mark-polaris.svg", 20, "SVG — Polaris mark, 20×20"),
+        mark: mark("mark-polaris.png", 20, "PNG — Polaris mark, 60×60 at 20"),
         cells: [
           "Banner, Toast, Badge, inline exceptions",
           "Informational · Success · Warning · Critical",
@@ -185,7 +228,7 @@ module.exports = {
       },
       {
         name: "Atlassian",
-        mark: mark("mark-atlassian.svg", 20, "SVG — Atlassian mark, 20×20"),
+        mark: mark("mark-atlassian.png", 20, "PNG — Atlassian mark, 60×60 at 20"),
         cells: [
           "Flag, Banner, Section message, Inline message, Badge",
           "Info · Warning · Error · Success · Discovery",

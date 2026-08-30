@@ -33,25 +33,47 @@ permalink: /work/challenquiz/
 {% endmacro %}
 
 {# ---- 1. COVER — 281:64082 ------------------------------------------------ #}
-<section class="case-band case-band--cover case-band--has-back" aria-labelledby="cq-title">
+<section class="case-band case-band--cover" aria-labelledby="cq-title">
   <div class="case-band__inner">
-    <p class="case-back">
-      <a class="case-back__link" href="{{ challenquiz.cover.backHref }}">
-        {{ markSlot(challenquiz.cover.chevron) }}
-        <span>{{ challenquiz.cover.backLabel }}</span>
-      </a>
-    </p>
+    {#- BREADCRUMB — 550:11647. One 100-tall row carrying what used to be two:
+        the back link and the eyebrow lockup. <nav> because it is navigation to
+        somewhere else on the site, and the aria-label is what distinguishes it
+        from the site nav in a landmark list.
 
-    <p class="case-eyebrow">
-      {{ markSlot(challenquiz.cover.mark) }}
-      <span class="case-eyebrow__label">{{ challenquiz.cover.eyebrow }}</span>
-    </p>
+        THE SEPARATOR RIDES INSIDE THE CRUMB IT FOLLOWS. Two links, two slashes,
+        none trailing — the count is structural rather than something a loop
+        index has to get right. Each is aria-hidden: it is punctuation between
+        list items, and the list already says "3 items" out loud. -#}
+    <nav class="case-crumbs" aria-label="Breadcrumb">
+      <a
+        class="case-crumbs__back"
+        href="{{ challenquiz.cover.backHref }}"
+        aria-label="{{ challenquiz.cover.backLabel }}"
+      >{{ markSlot(challenquiz.cover.chevron) }}</a>
+
+      <ol class="case-crumbs__list" role="list">
+        {%- for c in challenquiz.cover.crumbs %}
+          <li class="case-crumbs__item">
+            <a class="case-crumbs__link" href="{{ c.href }}">{{ c.label }}</a>
+            <span class="case-crumbs__sep" aria-hidden="true">/</span>
+          </li>
+        {%- endfor %}
+        <li class="case-crumbs__item">
+          {{ markSlot(challenquiz.cover.mark) }}
+          <span class="case-crumbs__current" aria-current="page">{{ challenquiz.cover.eyebrow }}</span>
+        </li>
+      </ol>
+    </nav>
 
     {{ mediaSlot(challenquiz.cover.media) }}
 
     <div class="case-cover__row">
       <h1 class="case-cover__headline" id="cq-title">{{ challenquiz.cover.headline }}</h1>
-      <p class="case-cover__intro">{{ challenquiz.cover.intro }}</p>
+      <p class="case-cover__intro">
+        {%- for part in challenquiz.cover.intro -%}
+          <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+        {%- endfor -%}
+      </p>
     </div>
   </div>
 </section>
@@ -63,7 +85,19 @@ permalink: /work/challenquiz/
       {%- for f in challenquiz.facets %}
         <div class="case-facet">
           <h3 class="case-facet__label">{{ f.label }}</h3>
-          <p class="case-facet__body">{{ f.body }}</p>
+          <p class="case-facet__body">
+            {#- Same shape as ONTON's: a facet body is either one plain string or
+                an array of {text, tone} runs, and the comp inks part of every one
+                of these four (281:64399 / 64403 / 64408 / 64412). The string
+                branch stays for anything single-toned. -#}
+            {%- if f.body is string -%}
+              {{ f.body }}
+            {%- else -%}
+              {%- for part in f.body -%}
+                <span class="case-tone--{{ part.tone }}">{{ part.text }}</span>
+              {%- endfor -%}
+            {%- endif -%}
+          </p>
         </div>
       {%- endfor %}
     </div>
@@ -148,9 +182,14 @@ permalink: /work/challenquiz/
       <h2 class="case-heading" id="cq-why">{{ challenquiz.why.heading }}</h2>
     </div>
 
-    <div class="case-why">
-      <div class="case-panel">
-        <table class="case-table case-table--why">
+    {#- THE PANEL WRAPS THE WHOLE ROW NOW, not just the table. 208:2923 is one
+        1270 Banner holding both halves, and its 32px padding is what the comp's
+        905 + 301 add up inside. With the panel around the table alone the two
+        could not both hit their widths. -#}
+    <div class="case-panel">
+      <div class="case-why">
+        <div class="case-why__table">
+          <table class="case-table case-table--why">
           <thead>
             <tr>
               {%- for col in challenquiz.why.columns %}
@@ -159,13 +198,21 @@ permalink: /work/challenquiz/
             </tr>
           </thead>
           <tbody>
+            {#- data-persona is the hover cross-highlight's hook, and it is the
+                same value that picks the dot's colour — one identity, used by
+                both. It was missing here, which is why this table looked
+                interactive and was not; ONTON has carried it all along. See the
+                cross-highlight block in _case-study-v2.css. -#}
             {%- for row in challenquiz.why.rows %}
-              <tr>
+              <tr data-persona="{{ row.persona }}">
                 <th scope="row">{{ row.change }}</th>
-                <td>{{ row.quote }}</td>
                 {#- A dot and nothing else, as the comp shows; the persona's
                     name rides along visually hidden so the column still says
-                    something to a screen reader. -#}
+                    something to a screen reader.
+
+                    SECOND, NOT THIRD, as of 576:59171 — the persona sits between
+                    the two text columns now, and the hidden name moves with it
+                    so the reading order still matches the header. -#}
                 <td class="case-table__persona">
                   <span class="case-dot case-dot--{{ row.persona }}" aria-hidden="true"></span>
                   <span class="case-table__hidden">
@@ -174,22 +221,24 @@ permalink: /work/challenquiz/
                     {%- endfor -%}
                   </span>
                 </td>
+                <td>{{ row.quote }}</td>
               </tr>
             {%- endfor %}
           </tbody>
-        </table>
-      </div>
+          </table>
+        </div>
 
-      <div class="case-personas">
-        <h3 class="case-personas__heading">{{ challenquiz.why.personaKeyHeading }}</h3>
-        <ul class="case-personas__list">
-          {%- for p in challenquiz.why.personas %}
-            <li class="case-personas__item">
-              <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
-              <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
-            </li>
-          {%- endfor %}
-        </ul>
+        <div class="case-personas">
+          <h3 class="case-personas__heading">{{ challenquiz.why.personaKeyHeading }}</h3>
+          <ul class="case-personas__list">
+            {%- for p in challenquiz.why.personas %}
+              <li class="case-personas__item" data-persona="{{ p.slug }}">
+                <span class="case-dot case-dot--{{ p.slug }}" aria-hidden="true"></span>
+                <span><strong>{{ p.name }}</strong>{{ p.text }}</span>
+              </li>
+            {%- endfor %}
+          </ul>
+        </div>
       </div>
     </div>
 

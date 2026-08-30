@@ -6,26 +6,24 @@
 <title>Spend attention like it's scarce — pyramid</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* Band fills eyedropper-matched from the Figma renders (asset download blocked in sandbox).
-     Tweak these six if any is off: */
   :root{
-    --high:#c99da6; --high-on:#cc161c;
-    --med:#cbbd98;  --med-on:#d4a017;
-    --low:#93a8c6;  --low-on:#2e6dc9;
+    --high:#f9dddd; --high-on:#87201b;
+    --med:#fdf1d6;  --med-on:#b28a38;
+    --low:#d5e6fd;  --low-on:#224dab;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:#fff;}
-  body{font-family:"Roboto",-apple-system,BlinkMacSystemFont,sans-serif;}
+  body{font-family:"Figtree",-apple-system,BlinkMacSystemFont,sans-serif;}
   .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;width:585px;max-width:100%;margin:0 auto;padding:32px;}
   .frame{width:367px;max-width:100%;}
   svg{display:block;width:100%;height:auto;}
   .band{transition:fill .22s;cursor:pointer;}
-  .lb{font-weight:700;font-size:16px;letter-spacing:0.5px;fill:#1a1a1a;transition:fill .22s;pointer-events:none;}
-  .sub{font-weight:400;font-size:14px;letter-spacing:0.25px;fill:#727272;transition:fill .22s;pointer-events:none;}
+  .lb{font-family:"Figtree",sans-serif;font-weight:400;font-size:16px;letter-spacing:0.5px;fill:#1a1a1a;transition:fill .22s;pointer-events:none;}
+  .sub{font-family:"Figtree",sans-serif;font-weight:400;font-size:14px;letter-spacing:0.25px;fill:rgba(26,26,26,0.7);transition:fill .22s;pointer-events:none;}
   .divider{height:2px;width:100%;background:rgba(120,120,120,0.2);}
-  .cap{font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;font-weight:400;width:100%;}
+  .cap{font-family:"Figtree",sans-serif;font-weight:400;font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;width:100%;}
   .cap b{color:#1a1a1a;font-weight:700;}
 </style>
 </head>
@@ -36,12 +34,12 @@
         <polygon class="band" data-b="low"  points="45.6,239 321.4,239 366.5,317.2 0.46,317.2" fill="var(--low)"/>
         <polygon class="band" data-b="med"  points="100.98,143 266,143 319.1,235 47.9,235" fill="var(--med)"/>
         <polygon class="band" data-b="high" points="183.5,0 263.7,139 103.3,139" fill="var(--high)"/>
-        <text class="lb"  data-b="high" x="183.5" y="74"  text-anchor="middle">High</text>
-        <text class="sub" data-b="high" x="183.5" y="90"  text-anchor="middle">Alert · Error</text>
+        <text class="lb"  data-b="high" x="183.5" y="85"  text-anchor="middle">High</text>
+        <text class="sub" data-b="high" x="183.5" y="107" text-anchor="middle">Alert · Error</text>
         <text class="lb"  data-b="med"  x="183.5" y="184" text-anchor="middle">Medium</text>
-        <text class="sub" data-b="med"  x="183.5" y="201" text-anchor="middle">Warning · Success</text>
-        <text class="lb"  data-b="low"  x="183.5" y="274" text-anchor="middle">Low</text>
-        <text class="sub" data-b="low"  x="183.5" y="291" text-anchor="middle">Status · Info</text>
+        <text class="sub" data-b="med"  x="183.5" y="206" text-anchor="middle">Warning · Success</text>
+        <text class="lb"  data-b="low"  x="183.5" y="271" text-anchor="middle">Low</text>
+        <text class="sub" data-b="low"  x="183.5" y="293" text-anchor="middle">Status · Info</text>
       </svg>
     </div>
     <div class="divider"></div>
@@ -63,15 +61,16 @@
   const lbs=[...svg.querySelectorAll('.lb')], subs=[...svg.querySelectorAll('.sub')];
   function reset(){
     bands.forEach(b=>b.setAttribute('fill',OFF[b.dataset.b]));
-    lbs.forEach(t=>t.style.fill='#1a1a1a'); subs.forEach(t=>t.style.fill='#727272');
+    lbs.forEach(t=>{t.style.fill='#1a1a1a';t.style.fontWeight='400';});
+    subs.forEach(t=>t.style.fill='rgba(26,26,26,0.7)');
     cap.innerHTML=DEFAULT_CAP;
   }
   bands.forEach(b=>{
     b.addEventListener('mouseenter',()=>{
       const k=b.dataset.b;
       bands.forEach(x=>x.setAttribute('fill',x===b?ON[k]:OFF[x.dataset.b]));
-      lbs.forEach(t=>t.style.fill=t.dataset.b===k?'#fff':'#1a1a1a');
-      subs.forEach(t=>t.style.fill=t.dataset.b===k?SUBON[k]:'#727272');
+      lbs.forEach(t=>{const on=t.dataset.b===k;t.style.fill=on?'#fff':'#1a1a1a';t.style.fontWeight=on?'700':'400';});
+      subs.forEach(t=>t.style.fill=t.dataset.b===k?SUBON[k]:'rgba(26,26,26,0.7)');
       cap.innerHTML=CAPS[k];
     });
   });

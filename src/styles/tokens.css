@@ -194,6 +194,16 @@
   --m3-headline-md-leading: 36px;
   --m3-headline-md-tracking: 0;
 
+  /* HEADLINE SMALL — added for the case-study breadcrumb (550:11647), which
+     sets the project's own name at 24/36 regular. The scale jumped 22 -> 28 with
+     nothing between, and Figma's own variable on that text node is
+     "Static/Headline Small", so this fills the step the design was already
+     naming rather than inventing one. 36 is 24 x 1.5, the same ratio the rest of
+     the case pages run on. */
+  --m3-headline-sm: 24px;
+  --m3-headline-sm-leading: 36px;
+  --m3-headline-sm-tracking: 0;
+
   --m3-body-md: 14px;
   --m3-body-md-leading: 20px;
   --m3-body-md-tracking: 0.25px;
@@ -222,6 +232,24 @@
      own token: 1.55 would put them a pixel off the comp. */
   --leading-half: 1.5;
 
+  /* THE ONE SOURCE OF TRUTH FOR PROSE LEADING. 150% on body and paragraph text,
+     everywhere. It exists because the M3 pairs encode their leading as a pixel
+     value next to a pixel size, so the ratio each step actually runs at is
+     invisible until you divide: title-md and body-lg were already 1.500, but
+     body-md and title-sm ran 1.429 and body-sm 1.333, and nothing in the file
+     said so. Prose now names the ratio instead of inheriting it by accident.
+
+     WHAT DELIBERATELY DOES NOT USE THIS: every display-* and headline-* step,
+     title-lg, .button's line-height:1, the --leading-tight panels, the hero card
+     TITLE's 1.1875 (the design's own 19/16) and the hero H1 on display-lg. The
+     H1 especially — its 64px line box is what --designer-nudge was solved
+     against, and the 80/80 intro spacing and 753 canvas sit on top of it.
+
+     The --m3-*-leading tokens are all still defined and are NOT renamed or
+     removed; three of them (body-md, body-sm, title-sm) simply have no consumer
+     left. That broader rename is a separate pass. */
+  --leading-body: 1.5;
+
   --tracking-tight: -0.02em;
   --tracking-wide: 0.08em;
 
@@ -249,6 +277,14 @@
      there — the toggle simply becomes instantaneous. */
   --duration-folder: 500ms;
   --stagger-folder: 70ms;
+  /* THE NAV ROLL — one full turn of the word, in both the header and the footer.
+     NOT --header-roll any more: the roll is Nav_item's (410:66301), and that
+     component is instanced in 446:37196 and 275:57838 alike, so a header-named
+     token was describing only where it happened to land first.
+     Not folded into --duration-slow, which is a crossfade duration.
+     _nav-item.css zeroes this under prefers-reduced-motion — an animation,
+     unlike a transition, is not caught by base.css's blanket rule. */
+  --nav-roll: 0.7s;
 
   /* Drag feel. Grab is short — the card only has to straighten and lift, and
      the pointer has barely moved past the 4px threshold, so anything longer
@@ -268,6 +304,22 @@
      grab would pop. (This block previously said no shadow was added; that was
      written before the hover cue existed.) */
   --duration-grab: 180ms;
+
+  /* THE FIRST-PAINT ENTRANCE, split so the two halves add up to one 800ms beat:
+     the intro text runs the full 640, the board starts 160 later and runs the
+     same 640, so the last thing to settle does so at exactly 800. Kept as two
+     numbers rather than one 800 because the stagger is the part anyone would
+     want to feel out, and it should not require re-deriving the duration. */
+  /* How long the hero CANVAS holds under the header before releasing. A duration in
+     screens rather than pixels — see .hero__runway in _hero.css. */
+  --hero-hold: 45vh;
+
+  --hero-enter: 780ms;
+  /* The gap between one line entering and the next. Four things ride this step —
+     the two heading lines, the tagline and the board — so the whole cascade
+     retimes from here. 300 is slow enough to read as one-after-another rather
+     than as a single blurred event. */
+  --hero-enter-step: 300ms;
   --duration-return: 600ms;
   --lift-amount: 1.03;
 
@@ -364,6 +416,11 @@
      exactly on the boundary and they slide along it, which reads as a wall. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* OVERSHOOTS AND COMES BACK. The 1.56 control point takes the value past its
+     target before settling, which is what makes a rise read as sprung rather
+     than merely fast. Only the hero entrance uses it — every other motion on the
+     site is a state change, and a state change that bounces reads as a glitch. */
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ---- 3e. LAYOUT ---------------------------------------------------------
      The 3-column shell. Sidebars are fixed; the middle column takes the rest. */
@@ -384,15 +441,20 @@
      and every child is positioned in % of it (see _data/hero.js), so the whole
      composition scales as a single unit.
 
-     --hero-card-base is the one number the card interior hangs off: it is the
-     card's BODY font size expressed in cqw against the board. Everything else
-     inside a card (title, padding, gap, radius, tracking) is a clean em
-     multiple of it — 2em padding, 1.25em gap, 1.375em title — which is why
-     there is no second magic number in _hero.css. */
+     The card interior used to hang off one number, --hero-card-base, with every
+     other value an em multiple of it. It does not any more: the design sets a
+     16px title against a 13px body, which no single base expresses, so there are
+     four purpose-named cqw tokens further down (--hero-card-pad/-gap/-title/
+     -body). They are derived from the board's own width, not guessed. */
   /* About Me. 60px is the comp's heading inset and is not on the 4px scale --
      it sits between --space-9 (64) and --space-8 (48), so it is named here
      rather than rounded to a neighbour and losing the geometry match. */
   --about-head-top: 60px;
+  /* 543:1128 sits at y=41 in a 704-tall section and ends 41 from the bottom.
+     Off the 4px scale, and named rather than rounded for the same reason
+     --about-head-top is: 40 or 48 would break the match with the node. It was
+     --space-11 (120) while the section stood 862 tall. */
+  --about-figure-pad: 41px;
   --about-figure-size: 83.1%;   /* 528 of the 635 column */
   --about-figure-w: 528;        /* the exported frame + figure coordinate space */
   --about-figure-h: 622;
@@ -405,14 +467,82 @@
      neighbour, for the same reason --about-head-top is: rounding them breaks
      the geometry match with the comp.
 
-     --work-row-inset is the 160px band above and below each row's content;
-     --work-band-pad is the 60px above the heading and below the last rule.
+     --work-row-inset is the 120px band above and below each row's content — now
+     the CEILING of --work-row-pad rather than a fixed value; --work-band-pad is
+     the 60px above the heading and below the last rule, likewise a ceiling.
+     The inset was 160 for one revision, when a row stood 796 tall. 184:13749
+     now draws the row at 716 — 120 + the 476 media box + 120 — and the section
+     closes on 2348: 60 + 40 (heading) + 40 + 3x716 + 60. If either number is
+     ever edited, check that sum still lands.
 
      The column ratio is expressed as two unitless numbers fed straight into
      grid-template-columns as fr, so the 594:574 split from the comp is exact at
      any width instead of being frozen in pixels. */
-  --work-row-inset: 160px;
-  --work-band-pad: 60px;
+  --work-row-inset: 120px;
+
+  /* WHERE A STACKED WORK ROW COMES TO REST. The sticky header, plus the band the
+     heading occupies above the rows — its own line box and the 40 .work__rows
+     already puts under it. Expressed from the three tokens rather than as 168 so
+     it follows the header or the heading step if either moves. The section pin
+     will park the heading in exactly this band; the rows are already spaced for
+     it.
+
+     --work-band-pad IS IN HERE BECAUSE THE PIN HAS TO KEEP IT. In flow the
+     heading sits 60px below the section's top edge — that band is .work__inner's
+     own padding and it is the comp's spacing above "My Work" (184:13749). Pinning
+     the heading at plain --header-height threw all 60 of it away and parked the
+     heading hard against the navbar. The heading now pins 60 below the header
+     instead, so the spacing above it reads the same parked as it does in flow —
+     and the rows, which rest 40 below the heading's line box, follow it down.
+     168 -> 228. */
+  --work-stack-top: calc(
+    var(--header-height) + var(--work-band-pad) + var(--m3-headline-lg-leading) +
+      var(--space-7)
+  );
+  /* THE HEADING'S BAND, AND IT BREATHES WITH THE WINDOW. 60 is the comp's room
+     above "My Work" and it is what tall windows get. It is also 60px of a
+     PINNED budget — header + this + the heading + 40 is what a stuck row rests
+     below — so on a short window it is 60px the card cannot have, and holding it
+     rigid is what pushed the stack's minimum past every laptop. 24 is the floor:
+     reduced, still clearly a gap under the navbar, never cramped. Ramps across
+     688-760 rather than snapping, so no window sits on a visible step. */
+  --work-band-pad: clamp(24px, calc((100vh - 640px) / 2), 60px);
+
+  /* A ROW'S BLOCK PADDING, ON THE SAME PRINCIPLE. This was a fixed
+     --work-row-inset with a @media override bolted on; it is one expression now.
+     16 is the floor by an earlier deliberate call — a readable card interior
+     beats comp fidelity when the two fight. 92vh rather than 100vh leaves the
+     stuck row a margin off the fold instead of filling it exactly. */
+  --work-row-pad: clamp(16px, calc((92vh - 704px) / 2), var(--work-row-inset));
+
+  /* ONE CARD AT A TIME. Without this the rows are contiguous, so the moment card
+     1 parks at --work-stack-top card 2 is already 60-260px into the bottom of the
+     window — two cards on screen, and the stack reads as a list that happens to
+     overlap rather than as one card being replaced.
+
+     THE GAP IS THE REST OF THE WINDOW. When card N is stuck its top is at
+     --work-stack-top; card N+1's top is one card plus this gap below that, so
+     pushing N+1 to the fold wants exactly `100vh - stack-top - cardHeight`.
+
+     WHY THAT IS A max() AND NOT THAT SUBTRACTION. cardHeight is not a number CSS
+     can name here: the clamp on .work-card trades block padding away as the
+     window shortens, and the content itself is shorter at 1200px wide than at
+     1512 because the media column follows a fixed ratio. Measured, the true
+     requirement runs 66px at 1512x820 up to 151px at 1200x700 — it grows as the
+     card gets SHORTER, which is the opposite of what a single vh expression
+     does. So: a flat floor that clears the worst short-card case, and the
+     subtraction taking over on tall windows where the padding is back at 120 and
+     the card is its full 716. They cross at 1044px of viewport height.
+
+     Overshooting is harmless and deliberate — a gap larger than the remainder
+     just means card N+1 starts further below the fold, which is the heavier,
+     more deliberate pace the stack is being tuned for. Undershooting is the
+     visible bug. */
+  --work-card-tall: 716px; /* 476 of content + the clamp's full 2x120 */
+  --work-card-gap: max(
+    160px,
+    calc(100vh - var(--work-stack-top) - var(--work-card-tall))
+  );
   --work-media-w: 594;
   --work-media-h: 476;
   /* The WHOLE track list, not two separate numbers. `fr` is a flex unit and is
@@ -432,35 +562,100 @@
   --header-height: 88px; /* 446:37196 — both variants are 1512x88. */
   /* 367:42670 — the mark is 40 square inside a 40-tall Logo frame. */
   --header-mark: 40px;
+  /* 566:38369 — the mobile header is 48 tall with a 24 mark. Named here rather
+     than written into the media query so the two headers' geometry stays in one
+     place, next to each other. */
+  --header-height-mobile: 48px;
+  --header-mark-mobile: 24px;
   /* 410:66313/19/25 — each Nav_item is 71 wide, three of them 32 apart across
      the 277px Nav Links frame. Applied as a MIN width, not a fixed one. */
   --header-item-w: 71px;
+  /* THE INTRO'S PADDING AND THE GAP BELOW IT ARE TWO NUMBERS. They were one —
+     a single --space-11 on .hero__intro whose bottom side doubled as the gap —
+     and separating them is what lets either move without the other. Hero-local
+     on purpose: --space-11 has 21 other consumers and none of them wanted 80. */
+  /* THE OPTICAL DROP on the hero's drawn "Designer" (see _hero.css). Centring the
+     59-tall drawing inside the 64-tall line box leaves it riding ~4px high, because
+     the word carries a "g" descender and no matching ascender slack — the ink is
+     bottom-heavy in its own box. This puts it back.
 
-  /* FOOTER — 275:57838. The menu items and the copyright both sit at 70% in the
-     comp; hover takes an item to full. One token because they are the same
-     decision (recede against the black), not a coincidence of two values. */
-  --footer-dim: 0.7;
+     SOLVED, NOT GUESSED: measured in the rendered page against a rule drawn on
+     "Product"'s real text baseline, then confirmed by eye across four candidates.
+     0.0596 (the D-foot reading) still sat a shade high and 0.0860 dipped under;
+     this lands the D on the baseline with the x-height letters just above it,
+     which is how handwriting sits beside type. In em, so it tracks the display
+     step if --m3-display-lg ever moves. */
+  --designer-nudge: 0.0728em;
+
+  --hero-intro-pad: 80px;
+  --hero-intro-gap: 80px;
+
   --hero-board-w: 1272;
-  --hero-board-h: 897; /* 457:58676 — the rebuilt hero board is 1272 x 897. */
+  --hero-board-h: 753; /* 457:58676 — the board is 1272 x 753. Was 897; the node
+                          was shortened and every percentage inside that had been
+                          solved against 897 was re-derived rather than kept. */
   --hero-folder-width: 67.9245%;  /* 864 of 1272 — re-solved from 457:58676 */
   /* The handwritten arrow line. Figma's text box is 195 x 24 at 15px in Figma
      Hand; Caveat runs small for its point size, so 18px matches the drawn
      width rather than the nominal one. */
-  --hero-hand-size: 18px;
   /* The two mockup filename captions (450:37859 / 392:14769). The comp sets
      them at 12.8px on its 1272 board; expressed in cqw so each label keeps its
      proportion to the mockup directly above it however wide the board gets — a
      fixed px size would grow and shrink against its own artwork. Same model as
-     --hero-card-base below. */
+     the --hero-card-* interior tokens below. */
   --hero-caption-size: 1.0063cqw;
   /* EXPANDED-STATE OFFSETS, in cqw so they are the same absolute distance for
      every card. They were ±10% / -30% of each card's own box, which only worked
-     while all three shared one size; these are those exact values measured on
-     that box (23.4621 x 19.8979 cqw), now pinned to the board instead. */
-  --tuck-step: 2.3462cqw;
-  --tuck-rise: -5.9694cqw;
+     while all three shared one size; those exact values measured on that box
+     (23.4621 x 19.8979 cqw) were pinned to the board instead.
+   *
+   * BOTH THEN x 0.8, WITH THE FOLDER ART. cqw is 1% of the board's WIDTH, which
+   * did not change, so these would otherwise have kept their old absolute travel
+   * while the flap they have to clear got 20% shorter — and the expanded fan
+   * would have overshot it. Timing, stagger and easing are untouched; this is
+   * only the distance following the geometry. */
+  --tuck-step: 1.8770cqw;  /* 2.3462 x 0.8 */
+  --tuck-rise: -4.7755cqw; /* -5.9694 x 0.8 */
 
-  --hero-card-base: 0.845cqw;     /* ≈10.75px at a 1272px board */
+  /* CARD INTERIOR — PINNED TO THE DESIGN, NOT TO THE BOX.
+   *
+   * These replace the single --hero-card-base every interior value used to be an
+   * em multiple of. That worked while title and body were one ratio apart; the
+   * design's card (434:11718, the unrotated one, 240 x 260) sets them
+   * independently — 16px title against 13px body — which no single base can
+   * express. Four purpose-named numbers beat one clever one.
+   *
+   * WHY cqw AND HOW THESE WERE DERIVED. The cqw container is .hero__board
+   * (container-type: inline-size in _hero.css), so 1cqw is 1% of the board's
+   * width: 12.72px at the design's 1272. Each value below is its design pixel
+   * size divided by that — 16/12.72 = 1.2579, 4/12.72 = 0.3145, 13/12.72 = 1.0220
+   * — so at the design width they render exactly 16 / 4 / 16 / 13, and at any
+   * other width they hold that proportion instead of freezing at a px size.
+   *
+   * THE BOX IS 0.8, THE INTERIOR IS NOT — and that is deliberate, not an
+   * oversight. _hero.css scales .hero-folder__cards to 0.8 to stop the fan
+   * spilling past the flap; the interior stays at the design's own sizes because
+   * scaling it too (the old 0.676cqw pass) made the copy illegible. The cost is a
+   * 0.8 box holding full-size type, so a card truncates a little more body copy
+   * than a full-size one would. Readable-and-truncated beats
+   * proportional-and-illegible. */
+  --hero-card-pad: 1.2579cqw;    /* 16px at the 1272 design board */
+  --hero-card-gap: 0.3145cqw;    /*  4px */
+  --hero-card-title: 1.2579cqw;  /* 16px */
+  --hero-card-body: 1.0220cqw;   /* 13px */
+  /* Unchanged in rendered px (13.44 at 1272) — the old 1.25em of the retired
+     base. Restated in cqw so it no longer depends on a token that is gone. */
+  --hero-card-radius: 1.0562cqw;
+  /* The body dims while the card sits in the folder and comes up to full when it
+     is pulled out. --duration-base is the site's 240ms. */
+  --hero-card-body-dim: 0.5;
+  /* THE "MY EXPERTISE" PILL'S TYPE. 14px at the design board, in cqw off the same
+     .hero__board container as everything else on it — 14/12.72 = 1.1006. It used
+     to read --m3-title-lg (a flat 22px), which neither matched the requested size
+     nor scaled with the artwork it sits on. Only the type size moved; the pill's
+     padding, border, radius and position are untouched, so the capsule narrows to
+     fit its shorter text and keeps its height and centre. */
+  --hero-expertise-size: 1.1006cqw;
 
   /* ---- 3f. Z-INDEX --------------------------------------------------------
      Named layers. The footer card caps at 150 specifically to sit UNDER the
@@ -566,13 +761,56 @@
   --border-subtle: var(--fig-rule-soft-on-dark);
   --border-strong: var(--fig-rule-strong-on-dark);
 
-  /* The menu items and their hover rules. Pure white against the headings'
-     off-white is the comp's own hierarchy, not an approximation of it. */
+  /* The links and the chips. Pure white against the heading's off-white is the
+     comp's own hierarchy, not an approximation of it. */
   --accent: var(--white);
+
+  /* "Find me on" — 20/30 desktop, 18/27 mobile. NOT --m3-title-lg, which is
+     22/28 and is read by the nav, About and four case-study rules; this step
+     belongs to one label in one band, so it lives here rather than moving a
+     global step eight other places depend on. */
+  --footer-label: 20px;
+  --footer-label-leading: 30px;
+
+  /* THE MONOGRAM. Height is the only size knob — _footer.css derives the width
+     from the artwork's own 0.6821 aspect so the mark cannot distort. The inset
+     is how far the drawn glyph sits inside the container's right edge; the node
+     puts it at 49.7. White at 0.22 lands on #383838 over this band's black,
+     which is the grey the node renders. */
+  --footer-mark-color: var(--white);
+  --footer-mark-opacity: 0.22;
+  --footer-mark-h: 422px;
+  --footer-mark-inset: 50px;
+
+  /* Mobile-only, read by the ≤480 block: the node floats the mark 156px down
+     the column, and the page margin either side of the 334px column is 28 —
+     which is not on the spacing scale and is not trying to be. It is a comp
+     measurement for one band, kept beside the other three.
+     The mark's own mobile SIZE is not here: the tablet rule sets --footer-mark-h
+     on .site-footer__mark itself, and a value on the element always beats one
+     inherited from .site-footer however narrow the query. Both live together in
+     _footer.css so the cascade between them is visible in one place. */
+  --footer-mark-top: 156px;
+  --footer-page-inset: 28px;
 
   font-family: var(--font-sans);
   background-color: var(--surface);
   color: var(--text-primary);
+}
+
+/* THE MOBILE FOOTER'S TYPE, SCOPED — and the scoping is the point. 568:39274
+   sets the heading 24/30 and "Find me on" 18/27. The 24 is already the ≤480
+   value on :root, but the 30 is NOT: that block says 36, and it is read by My
+   Work's heading, About's headings and the case-study rules as well as this
+   one. Overriding --m3-headline-lg-leading globally to satisfy the footer would
+   move three other sections, so the footer takes the 30 for itself here. */
+@media (max-width: 480px) {
+  .site-footer {
+    --m3-headline-lg-leading: 30px;
+
+    --footer-label: 18px;
+    --footer-label-leading: 27px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -645,4 +883,91 @@
   font-family: var(--font-sans);
   background-color: var(--surface);
   color: var(--text-primary);
+}
+
+/* ---- Case-study type scale ------------------------------------------------
+   THE CASE PAGES RUN A SMALLER SCALE THAN THE HOMEPAGE, and the three comps
+   (193:4660, 281:64068, 296:11457) agree on it to the pixel: every body text
+   node measures a multiple of 21, every band title 30, the persona key and the
+   stat values 27. That is 14 / 20 / 18 at 150%.
+
+   A SEPARATE BLOCK FROM `.case, .about` ABOVE, deliberately. That rule is shared
+   with the About section, which lives on the homepage and keeps the homepage's
+   scale; folding these three steps into it would drag About down with them. The
+   colour tokens genuinely are shared, so that block stays exactly as it is.
+
+   1.5 IS BAKED INTO THE -leading VALUES RATHER THAN WRITTEN AS line-height.
+   Twenty-six rules across the three case stylesheets already read
+   `line-height: var(--m3-*-leading)`, so redefining the pair here does the whole
+   job and keeps size and leading declared together — the pairing the rest of the
+   file depends on. The alternative, a `line-height: var(--leading-body)` on each
+   selector, is the same numbers spread over 26 edits and splits them apart.
+
+   THE ONE PLACE THIS BITES is a rule that reads a -leading as a LENGTH rather
+   than as a line-height, where 24 would silently become 21. There were exactly
+   two and both are now pinned to var(--space-6) at their own sites, each with a
+   note: _case-connect2wow.css's principle gap and _case-study-v2.css's note
+   margin. Anything added later that consumes a leading as a length has to make
+   the same call.
+
+   CHALLENQUIZ'S BAND TITLES COME DOWN TO 20 WITH THE REST. Its node draws them
+   at 24 where ONTON and Connect2WOW both draw 30-tall boxes at 20; that 24 is
+   stale, and one scale across the three pages is the intent.
+
+   SCOPE IS THE WHOLE POINT. The site header and footer are siblings of
+   <article class="case">, not descendants, so neither can see these; nor can the
+   homepage. The only non-case consumers of these three steps are _hero, _work,
+   _nav, _about and _footer, every one of which styles something outside this
+   element. */
+.case {
+  --m3-body-lg: 14px;
+  --m3-body-lg-leading: 21px;
+
+  --m3-headline-md: 20px;
+  --m3-headline-md-leading: 30px;
+
+  --m3-title-lg: 18px;
+  --m3-title-lg-leading: 27px;
+}
+
+/* ---- 4. MOBILE (566:37656) -----------------------------------------------
+   THE FIRST MEDIA QUERY IN THIS FILE, and it earns its place: the mobile comp
+   collapses the type scale rather than reflowing it, and every component already
+   reads these tokens, so redefining four steps here does most of the work that
+   would otherwise be four dozen per-component overrides.
+
+   480, NOT 900. The 900 tier is tablet and stays exactly as it is; this sits
+   under it. Everything below is additive — nothing outside this block changed,
+   so desktop and tablet cannot regress.
+
+   THE LEADINGS ARE px, NOT UNITLESS, and that is not a style preference. Three
+   rules consume a *-leading token as a LENGTH rather than a line-height:
+     _hero.css:129          height: var(--m3-display-lg-leading)   ("Designer")
+     _case-connect2wow:172  gap:    var(--m3-body-lg-leading)
+     _case-study-v2:546     margin: var(--m3-body-lg-leading) 0 0
+   A unitless 1.5 is valid for line-height and meaningless for height/gap/margin,
+   so those three would silently collapse. Every value below is size x 1.5 in px,
+   which gives the comp's ratio without breaking them.
+
+   --m3-body-md (14) and --m3-title-lg (22, the clock) are deliberately absent:
+   the comp leaves both at their desktop size. */
+@media (max-width: 480px) {
+  :root {
+    /* Hero H1 — 566:38924-28 are 36 tall for 24px type. */
+    --m3-display-lg: 24px;
+    --m3-display-lg-leading: 36px;
+
+    /* Section headings (My Work 566:39201, About 568:39254, footer). */
+    --m3-headline-lg: 24px;
+    --m3-headline-lg-leading: 36px;
+
+    /* No consumer today — the My Work title moved to --m3-headline-lg — but the
+       step is kept in step with the comp so it is right if anything reads it. */
+    --m3-display-md: 18px;
+    --m3-display-md-leading: 27px;
+
+    /* Body prose: hero tagline, About bio, footer tagline. */
+    --m3-body-lg: 14px;
+    --m3-body-lg-leading: 21px;
+  }
 }

@@ -86,6 +86,31 @@ module.exports = function (eleventyConfig) {
   // ISO date for <lastmod> in the sitemap.
   eleventyConfig.addFilter("isoDate", (d) => new Date(d).toISOString().slice(0, 10));
 
+  /* Inline an SVG file's own markup into a template.
+   *
+   * WHY A FILTER AND NOT AN <img>. The hero's "Designer" is artwork sitting
+   * inside an <h1> and has to take that heading's colour — and an <img> cannot:
+   * SVG loaded that way is an isolated document that the page's CSS and
+   * `currentColor` never reach. Inlining is the only way the word recolours with
+   * the text around it.
+   *
+   * WHY A FILTER AND NOT A PASTED <svg>. The file stays the single copy — it is
+   * a real asset at Assets/images/, passthrough-copied like every other, and the
+   * template reads it at build time rather than holding a second hand-edited
+   * duplicate that can drift from the export.
+   *
+   * Paths are repo-root relative, matching how /Assets/... URLs are written
+   * everywhere else. Read synchronously at build time; there is no runtime cost. */
+  eleventyConfig.addFilter("inlineSvg", (file) => {
+    const fs = require("fs");
+    const path = require("path");
+    const svg = fs.readFileSync(path.join(__dirname, file), "utf8");
+    // XML comments are stripped: these files carry the same kind of explanatory
+    // header every other file here does, and it belongs in the repo, not pasted
+    // into the middle of a heading on every page load.
+    return svg.replace(/<!--[\s\S]*?-->/g, "").trim();
+  });
+
   return {
     dir: {
       input: "src",

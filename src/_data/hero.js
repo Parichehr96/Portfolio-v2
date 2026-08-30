@@ -17,9 +17,13 @@
 
 // Board frame in Figma units — the divisor for every percentage below.
 const BOARD_W = 1272;
-// 457:58676. The rebuilt board is 897 tall, not the 668 of the first pass —
-// every pctY() below re-derives from this, so it is the only number to change.
-const BOARD_H = 897;
+// 457:58676. THIS IS THE ONLY PLACE THE BOARD HEIGHT IS WRITTEN, and it has to
+// track --hero-board-h in tokens.css or every pctY() below silently lies. It sat
+// at 897 for one revision after the node was shortened to 753, which is exactly
+// what put the mockup captions on top of their images: caption y divides by this,
+// the mockups' own y values were hardcoded percentages of the old height, and the
+// two drifted apart by different amounts. Change both files together.
+const BOARD_H = 753;
 
 const pctX = (px) => +((px / BOARD_W) * 100).toFixed(4);
 const pctY = (px) => +((px / BOARD_H) * 100).toFixed(4);
@@ -33,12 +37,16 @@ module.exports = {
     // accent pill; Figma 446:37196 has no pill in either variant — all three are
     // instances of the same Nav_item component, 71px wide and 32px apart. So
     // Contact is a link like the others and the pill styling is gone.
+    // ORDER IS THE SCROLL ORDER, and 446:37196 draws it that way: index.njk
+    // includes work before about, so My Work comes first. This array shipped
+    // reversed for a while — About Me, then My Work — which put the bar out of
+    // step with the page under it. Reorder here only if the sections move.
     links: [
+      { label: "My Work", href: "/#featured-works" },
       // #about-me, not the v2 #all-about-me — that id belonged to the milestone
       // timeline, which the cleanup sweep removed. partials/about.njk carries
       // this one.
       { label: "About Me", href: "/#about-me" },
-      { label: "My Work", href: "/#featured-works" },
       // #contact HAS NO TARGET YET — the footer (289:2233) is unbuilt. The
       // scroll-spy is written to cope: it observes whichever ids actually
       // resolve, so this lights up on its own the day the section lands.
@@ -65,16 +73,20 @@ module.exports = {
      two captions had nothing left to say. */
   expertise: { label: "My Expertise" },
 
-  /* THE ARROW IS TWO ELEMENTS, and has to be. arrow-pull.svg is the drawn arrow
-     ONLY — Figma keeps the words in a separate text node (367:42807) set in
-     Figma Hand, which ships inside the Figma app and cannot be licensed as a
-     webfont. So the words are live HTML in Caveat and the SVG stays wordless.
-     Baking them in would need the font to outline them, which is the same
-     blocker one step earlier. */
-  arrow: {
-    file: "arrow-pull.svg",
-    text: "Pull a card out to read",
-  },
+  /* THE ARROW IS ONE ELEMENT NOW. It used to be two: arrow-pull.svg was the
+     drawn curve ONLY, and the words beside it were live HTML in Caveat, because
+     Figma sets them in Figma Hand (367:42807) — a face that ships inside the
+     Figma app and cannot be licensed as a webfont.
+
+     THE RE-EXPORT OUTLINES THEM. 465:61243 now comes out of Figma as one
+     262 x 64 graphic with the letterforms as vector paths, which is the only way
+     to get the real Figma Hand shapes onto the page. Caveat was always a stand-in
+     for them; this is the thing itself. The trade is that the words are no longer
+     selectable text — the <img>'s alt carries them instead, so the sentence is
+     still announced and still indexed.
+
+     There is no `text` key here on purpose. Anything that renders one would draw
+     the words a SECOND time, on top of the ones in the artwork. */
 
   /* Cards, in DOM order = z-order (1 backmost, 3 frontmost), matching the Figma
      layer stack inside 390:469.
@@ -120,17 +132,21 @@ module.exports = {
           tone: "muted",
         },
       ],
-      // HEIGHT AND TILT MIRROR CARD 3; X DOES NOT. Figma's reported centre-Y
-      // sinks this card ~47px below card 3, which the rendered comp plainly
-      // contradicts — the two outer cards sit at nearly the same height there.
-      // So y and rotate are taken as card 3's mirror.
+      // Y IS CARD 3'S MIRROR, AND THE METADATA IS WRONG HERE. 434:11714 reports a
+      // centre-y of 65.5793% of the cards frame, which would sink this card ~38px
+      // below card 3. The RENDER of 457:58676 shows the two outer cards level with
+      // each other, and where the numbers and the picture disagree the picture
+      // wins — Figma reports the axis-aligned box of a ROTATED node, and at -11.02
+      // degrees that box's centre is not the card's visual centre.
       //
-      // X IS THE FILE'S OWN VALUE and was already right. Mirroring it too
-      // (15.73%) pushed the card left until its title cleared card 2 entirely;
-      // in the comp that title is half-hidden behind card 2, which is what
-      // 23.96% reproduces. The fan is symmetric in height and tilt, and
-      // deliberately tighter on the left — matched against the render, not
-      // read off the coordinates.
+      // THIS HAS BEEN ROUND-TRIPPED ONCE. 65.5793 was applied on the reasoning
+      // that the file's own value should be trusted, and it visibly dropped the
+      // left card out of the fan. It was reverted. Do not re-apply it from the
+      // metadata a third time without looking at the render first.
+      //
+      // X and ROTATE keep the tighter-on-the-left values. X is the file's own;
+      // mirroring it to 15.73% pushed the card left until its title cleared card
+      // 2 entirely, where the comp keeps that title half-hidden behind it.
       x: 23.9558,
       y: 49.8472,
       rotate: -11.02,
@@ -184,11 +200,22 @@ module.exports = {
      now pulls each icon back by half its own box, so the wiggle orbits the
      Figma position rather than starting from its corner — and an icon's
      resting point stays put whatever its size. */
+  /* EVERY BOARD CHILD CARRIES TWO POSITIONS, and `m` is the second one.
+     566:38397 is not a reflow of the desktop board — it is 356 x 753 portrait
+     against 1272 x 753 landscape, so the aspect inverts and no percentage
+     survives the change. hero.njk writes both sets as custom properties and the
+     <=480 block in _hero.css switches which one each rule reads; nothing here is
+     chosen at runtime. `m` values are percentages of the 356 x 753 board, the
+     same convention `x`/`y`/`size` use for the desktop one. */
   icons: [
-    { slug: "notion", label: "Notion", file: "icon-notion.svg", x: 13.76, y: 11.48, size: pctX(56) },
-    { slug: "figma", label: "Figma", file: "icon-figma.svg", x: 83.02, y: 10.81, size: pctX(56) },
-    { slug: "jira", label: "Jira", file: "icon-jira.svg", x: 89.78, y: 46.49, size: pctX(60) },
-    { slug: "claude", label: "Claude", file: "icon-claude.svg", x: 23.98, y: 90.86, size: pctX(64) },
+    { slug: "notion", label: "Notion", file: "icon-notion.svg", x: 13.76, y: 11.48, size: pctX(56),
+      m: { x: 46.180, y: 7.888, size: 12.584 } },
+    { slug: "figma", label: "Figma", file: "icon-figma.svg", x: 83.02, y: 10.81, size: pctX(56),
+      m: { x: 75.112, y: 14.396, size: 12.584 } },
+    { slug: "jira", label: "Jira", file: "icon-jira.svg", x: 89.78, y: 46.49, size: pctX(60),
+      m: { x: 11.236, y: 75.963, size: 13.483 } },
+    { slug: "claude", label: "Claude", file: "icon-claude.svg", x: 23.98, y: 90.86, size: pctX(64),
+      m: { x: 11.124, y: 92.244, size: 14.382 } },
   ],
 
   /* Static decoration. None of this wiggles, drags or animates — it is artwork
@@ -210,25 +237,56 @@ module.exports = {
      multi-megabyte originals never enter the repo. */
   decor: [
     {
+      // 465:61243 — the WHOLE arrow-pull frame (curve + outlined words), centred
+      // on the comp's box: (619, 115) 262 x 64 on the 1272 x 753 board. The old
+      // numbers here placed the 60-wide curve alone; the words carried their own
+      // pair. One graphic, one position now.
       slug: "arrow",
       file: "arrow-pull.svg",
-      x: 51.01,
-      y: 21.32,
-      w: pctX(59.66),
+      alt: "Pull a card out to read",
+      x: 58.9623,
+      y: 19.5219,
+      w: 20.5975,
+      // 566:37698 — 262 x 64 at (130, 178) on the 356-wide mobile board.
+      //
+      // NARROWER THAN THE NODE'S FRAME, AND IT HAS TO BE. The comp's frame IS
+      // 262 (73.596%), but its Arrow Text child is only 156 wide at x=60, so the
+      // words stop at 346 and only empty frame bleeds past 356. Our asset is the
+      // DESKTOP export, whose text is 195 wide and runs to the frame's own right
+      // edge — at 262 the last glyph would land at 392 and .hero__board's
+      // overflow would eat 36px of "read".
+      //
+      // So the frame is sized to the WORDS instead of to the node's box: 216 wide
+      // (60.674%) centred at 238 (66.854%) keeps the left edge at 130, exactly
+      // where the comp starts the curve, and lands the last glyph at 346 —
+      // exactly where the comp lands its own. The curve comes out ~50 wide
+      // rather than 60; that is the price of one asset serving both widths, and
+      // it is the half of the graphic that has slack. Re-export a mobile arrow
+      // with the smaller text baked in and these two numbers go back to the
+      // node's 73.315 / 73.596.
+      m: { x: 66.854, y: 27.888, w: 60.674 },
     },
     {
+      // 450:37220 inside Phone Mockup 450:37860 — image centre (126.50, 466.248)
+      // on the 1272 x 753 board. y was 55.21, a percentage of the old 897.
       slug: "campaign",
       file: "campaign_landing.png",
-      x: 9.94,
-      y: 55.21,
+      x: 9.9450,
+      y: 61.9188,
       w: pctX(95.04),
+      m: { x: 13.719, y: 13.590, w: 19.222 }, // 566:37704
     },
     {
+      // 392:14768 inside Container 434:11677 — image centre (984.2052, 638.64).
+      // BOTH axes were stale: y was a percentage of 897, and x still placed the
+      // container at its old x=950. The node moved it to 863 when the board was
+      // shortened, which is why the laptop sat 87px too far right.
       slug: "website",
       file: "website_landing.png",
-      x: 84.21,
-      y: 85.02,
+      x: 77.3746,
+      y: 84.8127,
       w: pctX(242.41),
+      m: { x: 64.597, y: 83.255, w: 54.474 }, // 566:37685
     },
   ],
 
@@ -258,27 +316,39 @@ module.exports = {
       slug: "campaign",
       text: "campaign_landing.svg",
       x: pctX(126.5), // centre-x — the campaign mockup's own
-      y: pctY(606.496), // top — 392 (Phone Mockup) + 214.496 (450:37859)
+      // TOP, not centre (see the note above). 450:37859 sits at 363 + 214.496 =
+      // 577.496 on the 753 board — 8px under the image's bottom at 569.496,
+      // which is the gap the comp draws under both mockups.
+      y: pctY(577.496),
       w: pctX(131),
+      // 566:38271. y is a TOP here, like the desktop pair.
+      m: { x: 13.719, y: 24.228, w: 26.405 },
     },
     {
       slug: "website",
       text: "website_landing.svg",
-      x: pctX(1071.2052), // centre-x — the website mockup's own
-      y: pctY(839.28), // top — 694 (Container) + 145.280 (392:14769)
+      x: pctX(984.2052), // centre-x — follows the mockup's 87px move left
+      // 392:14769 at 570 + 145.280 = 715.280; the image bottom is 707.280, so
+      // the same 8px gap as the phone.
+      y: pctY(715.280),
       w: pctX(242.4104),
+      m: { x: 64.597, y: 91.398, w: 54.474 }, // 566:37697
     },
   ],
 
-  // The words beside the arrow. Centre, as % of the board.
-  arrowText: { x: 61.6, y: 17.39 },
+  /* The "My Expertise" pill (432:11655), sitting ON the folder front. Expressed
+     relative to the FLAP box because the pill is a child of the flap button, not
+     of the board — converting once here keeps the CSS a plain percentage offset
+     instead of a calc() chain across two coordinate spaces.
 
-  /* The "My Expertise" pill, sitting ON the folder front. Its centre is
-     49.95% / 62.18% of the BOARD in Figma; expressed here relative to the flap
-     box (298.05, 392.08, 685.68 x 302.40) because the pill is a child of the
-     flap button, not of the board. Converting once here keeps the CSS a plain
-     percentage offset instead of a calc() chain against two coordinate spaces. */
-  expertisePos: { x: 49.1898, y: 54.7863 },
+     RE-SOLVED FOR THE 0.8 FLAP. The pill itself did not change size — it is 197 x
+     62 in the comp before and after, and in CSS it is sized by its own text and
+     padding, not by a percentage of the flap. What changed is the box underneath
+     it: the flap went 685.68 x 302.40 -> 548.54 x 241.92, so the same absolute
+     centre is now a different fraction of it. y moved 54.7863 -> 51.1277; x is
+     unchanged to within a rounding step because the flap scaled about its own
+     centre horizontally. */
+  expertisePos: { x: 49.1816, y: 51.1277 },
 
   // Folder art. Insets are percentages of the 864 × 864 glyph box — the same
   // model as before, re-solved against 457:58676 (the box was 720 at 1272x668).

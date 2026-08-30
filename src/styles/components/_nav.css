@@ -139,6 +139,10 @@
   padding-block: var(--space-1);
   border-top: var(--border-width) solid transparent;
   border-bottom: var(--border-width) solid transparent;
+  /* The outer half of the roll's clip. The roll below masks to the line box,
+     which is the edge that matters; this is here so nothing can ever escape the
+     item itself — including a focus ring or a future decoration on the word. */
+  overflow: hidden;
   color: var(--text-primary);
   font-size: var(--m3-title-md);
   line-height: var(--m3-title-md-leading);
@@ -162,14 +166,38 @@
   border-bottom-color: currentColor;
 }
 
+/* THE ROLL ON HOVER IS NOT HERE ANY MORE. It moved to _nav-item.css when the
+   footer got it too — the comp instances the same Nav_item (410:66301) in both
+   places, so one definition serves both and neither host can drift. What stays
+   here is everything above: the rules, the colours, the geometry. The trigger
+   selector in that file names .site-header__link, so this file is still half of
+   the contract; the markup half is components/nav-item.njk. */
+
 /* .site-header__cta — DELETED. Contact was a filled accent pill; 446:37196 has
    no pill in either variant, and all three items are instances of one Nav_item
    component. It is a plain link in hero.js's `links` array now. */
+
+/* THE MOBILE MENU BUTTON. Present in the markup at every width and hidden here,
+   because the ≤480 tier is the only place it means anything — keeping the
+   default in this file rather than relying on the media query means the button
+   can never flash in on a stylesheet that loads out of order. */
+.site-header__burger {
+  display: none;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
 
 /* Focus is an OUTLINE, not the hover rules, on purpose: reusing the underline
    would make a keyboard user unable to tell a focused item from the current
    one. currentColor keeps it legible in both variants. */
 .site-header__logo:focus-visible,
+.site-header__burger:focus-visible,
 .site-header__link:focus-visible {
   outline: var(--border-width) solid currentColor;
   outline-offset: var(--space-1);
@@ -184,6 +212,7 @@
   .site-header__link {
     transition: none;
   }
+  /* The roll's reduced-motion override lives with the roll, in _nav-item.css. */
 }
 
 /* ---- Narrow -------------------------------------------------------------- */
@@ -207,5 +236,80 @@
   .site-header__nav,
   .site-header__links {
     gap: var(--space-4);
+  }
+}
+
+/* ---- Mobile — 566:37656 --------------------------------------------------- */
+/* 390 WIDE, AND EVERYTHING HERE IS ADDITIVE. Nothing above this block changed
+   for this tier; the 900 rules still own 481..900 and desktop is untouched.
+ *
+ * THE COMP'S HEADER IS 48 TALL, roughly half the desktop 88, with a 24px mark
+ * and the name still visible. Insets: the container sits at x=16 and the logo at
+ * x=12 inside it, so the mark starts 28 from the page edge, and the burger's
+ * right edge lands 28 from the other — symmetric, which is why the two paddings
+ * are split 16 + 12 rather than collapsed into one 28. */
+@media (max-width: 480px) {
+  .site-header {
+    padding-inline: var(--space-4);
+  }
+
+  .site-header__inner {
+    min-height: var(--header-height-mobile);
+    padding: 0 var(--space-3);
+  }
+
+  .site-header__mark {
+    height: var(--header-mark-mobile);
+    width: var(--header-mark-mobile);
+  }
+
+  /* 566:37638 is 135 x 21 — Body Large's step, not Title Large's 22. */
+  .site-header__name {
+    /* RE-SHOWN. The 600 tier hides it and the comp does not: this rule sits
+       after that block, so at ≤480 it wins and 481..600 still hides it. */
+    display: inline;
+    font-size: var(--m3-body-lg);
+    line-height: var(--m3-body-lg-leading);
+  }
+
+  .site-header__burger {
+    display: inline-flex;
+  }
+
+  /* THE BAR BECOMES A DROP PANEL. Absolute rather than in flow so opening it
+     cannot change the header's 48px height and shove the page down. */
+  .site-header__nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    flex-direction: column;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    border-bottom: var(--border-width) solid var(--border-subtle);
+    background-color: var(--surface);
+    color: var(--text-primary);
+  }
+
+  /* SCOPED TO THIS TIER ONLY — see the note in nav.njk. Above 480 this class is
+     inert and the bar renders normally. */
+  .site-header__nav.is-closed {
+    display: none;
+  }
+
+  .site-header__links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  /* The items stop being a 71px centred pill row and become full-width rows.
+     The roll markup is untouched — it is @media (hover: hover) gated and simply
+     never fires on a touch device. */
+  .site-header__link {
+    justify-content: flex-start;
+    min-width: 0;
+    width: 100%;
+    padding-block: var(--space-3);
   }
 }

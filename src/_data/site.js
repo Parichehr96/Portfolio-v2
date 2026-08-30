@@ -144,20 +144,41 @@ module.exports = {
     heading: "You made it to the end!",
     tagline: "If this sparked something, tell me. I'd love to talk.",
     siteName: "Pari\u2019s Portfolio",
-    titles: {
-      caseStudies: "Case studies",
-      moreWorks: "More works",
-      getInTouch: "Get in touch",
-    },
-    // Behance and Dribbble reuse the URLs already in contactGroups rather than
-    // restating them. MEDIUM HAS NO URL: the comp lists it but no Medium
-    // account appears anywhere in this file or in `sameAs`, so it renders as
-    // plain text rather than a link to a guess. Add the url and it becomes a
-    // link with no template change.
-    moreWorks: [
-      { name: "Behance", url: "https://behance.net/pariuxd", external: true },
-      { name: "Dribbble", url: "https://dribbble.com/pariuxd", external: true },
-      { name: "Medium", url: null },
+    // THE TWO ACTIONS AND THE THREE SOCIALS ARE WHAT THE COLUMNS BECAME.
+    // 568:39273 replaced the three link columns (Case studies / More works /
+    // Get in touch) with one pair of actions and a row of brand chips, so
+    // `titles` and `moreWorks` are gone rather than merely unrendered — nothing
+    // reads them any more. The two URLs that were in `moreWorks` survive here,
+    // on the chips.
+    //
+    // contactPrimary IS DELIBERATELY LEFT ALONE one screen up. The footer was
+    // its only consumer, so it is unreferenced as of this change, but it is the
+    // canonical contact list and the mailto below is the same address it holds
+    // — deleting it would throw away the record to save three lines.
+    //
+    // WHATSAPP AND MEDIUM ARE THE TWO THINGS THAT LEAVE THE PAGE. Neither is in
+    // the new comp: Whatsapp was a Get in touch row and Medium was a More works
+    // row that never had a URL to begin with.
+    actions: [
+      { name: "Email Me", url: "mailto:info@parichehr.design" },
+      {
+        name: "Set a Meeting",
+        url: "https://calendar.app.google/esnBYXwJEYMbRyxb6",
+        external: true,
+      },
+    ],
+
+    // `icon` keys into the map in components/icon.njk. Name doubles as the
+    // link's accessible name — the chips are glyphs with no text.
+    socialTitle: "Find me on",
+    socials: [
+      {
+        name: "LinkedIn",
+        url: "https://linkedin.com/in/parichehr-talebzadeh",
+        icon: "linkedin",
+      },
+      { name: "Dribbble", url: "https://dribbble.com/pariuxd", icon: "dribbble" },
+      { name: "Behance", url: "https://behance.net/pariuxd", icon: "behance" },
     ],
   },
 

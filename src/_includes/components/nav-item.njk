@@ -1,0 +1,44 @@
+{#
+  NAV ITEM LABEL — the word stack behind the roll-on-hover.
+
+  THIS IS THE CODE COUNTERPART OF FIGMA'S Nav_item (410:66301). That component
+  is instanced in two places in the comp — three times in the header (446:37196)
+  and twice in the footer (568:39273, the Email Me and Set a Meeting actions) —
+  and for a long time the code answered that with two independent implementations
+  that happened to agree. The rules-above-and-below mechanic is still written out
+  twice, once per host, because the two genuinely differ in their resting state;
+  but the roll is identical in both and lives here, once.
+
+  WHAT THE HOSTS STILL OWN. This macro emits the label and nothing else — no
+  colour, no borders, no opacity, no padding. .site-header__link and
+  .site-footer__action keep every one of those. The footer's items used to sit at
+  a 70% resting dim and lift to full on hover; 568:39273 states their colour
+  outright instead, so --footer-dim was removed and the resting state is now just
+  the colour the host sets. Swapping a bare {{ label }} for {{ navItem(label) }}
+  is meant to be invisible until someone hovers.
+
+  THE COPY COUNT IS LOAD-BEARING, and this is the only place it is written down.
+  The roll lifts the stack by exactly one line, so N turns need N+1 copies —
+  something has to be sitting in the slot when the motion stops. One turn, two
+  copies. If the roll ever goes back to three turns, this is the file that grows
+  two more spans, and _nav-item.css is the file that changes the travel; nothing
+  else in the codebase knows the number.
+
+  Copy 2 is aria-hidden, so the accessible name is the label once rather than
+  twice, and it is user-select:none in CSS so dragging across a nav does not put
+  "ContactContact" on the clipboard. With no hover (touch) or under reduced
+  motion the stack never moves and the spare is simply clipped out of sight.
+
+  USAGE
+    {% raw %}{% from "components/nav-item.njk" import navItem %}
+    <a class="site-header__link" href="/#contact">{{ navItem("Contact") }}</a>{% endraw %}
+#}
+
+{%- macro navItem(label) -%}
+<span class="nav-item__roll"
+  ><span class="nav-item__stack"
+    ><span class="nav-item__word">{{ label }}</span
+    ><span class="nav-item__word" aria-hidden="true">{{ label }}</span
+  ></span
+></span>
+{%- endmacro -%}

@@ -15,12 +15,17 @@
  * it to be on screen. One observer cannot be both without either fetching too
  * late or playing to nobody.
  *
- * NOT EVERY CLIP LOOPS. ONTON's homepage row is a reveal whose keyframes end
- * somewhere different from where they began, so repeating it snaps the frame
- * back; it carries no `loop` attribute and must hold its final frame instead.
- * That needs an explicit guard, because HTMLMediaElement.play() on an ended
- * video seeks back to zero and starts again — exactly the restart we are
- * avoiding. See the MOTION table in _data/projects.js.
+ * NOT EVERY CLIP LOOPS, AND THE GUARD BELOW IS WHAT HONOURS THAT. A clip
+ * without `loop` must hold its final frame, and that needs saying explicitly:
+ * HTMLMediaElement.play() on an ended video seeks back to zero and starts again,
+ * which is precisely the restart a missing `loop` is trying to avoid.
+ *
+ * ALL THREE HOMEPAGE ROWS NOW CARRY `loop`, so none of them reaches that branch
+ * today — ONTON was the exception until it was asked to loop anyway, despite its
+ * keyframes not wrapping. Nothing here changed for that: `video.loop` is read
+ * from the element, so the guard simply stops applying to it. The branch stays
+ * live for the case-study clips, which still hold their last frame and opt into
+ * a rewind through data-motion-replay. See the MOTION table in projects.js.
  *
  * AND ONE OF THOSE WANTS TO RUN AGAIN. The ONTON case study's flow map is the
  * same shape of animation — it draws itself in from an empty frame and the

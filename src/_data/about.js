@@ -1,37 +1,60 @@
-/* ABOUT ME — Figma 185:2029 "Bio Container".
+/* ABOUT ME — Figma 543:1124. Copy is verbatim from the node; geometry notes
+ * live next to the values they explain in _about.css. This file is content only.
  *
- * Copy is verbatim from the comp. Geometry notes live next to the values they
- * explain in _about.css; this file is content only.
+ * NO STATS ARRAY ANY MORE. This used to carry three re-mapped stats.js entries
+ * (Shipped Products / Side Projects / Years of Experience) rendered as a row
+ * under the heading. 543:1124 has no such row: its right column runs heading
+ * (y=60) -> the three paragraphs (124, 244, 412) -> the clock band (544), and
+ * nothing else. The require("./stats.js") went with it, so stats.js now has no
+ * consumer — it is left on disk rather than deleted, in case the "At a Glance"
+ * block that index.njk records as removed ever comes back.
  *
- * STATS REUSE stats.js rather than restating the numbers. That array is also
- * consumed by the Summary block (index.njk), where it renders in a different
- * order and with "5+" rather than "5" — so it is re-mapped here instead of
- * edited, which would silently change a section this phase must not touch.
- * The numbers stay in one place; only the presentation differs.
+ * NO `location` EITHER. "Based in the Netherlands" was its own line with a flag
+ * icon; the node folds the country into the third paragraph as bold text, so
+ * the line, the flag <img> and this key are all gone.
  */
-const stats = require("./stats.js")();
-
-const byLabel = (needle) =>
-  stats.find((s) => s.label.toLowerCase().indexOf(needle) === 0);
-
 module.exports = {
   heading: { lead: "About", rest: "Me" },
 
-  // Figma order, Figma labels. Values come from stats.js except the years,
-  // which the comp writes bare ("5") where the Summary block writes "5+".
-  stats: [
-    { value: byLabel("shipped").value, label: "Shipped Products" },
-    { value: byLabel("side").value, label: "Side Projects" },
-    { value: "5", label: "Years of Experience" },
-  ],
+  /* RUNS, NOT STRINGS. Each paragraph is a list of {text} / {text, bold} pieces
+     so the emphasis is data rather than markup — the same shape hero.js uses for
+     its card bodies. about.njk joins them with no separator, so every run must
+     carry its own leading or trailing space.
 
+     THE BOLD SET IS THE NODE'S, AND IT IS SHORT ON PURPOSE. 543:1124 bolds three
+     spans across the whole bio and nothing else: the role, the results, and the
+     country. Paragraph 1 carries none. Adding a fourth is a design change, not a
+     copy edit.
+
+     COPY CHANGED WITH IT, in three places the node is explicit about:
+       - p1 drops "— the kind that lives beneath every interaction in products
+         real people rely on", which is what takes it from five lines to the
+         node's four (543:1136 is 96 tall = 4 x 24);
+       - p2 replaces the em-dash before "often" with a comma;
+       - p3 gains "in the Netherlands" and loses the closing "If that's you, I'd
+         love to talk." sentence. */
   bio: [
-    "I'm a product designer who's drawn to complexity — the kind that lives beneath every interaction in products real people rely on. My background in Industrial Design taught me to think in systems; my Master's in Interaction Design taught me to ground those systems in evidence. I work best where the problem is ambiguous and no one quite owns it yet.",
-    "Across five years I've shipped consumer apps, B2B platforms, and Web3 products — often as the sole or lead designer. I've grown a product from 87 to 1,500 daily active users, cut task times through progressive disclosure, and built design systems that outlived my time on the team. I care about structure before pixels, evidence over opinion, and shipping something viable over polishing something theoretical.",
-    "Right now I'm looking for a team building ambitious products where design meaningfully shapes the direction, not just the surface. If that's you, I'd love to talk.",
+    [
+      {
+        text: "I'm a product designer who's drawn to complexity. My background in Industrial Design taught me to think in systems; my Master's in Interaction Design taught me to ground those systems in evidence. I work best where the problem is ambiguous and no one quite owns it yet.",
+      },
+    ],
+    [
+      { text: "Across five years I've shipped consumer apps, B2B platforms, and Web3 products, often as the " },
+      { text: "sole or lead designer", bold: true },
+      { text: ". I've grown a product from " },
+      {
+        text: "87 to 1,500 daily active users, cut task times through progressive disclosure, and built design systems",
+        bold: true,
+      },
+      { text: " that outlived my time on the team. I care about structure before pixels, evidence over opinion, and shipping something viable over polishing something theoretical." },
+    ],
+    [
+      { text: "Right now I'm looking for a team in " },
+      { text: "the Netherlands", bold: true },
+      { text: " building ambitious products where design meaningfully shapes the direction, not just the surface." },
+    ],
   ],
-
-  location: "Based in the Netherlands",
 
   illustration: {
     file: "/Assets/images/about/illustration-pari.png",
@@ -45,12 +68,12 @@ module.exports = {
     frame: "/Assets/images/about/frame-pari.svg",
   },
 
-  /* TIME WIDGET — static markup only. These are the comp's mocked values; a
-     later phase points scripts/clock.js at the data-clock-* hooks in about.njk
-     and they become live. The sub-line is verbatim the first variation of that
-     script's 09:00-12:30 block, so the two already agree. */
+  /* TIME WIDGET. These values are the no-JS fallback; scripts/clock.js
+     overwrites all three from the live Amsterdam clock on load.
+
+     NO `atLabel`. The widget used to read "At 02:18"; 543:1205 has no such word
+     — the clock box holds the hands and the digital time and nothing else. */
   clock: {
-    atLabel: "At",
     time: "02:18",
     statusLead: "I'm",
     status: "probably in deep work",

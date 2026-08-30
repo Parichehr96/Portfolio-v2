@@ -1,0 +1,118 @@
+/* NAV ITEM — the roll on hover. Shared by the header and the footer.
+ *
+ * NET-NEW. Figma's Nav_item (410:66301) has three variants — Default, Hover and
+ * Selected — and Hover is exactly two 1px rules, above and below the word, in
+ * the current text colour. That is still what paints, and it is still drawn by
+ * the hosts: _nav.css for the header, _footer.css for the footer. Nothing in
+ * this file touches colour, borders, opacity or spacing.
+ *
+ * WHAT THIS FILE IS FOR is the motion layered over that hover, and the reason it
+ * is a file at all rather than a block inside _nav.css: the comp instances the
+ * same component in both places — three times in the header (446:37196) and
+ * twice in the footer (568:39273, the Email Me / Set a Meeting actions) — so the
+ * roll has to be identical in both, and the way to guarantee that is one
+ * definition. components/nav-item.njk is the markup half of the same decision.
+ *
+ * THE TRIGGER LIVES HERE NOW, not in the hosts. It used to be one selector per
+ * host, naming each host's own class; see the note above the @media below for
+ * why that turned out to be a way of breaking the footer silently. The hosts
+ * still own everything about the resting state — colour, borders, spacing — and
+ * nothing in this file touches any of it.
+ */
+
+/* THE CLIP IS THE LINE BOX. --m3-title-md-leading is the line-height both hosts
+   set on their items, so the roll is exactly one line tall and a word leaving
+   the top vanishes on the same edge the top rule is drawn on — "within the
+   strokes" — rather than somewhere out in the item's 4px of padding. Both hosts
+   use the same type step, which is what lets one number serve both. */
+.nav-item__roll {
+  display: block;
+  height: var(--m3-title-md-leading);
+  overflow: hidden;
+}
+
+/* The part that actually moves. Two words tall; the roll clips it to one. */
+.nav-item__stack {
+  display: block;
+}
+
+.nav-item__word {
+  display: block;
+  height: var(--m3-title-md-leading);
+}
+
+/* THE SPARE COPY IS UNSELECTABLE. aria-hidden keeps it out of the accessibility
+   tree, so an item's accessible name is its label once — but that does nothing
+   for a pointer, and dragging across a nav would otherwise yield "ContactContact"
+   on the clipboard. */
+.nav-item__word[aria-hidden] {
+  user-select: none;
+}
+
+/* DESKTOP HOVER ONLY. On a touch device `:hover` sticks after a tap, which would
+   leave the word mid-roll under the finger and then frozen on the spare copy.
+ *
+ * ONE SELECTOR, AND IT NAMES THE ANCHOR RATHER THAN THE PAGE. This used to be
+ * two — `.site-header__link` and `a.site-footer__item` — and the second of them
+ * quietly died: the 568:39273 footer replaced its three link columns with two
+ * action links on a new class, `.site-footer__action`, and this file went on
+ * naming the old one. A selector that matches nothing fails silently, so the
+ * roll simply stopped happening in the footer and nothing reported it. Listing
+ * host classes here means every future rename in a host can break the motion
+ * from a distance; `a:hover` cannot go stale, because the thing it depends on is
+ * the markup navItem() itself emits.
+ *
+ * THE `a` QUALIFIER IS NOT DECORATION. A host may render an item with no url as
+ * a <span> — the old footer did, for a Medium account that does not exist — and
+ * a dead item that rolls under the cursor is a worse lie than one that sits
+ * inert. Anchors roll; spans do not. That rule was previously carried by the
+ * footer's half of the selector alone, and it is now carried by both.
+ *
+ * THE BLAST RADIUS IS EXACTLY THE COMPONENT. .nav-item__stack is emitted by
+ * navItem() and by nothing else, so broadening the host to `a` widens this to
+ * every anchor that renders a nav item — which today is three in the header and
+ * two in the footer — and to nothing more. */
+@media (hover: hover) {
+  a:hover .nav-item__stack {
+    animation: nav-item-roll var(--nav-roll) var(--ease-in-out) both;
+  }
+}
+
+/* ONE TURN, THE WHOLE 0.7s. The word lifts out the top while its own copy rises
+   in from below, and it is over — travel is exactly one line, so the only place
+   the motion can rest is on a word and it can never stop mid-roll.
+ *
+ * ONE CURVE, NOT A HANDOVER. When this turned three times the last turn had to
+ * switch to --ease-out to land, because a single ease across three lines blurs
+ * the first two past and crawls the last. Over one line there is no midpoint to
+ * hand over at: --ease-in-out carries the whole thing, easing out of rest and
+ * decelerating into the landing, which is the settle the handover used to buy.
+ * It lives in the animation shorthand above rather than in these keyframes for
+ * that reason — there is only one segment left to time.
+ *
+ * `both` holds the end state while the pointer stays. Releasing hover drops the
+ * animation and the stack snaps back to 0 — invisibly, because copy 1 and copy 2
+ * are the same word. That is the whole trick.
+ *
+ * WHY THE TEXT STAYS SHARP: the offset is a whole 24px line, so the stack never
+ * lands on a fractional pixel, and there is no `will-change` promoting it to a
+ * layer that would resample the glyphs. Both halves of that matter — integer
+ * offsets on a promoted layer still soften. */
+@keyframes nav-item-roll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(var(--m3-title-md-leading) * -1));
+  }
+}
+
+/* No roll for anyone who asked not to have one — in EITHER host. base.css zeroes
+   transitions site-wide but not animations, so this has to say so itself. It
+   mirrors the selector above exactly, including the `a`, so the two can never
+   drift apart the way the old host-named pair did. */
+@media (prefers-reduced-motion: reduce) {
+  a:hover .nav-item__stack {
+    animation: none;
+  }
+}

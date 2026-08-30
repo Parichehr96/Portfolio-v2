@@ -132,7 +132,7 @@
   align-items: center;
   gap: 6px;
   font-size: var(--m3-title-sm);
-  line-height: var(--m3-title-sm-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-title-sm-tracking);
   font-weight: var(--weight-medium);
   color: var(--text-primary);
@@ -277,6 +277,6 @@
   /* The axis labels stop fitting side by side long before the chart does. */
   .case-chart__axis {
     font-size: var(--m3-body-sm);
-    line-height: var(--m3-body-sm-leading);
+    line-height: var(--leading-body);
   }
 }

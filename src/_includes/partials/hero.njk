@@ -14,9 +14,16 @@
   the structure the open/drag phase animates. Flattening it to a single export
   would look identical at rest and be impossible to animate afterwards.
 
-  The board is a fixed 1272 × 897 frame in Figma. Everything inside is
+  The board is a fixed 1272 × 753 frame in Figma. Everything inside is
   positioned in PERCENT of that frame (see hero.js), and aspect-ratio holds the
   proportions, so the whole composition scales as one piece.
+
+  TWO POSITION SETS PER BOARD CHILD. Each icon, decor image and caption writes
+  its desktop custom properties AND a parallel -m set from hero.js's `m` values;
+  the <=480 block in _hero.css decides which one each rule reads. It has to work
+  this way round: these are INLINE custom properties, and no stylesheet rule can
+  override an inline one — but CSS can choose which property to consume. The
+  cards need no -m set at all; their percentages are identical in both comps.
 
   Cards are positioned by their CENTRE and pulled back with translate(-50%,-50%)
   before rotating, so each fans around its own middle. The --tuck-* custom
@@ -31,9 +38,25 @@
         <span class="hero__greeting">{{ hero.title.greeting }}</span>
         <span class="hero__name">{{ hero.title.name }}</span>
       </span>
+      {#
+        "DESIGNER" IS ARTWORK, NOT TEXT. 184:13342 draws it by hand; there is no
+        webfont for that, so the word is the exported drawing (259 x 59, the same
+        1:1 export as the comp's 258-wide node) inlined so it can take the H1's
+        colour through currentColor. An <img> could not — SVG loaded that way is
+        an isolated document CSS never reaches.
+
+        THE WORD IS STILL IN THE DOM. The drawing is aria-hidden and a
+        visually-hidden span carries the real text, so the heading's accessible
+        name and its indexable content are both still "I'm Pari. Product
+        Designer". Losing that to make the word prettier would be a bad trade.
+      #}
       <span class="hero__line">
         <span class="hero__role">{{ hero.title.roleLead }}</span>
-        <span class="hero__role-outline">{{ hero.title.roleOutline }}</span>
+        <span class="hero__role-outline">
+          <span class="hero__role-art" aria-hidden="true"
+            >{{ "Assets/images/designer-word.svg" | inlineSvg | safe }}</span
+          ><span class="hero__role-text">{{ hero.title.roleOutline }}</span>
+        </span>
       </span>
     </h1>
     <p class="hero__tagline">{{ hero.tagline }}</p>
@@ -47,7 +70,7 @@
         alt="{{ icon.label }}"
         {% if not icon.label %}aria-hidden="true"{% endif %}
         draggable="false"
-        style="--icon-x: {{ icon.x }}%; --icon-y: {{ icon.y }}%; --icon-size: {{ icon.size }}%"
+        style="--icon-x: {{ icon.x }}%; --icon-y: {{ icon.y }}%; --icon-size: {{ icon.size }}%; --icon-x-m: {{ icon.m.x }}%; --icon-y-m: {{ icon.m.y }}%; --icon-size-m: {{ icon.m.size }}%"
         data-hero-icon
       />
     {%- endfor %}
@@ -58,20 +81,23 @@
       artwork: the drawn arrow and the two product mockups. There is no cursor
       mark here — the board's live CSS cursor is the comp's arrow, and a static
       copy beside it would be a frozen duplicate (see hero.js).
-      alt="" + aria-hidden because none of them carries meaning a
-      screen-reader user is missing; the words beside the arrow do, and those
-      are real text below.
+      THE MOCKUPS ARE alt="" + aria-hidden; THE ARROW IS NOT. It used to be —
+      back when arrow-pull.svg was the wordless curve and the sentence beside it
+      was live HTML that carried the meaning. The re-export bakes the words in as
+      outlines, so the graphic IS the sentence now and `alt` is the only thing
+      left announcing it. Any decor entry with an `alt` is treated as meaningful;
+      the rest stay decorative.
     #}
     {%- for d in hero.decor %}
       <img
         class="hero__decor hero__decor--{{ d.slug }}"
         src="{{ hero.assetPath }}/{{ d.file }}"
-        alt=""
-        aria-hidden="true"
+        alt="{{ d.alt if d.alt else '' }}"
+        {%- if not d.alt %} aria-hidden="true"{% endif %}
         draggable="false"
         loading="lazy"
         decoding="async"
-        style="--decor-x: {{ d.x }}%; --decor-y: {{ d.y }}%; --decor-w: {{ d.w }}%"
+        style="--decor-x: {{ d.x }}%; --decor-y: {{ d.y }}%; --decor-w: {{ d.w }}%; --decor-x-m: {{ d.m.x }}%; --decor-y-m: {{ d.m.y }}%; --decor-w-m: {{ d.m.w }}%"
       />
     {%- endfor %}
 
@@ -91,18 +117,17 @@
       <p
         class="hero__caption hero__caption--{{ c.slug }}"
         aria-hidden="true"
-        style="--caption-x: {{ c.x }}%; --caption-y: {{ c.y }}%; --caption-w: {{ c.w }}%"
+        style="--caption-x: {{ c.x }}%; --caption-y: {{ c.y }}%; --caption-w: {{ c.w }}%; --caption-x-m: {{ c.m.x }}%; --caption-y-m: {{ c.m.y }}%; --caption-w-m: {{ c.m.w }}%"
       >{{ c.text }}</p>
     {%- endfor %}
 
     {#
-      THE ARROW'S WORDS ARE LIVE HTML, not part of arrow-pull.svg. Figma sets
-      them in Figma Hand, which cannot be licensed as a webfont, so the export
-      is the arrow alone and this is Caveat standing in. Being real text also
-      means it is selectable and readable by a screen reader, which a baked-in
-      outline would not be.
+      NO <p> FOR THE ARROW'S WORDS ANY MORE. They were live HTML in Caveat while
+      arrow-pull.svg was the wordless curve; 465:61243 now exports as one graphic
+      with the letterforms outlined, so the words are in the artwork above and
+      this element would draw them a second time on top. Its accessible text
+      lives on that <img>'s alt.
     #}
-    <p class="hero__arrow-text" style="--arrow-x: {{ hero.arrowText.x }}%; --arrow-y: {{ hero.arrowText.y }}%">{{ hero.arrow.text }}</p>
 
     {#
       THE FLAP IS THE BUTTON. It cannot wrap the whole folder: the cards are
@@ -184,4 +209,19 @@
       </button>
     </div>
   </div>
+
+  {#
+    THE BOARD'S RUNWAY. .hero__board is sticky; this empty block is what gives it
+    somewhere to be sticky FOR. A sticky box holds until its containing block's
+    content runs out, so without a sibling after it the board would meet the
+    header and release in the same frame.
+
+    A REAL ELEMENT, NOT .hero::after — that pseudo-element and its ::before pair
+    are already the hero's gutter rules (the two vertical strokes at x=120), and
+    they are absolutely positioned, so anything given to them takes no space in
+    flow and buys no sticky range at all.
+
+    aria-hidden and empty: it is scroll distance, not content.
+  #}
+  <div class="hero__runway" aria-hidden="true"></div>
 </section>

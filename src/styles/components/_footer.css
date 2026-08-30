@@ -1,14 +1,20 @@
-/* SITE FOOTER — Figma 275:57838.
+/* SITE FOOTER — Figma 568:39273 (desktop 275:57838, mobile 568:39274).
  *
  * The page's second dark band. Colours come from the .site-footer scope in
  * tokens.css, which is deliberately NOT the .work block — the comp pitches this
- * band's text one step off it (headings gray-6, body #BFBFBF, pure white kept
- * for the menu items). Nothing here names a colour.
+ * band's text one step off it (heading gray-6, body #BFBFBF, pure white kept
+ * for the links and the chips). Nothing here names a colour.
  *
  * THE GUTTER RULES ARE THE PAGE FRAME, the same pair the header and My Work
  * carry: a 1px line either side of the inner container at 16% white. They are
  * what makes the 120px page margin read as a frame rather than as padding, so
  * they collapse together with it at narrow widths.
+ *
+ * THE FRAME IS UNCHANGED BY THE 568:39273 ITERATION and that is worth stating,
+ * because it is why this was a content change and not a reframe: the node
+ * measures the same 120px margin, the same two rules, the same 32px inset and
+ * the same 120px block padding as the comp the previous footer was built to.
+ * Everything that moved, moved inside that box.
  */
 .site-footer {
   padding-inline: var(--space-11);
@@ -25,29 +31,49 @@
   overflow: clip;
 }
 
-/* TWO EQUAL HALVES. The comp gives both children flex:1 rather than sizing
-   either, so the split is 50/50 at any width and the columns reflow with it. */
-/* NO GAP between the halves, which is the comp: 275:57807 sets none, and only
-   the right section gaps its own three columns. The 50/50 split leaves the left
-   half far more room than its text needs, so the space between them is slack
-   rather than a gap that has to be reserved. */
+/* 785 / 421 OF 1206, NOT 50/50. The previous comp gave both halves flex:1
+   because both held text; this one gives the left column everything and the
+   right column an illustration, and the node sizes them 784.99 / 421.01. As two
+   `fr` the ratio survives any width without either number being frozen.
+ *
+ * align-items:start, NOT center. Both children begin on the same line at the
+ * top of the content box — the mark's 422px happens to equal the text column's
+ * 422px in the node, so centring looks identical there and drifts everywhere
+ * else. Aligning to the top is the rule the comp is actually expressing.
+ *
+ * position:relative is for the mark below 900, where it leaves the flow. */
 .site-footer__row {
-  display: flex;
-  align-items: center;
+  position: relative;
+  display: grid;
+  grid-template-columns: 785fr 421fr;
+  align-items: start;
 }
 
-/* ---- Left: sign-off and copyright ---------------------------------------- */
-/* BOTTOM-ANCHORED COPYRIGHT, via space-between on a stretched column. In the
-   comp the copyright sits on the baseline of the tallest link column, not at a
-   fixed offset under the tagline — so it has to be pushed by the row's height
-   rather than positioned. Same trick the work cards use for their button. */
+/* ---- Left column --------------------------------------------------------- */
+/* THREE BLOCKS, 80 APART. The node's vertical rhythm on this column is
+   80 / 80 between the sign-off group, the socials and the copyright, with
+   tighter gaps inside each. Reading down: heading 0-40, tagline 48-72,
+   actions 96-172, "Find me on" 252-282, chips 298-326, copyright 406-422 —
+   422 in total, which is the column's height in the node.
+ *
+ * THE COPYRIGHT IS NO LONGER PUSHED. It used to sit at the bottom of a
+ * stretched column via justify-content:space-between, because in the old comp
+ * it had to land on the baseline of the tallest link column. There are no
+ * columns now, so it takes the comp's own 80px like everything else and the
+ * column is its content's height rather than the row's. */
 .site-footer__intro {
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex: 1 0 0;
   min-width: 0;
   flex-direction: column;
-  align-self: stretch;
-  justify-content: space-between;
+  gap: var(--space-10);
+}
+
+/* The sign-off and the actions are one group: 24 between them, 80 to the rest. */
+.site-footer__contact {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-5);
 }
 
@@ -71,13 +97,114 @@
   font-size: var(--m3-body-lg);
   line-height: var(--m3-body-lg-leading);
   letter-spacing: var(--m3-body-lg-tracking);
-  font-weight: var(--weight-regular);
   color: var(--text-secondary);
 }
 
-/* Two spans with a 4px gap rather than one string: the comp keeps the year and
-   the site name as separate text nodes, and a gap survives the year changing
-   width in a way a hardcoded space does not. */
+/* ---- The two actions ------------------------------------------------------ */
+.site-footer__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 32px EXACTLY, WHICH IS WHY THE HEIGHT IS DECLARED. The node's Nav_item is 32
+   tall for 24px type. Reaching that with padding alone would need 4px a side
+   and then the two hover rules add 2 more and the row is 34 — so the box is
+   fixed at 32 with border-box doing the arithmetic, and the rules are drawn on
+   transparent borders that are already in the box. Nothing shifts on hover,
+   which is the same contract .site-header__link has. */
+.site-footer__action {
+  display: inline-flex;
+  box-sizing: border-box;
+  height: 32px;
+  align-items: center;
+  border-block: var(--border-width) solid transparent;
+  color: var(--accent);
+  font-size: var(--m3-title-md);
+  line-height: var(--m3-title-md-leading);
+  letter-spacing: var(--m3-title-md-tracking);
+  text-decoration: none;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+/* The rules are the Nav_item hover variant (410:66301) — two 1px lines in the
+   current text colour. The word's roll is _nav-item.css's, triggered there. */
+.site-footer__action:hover,
+.site-footer__action:focus-visible {
+  border-block-color: currentColor;
+}
+
+/* ---- Find me on ----------------------------------------------------------- */
+.site-footer__social {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* 20/30, WHICH IS NOT ON THE GLOBAL SCALE. --m3-title-lg is 22/28 and is read
+   by the nav, About and four case-study rules; this label is 20/30 in the node
+   and 18/27 on mobile. Rather than move a step eight other places depend on,
+   the pair lives in the .site-footer scope in tokens.css. */
+.site-footer__social-title {
+  margin: 0;
+  font-size: var(--footer-label);
+  line-height: var(--footer-label-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+/* 28px chips on a 48px pitch — so the gap is 20, and it is the same 20 on
+   mobile where the chips drop to 24 on a 44 pitch. */
+.site-footer__chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4h);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* THE TILE IS THE GLYPH, not a background this rule paints. All three marks are
+   the square variants, so the rounded tile arrives with the path and the only
+   thing CSS supplies is the colour it is knocked out against — see the note in
+   icon.njk. --surface here is the band's own black, so the mark reads as a hole
+   in the chip rather than as a second colour that would have to be maintained. */
+.site-footer__chip {
+  --icon-knockout: var(--surface);
+  display: block;
+  color: var(--accent);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.site-footer__chip .icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+/* NOT IN THE COMP. The node has one state for these, but a link with no
+   affordance at all is worse than a departure this small — and at rest it is
+   invisible, so the pixel match is unaffected. */
+.site-footer__chip:hover,
+.site-footer__chip:focus-visible {
+  opacity: 0.8;
+}
+
+/* ---- Copyright ------------------------------------------------------------ */
+/* TWO SPANS AND A FLEX GAP rather than a space in the text, so the comma sits
+   tight to the year and the pair wraps as two units if the column ever narrows.
+   The node measures them 46 and 82 wide, 4 apart.
+ *
+ * NO OPACITY. This used to carry --footer-dim (0.7) over --text-secondary,
+ * which lands on #868686 — the node says #BFBFBF flat, and the token now says
+ * the same, so dimming it a second time was making it wrong. Same for the
+ * links. --footer-dim has no consumers left. */
 .site-footer__copyright {
   display: flex;
   align-items: center;
@@ -87,111 +214,52 @@
   line-height: var(--m3-body-sm-leading);
   letter-spacing: var(--m3-body-sm-tracking);
   color: var(--text-secondary);
-  opacity: var(--footer-dim);
 }
 
-/* ---- Right: three link columns ------------------------------------------- */
-.site-footer__columns {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  align-items: flex-start;
-  gap: var(--space-5);
-}
-
-.site-footer__column {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  flex-direction: column;
-  gap: var(--space-4h);
-}
-
-/* The one type step in the comp that is not on the M3 scale — 20px at 1.5,
-   which is --text-lg. Regular weight, same off-white as the sign-off. */
-.site-footer__column-title {
-  margin: 0;
-  font-size: var(--text-lg);
-  line-height: var(--leading-half);
-  letter-spacing: var(--m3-headline-lg-tracking);
-  font-weight: var(--weight-regular);
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-.site-footer__list {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* ---- Menu item ------------------------------------------------------------ */
-/* THE HEADER'S NAV ITEM, ON A DARK GROUND. Figma builds these from the same
-   Nav_item component (410:66301) the header uses, so they share the mechanic:
-   rules above and below, transparent until the item is engaged, drawn in
-   currentColor so they can never disagree with the text.
+/* ---- The monogram --------------------------------------------------------- */
+/* SIZED FROM THE DRAWN GLYPH, NOT THE ARTBOARD. footer.njk hands the icon a
+   viewBox cropped to the three paths' measured bounds, so this box IS the mark:
+   422 tall in the node, and 0.6821 of that wide because that is the artwork's
+   own aspect (23.688 / 34.728 in its 40-unit grid). Height is the single knob;
+   width follows it and the mark can never distort.
  *
- * WHAT IS DIFFERENT IS THE RESTING STATE. Here the item sits at 70% (the comp's
- * opacity-70 on the Nav_item wrapper) and hover takes it to full — so the hover
- * is white text AND white rules at 100%, which is the header's behaviour plus
- * the dim lifting. The header has no equivalent because its items are already
- * at full strength.
+ * WHY NOT THE 303 THE NODE REPORTS. Figma gives the group 302.82 x 421.71,
+ * an aspect of 0.718 against the paths' real 0.682 — the group box is loose by
+ * about 15px horizontally. Honouring the height and letting the width fall out
+ * at 288 keeps the glyph undistorted and its top and bottom exactly on the
+ * node's, which is what the eye actually registers against the text column.
  *
- * Transparent rather than absent borders again, so engaging an item does not
- * grow it by 2px and shove the column. */
-.site-footer__item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding-block: var(--space-1);
-  border-top: var(--border-width) solid transparent;
-  border-bottom: var(--border-width) solid transparent;
-  color: var(--accent);
-  opacity: var(--footer-dim);
-  font-size: var(--m3-title-md);
-  line-height: var(--m3-title-md-leading);
-  letter-spacing: var(--m3-title-md-tracking);
-  font-weight: var(--weight-medium);
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    opacity var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
+ * NO BLEED, NO CROP. The mark is fully visible and sits 50px inside the
+ * container's right edge, which is where the node puts it. --footer-mark-inset
+ * is the knob for that. */
+.site-footer__mark {
+  justify-self: end;
+  margin-right: var(--footer-mark-inset);
+  width: calc(var(--footer-mark-h) * 0.6821);
+  height: var(--footer-mark-h);
+  color: var(--footer-mark-color);
+  opacity: var(--footer-mark-opacity);
 }
 
-/* a:hover, not :hover — a <span> item (Medium, which has no url) must not
-   light up as though it were going somewhere. */
-a.site-footer__item:hover,
-a.site-footer__item:focus-visible {
-  opacity: 1;
-  border-top-color: currentColor;
-  border-bottom-color: currentColor;
-}
-
-/* Focus keeps the rules AND adds the outline. On the header the two states are
-   distinguishable because only one item is ever current; here every item is
-   identical at rest, so the outline is what separates "focused" from "hovered
-   by someone else's mouse". */
-a.site-footer__item:focus-visible {
-  outline: var(--border-width) solid currentColor;
-  outline-offset: var(--space-1);
+.site-footer__mark .icon {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-footer__item {
+  .site-footer__action,
+  .site-footer__chip {
     transition: none;
   }
 }
 
-/* ---- Narrow -------------------------------------------------------------- */
-/* The frame collapses first, exactly as it does on the header: at this width
-   the 120px gutter is most of the screen and the side rules stop reading as a
-   frame. Below it the two halves stack, because 50/50 leaves neither side
-   enough room for its own content. */
+/* ---- Tablet — no node, so the desktop composition is kept and compressed ---
+   The comp jumps straight from 1510 to 390. Between them the page margin and
+   its rules collapse (the same move every other band makes here), the column
+   stacks, and the mark leaves the flow to sit behind the text the way the
+   mobile node has it — rather than keeping a 421px column for an illustration
+   on a 700px screen. */
 @media (max-width: 900px) {
   .site-footer {
     padding-inline: 0;
@@ -202,21 +270,56 @@ a.site-footer__item:focus-visible {
     border-right: 0;
   }
   .site-footer__row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-9);
+    display: block;
+  }
+  /* No node between 1510 and 390, so the mark takes a size that reads at
+     tablet widths rather than the desktop's 422 on a 700px screen. */
+  .site-footer__mark {
+    --footer-mark-h: 240px;
+    --footer-mark-inset: var(--space-5);
+    position: absolute;
+    right: var(--footer-mark-inset);
+    bottom: 0;
+    margin-right: 0;
+  }
+}
+
+/* ---- Mobile — 568:39274 ---------------------------------------------------
+   One column at 334 wide inside 28px margins, 32 top and bottom. The vertical
+   rhythm compresses from the desktop's 80/80 to 48/48; the 8, 12 and 24 inside
+   the groups are unchanged, and so is the chips' 20px gap.
+ *
+ * READING DOWN THE NODE: heading 0-30, tagline 38-59, actions 83-159,
+ * "Find me on" 207-234, chips 246-270, copyright 318-334.
+ *
+ * THE MARK GOES BEHIND THE TEXT, which is the node: its instance sits earlier
+ * in the layer order than the socials, so "Find me on" and the chips paint over
+ * it. .site-footer__intro carries the z-index that guarantees that here. */
+@media (max-width: 480px) {
+  .site-footer__inner {
+    padding: var(--space-6) var(--footer-page-inset);
   }
   .site-footer__intro {
     gap: var(--space-8);
   }
-}
-
-@media (max-width: 600px) {
-  .site-footer__columns {
-    flex-wrap: wrap;
-    gap: var(--space-7) var(--space-5);
+  .site-footer__social {
+    gap: var(--space-3);
   }
-  .site-footer__column {
-    flex-basis: 40%;
+  .site-footer__chip .icon {
+    width: 24px;
+    height: 24px;
+  }
+  /* SET ON THE ELEMENT, not on .site-footer, and that is not a style choice:
+     the ≤900 rule above puts --footer-mark-h on this same element, and a
+     declaration on the element beats one inherited from an ancestor no matter
+     which media query it came from. Measured the wrong way round first — the
+     mark stayed 240 tall at 390 wide. */
+  .site-footer__mark {
+    --footer-mark-h: 186px;
+    --footer-mark-inset: 16px;
+    position: absolute;
+    top: var(--footer-mark-top);
+    right: var(--footer-mark-inset);
+    bottom: auto;
   }
 }

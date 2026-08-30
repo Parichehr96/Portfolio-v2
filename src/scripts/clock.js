@@ -37,8 +37,34 @@
     lead: root.querySelector("[data-clock-lead]"),
     head: root.querySelector("[data-clock-status]"),
     sub: root.querySelector("[data-clock-detail]"),
+    hour: root.querySelector("[data-clock-hour]"),
+    minute: root.querySelector("[data-clock-minute]"),
+    second: root.querySelector("[data-clock-second]"),
   };
   if (!els.time || !els.head || !els.sub) return;
+
+  /* THE HANDS' PIVOT, and it must match the hub in about.njk's SVG. The <line>s
+     are authored pointing at 12 and rotated about this point; the <circle> that
+     draws the hub sits on it too. Both are in the 118 x 80 viewBox from
+     543:1205, so this is a coordinate in that space, not in CSS pixels. */
+  var PIVOT = "52 30";
+
+  /* THE SECOND HAND IS CSS'S, AND THIS IS THE ONLY THING JS DOES FOR IT: hand it
+     a negative animation-delay equal to the seconds already elapsed, so the 60s
+     sweep starts part-way through instead of snapping to 12 on load. Set ONCE —
+     rewriting it on every render() would restart the animation each minute and
+     the hand would visibly jump.
+
+     Seconds are zone-independent (every IANA offset is a whole number of
+     minutes), so the visitor's own clock gives the same value Amsterdam would
+     and no conversion is needed here. */
+  if (els.second) {
+    var startedAt = new Date();
+    els.second.style.setProperty(
+      "--clock-second-offset",
+      "-" + (startedAt.getSeconds() + startedAt.getMilliseconds() / 1000) + "s"
+    );
+  }
 
   /* The light prefix is PER STATUS, not a fixed "I'm". Most phrases follow a
      bare "I'm" and carry no `pre` of their own; the eleven that need a
@@ -137,6 +163,18 @@
     var ams = amsHM(now);           // Amsterdam — drives the status text
 
     els.time.textContent = ams.str; // Amsterdam, same clock as the status
+
+    /* The analog hands, from the SAME Amsterdam reading — never a second Date,
+       or the face and the digits could disagree across a minute boundary. The
+       hour hand carries the minutes too (0.5 deg per minute), which is what
+       stops it sitting exactly on the hour mark at :59. */
+    if (els.hour) {
+      els.hour.setAttribute("transform",
+        "rotate(" + (((ams.h % 12) * 30) + ams.m * 0.5) + " " + PIVOT + ")");
+    }
+    if (els.minute) {
+      els.minute.setAttribute("transform", "rotate(" + (ams.m * 6) + " " + PIVOT + ")");
+    }
 
     // Active block by Amsterdam minutes → its pre-picked phrasing + state.
     var mins = ams.h * 60 + ams.m;

@@ -18,6 +18,9 @@
 @import "_section-header.css";
 @import "_project-card.css";
 @import "_panel.css";
+/* Before _nav.css and _footer.css, not alphabetical: both name .nav-item__stack
+   in their roll triggers and this is where that class is defined. */
+@import "_nav-item.css";
 @import "_nav.css";
 @import "_footer.css";
 @import "_hero.css";

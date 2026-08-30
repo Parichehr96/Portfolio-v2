@@ -53,7 +53,14 @@
   top: 0;
   bottom: 0;
   width: var(--border-width);
-  background-color: var(--border-strong);
+  /* SUBTLE, NOT STRONG. Every stroke in all three comps is rgba(0,0,0,0.12) —
+     checked on the facets grid (193:4690), the reflection band and its stats row
+     (193:5408 / 208:2908) and the persona key (214:9260). There is no 0.16 in
+     the design; these rules were the only visible thing still reading
+     --border-strong, and at 0.16 they sat a shade darker than every rule they
+     bracket. The three dashed placeholder borders keep --border-strong on
+     purpose: they are scaffolding and should not blend into real rules. */
+  background-color: var(--border-subtle);
   pointer-events: none;
 }
 .case-band::before { left: var(--space-11); }
@@ -146,38 +153,123 @@
 }
 
 /* ---- 1. Cover ------------------------------------------------------------ */
-.case-eyebrow {
+/* ---- Breadcrumb ---------------------------------------------------------- */
+/* ONE ROW WHERE THERE WERE TWO. 550:11647 (and its twins 553:55014 / 553:55050,
+   identical to the pixel) folds the old "Back to home" link and the eyebrow
+   lockup into a single 100-tall line:
+ *
+ *   [<]  Home  /  My Work  /  [(o)] ProjectName
+ *   32   60   108   122   189  203    243
+ *
+ * EVERY ONE OF THOSE x VALUES FALLS OUT OF THE BOX MODEL — none is written
+ * down. The row is padded 32 from the rules and every item is 8 apart, so the
+ * positions are just the running sum of the intrinsic text widths. That is why
+ * the type size is load-bearing here in a way it usually is not: at 16px
+ * "Home" and "My Work" are wider and every element after them shifts right.
+ * See the note on .case-crumbs__link.
+ *
+ * VERTICALLY IT IS ONE CENTRED LINE. The comp's four y values (40, 39.5, 34, 32)
+ * are each exactly (100 - own height) / 2, so a fixed height plus align-items
+ * reproduces all four without a single offset. */
+.case-crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100px;
+  padding-inline: var(--space-6);
+}
+
+/* THE LIST AND ITS ITEMS REPEAT THE SAME 8px GAP, and that is deliberate rather
+   than redundant: the separator belongs to the crumb before it (so the count is
+   always right — two links, two slashes, no trailing one), which means the run
+   of items is nested two levels deep and the gap has to be declared at both or
+   the rhythm breaks at the nesting seam. */
+.case-crumbs__list {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  padding-inline: var(--space-6);
+  padding: 0;
+  /* role="list" is on the element in the markup: Safari drops list semantics
+     from a list whose list-style is none, and this trail is one of the few
+     places where "2 of 3" is genuinely useful to hear. */
+  list-style: none;
 }
 
-/* Headline-medium, matching the 36px box the comp gives it — the mark beside it
-   is 32, so the lockup reads as one unit rather than as a label with an icon. */
-.case-eyebrow__label {
-  font-size: var(--m3-headline-md);
-  line-height: var(--m3-headline-md-leading);
-  letter-spacing: var(--m3-headline-md-tracking);
+.case-crumbs__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* THE CHEVRON IS ITS OWN LINK, and it does not go where the words go. "Home"
+   goes home; this goes back to the row the reader came from — see the note in
+   each _data/<slug>.js. It carries no text, so its accessible name is an
+   aria-label in the markup rather than anything visible here. */
+.case-crumbs__back {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 14/21 WITH 0.5 TRACKING — Figma's "Static/Body Large" on this node, whose
+   14px value arrives with batch A. Written out rather than as
+   var(--m3-body-lg) because that token is still 16px until A lands, and at 16
+   the whole row mismeasures (see the x-position note above). When A sets
+   --m3-body-lg: 14px on .case, these two lines collapse into the token; the
+   tracking already reads from it. */
+.case-crumbs__link,
+.case-crumbs__sep {
+  font-size: 14px;
+  line-height: var(--leading-body);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: var(--text-secondary);
+}
+
+.case-crumbs__link {
+  text-decoration: none;
+}
+.case-crumbs__link:hover,
+.case-crumbs__link:focus-visible {
   color: var(--text-primary);
+}
+
+/* The page's own name, in ink, at the step Figma names on it. Not a link —
+   aria-current="page" in the markup says the same thing to a screen reader that
+   the colour change says to everyone else. */
+.case-crumbs__current {
+  font-size: var(--m3-headline-sm);
+  line-height: var(--m3-headline-sm-leading);
+  letter-spacing: var(--m3-headline-sm-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--fig-ink);
 }
 
 /* Headline left, intro right, equal halves, vertically centred. The 60px here
    is the row's own — it sits inside the band's 60, which is what the comp
    draws and why there is more air above this row than beside it. */
+/* TOP-ALIGNED, NOT CENTRED. 553:55023 is `flex items-start p-[32px]` with two
+   equal children and no gap: on a 1270 frame that is 32 + 603 + 603 + 32, so the
+   columns are adjacent and the gutter you see is the headline's own ragged
+   right. Centring was pushing a short headline halfway down a tall paragraph;
+   the comp hangs both from the same top edge. */
 .case-cover__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-7);
-  align-items: center;
-  padding: var(--case-band-pad) var(--space-6);
+  gap: 0;
+  align-items: start;
+  padding: var(--space-6);
 }
 
+/* 32/48, NOT THE 36/44 THE TOKEN CARRIES. All three covers set their headline in
+   a 603 x 96 box over two lines — 48 to a line, so 32 at the same 150% the rest
+   of these pages run on. Written out here rather than by moving
+   --m3-display-sm, because that step is a global and this is the only element on
+   the site that wanted it changed. Tracking still reads from the token; only the
+   size and the leading are the case pages' own. */
 .case-cover__headline {
   margin: 0;
-  font-size: var(--m3-display-sm);
-  line-height: var(--m3-display-sm-leading);
+  font-size: 32px;
+  line-height: 48px;
   letter-spacing: var(--m3-display-sm-tracking);
   font-weight: var(--weight-regular);
   color: var(--text-primary);
@@ -200,11 +292,18 @@
   grid-template-columns: 1fr 1fr;
 }
 
+/* 32 ON ALL FOUR SIDES and 8 between label and body — 193:4694 and its three
+   siblings are `p-[32px] gap-[8px]` to the pixel, and the same is true of
+   Challenquiz's (281:64396) and Connect2WOW's (296:11486). The 60 that used to
+   sit top and bottom was the band's rhythm applied to a cell that never asked
+   for it. Content starts top-left: a flex column with no justify-content puts it
+   at the top, and stretch plus the default text-align keeps it flush left —
+   which is what the comp's items-start + w-full children come out as. */
 .case-facet {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--case-band-pad) var(--space-6);
+  gap: var(--space-2);
+  padding: var(--space-6);
 }
 .case-facet:nth-child(odd) {
   border-right: var(--border-width) solid var(--border-subtle);
@@ -313,9 +412,20 @@
    artefact of hand-positioned frames that a real table cannot reproduce and
    should not: a column header belongs over its own column. The label sits with
    its data here, which is the 25px difference against the comp. */
-.case-table--why thead th:nth-child(1) { width: 46.43%; }
-.case-table--why thead th:nth-child(2) { width: 50%; }
-.case-table--why thead th:nth-child(3) { width: 3.57%; }
+/* THE DOT COLUMN MOVED TO THE MIDDLE and grew. 557:11539 lays the 905 out as
+   396.5 / 16 / 80 / 16 / 396.5 — two equal text columns with the persona
+   between them. The widths below carry their own 16px gutter (396.5+16=412.5 ->
+   45.58%, 80+16=96 -> 10.61%, 396.5 -> 43.81%, summing to 100) and the
+   padding-right underneath gives that gutter back as real space, because
+   .case-table sets no horizontal cell padding at all. Net content widths land
+   at 396.5 / 80 / 396.5. */
+.case-table--why thead th:nth-child(1) { width: 45.58%; }
+.case-table--why thead th:nth-child(2) { width: 10.61%; }
+.case-table--why thead th:nth-child(3) { width: 43.81%; }
+.case-table--why tr > *:nth-child(1),
+.case-table--why tr > *:nth-child(2) {
+  padding-right: var(--space-4);
+}
 
 /* This table inverts the competitor one's emphasis — the comp sets its headers
    in ink and its rows secondary, where the competitor table does the reverse. */
@@ -323,8 +433,11 @@
 .case-table--why tbody th,
 .case-table--why tbody td { color: var(--text-secondary); }
 
+/* 557:11541 puts the 16px dot at x=32.5 of an 80-wide cell — centred, where the
+   old 3.57% column left it hard against the left edge with nowhere else to go. */
 .case-table__persona {
   white-space: nowrap;
+  text-align: center;
 }
 
 /* ---- Persona dots -------------------------------------------------------- */
@@ -344,33 +457,72 @@
   height: 16px;
   border-radius: 50%;
 }
-.case-dot--dao-steward        { background-color: var(--fig-accent-purple); }
-.case-dot--trading-group-admin { background-color: var(--fig-accent-orange); }
-.case-dot--campaign-manager   { background-color: var(--fig-accent-red); }
-.case-dot--first-timer        { background-color: var(--fig-accent-blue); }
-.case-dot--power-user         { background-color: var(--fig-accent-green); }
+/* ONTON's five. Campaign Manager is BLUE by instruction — 214:9260 has it red
+   and First-Timer blue, so the two are swapped against the node; noted in the
+   build report rather than silently reconciled either way.
+
+   BOTH PAGES HAVE A `first-timer`, WHICH IS WHY THESE ARE PAGE-SCOPED NOW. They
+   were not, and Challenquiz's block sat later in the file, so its
+   .case-dot--first-timer won everywhere — including ONTON, where the persona
+   rendered red instead of its own colour and the key showed two red dots and no
+   blue at all. One slug cannot carry two colours; the page has to say which. */
+[data-page="onton"] .case-dot--dao-steward         { background-color: var(--fig-accent-purple); }
+[data-page="onton"] .case-dot--trading-group-admin { background-color: var(--fig-accent-orange); }
+[data-page="onton"] .case-dot--campaign-manager    { background-color: var(--fig-accent-blue); }
+[data-page="onton"] .case-dot--first-timer         { background-color: var(--fig-accent-red); }
+[data-page="onton"] .case-dot--power-user          { background-color: var(--fig-accent-green); }
 
 /* Challenquiz — a different cast on the same five accents. Two pages, one
    palette; no new colour was needed for either. */
-.case-dot--crypto-native-competitor { background-color: var(--fig-accent-purple); }
-.case-dot--casual-trivia-fan        { background-color: var(--fig-accent-orange); }
-.case-dot--first-timer              { background-color: var(--fig-accent-red); }
-.case-dot--competitive-quizzer      { background-color: var(--fig-accent-blue); }
-.case-dot--skeptic                  { background-color: var(--fig-accent-green); }
+[data-page="challenquiz"] .case-dot--crypto-native-competitor { background-color: var(--fig-accent-purple); }
+[data-page="challenquiz"] .case-dot--casual-trivia-fan        { background-color: var(--fig-accent-orange); }
+[data-page="challenquiz"] .case-dot--first-timer              { background-color: var(--fig-accent-red); }
+[data-page="challenquiz"] .case-dot--competitive-quizzer      { background-color: var(--fig-accent-blue); }
+[data-page="challenquiz"] .case-dot--skeptic                  { background-color: var(--fig-accent-green); }
 
 /* ---- Persona key --------------------------------------------------------- */
+/* TABLE AND KEY SIDE BY SIDE, sharing one padded panel — 208:2923 / 576:59170.
+   They used to stack, with the table in its own tinted .case-panel and the key
+   below it on the white page. The comp puts both inside a single 1270 Banner
+   that pads 32, splitting the 1206 that leaves into 905 for the table and 301
+   for the key. That is why .case-panel moved OUT to wrap this row in the two
+   band files rather than staying around the table: the 32 is the shared
+   container's, and with it in the old place the two halves could not add up to
+   the comp's widths no matter how the percentages were written.
+
+   NO GAP, AND THAT IS THE COMP: 905 + 301 = 1206 exactly. The separation the
+   eye reads is the key's own 40px inset, declared on .case-personas below. */
 .case-why {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  gap: 0;
 }
 
+/* 75.12 / 24.88 of the panel's 1206 content box = 906 / 300 against the comp's
+   905 / 301. min-width:0 because a flex item defaults to min-content, and a
+   table full of long strings would otherwise refuse to shrink to its share and
+   push the key off the end. */
+.case-why__table {
+  flex: 0 0 75.12%;
+  min-width: 0;
+}
+
+/* THE DIVIDER LIVES HERE. 214:9260 carries `border-l` in the same
+   rgba(0,0,0,0.12) as every other stroke on these pages — it is the boundary
+   between the 905 table and the 301 key, and the column-to-row relayout dropped
+   it because the old stacked version had nothing to divide. Its own box is
+   `pl-[40px] py-[32px] gap-[16px]`, all from the same node. */
 .case-personas {
-  padding-inline: var(--space-6);
+  flex: 0 0 24.88%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6) 0 var(--space-6) var(--space-7);
+  border-left: var(--border-width) solid var(--border-subtle);
 }
 
 .case-personas__heading {
-  margin: 0 0 var(--space-3);
+  /* The 16px below this is .case-personas' gap now, not a margin here. */
+  margin: 0;
   font-size: var(--m3-title-lg);
   line-height: var(--m3-title-lg-leading);
   letter-spacing: var(--m3-title-lg-tracking);
@@ -434,6 +586,7 @@
     transition: opacity 0.18s ease;
   }
 
+  /* ONTON's five. */
   .case-why:has(tbody tr[data-persona="dao-steward"]:hover)
     [data-persona]:not([data-persona="dao-steward"]),
   .case-why:has(tbody tr[data-persona="trading-group-admin"]:hover)
@@ -443,7 +596,20 @@
   .case-why:has(tbody tr[data-persona="first-timer"]:hover)
     [data-persona]:not([data-persona="first-timer"]),
   .case-why:has(tbody tr[data-persona="power-user"]:hover)
-    [data-persona]:not([data-persona="power-user"]) {
+    [data-persona]:not([data-persona="power-user"]),
+  /* CHALLENQUIZ'S FOUR THAT ONTON DOES NOT SHARE. Without them the page had a
+     table that looked interactive and was not: only `first-timer` overlapped
+     the list above, so one row in six responded and the other five did nothing.
+     first-timer is not repeated here — the rule above already covers it, and a
+     duplicate selector would be a second place to forget. */
+  .case-why:has(tbody tr[data-persona="crypto-native-competitor"]:hover)
+    [data-persona]:not([data-persona="crypto-native-competitor"]),
+  .case-why:has(tbody tr[data-persona="casual-trivia-fan"]:hover)
+    [data-persona]:not([data-persona="casual-trivia-fan"]),
+  .case-why:has(tbody tr[data-persona="competitive-quizzer"]:hover)
+    [data-persona]:not([data-persona="competitive-quizzer"]),
+  .case-why:has(tbody tr[data-persona="skeptic"]:hover)
+    [data-persona]:not([data-persona="skeptic"]) {
     opacity: 0.5;
   }
 
@@ -543,7 +709,11 @@
    margin reproduces the rhythm without putting empty elements in the document
    for a screen reader to walk through. */
 .case-problem__half {
-  margin: var(--m3-body-lg-leading) 0 0;
+  /* PINNED. This reads a leading as a LENGTH, so it would have followed
+     --m3-body-lg-leading from 24 down to 21 when the .case scale landed (see the
+     note in tokens.css). 24 is the space this note wanted; spelling it space-5
+     stops it drifting with the type again. */
+  margin: var(--space-5) 0 0;
   font-weight: var(--weight-bold);
 }
 
@@ -698,6 +868,26 @@
   aspect-ratio: var(--media-w) / var(--media-h);
 }
 
+/* THE COVER'S RATIO HAS TO WIN OVER ITS CLIP, and until now it did not. The
+   figure is a flex item in .case-band__inner's COLUMN, so its main size is its
+   max-content height — which for a replaced child at width:100% is that child's
+   own scaled height. aspect-ratio only offers a preferred size, and max-content
+   beat it, so the cover band has always been as tall as whatever clip happened
+   to be in it rather than as tall as 1270/661 says. Two clips that already
+   matched the ratio hid it; ONTON's 1.58 re-export is what made it visible.
+
+   Taking the asset out of flow drops the max-content contribution to zero and
+   leaves the ratio as the only thing sizing the box. Scoped to the cover on
+   purpose: .case-showcase__media and .case-split__media--tall deliberately size
+   their media from the clip and set explicit heights to do it. */
+.case-band--cover .case-media {
+  position: relative;
+}
+.case-band--cover .case-media__asset {
+  position: absolute;
+  inset: 0;
+}
+
 .case-media__asset {
   display: block;
   width: 100%;
@@ -736,7 +926,7 @@
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--m3-body-sm);
-  line-height: var(--m3-body-sm-leading);
+  line-height: var(--leading-body);
   color: var(--text-secondary);
   word-break: break-all;
 }
@@ -744,7 +934,7 @@
 .case-media__dims {
   margin: 0;
   font-size: var(--m3-body-sm);
-  line-height: var(--m3-body-sm-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-sm-tracking);
   color: var(--text-muted);
 }
@@ -804,34 +994,26 @@
   padding-inline: var(--space-6);
 }
 
-/* NO GAP, AND THAT IS THE COMP: the chevron's 24 box ends at 56 and the words
-   start at 56. A Material Symbols glyph carries its own padding inside that
-   box, so the space between them is the icon's, not the layout's — adding 8
-   here would double it. It reads tight only while the icon is a placeholder
-   square, which has no padding of its own to give. */
-.case-back__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  font-size: var(--m3-body-md);
-  line-height: var(--m3-body-md-leading);
-  letter-spacing: var(--m3-body-md-tracking);
-  color: var(--text-secondary);
-  text-decoration: none;
-}
-.case-back__link:hover,
-.case-back__link:focus-visible {
-  color: var(--text-primary);
-}
+/* .case-back__link IS GONE — the breadcrumb replaced it on all three v2 pages
+   (see .case-crumbs above). `.case-back` itself stays: layouts/case-study.njk
+   still puts that class on ezam's "← All projects" link, and this rule is what
+   keeps it out of a line box there. Removing it would be a silent regression on
+   a page this batch never touched. */
 
-/* ---- A cover that opens with a back link --------------------------------- */
-/* THE BACK LINK CHANGES THE BAND'S RHYTHM, so it is a modifier rather than
-   something bolted onto .case-band--cover. A cover that opens with one is 32
-   from the top and 32 from the bottom rather than the standard 60 — a 24px link
-   needs less air above it than a 36px lockup does. All three comps draw it that
-   way; ONTON simply had not been given the row yet. */
-.case-band--has-back .case-band__inner {
-  padding-block: var(--space-6);
+/* ---- The cover band ------------------------------------------------------ */
+/* THE BAND ADDS NOTHING; ITS THREE CHILDREN CARRY EVERYTHING. The comp stacks
+   them edge to edge — breadcrumb 0..100, thumbnail 100..761, title row 761..930
+   — so any padding or gap here would open a seam the design does not draw. The
+   breadcrumb's own 100px height IS the top air, which is exactly why it can be
+   a fixed height rather than padding: it has to be measurable as one row.
+ *
+ * This replaces .case-band--has-back, which paid for the old two-row opening
+ * (back link + eyebrow) with 32px of band padding. There is one row now and it
+ * pads itself, so the modifier had nothing left to do and the markup no longer
+ * carries it. */
+.case-band--cover .case-band__inner {
+  padding-block: 0;
+  gap: 0;
 }
 
 /* ---- A band whose own blocks carry the padding --------------------------- */
@@ -855,11 +1037,22 @@
    is live or the slot is still waiting for a share link. */
 /* THE SLOT IS THE FIXED OUTER BOX and it clips. Its size is the comp's; what
    goes inside is scaled to fit rather than the other way round. */
+/* THE BOX HUGS ITS DOCUMENT, and scripts/case-embed.js is what makes it. The
+   height here is only the pre-JS reservation: min-height keeps the band roughly
+   its final size before the measure pass runs, so the page does not jump, and
+   the script then writes an exact height. aspect-ratio is gone — it imposed the
+   comp's ratio on a document whose real ratio nobody had checked, which is how
+   alert-routing lost 11px off the bottom and the other two ended up scaled to
+   98% and 86% of themselves.
+
+   overflow:hidden stays. It is no longer doing any clipping once the script has
+   run — the scale is derived from this box's own width — but it is the guard if
+   the script never loads. */
 .case-embed {
   position: relative;
   width: 100%;
   max-width: calc(var(--embed-w) * 1px);
-  aspect-ratio: var(--embed-w) / var(--embed-h);
+  min-height: calc(var(--embed-h) * 1px);
   overflow: hidden;
 }
 
@@ -876,8 +1069,20 @@
    An embed whose natural size equals its slot lands on scale 1 and a zero
    translate — a no-op, which is what keeps this from touching the pages that
    were already fitting. */
+/* SCALE COMES FROM MEASUREMENT NOW. --fit-scale is written by case-embed.js
+   from this box's REAL width divided by the document's REAL width. The old
+   version computed it from --embed-w, a constant, while the box itself is
+   width:100% — so between about 1000 and 1280px of viewport the slot shrank to
+   530/438/387 and the iframe went on painting at its full width, losing 100-250px
+   off the right edge to the overflow above. That was the Component column
+   vanishing, and no amount of re-measuring --nat-w would have fixed it.
+
+   --fit-scale falls back to the old constant-derived ratio so the pre-JS render
+   is still contained rather than overflowing. No translate: the frame is pinned
+   top-left and the box is sized to the scaled document, so there is no slack
+   left over to centre. */
 .case-embed__frame {
-  --scale: min(
+  --fit-scale: min(
     calc(var(--embed-w) / var(--nat-w)),
     calc(var(--embed-h) / var(--nat-h))
   );
@@ -889,12 +1094,7 @@
   height: calc(var(--nat-h) * 1px);
   border: 0;
   transform-origin: top left;
-  transform:
-    translate(
-      calc((var(--embed-w) - var(--nat-w) * var(--scale)) * 0.5px),
-      calc((var(--embed-h) - var(--nat-h) * var(--scale)) * 0.5px)
-    )
-    scale(var(--scale));
+  transform: scale(var(--fit-scale));
 }
 
 /* Only shown when the document is missing. */
@@ -916,7 +1116,7 @@
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--m3-body-sm);
-  line-height: var(--m3-body-sm-leading);
+  line-height: var(--leading-body);
   color: var(--text-secondary);
   word-break: break-all;
 }
@@ -944,7 +1144,7 @@
   color: #975a16;
   font-family: var(--font-mono);
   font-size: var(--m3-body-sm);
-  line-height: var(--m3-body-sm-leading);
+  line-height: var(--leading-body);
 }
 
 /* ---- Stats with a delta chip --------------------------------------------- */
@@ -980,7 +1180,7 @@
   border-radius: 999px;
   background-color: transparent;
   font-size: var(--m3-body-sm);
-  line-height: var(--m3-body-sm-leading);
+  line-height: var(--leading-body);
   letter-spacing: var(--m3-body-sm-tracking);
   font-weight: var(--weight-regular);
   color: var(--fig-ink);
@@ -1085,6 +1285,30 @@
     min-width: 720px;
   }
 
+  /* THE ROW STACKS BACK at tablet. 905 + 301 needs 1206 to be honest; below
+     that the key would be squeezed to a column two words wide while the table
+     is already scrolling horizontally inside the panel. Stacked, each gets the
+     full width and the panel scrolls for the table alone, which is what this
+     tier did before the two halves were put side by side. */
+  .case-why {
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .case-why__table,
+  .case-why .case-personas {
+    flex: none;
+  }
+  /* The panel supplies the inset here, so the key's own 40 would double it.
+     Beats the shared .case-personas rule further up this block on specificity,
+     not on order. */
+  .case-why .case-personas {
+    padding-inline: 0;
+    /* Stacked, the key sits UNDER the table rather than beside it, so a left
+       border would be a stray vertical line down the page instead of a
+       boundary. The comp only draws it where the two halves are side by side. */
+    border-left: 0;
+  }
+
   .case-split--text-first,
   .case-split--wide-text {
     --split-cols: 1fr;
@@ -1096,9 +1320,9 @@
     max-width: 620px;
     height: auto;
   }
-  .case-band--has-back .case-band__inner {
-    padding-block: var(--space-9);
-  }
+  /* .case-band--has-back is gone with the two-row cover it paid for; the
+     breadcrumb's own 100px row is the cover's top air at every width now, so
+     there is nothing left for the tablet tier to re-pad. See .case-crumbs. */
   .case-band__inner--tight > .case-headrow,
   .case-band__inner--tight > .case-insight {
     padding-block: var(--space-9) var(--space-6);

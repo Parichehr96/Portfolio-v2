@@ -11,12 +11,19 @@
  * properties, which keeps the numbers next to the Figma node ids they came from
  * instead of scattered through this file.
  *
- * CARD INTERIORS use container-query units exactly once — --hero-card-base is
- * the card's body size against the board — and everything else inside a card is
- * a clean em multiple of it (2em padding, 1.25em gap/radius, 1.375em title).
- * That is why there is only one magic number here rather than a dozen.
+ * CARD INTERIORS are pinned to the design's own card (434:11718): 16px padding
+ * on four sides, 4px between title and body, 16px title, 13px body. Each is a
+ * cqw token in tokens.css derived from the board's width, so those are the exact
+ * rendered pixels at the design's 1272 and the proportion holds at any other
+ * width. They used to be em multiples of a single --hero-card-base; the design
+ * sets title and body independently, which one base cannot express.
  */
 
+/* ---- The hold -------------------------------------------------------------
+   THE RUNWAY IS MEASURED IN SCREENS, not pixels: the beat should feel the same
+   on a laptop and a large display. It lives on .hero__runway, the empty block
+   after the board — see the note on .hero__board below for why the pin sits on
+   the canvas rather than the section. */
 .hero {
   /* Not a viewport-height section any more: the board's aspect-ratio and the
      intro's padding fully determine the height, exactly as in Figma. */
@@ -62,10 +69,141 @@
 /* ---- Intro band ---------------------------------------------------------- */
 /* 120px above and below puts the board's top edge at y=428, which is where
    Figma places it. The gap is the padding, not a margin on the tagline. */
+/* TWO NUMBERS, NOT ONE, AND NEITHER IS --space-11. This used to be a single
+   `padding: var(--space-11)`, which made the 120px bottom padding double as the
+   gap down to the board — one value doing two jobs, adjustable only together.
+   The comp puts 80 on the intro and 80 between it and the canvas; they are
+   independent now, and the board owns its own half (see --hero-intro-gap).
+   --space-11 is untouched: 21 rules across nav, work, about, statement, case
+   studies and the footer read it, and none of them wanted 80. */
 .hero__intro {
-  padding: var(--space-11);
+  padding: var(--hero-intro-pad) var(--hero-intro-pad) 0;
   text-align: center;
 }
+
+/* ---- First-paint entrance -------------------------------------------------
+   THE TWO CHILDREN ANIMATE; THE SECTION NEVER DOES, and that is a structural
+   rule rather than a stylistic one. .hero is going to become position:sticky in
+   the scroll work, and a transform on a sticky element — or on any ancestor of
+   one — makes it the containing block and the sticky stops sticking. Putting the
+   entrance on .hero__intro and .hero__board keeps .hero transform-free for good.
+   Nothing here may ever move up to the section.
+
+   IT LEAVES NOTHING BEHIND. fill-mode is `backwards`, not `forwards`: the
+   from-state covers the board's 160ms delay so neither child flashes in at full
+   opacity first, and once the animation is over it stops applying entirely — the
+   elements fall back to their own rules, where no transform exists at all. That
+   matters more here than tidiness: draggable.js reads a live
+   getBoundingClientRect at pointerdown, so a residual translate of even a pixel
+   would offset every card the folder hands it. `forwards` would have left an
+   identity matrix parked on the board forever; `backwards` leaves nothing.
+
+   THE BOARD SCALES AND THE TEXT DOES NOT. A 0.98 on a large graphic reads as
+   depth; the same 0.98 on type is 640ms of softened glyphs for no gain. The
+   board can afford it for a second reason too — container-type:inline-size
+   measures the LAYOUT inline size, not the transformed one, so the cqw units the
+   card interiors are built on do not move while it scales. Nothing reflows. */
+/* THE BOUNCE IS IN TWO PLACES AT ONCE, and they do different jobs. The curve
+   (--ease-out-back) springs every segment it governs; the 82% keyframe is an
+   explicit overshoot the curve then has to come back from. Curve alone is a
+   soft-edged spring; keyframe alone is a mechanical there-and-back. Together the
+   value sails past its mark and is caught.
+
+   THE LAST SEGMENT DOES NOT BOUNCE. Each keyframe's own
+   animation-timing-function governs the segment STARTING at it, so 82% -> 100%
+   is overridden to a plain --ease-out. Left on the back curve that final leg
+   would overshoot a second time — a wobble rather than a catch, and it would
+   also mean the very last thing the eye sees is a correction.
+
+   100% IS THE IDENTITY, WHICH IS THE RESTING STATE SPELLED OUT. translateY(0)
+   scale(1) computes to the same matrix that `transform: none` paints, so the
+   instant the animation stops applying (fill: backwards) nothing moves. That is
+   the whole reason the final frame is written explicitly instead of leaning on
+   an implicit to-keyframe: it has to be legible that the end of the motion and
+   the resting state are the same place. */
+@keyframes hero-enter-text {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  55% {
+    opacity: 1;
+  }
+  /* Past the mark, then caught. No scale on type: 780ms of resampled glyphs buys
+     nothing, and the rise alone carries the same energy at this size. */
+  82% {
+    transform: translateY(-7px);
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-enter-board {
+  0% {
+    opacity: 0;
+    transform: translateY(32px) scale(0.9);
+  }
+  55% {
+    opacity: 1;
+  }
+  /* 1.03 at the top of the arc. The board has 120px of margin either side at
+     desktop and 17 at mobile, so 3% over its 1272 box (or 356) stays well inside
+     both — the overshoot cannot introduce a horizontal scrollbar. */
+  82% {
+    transform: translateY(-8px) scale(1.03);
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* FOUR THINGS ARRIVE IN ORDER, 300ms apart: "I'm Pari.", "Product Designer",
+   the tagline, then the canvas. The markup already separated them — the h1 holds
+   two .hero__line spans and the tagline is its own <p> — so this is four delays
+   on the same two keyframes, not a restructure. Nothing about the heading, the
+   drawn "Designer" or the layout moves.
+
+   THE DELAYS ARE MULTIPLES OF ONE STEP so the cascade cannot drift apart: change
+   --hero-enter-step and all four restage together. The board is deliberately
+   last and a full step behind the tagline — the text says who and what, then the
+   work appears. */
+.hero__line,
+.hero__tagline {
+  animation: hero-enter-text var(--hero-enter) var(--ease-out-back) backwards;
+}
+
+.hero__line:nth-child(2) {
+  animation-delay: var(--hero-enter-step);
+}
+
+.hero__tagline {
+  animation-delay: calc(var(--hero-enter-step) * 2);
+}
+
+.hero__board {
+  animation: hero-enter-board var(--hero-enter) var(--ease-out-back)
+    calc(var(--hero-enter-step) * 3) backwards;
+}
+
+/* NO ENTRANCE AT ALL, not a fast one. base.css collapses every animation to
+   0.01ms site-wide, which is nearly right — but it does not touch
+   animation-delay, so the board would still spend its 160ms stagger sitting at
+   opacity 0 and then appear. A hidden beat is exactly the flash the preference
+   is asking us to avoid, so both are switched off by name and the elements paint
+   in their final state on the first frame. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__line,
+  .hero__tagline,
+  .hero__board {
+    animation: none;
+  }
+}
+
 
 .hero__title {
   display: flex;
@@ -96,20 +234,62 @@
   font-weight: var(--weight-bold);
 }
 
-/* "Designer". This was Ribeye Marrow — an inherently outlined face, with the
-   hollow letterforms drawn into the glyphs — until that face was retired; it
-   is Figtree now, like everything else outside the hero canvas.
+/* "DESIGNER" IS A DRAWING NOW — 184:13342, exported at the comp's own size and
+   inlined by the `inlineSvg` filter so it inherits this heading's colour.
+   It has been three things: Ribeye Marrow, then plain Figtree when that face was
+   retired, and now the handwritten artwork the comp actually draws.
  *
- * THE REGULAR WEIGHT IS DELIBERATE, and it is now the only thing setting this
- * word apart from the bold "Product" beside it. Don't "fix" it to bold to
- * match its sibling: the light/bold pairing is what carries the emphasis that
- * the outline face used to carry. (The class name keeps the -outline suffix
- * only because hero.njk and hero.js share it — nothing here is stroked. An
- * early -webkit-text-stroke fitted to the Figma comp was removed on purpose
- * back when this was Ribeye, and should not come back now either.) */
+ * THE BOX IS THE LINE BOX, and that is what makes it sit level with "Product".
+ * .hero__line is a flex row with align-items:center, so the two words are
+ * centred against each other rather than sharing a text baseline — exactly what
+ * Figma does, where "Product" (208 x 64) and "Designer" (258 x 64) are two nodes
+ * of the same height at the same y. Giving this span that same 64px height
+ * reproduces the pairing; sizing it to the ink instead would centre a 59-tall
+ * drawing against a 64-tall line and ride high.
+ *
+ * EVERYTHING IS IN em OFF THE DISPLAY STEP, never px, so the word scales with
+ * the heading if --m3-display-lg ever moves. */
 .hero__role-outline {
-  font-family: var(--font-sans);
-  font-weight: var(--weight-regular);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* The comp's own line box: "Product" and "Designer" are both 64 tall at the
+     same y in 184:13340. */
+  height: var(--m3-display-lg-leading);
+}
+
+.hero__role-art {
+  display: block;
+  /* The ink box, 259 x 59 in the export. Height drives it and the SVG's own
+     aspect ratio supplies the width, so there is one number to change. */
+  height: calc(59em / 57);
+  /* THE OPTICAL NUDGE. Centring the 59-tall ink inside the 64-tall line box gets
+     close but not level: the drawing carries a "g" descender and no matching
+     ascender slack, so its visual baseline sits below the type's. This lifts it
+     back. Solved by measuring both baselines in the rendered page, not guessed —
+     see the note in the commit. */
+  transform: translateY(var(--designer-nudge));
+}
+
+.hero__role-art svg {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* The real word, kept for the accessible name and for indexing. Same clip
+   pattern as .hero-folder__label — out of flow, so it cannot affect the flex
+   row's sizing. */
+.hero__role-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .hero__tagline {
@@ -122,13 +302,56 @@
 }
 
 /* ---- Board --------------------------------------------------------------- */
+/* ---- The canvas rises, then holds ----------------------------------------
+   THE PIN IS ON THE CANVAS, NOT THE SECTION, and that is the whole difference
+   between a hold you notice and one you cannot. Pinning .hero put it at its
+   sticky offset from scroll 0 — a held hero and an untouched hero looked
+   identical, because nothing else was on screen to move against it.
+
+   The board starts 348 below the hero's top, so it has that much room to travel
+   before it meets the header. Measured at 1440x780: it climbs 437 -> 88 over the
+   first 400px of scroll, holds at 88 for the runway, then releases and the
+   statement comes up. Motion first, then the pause — which is what makes the
+   pause read as deliberate rather than as nothing happening.
+
+   SAFE FOR BOTH THINGS THAT TOUCH THIS ELEMENT, verified before committing:
+   the entrance animation still lands at transform:none (a transform on a sticky
+   box offsets it visually but does not break its own stickiness), and the folder
+   drag is better off than before — draggable.js reads getBoundingClientRect live
+   at pointerdown, and across the hold that rect measured 120,88,1200,710 at
+   every sample. A held board is a still board. */
 .hero__board {
-  position: relative;
+  position: sticky;
+  top: var(--header-height);
+  /* The gap to the intro, owned here rather than by the intro's bottom padding —
+     see the note on .hero__intro. */
+  margin-top: var(--hero-intro-gap);
   margin-inline: var(--space-11);
   aspect-ratio: var(--hero-board-w) / var(--hero-board-h);
   background-color: var(--surface-raised);
   container-type: inline-size;
   overflow: hidden;
+}
+
+/* Pure scroll distance: what the board is sticky FOR. See the note in hero.njk
+   for why this is an element rather than .hero::after. */
+.hero__runway {
+  height: var(--hero-hold);
+}
+
+/* THE HOLD STANDS DOWN on the same two conditions the card-stack does, and for
+   the same reasons: a section that parks itself under the header while the page
+   keeps moving is scroll-coupled motion, which reduced-motion is asking us not
+   to do; and below 900 the hero is nearly a screen tall already, so holding it
+   would be holding the entire viewport. Dropping the padding as well as the
+   sticky matters — a runway with nothing pinned to it is just dead space. */
+@media (prefers-reduced-motion: reduce), (max-width: 900px) {
+  .hero__board {
+    position: static;
+  }
+  .hero__runway {
+    height: 0;
+  }
 }
 
 /* ---- Live cursor --------------------------------------------------------- */
@@ -256,9 +479,18 @@
 .hero-folder {
   position: absolute;
   /* Not 50/50: the 864-square glyph box sits fractionally off centre on the
-     897-tall board (457:58676). */
+     753-tall board (457:58676).
+   *
+   * TOP IS ANCHORED ON THE CARDS, NOT ON THE FOLDER ART, and that is the whole
+   * trick to this revision. Figma scaled folder-back and folder-front to 0.8 and
+   * left the Cards frame alone — it is 597.5866 x 302.0045 in the node, the same
+   * numbers it had before — so the cards are the one thing in here whose size did
+   * not move and the only safe thing to solve the box against. Cards sit at
+   * y=195.24 on the new board; the box's own top is that minus 28.8009% of 864,
+   * which puts its centre at 50.2524%. Solving against the art instead would have
+   * been solving against something that just changed size. */
   left: 49.8899%;
-  top: 50.2118%;
+  top: 50.2524%;
   width: var(--hero-folder-width);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
@@ -276,22 +508,31 @@
 
 /* Figma gives these as insets; converted to left/top/width/height because an
    absolutely-positioned <img> with all four insets set and auto width is
-   over-constrained and falls back to its intrinsic size. */
+   over-constrained and falls back to its intrinsic size.
+ *
+ * THE ART IS AT 0.8; THE CARDS ARE NOT. In 457:58676 folder-back is 483.84 x
+ * 384.84 against the 604.80 x 481.08 it used to be, and folder-front is 548.54 x
+ * 241.92 against 685.68 x 302.40 — both exactly 0.8, to the fourth decimal. The
+ * Cards frame in the same node is unchanged. So this is NOT a scale on
+ * .hero-folder: shrinking that box would have taken the cards with it and made
+ * them 0.8 too, which the comp does not do. The two art layers carry the scale
+ * themselves, in their own percentages, and everything else in the folder holds
+ * still. */
 .hero-folder__back {
-  left: 10%;
-  top: 21.25%;
-  width: 70%;
-  height: 55.68%;
+  left: 18.0410%;
+  top: 26.9500%;
+  width: 56%;    /* 70    x 0.8 */
+  height: 44.542%; /* 55.68 x 0.8 */
 }
 
 /* The flap is a <button> (see hero.njk). Stripped to a bare box so it still
    paints as pure artwork, with the geometry unchanged from when it was an
    <img>. */
 .hero-folder__front {
-  left: 11.05%;
-  top: 43.25%;
-  width: 79.36%;
-  height: 35%;
+  left: 18.8794%;
+  top: 44.55%;
+  width: 63.4889%; /* 79.36 x 0.8 */
+  height: 28%;     /* 35    x 0.8 */
   padding: 0;
   border: 0;
   background: none;
@@ -331,7 +572,10 @@
   border-radius: var(--radius-pill-sm);
   background-color: var(--white);
   color: var(--fig-ink);
-  font-size: var(--m3-title-lg);
+  /* 14px at the design board — see --hero-expertise-size. SIZE ONLY: line-height,
+     letter-spacing, padding, border and position are all as they were, so the
+     capsule keeps its height and its centre and simply narrows to its text. */
+  font-size: var(--hero-expertise-size);
   line-height: var(--m3-title-lg-leading);
   letter-spacing: var(--m3-title-lg-tracking);
   font-weight: var(--weight-semibold);
@@ -351,13 +595,50 @@
   border: 0;
 }
 
-/* Re-solved against 457:58676 as a percentage of the 864 glyph box. */
+/* Re-solved against 457:58676 as a percentage of the 864 glyph box, THEN SCALED
+   TO 0.8 ABOUT THIS FRAME'S OWN CENTRE — and that scale is a deliberate
+   departure from the comp, so it needs saying plainly.
+ *
+ * 457:58676 scales folder-back and folder-front to 0.8 and leaves this frame at
+ * full size. Reproduced exactly, that puts card 3's right edge at 984.65 against
+ * a flap ending at 914.26 — a 70px spill, which the node really does draw and
+ * which read as a bug once the art shrank around it. Scaling the frame by the
+ * same 0.8 the art took lands that edge at 914.96, flush with the flap, and the
+ * fan sits inside the folder the way it did before the art moved.
+ *
+ * SCALED ABOUT THE CENTRE, NOT THE ORIGIN: the frame's midpoint (636.16, 346.24
+ * in board units) is what stays put, so the fan shrinks toward itself instead of
+ * sliding up and left.
+ *
+ * THE INTERIOR DOES NOT FOLLOW, AND THAT SUPERSEDES THE OLD RULE HERE. The
+ * interior is no longer one number scaled alongside this box — it is the design's
+ * own 16 / 4 / 16 / 13, held in cqw against the board (tokens.css). Scaling it
+ * with the box was tried once, at 0.676cqw, and made the copy illegible. So the
+ * box is 0.8 and the interior is full size: a card truncates a little more body
+ * copy than a full-size one would, which is the accepted cost. The body clips
+ * itself so that truncation still leaves the 16px inset clear.
+ *
+ * --card-x / --card-y / --card-rot are percentages of THIS frame and needed no
+ * edit; they scale with it for free. */
 .hero-folder__cards {
   position: absolute;
-  left: 15.5984%;
-  top: 28.8009%;
-  width: 69.1655%;
-  height: 34.9537%;
+  /* 0.96 OF THE DESIGN, NOT 0.8. The first pass took this frame to 0.8 to stop
+     the fan spilling past the flap; at that size the card box was 192 x 208 and
+     the body — held at the design's 13px, which is the right call — ran out of
+     box and truncated hard. 1.2x of that is 0.96 of the design: the box gets
+     230.4 x 249.6, tall enough to show the copy down to roughly where the comp's
+     own card stops, and the spill comes back to about 56px rather than the 70px
+     the comp draws. Every value here is re-derived from the design frame at 0.96
+     rather than multiplied off the 0.8 numbers, so the rounding does not compound.
+     The centre — (636.160, 346.242) in board units — is what stays fixed.
+     --card-x / --card-y / --card-rot are percentages of THIS frame and scale with
+     it untouched, as does everything the interior does NOT depend on: type,
+     padding and gap are cqw off the BOARD (tokens.css), so the box growing leaves
+     them exactly where they were and simply gives the body more room. */
+  left: 16.9813%;   /* re-solved: 0.96 about the frame centre */
+  top: 29.5000%;    /* re-solved: 0.96 about the frame centre */
+  width: 66.3985%;  /* 69.1655 x 0.96 */
+  height: 33.5561%; /* 34.9537 x 0.96 */
 }
 
 /* Each card is anchored by its CENTRE and pulled back half its own size, so the
@@ -379,12 +660,21 @@
   height: 86.0914%;
   display: flex;
   flex-direction: column;
-  gap: 1.25em;
-  padding: 2em;
-  border-radius: 1.25em;
+  /* 434:11718 — the design's card puts its title frame at (16,16) inside a
+     240 x 260 box, so 16 on all four sides. gap and both type sizes come from
+     the same node; all four are cqw off the board (see tokens.css for the
+     derivation) so they land on exactly 16 / 4 / 16 / 13 at the design width. */
+  gap: var(--hero-card-gap);
+  padding: var(--hero-card-pad);
+  border-radius: var(--hero-card-radius);
   background-color: var(--white);
+  /* Clips the card's own corners. It does NOT protect the padding: the clip box
+     for `overflow` is the PADDING box, so overflowing text paints straight
+     through the bottom inset and out to the card's edge — which is exactly what
+     was happening. The body clips itself instead; see .hero-folder__card-body. */
   overflow: hidden;
-  font-size: var(--hero-card-base);
+  /* The body size, so the body inherits it and only the title has to override. */
+  font-size: var(--hero-card-body);
   /* ORDER IS LOAD-BEARING. Every translate sits LEFT of the rotates, so their
      vectors stay in unrotated board space — a dragged card follows the pointer
      exactly instead of moving along its own tilted axes, and the hover and peek
@@ -583,10 +873,14 @@
   z-index: var(--z-content);
 }
 
+/* 16px against the body's 13. line-height 1.1875 is the design's own: 434:11719
+   is 19 tall for one 16px line, which is Figtree's natural leading rather than a
+   set value. flex:none so a long title is never squeezed by the body below it. */
 .hero-folder__card-title {
+  flex: none;
   margin: 0;
-  font-size: 1.375em;
-  line-height: 1.2727;
+  font-size: var(--hero-card-title);
+  line-height: 1.1875;
   font-weight: var(--weight-bold);
   color: var(--text-primary);
 }
@@ -601,12 +895,34 @@
   color: var(--text-secondary);
 }
 
+/* THE BODY CLIPS ITSELF, WHICH IS WHAT KEEPS THE 16px BOTTOM INSET CLEAR.
+   `overflow: hidden` on the card clips at its PADDING box, so long copy used to
+   paint through the bottom padding and touch the card's edge. Clipping here
+   instead ends the text at this element's own box — which stops at the card's
+   CONTENT box, 16px above the edge. min-height:0 is the half that makes it work:
+   without it a flex item refuses to shrink below its content and there is
+   nothing to clip.
+ *
+ * OPACITY IS A STATE. At rest the card is tucked in the folder and mostly under
+ * the flap, so the body sits back at 50% and the title carries the card. Pulling
+ * it out — folder expanded, or this card grabbed/dragged — brings it to full.
+ * The title never dims: it is the card's label in both states. */
 .hero-folder__card-body {
+  min-height: 0;
+  overflow: hidden;
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--leading-body);
   letter-spacing: 0.03125em;
   font-weight: var(--weight-regular);
   color: var(--text-secondary);
+  opacity: var(--hero-card-body-dim);
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.hero-folder.is-expanded .hero-folder__card .hero-folder__card-body,
+.hero-folder__card.is-grabbing .hero-folder__card-body,
+.hero-folder__card.is-dragging .hero-folder__card-body {
+  opacity: 1;
 }
 
 /* ---- Static decoration --------------------------------------------------- */
@@ -637,21 +953,12 @@
 
    Not pointer-events:none — unlike the artwork this is readable content, and
    there is no reason to make it unselectable. */
-.hero__arrow-text {
-  position: absolute;
-  left: var(--arrow-x);
-  top: var(--arrow-y);
-  transform: translate(-50%, -50%);
-  margin: 0;
-  font-family: var(--font-hand);
-  font-size: var(--hero-hand-size);
-  line-height: var(--m3-title-md-leading);
-  font-weight: var(--weight-medium);
-  color: var(--fig-ink);
-  white-space: nowrap;
-  text-align: center;
-  z-index: var(--z-content);
-}
+/* .hero__arrow-text — DELETED. The words beside the arrow were live HTML in
+   Caveat while arrow-pull.svg was the wordless curve. 465:61243 now exports with
+   the letterforms outlined, so they are part of .hero__decor--arrow and this rule
+   would have drawn a second copy over the top. --hero-hand-size went with it; it
+   had no other consumer. --font-hand stays defined in tokens.css and is now
+   unused — see the note there before removing Caveat from the fonts request. */
 
 /* ---- Captions ------------------------------------------------------------ */
 /* .hero__years and .hero__hint are GONE. They sat below the folder — "(2021 -
@@ -674,10 +981,11 @@
    is a percentage of the board, so a px-fixed label would drift in size against
    its own artwork as the board scales. --hero-caption-size carries the comp's
    12.8px; line-height and tracking are em multiples of that one number, so the
-   label scales as a single piece — the same model as --hero-card-base.
+   label scales as a single piece — the same model as the --hero-card-* tokens.
 
-   Not pointer-events:none. Like .hero__arrow-text this is text rather than
-   artwork, and there is no reason to make it unselectable. */
+   Not pointer-events:none. This is text rather than artwork, and there is no
+   reason to make it unselectable. (It is the last of its kind on the board —
+   the arrow's words were the other one, and they are outlines now.) */
 .hero__caption {
   position: absolute;
   left: var(--caption-x);
@@ -691,7 +999,7 @@
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--hero-caption-size);
-  line-height: 1.5; /* 19.2 / 12.8 */
+  line-height: var(--leading-body); /* 19.2 / 12.8 */
   letter-spacing: 0.009375em; /* 0.12px at 12.8px */
   font-weight: var(--weight-medium);
   color: var(--text-secondary);
@@ -719,11 +1027,247 @@
   .hero__intro {
     padding: var(--space-10) var(--space-7);
   }
+  .hero__board {
+    margin-inline: 0;
+  }
+}
+
+/* TABLET ONLY — 481..900. This used to live in the block above with no lower
+   bound, which meant it also applied at phone widths and its hardcoded
+   --text-2xl beat the mobile type tier in tokens.css: same selector, same
+   specificity, later in the cascade. Bounding it below is what lets ≤480 fall
+   through to .hero__title's base rule and pick up the overridden
+   --m3-display-lg (24/36). Nothing about the 481..900 rendering changed. */
+@media (min-width: 481px) and (max-width: 900px) {
   .hero__title {
     font-size: var(--text-2xl);
     line-height: var(--leading-tight);
   }
+}
+
+/* ---- Mobile — 566:37656 --------------------------------------------------- */
+/* THE INTRO TEXT BLOCK ONLY. The board and everything on it — folder, cards,
+   mockups, arrow — is deliberately untouched here and belongs to its own pass;
+   the comp gives it a 356 x 753 portrait composition that is not a reflow of the
+   1272 x 753 desktop one and cannot be reached from this file alone. */
+@media (max-width: 480px) {
+  /* 566:38921 sits 24 below the header, in a 358 frame at x=16. The 900 tier
+     leaves 80/40 here, which is desktop rhythm on a phone. */
+  .hero__intro {
+    padding: var(--space-5) var(--space-4) 0;
+  }
+
+  /* 566:38923/26 — the two lines are 44 apart on 36-tall boxes, so 8 between
+     them, and the words inside sit 8 apart too (161.5 - 153.5). Both are 4px
+     tighter than desktop because the type is less than half the size. */
+  .hero__title {
+    gap: var(--space-2);
+  }
+
+  .hero__line {
+    gap: var(--space-2);
+  }
+
+  /* ---- The board itself ---------------------------------------------------
+     356 x 753 and PORTRAIT, where desktop is 1272 x 753 landscape. The aspect
+     inverts from 1.689 to 0.473, which is why none of the desktop percentages
+     transfer and every child below reads a -m property instead.
+
+     17, NOT 16. Every other section takes the page's 16 gutter; the hero sits
+     one pixel further in because 566:38397 is at x=1 inside a frame that is
+     itself at x=16. That extra pixel is what makes the board exactly 356, which
+     every percentage here is normalised against. */
   .hero__board {
-    margin-inline: 0;
+    margin-top: var(--space-5);
+    margin-inline: 17px;
+    aspect-ratio: 356 / 753;
+  }
+
+  /* ---- Board children: read the -m set ------------------------------------
+     Each of these is the same rule as its desktop counterpart with the property
+     name swapped. Nothing is recomputed and no value is written here — the
+     numbers live in hero.js next to the node ids they came from. */
+  .hero__icon {
+    left: var(--icon-x-m);
+    top: var(--icon-y-m);
+    width: var(--icon-size-m);
+  }
+
+  .hero__decor {
+    left: var(--decor-x-m);
+    top: var(--decor-y-m);
+    width: var(--decor-w-m);
+  }
+
+  .hero__caption {
+    left: var(--caption-x-m);
+    top: var(--caption-y-m);
+    width: var(--caption-w-m);
+  }
+
+  /* ---- The folder ---------------------------------------------------------
+     WIDER THAN THE BOARD, ON PURPOSE. 566:37662 is 437.68 x 310.26 at x=-41, so
+     it runs from -11.5% to 111.4% and is cut off at both edges. Desktop never
+     does this. It is safe because .hero__board already carries overflow:hidden,
+     which clips the bleed at the board rather than the page — and base.css sets
+     overflow-x:clip on html besides. The arrow bleeds the same way.
+
+     AND IT IS NO LONGER SQUARE. The desktop box is aspect-ratio:1 with only its
+     width set; this one is 1.4106, so the ratio has to be overridden too or the
+     height comes out from the wrong side. */
+  .hero-folder {
+    left: 49.955%;
+    top: 49.951%;
+    width: 122.945%;
+    aspect-ratio: 1.4106;
+  }
+
+  .hero-folder__back {
+    left: 10%;
+    top: 10%;
+    width: 69.6437%;
+    height: 78.1439%;
+  }
+
+  .hero-folder__cards {
+    left: 7.053%;
+    top: 13.1988%;
+    width: 86.0173%;
+    height: 61.323%;
+  }
+
+  .hero-folder__front {
+    left: 11.043%;
+    top: 40.877%;
+    width: 78.9573%;
+    height: 49.1229%;
+  }
+
+  /* THE CARDS THEMSELVES NEED NOTHING. Their x/y/rotation and their 40.1615% x
+     86.0914% size are identical in both comps to four decimals — only the frame
+     around them moves. Card 1 keeps the desktop's levelled y (49.8472) rather
+     than the node's 65.5793, so the two stay consistent. */
+
+  /* ---- Card interior: a READABLE FLOOR, not the comp ----------------------
+     A DELIBERATE DEPARTURE. 566:37669 scales the interior with the box — 10.08
+     padding, ~10 title, ~8.2 body — and 8px body copy is not readable on a
+     phone. Worse, these tokens are cqw off the BOARD, and the board narrows
+     1272 -> 356 while the cards only shrink to 0.63, so left alone they would
+     render ~4.5 and ~3.6px. Fixed px instead, held at the desktop type size with
+     the padding trimmed 16 -> 12 to buy the room back. The cost is that a card
+     truncates more of its body copy than the comp shows; that trade is the point.
+
+     Set as tokens on the card rather than as rules, so the existing interior
+     rules pick them up untouched. */
+  .hero-folder__card {
+    --hero-card-pad: 12px;
+    --hero-card-gap: 4px;
+    --hero-card-title: 16px;
+    --hero-card-body: 13px;
+  }
+
+  /* Same argument for the pill: --hero-expertise-size is cqw and would come out
+     at ~3.9px on this board, and the comp's own 70 x 23 is not much better. 12px
+     with the padding trimmed keeps it legible and lets the capsule size itself. */
+  .hero-folder__expertise {
+    --hero-expertise-size: 12px;
+    padding: var(--space-2) var(--space-4);
+    line-height: var(--leading-body);
+  }
+
+  /* ---- Pulled out and latched open ----------------------------------------
+     THE RESTING FAN IS THE COMP; THIS IS THE READING STATE. At 151 x 164 a card
+     shows five of its sixteen body lines — the teaser the comp draws, and
+     unreadable as prose. Pulling one out latches it to a box that holds the
+     whole body at the 13px the card already uses: measured, all three come to
+     scrollHeight == clientHeight at 324 x 248.
+
+     324 = 356 - 2x16, the page's own gutter carried inside the board, so the
+     card sits fully inside the 356 with 16 to spare on each side and nothing
+     meets .hero__board's overflow. That is the whole reason this is a SIZE and
+     not a scale: the body takes the flex remainder, so height buys lines, while
+     scale() would magnify the same five clipped ones.
+
+     ONE HEIGHT FOR ALL THREE rather than per-card auto, because `height: auto`
+     does not animate. Card 3's copy is shorter and leaves ~20px at the bottom;
+     three cards that open to the same box reads as deliberate.
+
+     left/top 50% is the cards frame's centre, which is within 0.15px of the
+     board's centre horizontally — so "centred in the frame" and "centred on the
+     board" are the same pin here. */
+  .hero-folder__card.is-open {
+    left: 50%;
+    top: 50%;
+    width: 324px;
+    height: 248px;
+    /* Upright. The fan's tilt is a resting decoration; a card being read is
+       square to the reader. */
+    --rot-scale: 0;
+    z-index: var(--z-content);
+  }
+  .hero-folder__card.is-open .hero-folder__card-body {
+    opacity: 1;
+  }
+
+  /* THE OPEN CARD DOES NOT READ THE DRAG OFFSET, and that is what keeps the
+     geometry honest rather than merely tidy. makeDraggable caches its clamp once
+     at pointerdown, from a 151-wide box; if the open card still consumed
+     --drag-x/y it would be a 324-wide box governed by a 151-wide clamp, free to
+     run ~86px past the board on either side. Dropping the two translates from
+     this state makes that impossible by construction. hero-folder.js goes on
+     writing the properties — they are simply not read here, and they are still
+     read by every other state, so the pull itself is untouched. */
+  .hero-folder__card.is-open {
+    transform: translate(-50%, -50%) scale(var(--lift-scale, 1));
+  }
+
+  /* ---- The open/close motion ----------------------------------------------
+     Width and height are layout properties, so this is a layout animation — one
+     element for 200ms on an otherwise still page, which is affordable, but worth
+     naming rather than pretending a transform could do it.
+
+     THE TWO STATES THAT WOULD OTHERWISE SNAP. .is-dragging sets `transition:
+     none` so the card tracks 1:1, and .is-returning transitions transform alone;
+     both would drop the size change on the floor. They each get the two
+     properties back — .is-dragging deliberately WITHOUT transform, so pointer
+     tracking stays exact while a re-dragged open card still eases its size. */
+  .hero-folder__card {
+    --hero-open-ms: 200ms;
+    transition: transform var(--duration-folder) var(--ease-out) var(--card-delay, 0ms),
+      box-shadow var(--duration-hover) var(--ease-out),
+      width var(--hero-open-ms) var(--ease-out),
+      height var(--hero-open-ms) var(--ease-out);
+  }
+  .hero-folder__card.is-dragging {
+    transition: width var(--hero-open-ms) var(--ease-out),
+      height var(--hero-open-ms) var(--ease-out);
+  }
+  .hero-folder__card.is-returning {
+    transition: transform var(--duration-return) var(--ease-out),
+      width var(--hero-open-ms) var(--ease-out),
+      height var(--hero-open-ms) var(--ease-out);
+  }
+
+  /* ---- Touch: hand the vertical axis back to the page ----------------------
+     `touch-action: none` on the card and on the icon — the base rules, still
+     there and still correct above this breakpoint — tells the browser the app
+     owns EVERY gesture that begins on them. On a phone that is a trap: the board
+     is 753 tall against a ~750 viewport and the cards sit across its middle, so
+     a thumb that lands on one, and most thumbs do, can never scroll past the
+     hero. The page appears frozen.
+
+     `pan-y` splits the axes instead. The browser keeps vertical panning; the app
+     keeps horizontal movement, which is the only axis the pull gesture needs.
+     The icons take the same value for the same reason — hero-icons.js makes them
+     draggable, so they are interactive rather than decorative and plain `auto`
+     would hand the browser both axes and end the icon drag on touch entirely.
+
+     THE OTHER HALF OF THIS IS IN draggable.js, which refuses to start a drag on
+     a more-vertical touch. Both halves are load-bearing: this one lets the
+     browser scroll at all, that one stops us pulling a card halfway out while it
+     does. Neither is enough alone. */
+  .hero-folder__card,
+  .hero__icon {
+    touch-action: pan-y;
   }
 }

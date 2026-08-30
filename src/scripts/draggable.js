@@ -21,12 +21,22 @@
 
   var DEFAULT_THRESHOLD = 4; // px before a press counts as a drag, not a click
 
+  /* A FINGER IS NOT A MOUSE. 4px is the right number for a cursor, which sits
+     exactly where it is put; a thumb resting on the glass wanders several px on
+     its own, and a page scroll begins with a few px of unavoidable sideways
+     drift. At 4px both of those read as a drag, so a card would jump the instant
+     it was touched and again at the top of every scroll. Touch gets its own
+     floor. It is a floor, not a replacement — a consumer that asked for a
+     LARGER threshold still gets it. */
+  var TOUCH_THRESHOLD = 9;
+
   /**
    * makeDraggable(el, options) → { destroy }
    *
    * options.bounds     () => DOMRect-like, the box the element must stay inside.
    *                    Called once per drag, at pointerdown.
-   * options.threshold  px of movement before the drag starts (default 4).
+   * options.threshold  px of movement before the drag starts (default 4;
+   *                    touch never goes below 9, see TOUCH_THRESHOLD).
    * options.onStart    (ev)            → called when the threshold is crossed.
    * options.onMove     (dx, dy, ev)    → clamped offset from the drag origin.
    * options.onEnd      (dx, dy, vx, vy)→ final offset plus throw velocity px/s.
@@ -37,9 +47,12 @@
   function makeDraggable(el, options) {
     var opts = options || {};
     var threshold = opts.threshold == null ? DEFAULT_THRESHOLD : opts.threshold;
+    var touchThreshold = Math.max(threshold, TOUCH_THRESHOLD);
 
     var pointerId = null;
     var dragging = false;
+    var isTouch = false;  // this gesture came from a finger
+    var vetoed = false;   // ...and resolved to a page scroll, so hands off
     var startX = 0, startY = 0;   // pointer position at pointerdown
     var baseX = 0, baseY = 0;     // element offset at pointerdown
     var curX = 0, curY = 0;       // latest clamped offset
@@ -61,6 +74,12 @@
       pointerId = ev.pointerId;
       startX = ev.clientX;
       startY = ev.clientY;
+      // Read once, here: pointermove carries pointerType too, but reading it at
+      // the source keeps the whole gesture on one verdict. An engine that does
+      // not report it is treated as a mouse, so the desktop path is what any
+      // uncertainty falls back to.
+      isTouch = ev.pointerType === "touch";
+      vetoed = false;
 
       var off = opts.getOffset ? opts.getOffset() : { x: 0, y: 0 };
       baseX = off.x || 0;
@@ -107,7 +126,33 @@
       var dy = ev.clientY - startY;
 
       if (!dragging) {
-        if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return;
+        // The verdict is final for the rest of the gesture. Without the latch a
+        // thumb that had already committed to scrolling could wobble sideways
+        // 200ms later and yank the card out from under the moving page.
+        if (vetoed) return;
+
+        var limit = isTouch ? touchThreshold : threshold;
+        if (Math.abs(dx) < limit && Math.abs(dy) < limit) return;
+
+        /* AXIS GATE, TOUCH ONLY. The first move past the threshold decides what
+           the gesture IS, once: more sideways than vertical is a pull, anything
+           else belongs to the page. Without it a diagonal swipe starts a real
+           drag, the browser then claims the vertical pan and fires pointercancel
+           (onUp handles it, and that path is deliberately unchanged), and the
+           card is left snapping home mid-scroll — a flinch on every scroll that
+           happens to begin on a card.
+
+           A tie goes to the page. It is the recoverable half of the choice: a
+           scroll that should have been a pull costs one more swipe, a pull that
+           should have been a scroll costs the reader the rest of the page.
+
+           MOUSE IS UNTOUCHED — no gate, no latch, 4px, any direction. A cursor
+           has no competing gesture to disambiguate from. */
+        if (isTouch && Math.abs(dx) <= Math.abs(dy)) {
+          vetoed = true;
+          return;
+        }
+
         dragging = true;
         // Capture only once the gesture is genuinely a drag, so a plain click
         // still reaches whatever sits underneath.

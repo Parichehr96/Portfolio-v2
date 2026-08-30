@@ -61,14 +61,22 @@
   padding: var(--space-4h) var(--space-6);
 }
 
-/* Static/Headline Large — 32/40, weight 400, tracking 0. Left-aligned: the
-   comp centres the text BLOCK inside its row, but the block fills the row and
-   the type itself is ragged-right. */
+/* Figtree 24 / 150%, weight 400 — the size the selected Figma node reads. It was
+   Static/Headline Large (32/40) and is no longer on that step, so the m3 tokens
+   are gone from here: 24 has no entry in that scale, and pointing at a
+   ...headline-lg-* token while rendering 24px would be a lie in the stylesheet.
+   line-height is unitless 1.5 rather than 36px so it stays 150% if the size ever
+   moves. font-family is stated even though body already sets Figtree — all three
+   values the node specifies are then checkable in one place.
+
+   Left-aligned: the comp centres the text BLOCK inside its row, but the block
+   fills the row and the type itself is ragged-right. */
 .statement__line {
   margin: 0;
-  font-size: var(--m3-headline-lg);
-  line-height: var(--m3-headline-lg-leading);
-  letter-spacing: var(--m3-headline-lg-tracking);
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: var(--leading-body);
+  letter-spacing: 0;
   font-weight: var(--weight-regular);
   color: var(--fig-ink);
 }
@@ -89,8 +97,32 @@
   .statement__text {
     padding: 0 var(--space-7);
   }
+  /* NO TYPE OVERRIDE HERE ANY MORE. It used to step 32 -> 28 for narrow screens,
+     which made sense while the base was 32. At 24 that rule would step the text
+     UP to 28 on a phone — bigger than on a desktop — so it is gone and 24/150%
+     holds at every width. */
+}
+
+/* ---- Mobile — 566:39194 --------------------------------------------------- */
+@media (max-width: 480px) {
+  /* The node's text box is 332 wide at x=29 on a 390 board, i.e. ~28 inline on
+     both sides. Split 16 + 12 rather than one 28, because the 16 is the page
+     gutter every section shares and the 12 is this block's own inset. 24 above
+     and below matches the Bio Container's 183 = 24 + 135 + 24. */
+  .statement__inner {
+    margin-inline: var(--space-4);
+    padding-block: var(--space-5);
+  }
+
+  .statement__text {
+    padding: 0 var(--space-3);
+  }
+
+  /* 18/27, still 1.5. Per-component rather than a token, because 24 has no step
+     in the M3 scale and neither does 18 — the statement has been off that scale
+     since it moved to the node's own size. */
   .statement__line {
-    font-size: var(--m3-headline-md);
-    line-height: var(--m3-headline-md-leading);
+    font-size: 18px;
+    line-height: 27px;
   }
 }

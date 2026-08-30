@@ -12,8 +12,6 @@
   is a rewire, not a rewrite. Do not rename them casually.
 #}
 
-{% from "components/stat.njk" import stat %}
-
 <section class="about" id="about-me" data-header-theme="light">
   <div class="about__inner">
     <div class="about__figure-col">
@@ -47,32 +45,69 @@
           <span class="about__heading-rest">{{ about.heading.rest }}</span>
         </h2>
 
-        <ul class="about__stats">
-          {%- for s in about.stats %}{{ stat(s.value, s.label) }}{% endfor %}
-        </ul>
+        {#
+          NO STATS ROW, NO LOCATION LINE. 543:1124 has neither: the column is
+          heading -> three paragraphs -> clock band. The country moved into the
+          third paragraph as bold text, which is why the flag <img> went too.
 
+          RUNS, NOT A STRING. about.bio is a list of lists now, so the emphasis
+          the node specifies lives in the data. The whitespace control is
+          load-bearing: the runs carry their own spaces and must be joined with
+          nothing between them.
+        #}
         {%- for para in about.bio %}
-          <p class="about__bio">{{ para }}</p>
+          <p class="about__bio">
+            {%- for run in para -%}
+              {%- if run.bold %}<strong>{{ run.text }}</strong>{% else %}{{ run.text }}{% endif -%}
+            {%- endfor -%}
+          </p>
         {%- endfor %}
-
-        <p class="about__location">
-          <img
-            class="about__flag"
-            src="{{ site.flag }}"
-            alt=""
-            aria-hidden="true"
-            width="16"
-            height="16"
-          />
-          {{ about.location }}
-        </p>
       </div>
 
+      {#
+        A ROW, NOT A STACK — 543:1139. The clock box (118x80, at x=32) sits left
+        of the status block (429x44, at x=174), the 24px between them being the
+        gap. Both are centred on the band's middle.
+
+        THE CLOCK IS FACELESS, and that is the node, not an omission: 543:1181
+        draws a hub dot and thin hands with NO circle, and the digital time sits
+        over them. Do not add a ring to "finish" it.
+
+        THREE HANDS, AND THEY ARE NOT INTERCHANGEABLE. 543:1181 draws a short
+        thick grey hour hand, a longer thick grey minute hand, and a long THIN
+        BLACK second hand — the lengths and weights are what tell them apart when
+        there is no face to read them against, so the classes carry them.
+
+        THE HANDS ARE LIVE, BY TWO DIFFERENT MEANS. Hour and minute are rotated
+        by scripts/clock.js on its existing 60s tick; the second hand sweeps in
+        CSS instead, because a per-second JS tick to move one line is a timer the
+        page does not otherwise need. The <line>s point at 12 as authored. The
+        pivot (52 30) is repeated in clock.js and in _about.css's
+        transform-origin — all three must agree.
+      #}
       <div class="about__clock" data-clock>
-        <p class="about__clock-time">
-          <span class="about__clock-at">{{ about.clock.atLabel }}</span>
-          <span class="about__clock-value" data-clock-time>{{ about.clock.time }}</span>
-        </p>
+        <div class="about__clock-face">
+          <svg
+            class="about__clock-hands"
+            viewBox="0 0 118 80"
+            fill="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <line class="about__clock-hand about__clock-hand--hour" data-clock-hour
+                  x1="52" y1="30" x2="52" y2="12" />
+            <line class="about__clock-hand about__clock-hand--minute" data-clock-minute
+                  x1="52" y1="30" x2="52" y2="2" />
+            <line class="about__clock-hand about__clock-hand--second" data-clock-second
+                  x1="52" y1="30" x2="52" y2="-6" />
+            <circle class="about__clock-hub" cx="52" cy="30" r="3.5" />
+          </svg>
+          <p class="about__clock-time">
+            <span class="about__clock-value" data-clock-time>{{ about.clock.time }}</span>
+          </p>
+        </div>
+
+        <div class="about__clock-body">
         <p class="about__clock-status">
           {#
             NOT IN THE COMP. Figma 185:2029 draws no indicator — the v2 sidebar
@@ -85,6 +120,7 @@
           <span class="about__clock-headline" data-clock-status>{{ about.clock.status }}</span>
         </p>
         <p class="about__clock-detail" data-clock-detail>{{ about.clock.detail }}</p>
+        </div>
       </div>
     </div>
   </div>

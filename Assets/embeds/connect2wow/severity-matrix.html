@@ -6,17 +6,18 @@
 <title>Severity is a system — matrix</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:#fff;}
-  body{font-family:"Roboto",-apple-system,BlinkMacSystemFont,sans-serif;}
+  body{font-family:"Figtree",-apple-system,BlinkMacSystemFont,sans-serif;}
   .card{background:#fff;display:flex;flex-direction:column;gap:16px;padding:32px;width:647px;max-width:100%;margin:0 auto;}
 
   .head{display:flex;gap:8px;align-items:flex-start;justify-content:center;
-    font-weight:500;font-size:12px;line-height:16px;letter-spacing:0.4px;color:#727272;}
-  .head .tok{width:92px;flex:none;}
-  .head .col{flex:1 1 0;min-width:0;text-align:center;color:#727272;transition:color .2s;}
+    font-family:"Figtree",sans-serif;font-weight:500;font-size:12px;line-height:16px;letter-spacing:0.4px;
+    color:#727272;text-align:center;}
+  .head .tok{width:79px;flex:none;}
+  .head .col{flex:1 1 0;min-width:0;color:#727272;transition:color .2s;}
   .card.active .head .col{color:#1a1a1a;}
 
   .rows{display:flex;flex-direction:column;gap:12px;}
@@ -26,15 +27,14 @@
   .rows.active .row.sel{opacity:1;background:var(--tint);padding:8px;}
 
   .chip{width:92px;flex:none;display:flex;gap:4px;align-items:center;padding:8px;
-    border:1px solid var(--bd);border-radius:6px;transition:border-color .2s;}
+    border:1px solid var(--bd);border-radius:6px;}
   .chip .ic{width:16px;height:16px;flex:none;color:var(--c);display:block;}
   .chip .ic svg{display:block;width:100%;height:100%;}
-  .chip .lb{font-size:14px;line-height:20px;letter-spacing:0.25px;color:var(--c);font-weight:400;transition:font-weight .1s;}
-  .row.sel .chip{border-color:var(--bdsel);}
-  .row.sel .chip .lb{font-weight:700;}
+  .chip .lb{font-family:"Figtree",sans-serif;font-size:14px;line-height:20px;letter-spacing:0.25px;color:var(--c);font-weight:400;}
+  .row.sel .chip .lb{font-weight:500;}
 
   .cell{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;}
-  .toast,.banner{transition:transform .2s;transform-origin:center;}
+  .toast,.banner{transition:transform .2s;transform-origin:center;font-family:"Roboto",sans-serif;}
   .row.sel .toast,.row.sel .banner{transform:scale(1.2);}
 
   /* Toast (Alert) — Dark/Main/10 #212327 */
@@ -50,38 +50,36 @@
   .toast .tx svg{display:block;width:100%;height:100%;}
   .toast .r2{display:flex;align-items:center;justify-content:flex-end;}
   .toast .vm{font-size:2.94px;line-height:4.116px;letter-spacing:0.25px;color:#85bcff;}
-  .toast .hr{height:0;border-top:0.42px solid rgba(255,255,255,.14);width:100%;}
 
   /* Banner (trial) */
   .banner{display:flex;align-items:center;justify-content:space-between;gap:4px;
     width:128px;padding:2.16px 4.32px;border-radius:0.36px;overflow:hidden;
+    font-size:3.24px;line-height:1;
     background:var(--bnbg);border-bottom:0.36px solid var(--bnbd);}
   .banner .bl{flex:1;min-width:0;display:flex;gap:1.44px;align-items:flex-start;}
   .banner .bic{width:3.96px;height:3.96px;flex:none;color:var(--btn);}
   .banner .bic svg{display:block;width:100%;height:100%;}
   .banner .btx{font-size:3.24px;line-height:1.15;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .banner .br{display:flex;align-items:center;gap:2.88px;flex:none;}
-  .banner .bbtn{background:var(--btn);border-radius:2px;padding:1.44px 2.88px;}
+  .banner .bbtn{background:var(--btn);border-radius:2px;padding:1.44px 2.88px;display:flex;align-items:center;font-size:2.52px;line-height:3.528px;}
   .banner .bbtn span{font-size:2.52px;line-height:3.528px;letter-spacing:0.25px;color:#f9fafb;white-space:nowrap;}
   .banner .bx{width:3.96px;height:3.96px;flex:none;color:#000;}
   .banner .bx svg{display:block;width:100%;height:100%;}
 
-  .cell.inline{}
   .divider{height:2px;width:100%;background:rgba(120,120,120,0.2);}
-  .cap{font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;font-weight:400;}
+  .cap{font-family:"Figtree",sans-serif;font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;font-weight:400;}
 </style>
 </head>
 <body>
   <div class="card" id="card">
     <div class="head">
       <div class="tok">Token</div>
-      <div class="col">Toast</div>
+      <div class="col">Toast/Inline</div>
       <div class="col">Banner</div>
-      <div class="col">Inline</div>
     </div>
     <div class="rows" id="rows"></div>
     <div class="divider"></div>
-    <div class="cap">Left column shows definitions. Hover a row to see components in inline, toast, banner, and modal.</div>
+    <div class="cap">Left column shows definitions. Hover a row to see components in inline/toast, and banner.</div>
   </div>
 
 <script>
@@ -93,13 +91,13 @@
     times:'<svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
   };
   const SEV=[
-    {k:'Info',    c:'#3374f5', bd:'#316fe8', bdsel:'#3374f5', tint:'rgba(152,186,255,0.24)',
+    {k:'Info',    c:'#3374f5', bd:'#316fe8', tint:'rgba(152,186,255,0.24)',
      icon:'infofill', rot:false, bnbg:'rgba(0,133,255,0.13)', bnbd:'#66b6ff', btn:'#1563ad'},
-    {k:'Success', c:'#16cf4b', bd:'#16cf4b', bdsel:'#16cf4b', tint:'rgba(182,245,201,0.24)',
+    {k:'Success', c:'#16cf4b', bd:'#16cf4b', tint:'rgba(182,245,201,0.24)',
      icon:'checkfill', rot:false, bnbg:'rgba(22,207,75,0.13)', bnbd:'#90f0ac', btn:'#0b6a27'},
-    {k:'Warning', c:'#ffa600', bd:'#ffa600', bdsel:'#ffa600', tint:'rgba(255,229,182,0.24)',
+    {k:'Warning', c:'#ffa600', bd:'#ffa600', tint:'rgba(255,229,182,0.24)',
      icon:'infofill', rot:true, bnbg:'rgba(237,164,3,0.13)', bnbd:'#fdce68', btn:'#a16f02'},
-    {k:'Error',   c:'#e82b32', bd:'#e82b32', bdsel:'#e82b32', tint:'rgba(254,146,150,0.24)',
+    {k:'Error',   c:'#e82b32', bd:'#e82b32', tint:'rgba(254,146,150,0.24)',
      icon:'timesfill', rot:false, bnbg:'rgba(204,22,28,0.13)', bnbd:'#f47176', btn:'#931013'}
   ];
   const rows=document.getElementById('rows'), card=document.getElementById('card');
@@ -109,8 +107,7 @@
       <div class="r1">${ic}
         <div class="ttx"><div class="tt">Title</div><div class="tl">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been ...</div></div>
         <span class="tx">${IC.times}</span></div>
-      <div class="r2"><span class="vm">View more</span></div>
-      <div class="hr"></div></div>`;
+      <div class="r2"><span class="vm">View more</span></div></div>`;
   }
   function bannerHTML(s){
     return `<div class="banner">
@@ -122,13 +119,12 @@
     const row=document.createElement('div');
     row.className='row'; row.dataset.i=i;
     row.style.setProperty('--c',s.c); row.style.setProperty('--bd',s.bd);
-    row.style.setProperty('--bdsel',s.bdsel); row.style.setProperty('--tint',s.tint);
+    row.style.setProperty('--tint',s.tint);
     row.style.setProperty('--bnbg',s.bnbg); row.style.setProperty('--bnbd',s.bnbd); row.style.setProperty('--btn',s.btn);
     const icon=`<span class="ic"${s.rot?' style="transform:rotate(180deg)"':''}>${IC[s.icon]}</span>`;
     row.innerHTML=`<div class="chip">${icon}<span class="lb">${s.k}</span></div>
       <div class="cell">${toastHTML(s)}</div>
-      <div class="cell">${bannerHTML(s)}</div>
-      <div class="cell inline"></div>`;
+      <div class="cell">${bannerHTML(s)}</div>`;
     rows.appendChild(row);
   });
   const allRows=[...rows.children];

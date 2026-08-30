@@ -87,10 +87,34 @@ module.exports = {
 
   /* ---- 1. Cover — 281:64082 --------------------------------------------- */
   cover: {
-    backLabel: "Back to home",
-    backHref: "/",
-    chevron: icon("icon-chevron-backward.svg", 24, "SVG — chevron_backward, 24×24"),
-    mark: mark("mark-challenquiz.svg", 32, "SVG — Challenquiz logo mark, 32×32"),
+    /* ---- Breadcrumb — 550:11647 / 553:55014 / 553:55050 ------------------
+       ONE ROW, REPLACING TWO. The cover used to open with a "Back to home" link
+       and then an eyebrow lockup on its own line; the comp folds both into a
+       single 100-tall trail. `eyebrow` and `mark` are the same two values they
+       always were — they render inside the trail now instead of under it, which
+       is why neither had to change shape.
+
+       THE CHEVRON DOES NOT GO WHERE "Home" GOES, and that separation is the
+       point of the row. "Home" is the site root. The chevron is *back* — it
+       returns the reader to the exact My Work row they clicked to get here, via
+       the id components/project-card.njk writes onto every card. A static
+       anchor rather than history.back() or a stored referrer, because it is
+       right on a cold arrival too — from search, or a shared link — where there
+       is no history and nothing stored to read. */
+    backHref: "/#work-challenquiz",
+    /* The chevron carries no visible text, so this is its accessible name. It
+       names the destination rather than the gesture: "back" on its own tells a
+       screen reader nothing about where back is. */
+    backLabel: "Back to Challenquiz in My Work",
+    chevron: icon("chevron.svg", 20, "SVG — chevron_backward, 20×20"),
+    crumbs: [
+      { label: "Home", href: "/" },
+      { label: "My Work", href: "/#featured-works" },
+    ],
+    /* 96x96 so the 32px box is retina-sharp. PNG, not SVG: these are the exports
+       that exist, and the .svg the old reference named never did — which is why
+       this mark rendered as a dashed placeholder on all three pages until now. */
+    mark: mark("challenquiz-eyebrow.png", 32, "PNG — Challenquiz logo mark, 96×96 at 32"),
     eyebrow: "Challenquiz",
     /* THE COVER IS A MARQUEE, which is why it is a video slot and not a still.
        311:53358 clips a 1004 x 3007 strip of twelve phone screens down to an
@@ -98,34 +122,54 @@ module.exports = {
        single frame of it would be an arbitrary crop. */
     media: video(
       "cover",
+      // 1270 x 661 — the box 475:26231 / 553:55022 / 553:55058 draw, aspect
+      // 1.9213. media-slot.njk turns these two into the figure's
+      // aspect-ratio, so this is the frame the cover reserves, not the
+      // clip's own size.
       1270,
-      874,
+      661,
       "VIDEO — cover marquee",
       "Columns of Challenquiz screens scrolling"
     ),
     headline: "A multiplayer game that everyone played alone",
-    intro:
-      "Challenquiz is a Telegram Mini App where people stake tokens and go head-to-head in live trivia. You answer fastest and sharpest, you win the pot. I redesigned the whole product, from the information architecture up. This story is about the part that decides whether anyone comes back: the in-game experience, from the moment you join a match to the moment you see the result. It was the part players quietly slipped out of.",
+    intro: [
+      { text: "Challenquiz is a Telegram Mini App where people stake tokens and go head-to-head in live trivia. You answer fastest and sharpest, you win the pot. I redesigned the whole product, from the information architecture up. ", tone: "muted" },
+      { text: "This story is about the part that decides whether anyone comes back: the in-game experience, from the moment you join a match to the moment you see the result. ", tone: "lead" },
+      { text: "It was the part players quietly slipped out of.", tone: "muted" },
+    ],
   },
 
   /* ---- 2. Challenge / Objective / Role / Outcome — 281:64392 ------------- */
   facets: [
     {
       label: "Challenge",
-      body: "The old in-game flow was multiplayer in the database and single-player on the screen. You found a match inside a long list of identical cards, read a six-bullet rulebook before you could start, waited for the room to fill with no sign anything was happening, answered into silence, and finished on a screen that told you to wait. For a game with real tokens on the line, it delivered the worst possible shape: high stakes, zero tension.",
+      body: [
+        { text: "The old in-game flow was multiplayer in the database and single-player on the screen.", tone: "lead" },
+        { text: " You found a match inside a long list of identical cards, read a six-bullet rulebook before you could start, waited for the room to fill with no sign anything was happening, answered into silence, and finished on a screen that told you to wait. For a game with real tokens on the line, it delivered the worst possible shape: high stakes, zero tension.", tone: "muted" },
+      ],
     },
     {
       label: "Objective",
-      body: "Make a competitive game feel competitive. Cut the reading, put the opponents back on screen, and give the result the weight it earns. And resolve one honest conflict head-on: players learn and enjoy more when they see answers instantly, but showing answers in a live match can let someone cheat for real money. Solve for both.",
+      body: [
+        { text: "Make a competitive game feel competitive. Cut the reading, put the opponents back on screen, and give the result the weight it earns. ", tone: "lead" },
+        { text: "And resolve one honest conflict head-on: players learn and enjoy more when they see answers instantly, but showing answers in a live match can let someone cheat for real money. Solve for both.", tone: "muted" },
+      ],
     },
     {
       label: "Role",
       // "an usability" in the comp; corrected here with approval.
-      body: "Sole designer across the entire product. I redesigned the information architecture, the interface, and the in-game flow end to end, built the object model the screens are organized around, ran a usability evaluation of both flows, and worked closely with the founder and two developers to keep every decision buildable inside Telegram's Mini App constraints.",
+      body: [
+        { text: "Sole designer across the entire product. I redesigned the information architecture, the interface, and the in-game flow end to end, built the object model the screens are organized around, ran a usability evaluation of both flows,", tone: "lead" },
+        { text: " and worked closely with the founder and two developers to keep every decision buildable inside Telegram's Mini App constraints.", tone: "muted" },
+      ],
     },
     {
       label: "Outcome",
-      body: "In a usability study on five players through each flow, time-to-start roughly halved (~127s → ~62s), findability and satisfaction more than doubled, and clean completion rose from 60% to 100%. The honest asterisk: the one friction the redesign couldn't erase sits at the wallet gate, and that's an economics problem, not a layout one.",
+      body: [
+        { text: "In a usability study on five players through each flow, ", tone: "muted" },
+        { text: "time-to-start roughly halved (~127s → ~62s), findability and satisfaction more than doubled, and clean completion rose from 60% to 100%.", tone: "lead" },
+        { text: " The honest asterisk: the one friction the redesign couldn't erase sits at the wallet gate, and that's an economics problem, not a layout one.", tone: "muted" },
+      ],
     },
   ],
 
@@ -211,9 +255,17 @@ module.exports = {
        would pull a whole editor. */
     embed: embed(
       "prototype.html",
+      /* 0.7x OF THE COMP'S 757 x 970 SLOT — 530 x 679, same 0.7804 ratio. The
+         last two arguments are what make this a resize rather than a squeeze:
+         the document still renders at its own 757 x 970, and _case-study-v2.css
+         derives --scale = min(embed/nat) = 0.70 and centres the remainder. Drop
+         them and natW/natH would default to the slot, which would hand the
+         prototype a 530-wide viewport and reflow it instead of scaling it. */
+      530,
+      679,
+      "Challenquiz interactive prototype",
       757,
-      970,
-      "Challenquiz interactive prototype"
+      970
     ),
   },
 
@@ -225,7 +277,10 @@ module.exports = {
        which describes a different product's flow and is a copy-paste left in
        the file. Rather than carry a wrong line or a placeholder, the band runs
        heading → table → persona key → proudest → chart. */
-    columns: ["Change", "Why, in their words", "Persona"],
+    /* ORDER FOLLOWS THE COMP, and it changed with the relayout: the persona
+       column moved between the two text columns (557:11539 / 576:59171), so the
+       header reads Change · Persona · Why to match the cells beneath it. */
+    columns: ["Change", "Persona", "Why, in their words"],
     /* SIX ROWS, against ONTON's seven, and every persona is used at least
        once — where ONTON left Campaign Manager off its table entirely.
 

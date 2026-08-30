@@ -56,14 +56,18 @@ const path = require("path");
  * Assets/images/work/README.md.
  */
 const MOTION = {
-  // ONTON DOES NOT LOOP, and that is a property of the animation rather than a
-  // preference. Its keyframes end where they did not begin — the phone finishes
-  // upright, scaled 1.15 and scrolled 462px on, with the star faded out — so
-  // repeating it snaps the whole frame back every 6.8s. Measured, the wrap
-  // changes ~5x more than an ordinary frame step. It is a reveal, so it plays
-  // once and holds its final frame; see scripts/work-motion.js. Set this true
-  // once closing keyframes are added in Figma.
-  onton: { node: "417:66339", w: 1104, h: 714, durationMs: 6832, loop: false },
+  // ONTON LOOPS BY REQUEST, AND THE SOURCE STILL DOES NOT WRAP CLEANLY. Its
+  // keyframes end where they did not begin — the phone finishes upright, scaled
+  // 1.15 and scrolled 462px on, with the star faded out — so the clip snaps back
+  // every 6.85s. Measured on the encode itself: the last->first wrap moves 38.87
+  // mean abs pixel value against 4.34 for an ordinary adjacent-frame step, i.e.
+  // 9x. It held its final frame for exactly that reason until this was flipped.
+  //
+  // THE FIX IS IN FIGMA, NOT HERE. Add closing keyframes to 417:66339 so the
+  // animation returns to its opening state, re-export, and the snap goes away
+  // with no code change — this flag is already true and the template already
+  // emits `loop`.
+  onton: { node: "417:66339", w: 1104, h: 714, durationMs: 6832, loop: true },
   challenquiz: { node: "314:54396", w: 1038, h: 714, durationMs: 19997, loop: true },
   connect2wow: { node: "432:11086", w: 1190, h: 714, durationMs: 6000, loop: true },
 };
