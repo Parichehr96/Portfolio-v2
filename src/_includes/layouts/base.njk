@@ -36,6 +36,29 @@
     gtag('config', '{{ site.analytics.ga4 }}');
   </script>
   {%- endif %}
+
+  {#- MICROSOFT CLARITY — session recordings and heatmaps. Guarded on its own id
+      exactly as GA is above, so emptying site.analytics.clarity removes the tag
+      rather than shipping a broken one, and neither vendor's absence affects the
+      other.
+
+      EVERY PAGE, DELIBERATELY. Unlike the GA custom events in
+      scripts/analytics-events.js, which branch on data-page, Clarity is only
+      useful when it sees the whole journey — a recording that stops at a case
+      study because the tag was homepage-only is worse than no recording.
+
+      The tag inserts itself before the first <script> already in the document,
+      which on this page is the GA loader; both are async and neither depends on
+      the other. -#}
+  {%- if site.analytics.clarity %}
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "{{ site.analytics.clarity }}");
+  </script>
+  {%- endif %}
 </head>
 
 <body data-page="{{ pageId or 'home' }}"{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>

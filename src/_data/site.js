@@ -113,7 +113,7 @@ module.exports = {
   ],
 
   // ---- Third party ----------------------------------------------------------
-  analytics: { ga4: "G-JXCBH3PH93", vercel: true },
+  analytics: { ga4: "G-JXCBH3PH93", clarity: "ybg1l63t5n", vercel: true },
   /* Figtree everywhere, DM Mono for the Snake readout, Caveat for the hero's
      handwritten "Pull a card out to read".
 
