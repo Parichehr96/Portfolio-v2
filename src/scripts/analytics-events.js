@@ -93,6 +93,9 @@
     /* ---- 1 + 2. scroll_50 / scroll_100 ---- */
     var got50 = false;
     var got100 = false;
+    // Hero-card latches — see events 10 and 11 at the bottom of this block.
+    var hovered = {};
+    var pulled = {};
     watchScroll(function () {
       var d = depth();
       if (!got50 && d >= 0.5) {
@@ -127,6 +130,74 @@
       io.observe(about);
     }
 
+    /* ---- 10 + 11. hero_card_hover / hero_card_pull ----
+       The three expertise cards in the hero folder. `card` is the data-card slug
+       written by partials/hero.njk from hero.js — a slug and not the title, so a
+       copy edit cannot silently split the GA dimension in two.
+
+       BOTH LATCH PER CARD, PER PAGE LOAD, and independently: a card can report a
+       hover and a pull, once each. `hovered` and `pulled` are plain objects
+       rather than Sets to match the rest of this file, which is ES5 throughout.
+
+       WHAT "PULL" MEANS HERE IS "DRAGGED", and the distinction is worth stating
+       because the two platforms end a drag differently. Above 480px the card
+       always springs home — hero-folder.js calls that elastic behaviour
+       deliberate, so there is no "opened" state to wait for and a completed drag
+       is the only signal there is. At 480 and below the same gesture latches the
+       card open. Both paths pass through the same class transition, so one rule
+       covers them without knowing which it is.
+
+       NOTHING HERE TOUCHES THE GESTURE. hero-folder.js and draggable.js are not
+       modified and are not called; this observes the classes they already write.
+       That is the whole reason it is a MutationObserver and not a pointer
+       listener — a second pointerdown handler on the same element is a chance to
+       interfere with a drag, and analytics is never worth that risk. */
+    var heroCards = document.querySelectorAll(".hero-folder__card[data-card]");
+    for (var hc = 0; hc < heroCards.length; hc++) {
+      (function (card) {
+        var slug = card.getAttribute("data-card");
+        if (!slug) return;
+
+        card.addEventListener(
+          "mouseenter",
+          function () {
+            if (hovered[slug]) return;
+            hovered[slug] = true;
+            track("hero_card_hover", { card: slug });
+          },
+          { passive: true }
+        );
+
+        if (!("MutationObserver" in window)) return;
+
+        /* THE GRAB CLASSES, NOT .is-dragging ALONE. onStart adds .is-grabbing
+           synchronously the moment draggable.js's threshold is crossed, and
+           .is-dragging only arrives GRAB_MS later — so a quick flick can begin
+           and end without .is-dragging ever existing. Watching for either, then
+           firing when both have gone, catches the short drags too.
+
+           A PLAIN CLICK NEVER GETS HERE: onStart is what adds the first class,
+           and draggable.js only calls it past 4px of movement (9 on touch), so a
+           press with no drag sets nothing to observe. The other classes this
+           element takes — is-peeking, is-returning, is-open — move through the
+           same attribute and are simply not read. */
+        var held = false;
+        new MutationObserver(function () {
+          var now =
+            card.classList.contains("is-grabbing") ||
+            card.classList.contains("is-dragging");
+          if (now) {
+            held = true;
+            return;
+          }
+          if (!held) return;
+          held = false;
+          if (pulled[slug]) return;
+          pulled[slug] = true;
+          track("hero_card_pull", { card: slug });
+        }).observe(card, { attributes: true, attributeFilter: ["class"] });
+      })(heroCards[hc]);
+    }
   }
 
   /* A SEPARATE `if`, NOT AN `else`. /projects/ and /404.html are neither home

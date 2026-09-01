@@ -121,6 +121,10 @@ module.exports = {
      below is within 0.05 board units of the comp. */
   cards: [
     {
+      // Stable identity for analytics — the `card` parameter on
+      // hero_card_hover / hero_card_pull. A slug rather than the title so the
+      // GA dimension survives a copy edit.
+      slug: "interaction-ux-design",
       title: "Interaction and UX Design",
       body: [
         {
@@ -152,6 +156,10 @@ module.exports = {
       rotate: -11.02,
     },
     {
+      // Stable identity for analytics — the `card` parameter on
+      // hero_card_hover / hero_card_pull. A slug rather than the title so the
+      // GA dimension survives a copy edit.
+      slug: "product-redesign",
       title: "Product Redesign",
       // TWO SPANS, like all three. Every card splits its body the same way in
       // Figma — an opening sentence at #1a1a1a, the remainder at #727272 — and
@@ -174,6 +182,10 @@ module.exports = {
       rotate: 0,
     },
     {
+      // Stable identity for analytics — the `card` parameter on
+      // hero_card_hover / hero_card_pull. A slug rather than the title so the
+      // GA dimension survives a copy edit.
+      slug: "strategic-design",
       title: "Strategic Design",
       body: [
         {

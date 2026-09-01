@@ -154,6 +154,10 @@
         {%- for card in hero.cards %}
           <article
             class="hero-folder__card hero-folder__card--{{ loop.index }}"
+            {#- READ BY analytics-events.js, BY NOTHING ELSE. The card's identity for
+                hero_card_hover / hero_card_pull. Deliberately not a class: a class
+                invites styling off it, and this is a name, not a state. -#}
+            data-card="{{ card.slug }}"
             style="--card-x: {{ card.x }}%; --card-y: {{ card.y }}%; --card-rot: {{ card.rotate }}deg"
           >
             <h2 class="hero-folder__card-title">{{ card.title }}</h2>
