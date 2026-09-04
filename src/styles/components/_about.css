@@ -1,27 +1,48 @@
-/* ABOUT ME — Figma 185:2029.
+/* ABOUT ME — Figma 664:61547 (desktop layout) and 666:61738 (mobile, scrolled).
  *
- * Colours come from the .about scope in tokens.css, the same light block the
- * header and hero use, so no Figma hex appears here.
+ * A PARALLAX BETWEEN TWO COMPS. 664:61547 is the resting state — photo in a
+ * rounded box at the top of the band, summary below it, every line muted.
+ * 666:61738 is the arrival — photo dimmed, summary over it in white. The section
+ * is the travel between them, and --about-progress (0 to 1) is where it is.
  *
- * THE PAGE FRAME CONTINUES THROUGH THIS SECTION. Four rules in total: the outer
- * pair at x=120/1392 carry on from the header and hero, and the comp adds a
- * divider between the two columns and one above the time widget. They are all
- * --border-strong; together they are what makes the page read as one ruled
- * grid rather than a stack of unrelated bands.
+ * ONE PROPERTY DRIVES EVERYTHING. scripts/about-parallax.js writes
+ * --about-progress on this element and nothing else; the dim opacity, all six
+ * colour ramps and the summary's translate are calc() off it. That is what keeps
+ * the handler out of layout entirely — it never reads a size, never writes one.
  *
- * The outer pair are pseudo-elements rather than borders for the same reason as
- * the hero's: a real border-inline would eat 1px per side off the content box
- * and shift the columns. The inner two CAN be borders, because they sit on
- * boxes whose exact width is not load-bearing.
+ * THE RULES ARE THE PAGE FRAME, unchanged: the outer pair at +-120 continue the
+ * header's and the hero's, and the clock column keeps its border-top. They are
+ * pseudo-elements rather than borders for the hero's reason — a real
+ * border-inline eats 1px per side off the content box and shifts the columns.
  */
 
 .about {
   position: relative;
-  width: 100%;
-  background-color: var(--surface);
+  padding-block-start: 60px;
+
+  /* 0 at rest, 1 at the end of the pin. Declared here so every rule below has a
+     value before the script runs — with JS off the section renders as the light
+     resting comp rather than as an unstyled stack. */
+  --about-progress: 0;
+  --about-mix: calc(var(--about-progress) * 100%);
+
+  /* THE SETTLE TRAVEL, AND IT IS ONE NUMBER FOR A REASON. The summary rests 40px
+     under the photo (797.73 inside the stage) and lands centred on it
+     ((757.73 - 520) / 2 = 118.87), so it has 678.86 to travel. The runway is the
+     same number, which is what makes the pin end exactly as the content settles:
+     scroll distance in, translate distance out. Change one and the other follows.
+     Previously these were two independent 680s and the pin outlasted the settle
+     by ~430px, which is the gap the content spent sliding off the top. */
+  --about-travel: 678.86px;
+
+  /* The three colour pairs the comps specify: everything starts at Tertiary and
+     only the emphasis ends white. Written as tokens so the ramp is stated once
+     and the six rules that use it cannot drift apart. */
+  --about-ink: color-mix(in srgb, #ffffff var(--about-mix), var(--fig-gray-tertiary-on-dark));
+  --about-body: color-mix(in srgb, var(--fig-gray-3) var(--about-mix), var(--fig-gray-tertiary-on-dark));
+  --about-muted: var(--fig-gray-tertiary-on-dark);
 }
 
-/* Outer gutter rules — same x positions as the header and hero. */
 .about::before,
 .about::after {
   content: "";
@@ -31,69 +52,95 @@
   width: var(--border-width);
   background-color: var(--border-strong);
   pointer-events: none;
+  z-index: 2;
 }
 .about::before { left: var(--space-11); }
 .about::after { right: var(--space-11); }
 
-.about__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-inline: var(--space-11);
+/* ---- The stage ------------------------------------------------------------ */
+/* Pinned for exactly --about-travel and then released. Its height is the photo's
+   because the photo fills it; the summary hangs below it at rest and is drawn up
+   into it as progress runs, which overflow:visible allows. */
+.about__stage {
+  position: sticky;
+  top: 60px;
+  height: 757.73px;
 }
 
-/* ---- Left: illustration -------------------------------------------------- */
-.about__figure-col {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-block: var(--about-figure-pad);
-}
-
-/* THE FRAME IS ARTWORK, NOT A BORDER. It was a CSS rounded rect until the real
-   export was inspected: Figma strokes it 2px solid black at radius 12, and the
-   path is OPEN — the bottom edge stops at x=73.85 and picks up again at x=425,
-   leaving a gap the folded arms pass through. A border can draw a rounded
-   rectangle; it cannot leave a hole in one side. So it ships as an SVG.
-
-   Both layers share the exported 528x622 coordinate space, which is why the
-   percentages below are exact rather than eyeballed. */
-.about__figure {
-  position: relative;
-  width: var(--about-figure-size);
-  aspect-ratio: var(--about-figure-w) / var(--about-figure-h);
-}
-
-.about__frame {
+/* ---- The photo ------------------------------------------------------------ */
+/* STICKY, NOT FIXED, and bounded by .about — so it pins for exactly the length
+   of this section and releases with it, the same mechanic the hero board and the
+   work card-stack use. 757.73 and the 1px inset inside the 1272 container are
+   666:61669's own numbers. */
+.about__media {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: var(--space-11);
+  right: var(--space-11);
+
+  /* EDGE TO EDGE BETWEEN THE RULES, SQUARE. --space-11 exactly, not +1px: the
+     image runs the full 120-to-120 span so its outer pixels sit UNDER the two
+     gutter rules rather than starting after them, and the rules (z-index 2 over
+     this layer's 0) draw on top as the frame. That is the whole treatment — no
+     radius and no stroke of its own; the side borders are what contain it. */
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* The source is PORTRAIT (2160x3840 upright) and both comps are cover crops of
+   it — wide here, near-full on mobile. object-position keeps the skyline and the
+   reflected figure in frame rather than centring on empty sky. */
+.about__photo {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
 }
 
-/* MIRRORED, because the comp mirrors it: the export places the raster under
-   transform="matrix(-1 0 0 1 493 0)", so the source PNG faces the other way.
-   Positioned from the same matrix — x 53..493 of 528 — rather than centred,
-   which is what keeps the figure aligned to the frame's opening. */
-.about__illustration {
+.about__media-dim {
   position: absolute;
-  left: 10.0379%; /* 53 / 528 */
-  top: 0;
-  width: 83.3333%; /* 440 / 528 */
-  height: 100%;
-  scale: -1 1;
+  inset: 0;
+  background-color: #000;
+  /* 0.82, not 0.6. At 0.6 the arrived state still read as a bright photo with
+     text on it; 666:61738 has the buildings barely legible and the copy plainly
+     dominant, which is what this lands. */
+  opacity: calc(var(--about-progress) * 0.82);
 }
 
-/* ---- Right: copy + clock ------------------------------------------------- */
-.about__body {
-  display: flex;
-  flex-direction: column;
-  border-left: var(--border-width) solid var(--border-strong);
+/* ---- The summary ---------------------------------------------------------- */
+/* TRANSLATED, NOT RE-LAID-OUT. The summary starts 40px below the photo, which is
+   857.73 from the band top and exactly where 666:61708 puts it, and rides up
+   over the pinned photo as progress runs. A transform rather than a margin
+   because a margin is layout and this runs on every scroll frame. */
+.about__summary {
+  /* ABSOLUTE INSIDE THE STAGE, not sticky in its own right. 797.73 is the comp's
+     resting offset — 757.73 of photo plus the 40 gap — and the transform lifts it
+     to 118.87, centred on the photo. The travel is --about-travel and progress is
+     clamped 0..1 by the handler, so the translate CANNOT exceed the centred
+     position: the content stops there and never rides up off the image. */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 797.73px;
+  z-index: 1;
+  transform: translateY(calc(var(--about-progress) * -1 * var(--about-travel)));
+  will-change: transform;
 }
 
+
+.about__inner {
+  display: grid;
+  grid-template-columns: 789fr 481fr;
+  margin-inline: var(--space-11);
+  min-height: 520px;
+}
+
+/* 32 in from the column edge, 60 down — 666:61710's origin. */
 .about__content {
-  flex: 1;
-  padding: var(--about-head-top) var(--space-6) var(--space-6);
+  padding: 60px var(--space-6) 0;
+  min-width: 0;
 }
 
 .about__heading {
@@ -101,141 +148,121 @@
   font-size: var(--m3-headline-lg);
   line-height: var(--m3-headline-lg-leading);
   letter-spacing: var(--m3-headline-lg-tracking);
-  font-weight: var(--weight-bold);
-  color: var(--text-primary);
+  font-weight: var(--weight-regular);
+  color: var(--about-ink);
 }
 
-/* ---- Bio ----------------------------------------------------------------- */
+/* ONE WEIGHT, BOTH WORDS. The old comp set "Me" bold; 666:61710 draws two text
+   nodes at 89 and 45 wide, which at Headline Large is the same weight twice. */
+.about__heading-rest {
+  font-weight: inherit;
+}
+
+/* 24 between every block: title ends at 100 and para 1 opens at 124, para 1 ends
+   at 220 and para 2 opens at 244, para 2 ends at 388 and para 3 opens at 412. */
 .about__bio {
   margin: var(--space-5) 0 0;
+  max-width: 725px;
   font-size: var(--m3-body-lg);
-  line-height: var(--leading-body);
+  line-height: var(--m3-body-lg-leading);
   letter-spacing: var(--m3-body-lg-tracking);
-  color: var(--text-secondary);
+  color: var(--about-body);
 }
 
-/* EMPHASIS IS COLOUR, NOT WEIGHT. The <strong> stays because the emphasis is
-   real — a screen reader should still hear it — but it is drawn by stepping the
-   ink up from the body grey to near-black at the SAME weight, so the phrase
-   reads as darker rather than heavier.
- *
- * --fig-ink, NOT --text-primary. This file otherwise takes every colour from the
-   .about scope, and this is the one exception: the node sets these runs to
-   Labels-Vibrant/Primary #1a1a1a, where --text-primary in this scope is
-   --fig-black #000000. Those are different colours and the softer one is the
-   node's — _statement.css consumes --fig-ink for the same reason. */
+/* The emphasis is what goes white first — it is the only thing in the paragraph
+   that reaches #FFFFFF, which is how 666:61738 reads at a glance. */
 .about__bio strong {
-  font-weight: inherit;
-  color: var(--fig-ink);
+  font-weight: var(--weight-regular);
+  color: var(--about-ink);
 }
 
-/* ---- Time widget --------------------------------------------------------- */
-/* A ROW — 543:1139, which is 635 x 160. The band's own 40/32 padding was already
-   right; what changed is the axis. The clock box is 118 x 80 at x=32, the status
-   block 429 x 44 at x=174, and 174 - 32 - 118 = 24 is the gap. Both are centred
-   on the band's middle (clock 40..120, status 58..102 — both centred on 80). */
+/* THE PIN'S SCROLL DISTANCE, and it is what sets how long the dim takes. 680 is
+   the summary's own travel — the distance from resting (857.73 from the band
+   top) to sitting centred over the photo — so the ramp finishes exactly as the
+   content lands rather than before or after it. */
+.about__runway {
+  height: var(--about-travel);
+}
+
+/* ---- The clock column ----------------------------------------------------- */
+/* 123.43 down and the rule across its top — 666:61716's origin and stroke. The
+   32px inset inside it is 666:61718's. */
+/* THE DIVIDER IS A WHITE VERTICAL RULE ON THIS COLUMN'S LEFT EDGE — the split
+   between the text and the clock at x=789 of the 1270 summary. It was a
+   border-top in the previous build, which put a horizontal line above the clock
+   that the comp does not draw.
+   WHITE, NOT --border-strong: this rule sits over the darkened photo rather than
+   on the page ground, so it is the only rule on the site that is not the shared
+   hairline token — the band's own +-120 pair keep --border-strong and are
+   untouched. align-self:stretch so it spans the column's full height. */
 .about__clock {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  border-top: var(--border-width) solid var(--border-strong);
-  padding: var(--space-7) var(--space-6);
+  display: block;
+  align-self: stretch;
+  margin-block-start: 123.43px;
+  padding: 62px var(--space-6) 0;
+  border-left: var(--border-width) solid #ffffff;
 }
 
-/* THE CLOCK BOX. 118 x 80 from 543:1205, fixed rather than fluid because the
-   hands are drawn in that coordinate space and the digital time is positioned
-   over them by percentage of it. flex:none so the status text takes the slack. */
+/* THE CLOCK ROW — 666:61718, 417 wide and 81.14 tall. The graphic and the time
+   are ABSOLUTE inside it because the comp places them at explicit offsets that
+   no flow would reproduce: the dial is 90.5 x 81.14 at 0,0 and the time frame
+   starts at 106.5, which is 16px past the dial's right edge, not a gap between
+   two boxes. */
 .about__clock-face {
   position: relative;
-  flex: 0 0 auto;
-  width: 118px;
-  height: 80px;
+  height: 81.14px;
 }
 
+/* ANCHORED ON THE HUB, NOT ON THE BOX. The second hand runs well past the pivot,
+   so the SVG's box is taller below the hub than above it — top:0 put the hub at
+   26.0 while the time's centre sits at 40.56, and the dial read visibly high
+   against the numerals.
+   14.56 is that difference, and it is derived rather than eyeballed: the hub is
+   at y=30 in a viewBox windowed from -3.9, so 33.9 units down, and the box
+   renders at 81.14/105.8 = 0.7669 per unit — 26.0px. The time is Title Large,
+   28 tall, at 26.57, so its centre is 40.56. Overflowing the face by 14.56 at
+   the bottom is fine: the status block sits 24 below it, leaving 9.4 clear. */
 .about__clock-hands {
   position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
+  left: 0;
+  top: 14.56px;
+  width: 90.5px;
+  height: 81.14px;
   overflow: visible;
 }
 
-/* FACELESS, WHICH IS THE NODE. 543:1181 is a hub dot and hands with no circle
-   around them — there is deliberately nothing here drawing a ring. The hands
-   point at 12 in the markup; hour and minute are rotated about (52 30) by
-   scripts/clock.js, the second hand sweeps in CSS below.
- *
- * WITH NO FACE, LENGTH AND WEIGHT ARE THE ONLY THINGS THAT DISTINGUISH THEM.
- * A dial lets you read a hand by where it points; here the three are told apart
- * purely by how they are drawn, which is why the node bothers to make them
- * three different shapes and why these values are not interchangeable:
- *   hour    18 long, 3 thick, grey   — shortest and heaviest
- *   minute  28 long, 3 thick, grey
- *   second  36 long, 1 thin,  black  — longest and lightest, the only black one
- * Flatten any of that and the clock stops being readable. */
-.about__clock-hand {
-  stroke: var(--text-secondary);
-  stroke-linecap: round;
-}
-
-.about__clock-hand--hour,
-.about__clock-hand--minute {
-  stroke-width: 3;
-}
-
-.about__clock-hand--second {
-  stroke: var(--text-primary);
-  stroke-width: 1;
-  /* SWEEPS IN CSS, NOT ON A JS TICK. One line moving once a second does not
-     justify a second timer on the page, and a CSS animation keeps sweeping
-     smoothly between frames instead of stepping. transform-origin is in user
-     space (transform-box defaults to view-box on SVG elements), so it is the
-     same (52 30) the markup and clock.js use.
-
-     --clock-second-offset is a NEGATIVE delay written once by clock.js from the
-     current seconds, which starts the animation part-way through its cycle so
-     the hand is in the right place on load rather than jumping to 12. */
-  transform-origin: 52px 30px;
-  animation: about-clock-sweep 60s linear infinite;
-  animation-delay: var(--clock-second-offset, 0s);
-}
-
-@keyframes about-clock-sweep {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* HIDDEN, NOT FROZEN, for anyone who asked for less motion. Stopping the
-   animation would leave the hand parked at 12 o'clock next to a digital time
-   that says otherwise, which reads as broken; dropping it leaves a clean
-   two-hand clock that still agrees with the digits. */
-@media (prefers-reduced-motion: reduce) {
-  .about__clock-hand--second {
-    display: none;
-  }
-}
-
-.about__clock-hub {
-  fill: var(--text-primary);
-}
-
-/* OVER the hands, not beside them: 568:39383 sits at x=32..83, y=36..64 inside
-   the 118 x 80 box, which is the lower middle. Expressed as percentages of that
-   box so the label tracks the face if the box is ever resized. */
+/* 106.5 / 26.57 — 666:61726's origin inside the row. */
 .about__clock-time {
   position: absolute;
-  left: 48.7%;
-  top: 45%;
-  transform: translateX(-50%);
+  left: 106.5px;
+  top: 26.57px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
   margin: 0;
+  white-space: nowrap;
 }
 
-/* The status column beside the clock. 543:1148 stacks its two rows with no gap
-   — 24 + 20 = its full 44 — so nothing separates them here either. */
+/* "At" is Body Medium against the time's Title Large, and it sits 4px lower —
+   666:61727 gives it y=4 in a frame where the time is y=0. Baseline alignment is
+   what produces that without restating the number. */
+.about__clock-at {
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: var(--about-muted);
+}
+
+.about__clock-value {
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--about-ink);
+}
+
+/* 24 below the row: the row ends at 143.14 and 666:61729 opens at 167.14. */
 .about__clock-body {
-  display: flex;
-  flex-direction: column;
+  margin-block-start: var(--space-5);
   min-width: 0;
 }
 
@@ -248,166 +275,135 @@
 
 .about__clock-lead {
   font-size: var(--m3-body-md);
-  line-height: var(--leading-body);
+  line-height: var(--m3-body-md-leading);
   letter-spacing: var(--m3-body-md-tracking);
-  color: var(--text-secondary);
+  color: var(--about-muted);
 }
 
-.about__clock-value {
-  font-size: var(--m3-title-lg);
-  line-height: var(--m3-title-lg-leading);
-  letter-spacing: var(--m3-title-lg-tracking);
-  color: var(--text-primary);
-}
-
+/* The status headline is the other thing that reaches white — 666:61736 draws it
+   at Title Medium against the lead's Body Medium. */
 .about__clock-headline {
   font-size: var(--m3-title-md);
   line-height: var(--m3-title-md-leading);
   letter-spacing: var(--m3-title-md-tracking);
-  font-weight: var(--weight-semibold);
-  color: var(--text-primary);
-}
-
-/* Live indicator. Colours and pulse rates are ported verbatim from the v2
-   widget: active pulses at 2s with a soft glow, away at half that rate, sleep
-   sits static. The state comes from [data-state] on the widget root, which
-   scripts/clock.js sets from the schedule block.
-
-   The blink is also covered by base.css's global reduced-motion rule, but it is
-   restated below because that rule only near-zeroes the DURATION — the dot
-   would still sit at whatever opacity the last frame left it. */
-.about__clock-dot {
-  flex: 0 0 auto;
-  align-self: center;
-  width: var(--space-2);
-  height: var(--space-2);
-  border-radius: 50%;
-  background-color: var(--status-offline);
-}
-
-@keyframes about-clock-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-[data-state="active"] .about__clock-dot {
-  background-color: var(--status-online);
-  color: var(--status-online);
-  filter: drop-shadow(0 0 var(--space-1) currentColor);
-  animation: about-clock-pulse 2s ease-in-out infinite;
-}
-
-[data-state="away"] .about__clock-dot {
-  background-color: var(--status-away);
-  animation: about-clock-pulse 4s ease-in-out infinite;
-}
-
-/* sleep keeps the default colour and does not animate. */
-
-@media (prefers-reduced-motion: reduce) {
-  .about__clock-dot {
-    animation: none;
-    opacity: 1;
-  }
-}
-
-/* THE LEADING DASH is a pseudo-element, not part of the string. scripts/clock.js
-   assigns textContent here every minute, which would wipe any child node — and
-   the 40 sub-lines in that file's schedule would each have to carry the dash
-   otherwise. ::before survives the assignment and keeps the data clean. */
-.about__clock-detail::before {
-  content: "- ";
+  font-weight: var(--weight-regular);
+  color: var(--about-ink);
 }
 
 .about__clock-detail {
-  margin: 0;
+  margin: var(--space-1) 0 0;
   font-size: var(--m3-body-md);
-  line-height: var(--leading-body);
+  line-height: var(--m3-body-md-leading);
   letter-spacing: var(--m3-body-md-tracking);
-  color: var(--text-secondary);
+  color: var(--about-muted);
 }
 
-/* ---- Narrow -------------------------------------------------------------- */
-/* Below 900px the gutters collapse and the columns stack, matching how the
-   header drops its side rules at the same breakpoint. The column divider goes
-   with the two-column layout; the widget rule stays, since it still separates
-   two stacked blocks. */
-@media (max-width: 900px) {
+/* ---- The hands ------------------------------------------------------------
+   Unchanged from the previous build and deliberately so: clock.js rotates hour
+   and minute about 52,30 in the SVG's own 118x80 space, and the second hand
+   sweeps in CSS off a negative delay that file writes. All three numbers must
+   agree across clock.js, this file and the markup. */
+/* Stroke widths are in viewBox units and the box renders at 90.5/118 = 0.767,
+   so these are the comp's pixel weights divided back out: 5.87 -> 4.5px thick
+   for the two heavy hands, 1.7 -> 1.3px for the second. */
+.about__clock-hand {
+  stroke-linecap: round;
+}
+
+.about__clock-hand--hour,
+.about__clock-hand--minute {
+  stroke-width: 5.87;
+}
+
+.about__clock-hand--hour {
+  stroke: url(#about-clock-hour);
+}
+
+.about__clock-hand--minute {
+  stroke: url(#about-clock-minute);
+}
+
+/* Near-white and thin — the one hand that does not take the grey ramp, because
+   it is the only one that has to stay legible against the bright resting photo
+   as well as the dark arrived one. */
+.about__clock-hand--second {
+  stroke: #ededed;
+  stroke-width: 1.7;
+  transform-origin: 52px 30px;
+  animation: about-clock-sweep 60s linear infinite;
+  animation-delay: var(--clock-second-offset, 0s);
+}
+
+@keyframes about-clock-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__clock-hand--second { animation: none; }
+}
+
+/* FACELESS — there is no ring in 666:61719 and adding one to "finish" the clock
+   would be inventing a part the design does not have. The hub is the only solid
+   mark on the dial.
+   IT RAMPS, and it has to. The comp draws it near-black because the comp is
+   drawn on white; here the same dot ends up on a photo dimmed to 82% black,
+   where it simply disappeared. So it takes the same --about-progress ramp the
+   clock's text does — the node's #1A1A1A at the light resting end, white by the
+   time the photo is dark. */
+.about__clock-hub {
+  fill: color-mix(in srgb, #ffffff var(--about-mix), #1a1a1a);
+}
+
+
+/* ---- Tablet and mobile ----------------------------------------------------
+ * 666:61738 IS THE MOBILE COMP AND IT IS THE END STATE — full-bleed photo,
+ * content over it, everything already arrived. So below 900 the section stops
+ * animating and simply renders that: progress pinned at 1, the photo behind the
+ * whole band, the rules dropped the way every other band drops them here.
+ * That is also the reduced-motion answer, which is why the two share a block. */
+@media (prefers-reduced-motion: reduce), (max-width: 900px) {
+  .about {
+    --about-progress: 1;
+    padding-block-start: 0;
+  }
   .about::before,
   .about::after {
     display: none;
   }
+  .about__stage {
+    position: static;
+    height: auto;
+  }
+  .about__media {
+    position: absolute;
+    inset: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+  }
+  .about__summary {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+  }
   .about__inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     margin-inline: 0;
-  }
-  .about__body {
-    border-left: 0;
-  }
-  .about__figure-col {
-    padding-block: var(--space-10);
+    min-height: 0;
   }
   .about__content {
-    padding: var(--space-8) var(--space-7) var(--space-7);
+    padding: var(--space-6);
   }
-  /* The stats override went with the stats row itself. The clock band stacks
-     here instead, so the hands sit above the status text rather than beside it. */
+  /* 666:61749: the column sits at 625.93 with its rule across the top and the
+     same 32 inset as the text above it. */
   .about__clock {
-    flex-direction: column;
-    align-items: flex-start;
+    margin-block-start: var(--space-6);
+    padding: var(--space-6);
   }
-}
-
-/* ---- Mobile — 568:39244 --------------------------------------------------- */
-@media (max-width: 480px) {
-  /* 568:39248 starts at the container's own top and the content picks up 32
-     below it. The 900 tier's 80/80 is desktop rhythm and pushes the figure a
-     third of a screen down on a phone. */
-  .about__figure-col {
-    padding-block: 0 var(--space-6);
-  }
-
-  /* THE PAGE GUTTER. 568:39245 sits at x=16 in the 390 frame, so the section is
-     358 wide, not the full 390 the 900 tier leaves it at. Everything inside is
-     measured from that: the clock band becomes 358 rather than 390 and its status
-     block 294 rather than 326, which is what makes the sub-line wrap to the two
-     lines 571:59153 shows. The content's own 32 sits inside this, giving the
-     heading the comp's 48 from the page edge. */
-  .about__inner {
-    margin-inline: var(--space-4);
-  }
-
-  /* 568:39248 is 331 wide in the node's 356 column — 93%, where the desktop
-     --about-figure-size is 83.1% (528 of the 635 column). The token is solved for
-     the desktop column and does not transfer: at 83.1% of a 358 mobile column the
-     figure comes out ~297, a good 34 short. Overridden rather than re-tokenised
-     because the two widths are two different measurements, not one value at two
-     sizes. The frame and the PNG inside are both percentage-positioned against
-     this box, so they follow with no second edit. */
-  .about__figure {
-    width: 93%;
-  }
-
-  /* 568:39253 puts the heading at x=32, y=24 in a 356 frame — 32 inline, not
-     the 900 tier's 40, and 24 above rather than 48. */
-  .about__content {
-    padding: var(--space-5) var(--space-6) var(--space-6);
-  }
-
-  /* THE CLOCK CENTRES, THE STATUS DOES NOT. 571:59136 sits at x=119 in a 356
-     band — dead centre — while 571:59145 stays at x=32 and runs the full 292.
-     So the column centres its items and the status block opts out by stretching:
-     centring it too would centre its text as well, which the node does not do. */
-  .about__clock {
-    align-items: center;
-  }
-
-  .about__clock-body {
-    align-self: stretch;
+  .about__runway {
+    height: 0;
   }
 }

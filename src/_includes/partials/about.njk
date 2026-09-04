@@ -1,60 +1,76 @@
 {#
-  ABOUT ME — Figma 185:2029. Content from _data/about.js.
+  ABOUT ME — Figma 664:61547 (desktop layout) and 666:61738 (mobile, scrolled).
 
-  TWO COLUMNS of equal width inside the same 120px gutters as the header and
-  hero, so the page frame runs unbroken down the page. The rules are part of
-  that frame: the outer pair continue the header's, and the comp adds two more
-  inside — a divider between the columns and one above the time widget.
+  A PARALLAX, AND THE TWO NODES ARE ITS TWO ENDS. 664:61547 is the resting state:
+  the photo in a rounded box at the top of the band, the summary below it, every
+  line muted. 666:61738 is where it arrives: the photo dimmed and full-bleed with
+  the summary sitting over it in white. Neither node is the whole thing — the
+  section is the travel between them.
 
-  THE TIME WIDGET IS STATIC. Every value is mocked from the comp. The
-  data-clock-* hooks are the contract for the later phase that makes it live:
-  scripts/clock.js already computes exactly these three fields, so that phase
-  is a rewire, not a rewrite. Do not rename them casually.
+  THREE LAYERS, AND ONLY THE MIDDLE ONE MOVES.
+    .about__media    the photo, position:sticky, pinned while the band scrolls
+    .about__summary  the text and the clock, translated up over it by transform
+    .about__runway   an empty block that buys the pin its scroll distance
+  scripts/about-parallax.js writes one custom property, --about-progress, and
+  everything above reads it. It writes no layout — see the note in that file.
+
+  THE CLOCK IS THE EXISTING COMPONENT, MOVED AND NOT REBUILT. Every data-clock-*
+  hook below is byte-identical to what scripts/clock.js already binds, so that
+  file needed no edit: the live Amsterdam time, the three rotating hands and the
+  time-of-day status schedule all keep working exactly as before. The comp's
+  "01:51 / Probably in deep work" is one moment of that schedule, not a string to
+  hardcode — and not even a consistent one, since 01:51 falls in the block that
+  says "probably asleep".
+
+  ONE THING IS NEW IN THIS MARKUP: the "At" label before the time. 666:61759
+  draws it as its own text node, Body Medium against the time's Title Large, so
+  it is a span here rather than something CSS could fake.
+
+  #about-me AND data-header-theme STAY ON THIS ELEMENT. The id is the nav anchor
+  and the target analytics-events.js observes for view_about; the theme attribute
+  is what the header reads, and about-parallax.js flips it to dark as the photo
+  darkens so the header does not sit light-on-light over the end state.
 #}
 
 <section class="about" id="about-me" data-header-theme="light">
-  <div class="about__inner">
-    <div class="about__figure-col">
-      {#
-        TWO LAYERS, frame behind the figure — the same order Figma draws them.
-        The frame is an exported open path (see about.js); the figure is a
-        transparent PNG that overhangs it at the bottom, so the arms read as
-        crossing the line rather than sitting inside a box.
-      #}
-      <div class="about__figure">
-        <img
-          class="about__frame"
-          src="{{ about.illustration.frame }}"
-          alt=""
-          aria-hidden="true"
-          draggable="false"
-        />
-        <img
-          class="about__illustration"
-          src="{{ about.illustration.file }}"
-          alt="{{ about.illustration.alt }}"
-          draggable="false"
-        />
-      </div>
-    </div>
 
-    <div class="about__body">
+  {#- ONE STICKY STAGE, BOTH LAYERS INSIDE IT. The photo and the summary used to
+      be two independent sticky elements, and that is what broke the exit: their
+      pins were bounded by the same container but started at different offsets,
+      so the summary un-stuck roughly 560px before the photo did and slid off the
+      top on its own. Pinning the pair as one unit means beat 2 is free — when
+      the stage releases, the image and the content leave together because they
+      are the same element. -#}
+  <div class="about__stage">
+
+  {#- The photo. aria-hidden with an empty alt: it is atmosphere, and the three
+      paragraphs beside it already say everything it says. -#}
+  <div class="about__media" aria-hidden="true">
+    <img
+      class="about__photo"
+      src="{{ about.photo.file }}"
+      alt=""
+      width="1600"
+      height="2844"
+      decoding="async"
+      draggable="false"
+    />
+    <div class="about__media-dim"></div>
+  </div>
+
+  <div class="about__summary">
+    <div class="about__inner">
+
       <div class="about__content">
         <h2 class="about__heading">
           <span class="about__heading-lead">{{ about.heading.lead }}</span>
           <span class="about__heading-rest">{{ about.heading.rest }}</span>
         </h2>
 
-        {#
-          NO STATS ROW, NO LOCATION LINE. 543:1124 has neither: the column is
-          heading -> three paragraphs -> clock band. The country moved into the
-          third paragraph as bold text, which is why the flag <img> went too.
-
-          RUNS, NOT A STRING. about.bio is a list of lists now, so the emphasis
-          the node specifies lives in the data. The whitespace control is
-          load-bearing: the runs carry their own spaces and must be joined with
-          nothing between them.
-        #}
+        {#- RUNS, NOT A STRING. about.bio is a list of lists, so the emphasis the
+            node specifies lives in the data. The whitespace control is
+            load-bearing: the runs carry their own spaces and must be joined with
+            nothing between them. The bold runs are what go white first. -#}
         {%- for para in about.bio %}
           <p class="about__bio">
             {%- for run in para -%}
@@ -64,64 +80,71 @@
         {%- endfor %}
       </div>
 
-      {#
-        A ROW, NOT A STACK — 543:1139. The clock box (118x80, at x=32) sits left
-        of the status block (429x44, at x=174), the 24px between them being the
-        gap. Both are centred on the band's middle.
-
-        THE CLOCK IS FACELESS, and that is the node, not an omission: 543:1181
-        draws a hub dot and thin hands with NO circle, and the digital time sits
-        over them. Do not add a ring to "finish" it.
-
-        THREE HANDS, AND THEY ARE NOT INTERCHANGEABLE. 543:1181 draws a short
-        thick grey hour hand, a longer thick grey minute hand, and a long THIN
-        BLACK second hand — the lengths and weights are what tell them apart when
-        there is no face to read them against, so the classes carry them.
-
-        THE HANDS ARE LIVE, BY TWO DIFFERENT MEANS. Hour and minute are rotated
-        by scripts/clock.js on its existing 60s tick; the second hand sweeps in
-        CSS instead, because a per-second JS tick to move one line is a timer the
-        page does not otherwise need. The <line>s point at 12 as authored. The
-        pivot (52 30) is repeated in clock.js and in _about.css's
-        transform-origin — all three must agree.
-      #}
       <div class="about__clock" data-clock>
         <div class="about__clock-face">
           <svg
             class="about__clock-hands"
-            viewBox="0 0 118 80"
+            viewBox="-22.3 -3.9 118 105.8"
             fill="none"
             aria-hidden="true"
             focusable="false"
           >
+            {#- THE VIEWBOX IS OFFSET, NOT REDRAWN. clock.js pins PIVOT = "52 30"
+                and rotates the hands about it, so those coordinates cannot move.
+                Shifting the window instead (-22.3, -3.9) puts that same pivot at
+                63% across and 32% down of the 90.5 x 81.14 box, which is where
+                666:61719 has the hub, and 118 x 105.8 matches the box's aspect so
+                nothing letterboxes. -#}
+            <defs>
+              {#- Along each hand's own length, dark at the hub and light at the
+                  tip. userSpaceOnUse so the gradient rotates WITH the hand — a
+                  transform on the line carries its paint with it. Two of them
+                  because the hands are different lengths and one shared ramp
+                  would leave the shorter hand's tip mid-gradient. -#}
+              <linearGradient id="about-clock-hour" x1="52" y1="30" x2="52" y2="-9"
+                              gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#8A8A8A" />
+                <stop offset="1" stop-color="#DADADA" />
+              </linearGradient>
+              <linearGradient id="about-clock-minute" x1="52" y1="30" x2="52" y2="-17"
+                              gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#8A8A8A" />
+                <stop offset="1" stop-color="#DADADA" />
+              </linearGradient>
+            </defs>
+
             <line class="about__clock-hand about__clock-hand--hour" data-clock-hour
-                  x1="52" y1="30" x2="52" y2="12" />
+                  x1="52" y1="30" x2="52" y2="-9" />
             <line class="about__clock-hand about__clock-hand--minute" data-clock-minute
-                  x1="52" y1="30" x2="52" y2="2" />
+                  x1="52" y1="30" x2="52" y2="-17" />
+            {#- The only hand that crosses the pivot: it runs a little past the hub
+                on the far side, as 666:61719 draws it. -#}
             <line class="about__clock-hand about__clock-hand--second" data-clock-second
-                  x1="52" y1="30" x2="52" y2="-6" />
-            <circle class="about__clock-hub" cx="52" cy="30" r="3.5" />
+                  x1="52" y1="43" x2="52" y2="-33" />
+            <circle class="about__clock-hub" cx="52" cy="30" r="6.5" />
           </svg>
           <p class="about__clock-time">
+            <span class="about__clock-at">{{ about.clock.at }}</span>
             <span class="about__clock-value" data-clock-time>{{ about.clock.time }}</span>
           </p>
         </div>
 
         <div class="about__clock-body">
         <p class="about__clock-status">
-          {#
-            NOT IN THE COMP. Figma 185:2029 draws no indicator — the v2 sidebar
-            widget had one at the tip of an L-connector and the brief asks for
-            it back, so it is added here rather than invented silently. It is
-            one span and one CSS block; delete both to return to the comp.
-          #}
-          <span class="about__clock-dot" data-clock-dot aria-hidden="true"></span>
           <span class="about__clock-lead" data-clock-lead>{{ about.clock.statusLead }}</span>
           <span class="about__clock-headline" data-clock-status>{{ about.clock.status }}</span>
         </p>
         <p class="about__clock-detail" data-clock-detail>{{ about.clock.detail }}</p>
         </div>
       </div>
+
     </div>
   </div>
+
+  </div>{#- /.about__stage -#}
+
+  {#- THE PIN'S SCROLL DISTANCE. A real element for the same reason .hero__runway
+      and .work__runway are: padding sits outside the content box a sticky child
+      is bounded by, so only a sibling with height can extend the pin. -#}
+  <div class="about__runway" aria-hidden="true"></div>
 </section>

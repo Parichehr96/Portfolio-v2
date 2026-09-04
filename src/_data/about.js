@@ -56,6 +56,17 @@ module.exports = {
     ],
   ],
 
+  /* THE PARALLAX PHOTO — 664-61547 / 666-61738. Portrait source (2160x3840
+     upright); both comps are object-fit:cover crops of it, wide on desktop and
+     near-full on mobile. The EXIF rotation is baked into the file rather than
+     left for the browser: the stored pixels are sideways and orientation=6 is
+     what turns them upright, which is fine in a browser and wrong in every tool
+     that ignores EXIF. about-me-original.jpg is the same image at full size. */
+  photo: {
+    file: "/Assets/images/about/about-me.jpg",
+    alt: "",
+  },
+
   illustration: {
     file: "/Assets/images/about/illustration-pari.png",
     alt: "Line illustration of Parichehr, arms folded",
@@ -74,6 +85,9 @@ module.exports = {
      NO `atLabel`. The widget used to read "At 02:18"; 543:1205 has no such word
      — the clock box holds the hands and the digital time and nothing else. */
   clock: {
+    // The label before the time — 666:61759 draws it as its own text node,
+    // Body Medium against the time's Title Large.
+    at: "At",
     time: "02:18",
     statusLead: "I'm",
     status: "probably in deep work",

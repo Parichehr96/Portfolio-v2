@@ -81,6 +81,11 @@
      black where #AEAEB2 sits too low, so the comp lifts it. 275:57809. */
   --fig-gray-tertiary-on-dark: #BFBFBF;
 
+  /* Grays/Gray 3 — the About parallax's body copy at the end of its ramp
+     (664:61547). Between --fig-gray-on-dark and white; neither existing step
+     is it. */
+  --fig-gray-3: #C7C7CC;
+
   /* ---- 2. SEMANTICS -------------------------------------------------------
      What components actually reference. Retheme by repointing these. */
   --surface: var(--navy-900);
