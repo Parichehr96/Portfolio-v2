@@ -102,26 +102,6 @@
     {%- endfor %}
 
     {#
-      THE MOCKUP FILENAMES (450:37859, 392:14769). The comp writes each mockup's
-      source filename under it. They were skipped once as Figma annotations —
-      they are not; they are text nodes in the board and they render.
-
-      LIVE TEXT, NOT BAKED INTO THE PNGs. Keeping them out of the artwork means
-      they stay crisp at every board size, cost nothing to correct, and leave
-      the mockup exports untouched.
-
-      aria-hidden, like the mockups they sit under: the name of an asset file is
-      not something a screen-reader user is missing.
-    #}
-    {%- for c in hero.captions %}
-      <p
-        class="hero__caption hero__caption--{{ c.slug }}"
-        aria-hidden="true"
-        style="--caption-x: {{ c.x }}%; --caption-y: {{ c.y }}%; --caption-w: {{ c.w }}%; --caption-x-m: {{ c.m.x }}%; --caption-y-m: {{ c.m.y }}%; --caption-w-m: {{ c.m.w }}%"
-      >{{ c.text }}</p>
-    {%- endfor %}
-
-    {#
       NO <p> FOR THE ARROW'S WORDS ANY MORE. They were live HTML in Caveat while
       arrow-pull.svg was the wordless curve; 465:61243 now exports as one graphic
       with the letterforms outlined, so the words are in the artwork above and

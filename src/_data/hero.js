@@ -28,6 +28,27 @@ const BOARD_H = 753;
 const pctX = (px) => +((px / BOARD_W) * 100).toFixed(4);
 const pctY = (px) => +((px / BOARD_H) * 100).toFixed(4);
 
+/* THE MOBILE BOARD IS 356, NOT 390, and the 34 between them is this file's
+   business rather than the stylesheet's. _hero.css insets the board 17px either
+   side of the phone frame, so a 390-wide viewport gives a 356-wide board — and
+   the mobile hero node measures its icons against the 390 FRAME. Every mobile x
+   below therefore loses the 17 before it becomes a percentage, which is what
+   makes the node's raw pixels land where the node puts them: an icon the node
+   draws at x=306 renders at page x=306. The y axis needs no such correction —
+   both are 753 tall. */
+const M_BOARD_W = 356;
+const M_FRAME_INSET = 17;
+const mPctX = (px) => +((px / M_BOARD_W) * 100).toFixed(4);
+
+/* THE NODE GIVES TOP-LEFTS; THE CSS WANTS CENTRES. .hero__icon pulls itself back
+   by half its own box (see the note on the icons array), so these four helpers
+   are the only place the conversion happens — and the call sites below can then
+   read as the node's own numbers instead of as percentages nobody can check. */
+const iconCX = (left, size) => pctX(left + size / 2);
+const iconCY = (top, size) => pctY(top + size / 2);
+const iconMCX = (left, size) => mPctX(left + size / 2 - M_FRAME_INSET);
+const iconMCY = (top, size) => pctY(top + size / 2);
+
 module.exports = {
   header: {
     logo: { file: "logo-mark.svg", size: 40 },
@@ -204,34 +225,51 @@ module.exports = {
     },
   ],
 
-  /* Floating marks — 457:58676 resting CENTRES, as a percentage of the board.
-     `size` is a percentage of board WIDTH; the CSS keeps them square via
+  /* FLOATING MARKS — 457:58676 desktop, 566:37658 mobile. FOUR, AND ONLY FOUR:
+     Notion, Figma, Jira, Claude. The node has never carried a fifth, and neither
+     has this array — there was nothing to prune when the set was reconciled.
+
+     WRITTEN AS THE NODE WRITES THEM: top-left and pixel size, converted to the
+     centre percentages the CSS consumes by the four helpers above. The previous
+     values were hand-computed centres, which is why nobody caught that mobile
+     Claude sat 93px BELOW a board with overflow:hidden — an opaque 92.244% looks
+     as plausible as any other number. These read back against the comp.
+
+     `size` is a percentage of board WIDTH; the CSS keeps the mark square with
      aspect-ratio, so one number does both axes.
 
-     THESE ARE CENTRES, NOT TOP-LEFTS, which changed with this rebuild. The CSS
-     now pulls each icon back by half its own box, so the wiggle orbits the
-     Figma position rather than starting from its corner — and an icon's
-     resting point stays put whatever its size. */
-  /* EVERY BOARD CHILD CARRIES TWO POSITIONS, and `m` is the second one.
-     566:38397 is not a reflow of the desktop board — it is 356 x 753 portrait
-     against 1272 x 753 landscape, so the aspect inverts and no percentage
-     survives the change. hero.njk writes both sets as custom properties and the
-     <=480 block in _hero.css switches which one each rule reads; nothing here is
-     chosen at runtime. `m` values are percentages of the 356 x 753 board, the
-     same convention `x`/`y`/`size` use for the desktop one. */
+     EVERY BOARD CHILD CARRIES TWO POSITIONS, and `m` is the second one. The
+     mobile board is 356 x 753 portrait against 1272 x 753 landscape, so the
+     aspect inverts and no percentage survives the change. hero.njk writes both
+     sets as custom properties and the <=480 block in _hero.css switches which
+     one each rule reads; nothing here is chosen at runtime.
+
+     THE MOBILE ARRANGEMENT IS NOT THE DESKTOP ONE REFLOWED. Desktop puts Jira
+     bottom-right and Claude bottom-left; mobile swaps them. That is the node's
+     call, not a mistake to normalise away. */
   icons: [
-    { slug: "notion", label: "Notion", file: "icon-notion.svg", x: 13.76, y: 11.48, size: pctX(56),
-      m: { x: 46.180, y: 7.888, size: 12.584 } },
-    { slug: "figma", label: "Figma", file: "icon-figma.svg", x: 83.02, y: 10.81, size: pctX(56),
-      m: { x: 75.112, y: 14.396, size: 12.584 } },
-    { slug: "jira", label: "Jira", file: "icon-jira.svg", x: 89.78, y: 46.49, size: pctX(60),
-      m: { x: 11.236, y: 75.963, size: 13.483 } },
-    { slug: "claude", label: "Claude", file: "icon-claude.svg", x: 23.98, y: 90.86, size: pctX(64),
-      m: { x: 11.124, y: 92.244, size: 14.382 } },
+    { slug: "notion", label: "Notion", file: "icon-notion.svg",
+      x: iconCX(196, 56), y: iconCY(127, 56), size: pctX(56),
+      m: { x: iconMCX(59, 36), y: iconMCY(75, 36), size: mPctX(36) } },
+    { slug: "figma", label: "Figma", file: "icon-figma.svg",
+      x: iconCX(1028, 56), y: iconCY(40, 56), size: pctX(56),
+      m: { x: iconMCX(306, 36), y: iconMCY(29, 36), size: mPctX(36) } },
+    { slug: "jira", label: "Jira", file: "icon-jira.svg",
+      x: iconCX(1024, 60), y: iconCY(539, 60), size: pctX(60),
+      m: { x: iconMCX(57, 38), y: iconMCY(587, 38), size: mPctX(38) } },
+    { slug: "claude", label: "Claude", file: "icon-claude.svg",
+      x: iconCX(95, 64), y: iconCY(599, 64), size: pctX(64),
+      m: { x: iconMCX(252, 41), y: iconMCY(634, 41), size: mPctX(41) } },
   ],
 
-  /* Static decoration. None of this wiggles, drags or animates — it is artwork
-     the composition needs and the interaction layer must not touch.
+  /* Static decoration — ONE ITEM, and it used to be three. The two product
+     mockups (campaign_landing.png, website_landing.png) and the two filename
+     captions under them are gone: the hero node contains the folder-card, the
+     four marks and this arrow, and nothing else. The .png files stay on disk;
+     only the references are removed, so restoring them is a data edit.
+   *
+   * Nothing here wiggles, drags or animates — it is artwork the composition
+   * needs and the interaction layer must not touch.
 
      THERE IS NO CURSOR MARK IN THIS LIST, AND ONE MUST NOT BE ADDED. A static
      arrow has been put here twice on the reading that the comp draws one —
@@ -278,28 +316,6 @@ module.exports = {
       // node's 73.315 / 73.596.
       m: { x: 66.854, y: 27.888, w: 60.674 },
     },
-    {
-      // 450:37220 inside Phone Mockup 450:37860 — image centre (126.50, 466.248)
-      // on the 1272 x 753 board. y was 55.21, a percentage of the old 897.
-      slug: "campaign",
-      file: "campaign_landing.png",
-      x: 9.9450,
-      y: 61.9188,
-      w: pctX(95.04),
-      m: { x: 13.719, y: 13.590, w: 19.222 }, // 566:37704
-    },
-    {
-      // 392:14768 inside Container 434:11677 — image centre (984.2052, 638.64).
-      // BOTH axes were stale: y was a percentage of 897, and x still placed the
-      // container at its old x=950. The node moved it to 863 when the board was
-      // shortened, which is why the laptop sat 87px too far right.
-      slug: "website",
-      file: "website_landing.png",
-      x: 77.3746,
-      y: 84.8127,
-      w: pctX(242.41),
-      m: { x: 64.597, y: 83.255, w: 54.474 }, // 566:37685
-    },
   ],
 
   /* MOCKUP CAPTIONS — 450:37859 and 392:14769. The comp writes each mockup's
@@ -323,30 +339,6 @@ module.exports = {
      PURELY DECORATIVE. A caption that names an asset file is not information a
      screen-reader user is missing — the mockups themselves are aria-hidden for
      the same reason, and these are rendered the same way. */
-  captions: [
-    {
-      slug: "campaign",
-      text: "campaign_landing.svg",
-      x: pctX(126.5), // centre-x — the campaign mockup's own
-      // TOP, not centre (see the note above). 450:37859 sits at 363 + 214.496 =
-      // 577.496 on the 753 board — 8px under the image's bottom at 569.496,
-      // which is the gap the comp draws under both mockups.
-      y: pctY(577.496),
-      w: pctX(131),
-      // 566:38271. y is a TOP here, like the desktop pair.
-      m: { x: 13.719, y: 24.228, w: 26.405 },
-    },
-    {
-      slug: "website",
-      text: "website_landing.svg",
-      x: pctX(984.2052), // centre-x — follows the mockup's 87px move left
-      // 392:14769 at 570 + 145.280 = 715.280; the image bottom is 707.280, so
-      // the same 8px gap as the phone.
-      y: pctY(715.280),
-      w: pctX(242.4104),
-      m: { x: 64.597, y: 91.398, w: 54.474 }, // 566:37697
-    },
-  ],
 
   /* The "My Expertise" pill (432:11655), sitting ON the folder front. Expressed
      relative to the FLAP box because the pill is a child of the flap button, not
