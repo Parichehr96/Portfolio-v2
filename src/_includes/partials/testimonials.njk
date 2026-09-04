@@ -1,0 +1,105 @@
+{#
+  TESTIMONIALS, THE CONTENT LAYER — Figma 673:1638, cards 673:1650.
+
+  THIS PARTIAL IS NO LONGER A SECTION EITHER. Its section, stage, photo, dim and
+  runway are gone into partials/story.njk; what is left is the heading and the
+  card row that rise over the shared band during beats B and C.
+
+  THE ROW IS A MARQUEE, and 673:1638's nine card instances are what it is drawn
+  from — three testimonials repeated three times, the designer showing a row that
+  continues past both edges. It was built once as a snap-scroller centred on the
+  node's rest state; this is the other reading of the same node, and the one
+  asked for.
+
+  SIX ITEMS, TWO IDENTICAL SETS, AND THE MACRO IS WHY. A seamless loop needs the
+  second half to be pixel-identical to the first — so both come from one macro
+  rather than two copies of the markup that could drift the first time a field
+  changes. _testimonials.css animates the strip from -50% to 0, which moves the
+  cards RIGHTWARD and lands set B exactly where set A began.
+
+  THE SECOND SET IS FURNITURE, NOT CONTENT. aria-hidden on the item and
+  tabindex="-1" on its link, so a screen reader reads three testimonials and Tab
+  visits three cards — not six. The clone class is what CSS removes entirely in
+  both static regimes.
+
+  A LINK THAT DRIFTS UNDER THE CURSOR IS A LINK YOU CANNOT CLICK, so the strip
+  freezes on hover and on focus-within. That is not decoration: it is what makes
+  the three cards clickable at all.
+
+  THE WHOLE CARD IS THE LINK, so everything inside it is phrasing content —
+  spans, not headings and paragraphs. All three point at the same place: the
+  recommendations tab of the LinkedIn profile, where the unabridged text lives.
+
+  short/roleShort RATHER THAN quote/role, and the data file explains why: the
+  node's card is 327 tall with a three-line quote and a one-line title, and
+  neither the full recommendation nor Amir's four-clause role fits that. The
+  archive fields stay complete; these are what the card prints.
+
+  #testimonials IS NOT ON THIS BOX. It is a zero-height marker in the runway, at
+  the scroll offset where the cards settle — see story.njk. An id on this layer
+  would sit inside the sticky stage, so jumping to it would land the reader at
+  the very start of the About sequence instead of on the cards.
+#}
+
+  <div class="testimonials__content">
+    <h2 class="testimonials__heading">Testimonials</h2>
+
+    {#- ONE MACRO, CALLED TWICE. `clone` is the only difference between the two
+        sets: it adds the class CSS removes when the marquee is off, and it takes
+        the copy out of the accessibility tree and out of the tab order. -#}
+    {%- macro card(person, clone) %}
+    <li class="testimonials__item{% if clone %} testimonials__item--clone{% endif %}"
+        {%- if clone %} aria-hidden="true"{% endif %}>
+      <a
+        class="testimonial-card"
+        href="{{ person.link }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        {%- if clone %} tabindex="-1"{% endif %}
+      >
+        <span class="testimonial-card__avatar">
+          {%- if person.avatar %}
+          <img
+            class="testimonial-card__photo"
+            src="{{ person.avatar }}"
+            alt=""
+            width="96"
+            height="96"
+            decoding="async"
+            loading="lazy"
+          />
+          {%- else %}
+          {#- NO HEADSHOT SUPPLIED. The initials are derived from `name` in the
+              data file, so this can never disagree with the name printed below
+              it. Setting `avatar` swaps it for a photo. -#}
+          <span class="testimonial-card__initials" aria-hidden="true">{{ person.initials }}</span>
+          {%- endif %}
+
+          {#- THE QUOTE BADGE. 30px white disc at the avatar's lower right, and
+              the mark inside it is TYPE, not artwork: 673:1654 is a flattened
+              vector 12.923 x 9.261, and Figtree's own ” has an ink aspect of
+              1.3948 against that box's 1.3954 — a 0.04% match, so the vector is
+              this glyph. _testimonials.css carries the size and the two offsets
+              that put its ink on the node's coordinates. -#}
+          <span class="testimonial-card__badge" aria-hidden="true"></span>
+        </span>
+
+        <span class="testimonial-card__quote">{{ person.short }}</span>
+        <span class="testimonial-card__rule" aria-hidden="true"></span>
+        <span class="testimonial-card__name">{{ person.name }}</span>
+        <span class="testimonial-card__role">{{ person.roleShort }}</span>
+      </a>
+    </li>
+    {%- endmacro %}
+
+    {#- THE VIEWPORT CLIPS, THE TRACK MOVES. They cannot be the same element: a
+        box that clips its own overflow clips it in its own coordinate space, so
+        an animated track would carry its window along with it and nothing would
+        ever leave the frame. -#}
+    <div class="testimonials__viewport">
+      <ul class="testimonials__track">
+        {%- for person in testimonials %}{{ card(person, false) }}{% endfor %}
+        {%- for person in testimonials %}{{ card(person, true) }}{% endfor %}
+      </ul>
+    </div>
+  </div>

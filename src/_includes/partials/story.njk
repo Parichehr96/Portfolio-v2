@@ -1,0 +1,119 @@
+{#
+  THE ABOUT -> TESTIMONIALS SUPERSECTION — Figma 664:61547, 666:61738, 673:1638.
+
+  ONE SECTION, ONE PINNED BAND, FOUR LAYERS. This was two sections with two
+  sticky stages, and being two was the bug: the second section's own background
+  painted a 60px band between the photos and flipped the ±120 page margins from
+  white to black at the join. There is nothing to align here because there is
+  nothing to join — one band is pinned for the whole sequence and the content
+  flows over it.
+
+  THE FOUR LAYERS, in paint order:
+    story__shot--about    the About photo + its dim (0 -> 0.82)      z 0
+    story__shot--testi    the Testimonials photo + its 0.55 dim      z 1
+    story__layer--about   the About text, clipped at the TOP only    z 2
+    story__layer--testi   the cards, clipped top AND bottom          z 3
+
+  THE PANELS ARE display:contents WHILE PINNED, which is what lets that flat
+  order exist. Pairing each photo with its content is what the static regime
+  needs — two stacked blocks, each a photo backing its own copy — but a real box
+  around the pair would be a stacking context, and the four layers could no
+  longer interleave. display:contents dissolves the box under the pin and brings
+  it back below 900, so one markup serves both.
+
+  THE ASYMMETRIC CROSSFADE. The About shot stays fully opaque and the
+  Testimonials shot fades in OVER it, each carrying its own dim inside the layer
+  that fades. Two layers fading in opposite directions would dip at the halfway
+  point — 50% of each over the page — and the band would flash lighter mid
+  transition. This way the composite is opaque at every frame.
+
+  THE BEATS, in scroll pixels down the 1478px runway:
+    A     0.00 ->  678.86   About text rises 797.73 -> 118.87; its dim 0 -> 0.82
+    B   678.86 -> 1318.46   About text rises on to -520.73 and off the top
+    x   797.73 -> 1117.73   the photo crossfades, About -> Testimonials
+    C   797.73 -> 1318.46   the cards rise 757.73 -> 237 and settle
+    hold 1318.46 -> 1478.00 nothing moves — reading time, and a still window for
+                            the card scroller
+    D  past 1478.00         the stage releases; band and cards leave together
+
+  BEAT C STARTS ON THE FRAME THE ABOUT TEXT'S TOP EDGE CROSSES THE BAND'S TOP
+  EDGE. Both land on 797.73, and that is not a coincidence to be maintained by
+  hand: About needs 639.60 to clear, the cards need 520.73 to arrive, and
+  offsetting them by the 118.87 the text is sitting at makes the last of the old
+  copy leave as the first of the new content settles.
+
+  #about-me IS ON THE SECTION, not on the About layer. It is the nav anchor and
+  the element analytics-events.js observes for view_about, and it belongs on the
+  box that spans the whole sequence. data-header-theme likewise: parallax.js
+  flips it dark at 0.160758, which is the same 237.60 scroll pixels the About-only
+  version flipped at.
+#}
+
+<section
+  class="story"
+  id="about-me"
+  data-header-theme="light"
+  data-parallax="--story-progress"
+  data-parallax-flip="0.160758"
+>
+
+  <div class="story__stage">
+
+    <div class="story__panel story__panel--about">
+      {#- aria-hidden with an empty alt: the photo is atmosphere, and the three
+          paragraphs beside it already say everything it says. -#}
+      <div class="story__shot story__shot--about" aria-hidden="true">
+        <img
+          class="story__photo"
+          src="{{ about.photo.file }}"
+          alt=""
+          width="1600"
+          height="2844"
+          decoding="async"
+          draggable="false"
+        />
+        <div class="story__dim story__dim--about"></div>
+      </div>
+
+      <div class="story__layer story__layer--about">
+        {% include "partials/about.njk" %}
+      </div>
+    </div>
+
+    <div class="story__panel story__panel--testi">
+      {#- Pari at the Mindful Meet poster session. Atmosphere again — nothing in
+          it is information the three quotes do not already carry. -#}
+      <div class="story__shot story__shot--testi" aria-hidden="true">
+        <img
+          class="story__photo story__photo--testi"
+          src="/Assets/images/testimonials/testimonials.jpg"
+          alt=""
+          width="1200"
+          height="1600"
+          decoding="async"
+          loading="lazy"
+          draggable="false"
+        />
+        <div class="story__dim story__dim--testi"></div>
+      </div>
+
+      <div class="story__layer story__layer--testi">
+        {% include "partials/testimonials.njk" %}
+      </div>
+    </div>
+
+  </div>{#- /.story__stage -#}
+
+  {#- THE SUB-ANCHOR, AND IT IS A MARKER RATHER THAN AN id ON THE CARDS. The card
+      layer lives inside the sticky stage, so its offsetTop is the stage's and
+      jumping to it would land the reader at the very start of the About
+      sequence. This box sits in the runway at exactly the offset where the cards
+      settle, so #testimonials scrolls to the frame it names. -#}
+  <div id="testimonials" class="story__anchor" aria-hidden="true"></div>
+
+  {#- THE PIN'S SCROLL DISTANCE. A real element for the same reason .hero__runway
+      and .work__runway are: padding sits outside the content box a sticky child
+      is bounded by, so only a sibling with height can extend the pin. Its height
+      IS the travel — parallax.js measures this box, not the section. -#}
+  <div class="story__runway" data-parallax-runway aria-hidden="true"></div>
+</section>

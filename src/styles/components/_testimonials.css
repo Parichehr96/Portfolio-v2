@@ -1,0 +1,378 @@
+/* TESTIMONIALS, THE CONTENT LAYER — Figma 673:1638, cards 673:1650.
+ *
+ * Owns the heading and the card row. The section, the sticky stage, the photo,
+ * the dim and the runway are _story.css's: one band is pinned for the whole
+ * About -> Testimonials sequence and these cards are what rides over its second
+ * half. The layer's own translate lives there too, beside the beat it belongs to.
+ *
+ * THE DARK SCOPE IS GONE, AND THAT WAS THE BUG. This block used to set
+ * background-color on a section of its own, which is what put a 60px black band
+ * between the two photographs and flipped the +-120 page margins from white to
+ * black at the join. There is no section here now and no background: .story is
+ * in the light scope, so the margins are white for the whole run.
+ *
+ * The gutter rules went with it. .story::before/::after draw one continuous pair
+ * down both photographs in --border-strong, where this file used to draw a
+ * second, white pair that only existed because the band beneath it was black.
+ *
+ * WHAT DID NOT CHANGE: every card value below. get_variable_defs on 673:1638
+ * returns White, Black, Gray 3 #C7C7CC, Gray 5 #E5E5EA and Gray 6 #F2F2F7 and
+ * nothing else; Gray 3 is the role, Gray 6 the quote. The fill, the hairline,
+ * the divider and the 0.55 dim are as approved.
+ */
+
+/* ---- The layer's own geometry --------------------------------------------- */
+/* Inset to the band, so the row is clipped at 120 and 1392 exactly as 673:1638
+   cuts its outer two cards. Position and transform are _story.css's — this is
+   only the width. */
+.testimonials__content {
+  /* The row's two dimensions, declared where the row is rather than on a section
+     that no longer exists. 480 on a 540 pitch is what puts the three cards at
+     -145 / 395 / 935 once the track is centred. */
+  --testi-card-w: 480px;
+  --testi-card-gap: 60px;
+
+  position: absolute;
+  left: var(--space-11);
+  right: var(--space-11);
+  /* Starts on the band's bottom edge, where .story__layer--testi clips, so the
+     cards rise out of the photograph rather than fading in over the page. */
+  top: 757.73px;
+}
+
+/* ---- Heading -------------------------------------------------------------- */
+/* Headline Large 32/40, white, centred on the band. The node wraps it in an
+   80-tall Row with the text inset 20, which is why the card row below is 52 away
+   and not 32: 237 + 40 + 52 = 329. */
+.testimonials__heading {
+  margin: 0;
+  font-size: var(--m3-headline-lg);
+  line-height: var(--m3-headline-lg-leading);
+  letter-spacing: var(--m3-headline-lg-tracking);
+  font-weight: var(--weight-regular);
+  color: var(--white);
+  text-align: center;
+}
+
+/* ---- The card row: a marquee ---------------------------------------------- */
+/* TWO BOXES, AND THEY CANNOT BE ONE. The viewport clips at the band's edges; the
+   track is what moves. A single element doing both would clip in its own
+   coordinate space and carry its window along with it, so nothing would ever
+   cross an edge.
+ *
+ * overflow:clip, NOT hidden. `hidden` makes a scroll container, and a scroll
+ * container will scroll-into-view on focus — so tabbing to a card that is
+ * currently off the right edge would add a scrollLeft the animation knows
+ * nothing about and desync the strip permanently. `clip` cuts the same pixels
+ * and cannot scroll. */
+.testimonials__viewport {
+  margin-block-start: 52px;
+  overflow: clip;
+}
+
+/* THE STRIP. width:max-content is load-bearing, not tidiness: as a plain block
+   the ul would take the band's 1272 and translateX(-50%) would be -636 instead
+   of -1620, so the loop would land in the middle of a card. max-content makes
+   the percentage resolve against the strip's real 3240. */
+.testimonials__track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  animation: testi-marquee 40s linear infinite;
+  will-change: transform;
+}
+
+/* PAUSED ON HOVER AND ON FOCUS. Not a nicety — every card is a link, and a link
+   that drifts under the cursor is a link you cannot click. focus-within is the
+   keyboard half of the same guarantee: the strip stops while a card is focused,
+   which is also the only way a keyboard user can hold one still, since a clipped
+   viewport cannot scroll one into view. */
+.testimonials__track:hover,
+.testimonials__track:focus-within {
+  animation-play-state: paused;
+}
+
+/* -50% TO 0, WHICH MOVES THE CARDS RIGHTWARD and loops seamlessly because set B
+   sits exactly one set-pitch after set A: at -50% the strip's fourth card is at
+   x=0, at 0 the first card is, and the two are the same card. */
+@keyframes testi-marquee {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+/* MARGIN, NOT gap, AND THE SEAM IS WHY. With `gap` the strip is 6W + 5G, so half
+   of it is 3W + 2.5G — but one set's pitch is 3W + 3G, and the loop would jump
+   half a gap, 30px, every 40 seconds. A trailing margin on every item makes the
+   strip exactly 6(W + G) and the two halves exactly equal. Same 60px spacing. */
+.testimonials__item {
+  display: flex;
+  flex: 0 0 var(--testi-card-w);
+  margin-inline-end: var(--testi-card-gap);
+}
+
+/* ---- The card ------------------------------------------------------------- */
+/* 480 x 327, and the node's absolute offsets resolve to a padded column:
+     33 · avatar 96 · 16 · quote 60 · 16 · rule 1 · 16 · name 28 · 4 · role 24 · 33
+   which sums to 327 exactly, and 480 - 66 leaves the 414 the node gives the
+   quote, the name and the role. Writing those as a flex column reproduces every
+   one of them and survives a font swap; absolute offsets would restate them and
+   drift the first time a step changed.
+ *
+ * THE HAIRLINE IS AN INSET SHADOW, NOT A BORDER, and that is arithmetic rather
+ * than taste. A 1px border in border-box eats 2px of the content width, leaving
+ * 412 where the node says 414. An inset ring draws the same line, follows the
+ * 20px radius, and costs no layout. */
+.testimonial-card {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  min-height: 327px;
+  padding: 33px;
+  border-radius: 20px;
+
+  /* WHITE GLASS, NOT A DARK FILL. This was rgba(46,46,46,0.55) — a grey card on
+     a photograph. It is a white wash at a tenth of an alpha over a blurred
+     backdrop instead, which is why the fill can be white while every line of
+     type stays light: at 0.10 the card is still mostly the 0.64-dimmed photo
+     underneath, so it reads as soft dark glass rather than as a white panel. It
+     looks near-white only when it is composited on a white canvas with nothing
+     behind it, which is how a comp renders it and not how the page does.
+   *
+   * NO OPAQUE LAYER ANYWHERE IN HERE. The moment a solid fill goes under this,
+   * the blur has nothing to sample and the light type loses its ground. */
+  background-color: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+
+  /* THE HAIRLINE IS AN INSET SHADOW, NOT A BORDER, and that is arithmetic rather
+     than taste. Same 1px and the same rgba(255,255,255,0.12), but a real border
+     in border-box eats 2px of the content width and leaves 412 where the node
+     says 414. An inset ring draws the same line, follows the 20px radius, and
+     costs no layout. */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+
+  color: var(--white);
+  text-align: center;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* NOT IN THE COMP, which draws one state. A card-sized link with no response at
+   all reads as decoration; at rest it is identical, so the pixel match holds.
+   The glass thickens rather than darkening — a dark hover on a white wash would
+   read as the card switching material. */
+.testimonial-card:hover,
+.testimonial-card:focus-visible {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.testimonial-card__avatar {
+  position: relative;
+  flex: none;
+  width: 96px;
+  height: 96px;
+}
+
+.testimonial-card__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* The no-headshot state. A white wash rather than a grey fill, for the same
+   reason .work's raised surface is one: a darker disc on a dark card reads as a
+   hole where a face should be. */
+.testimonial-card__initials {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  font-size: var(--m3-title-lg);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-indent: 0.04em; /* cancels the trailing letter-space so it reads centred */
+}
+
+/* 30px disc at 66,66 inside the 96 box — the node's own coordinates. */
+.testimonial-card__badge {
+  position: absolute;
+  left: 66px;
+  top: 66px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--white);
+}
+
+/* THE MARK IS TYPE. 673:1654 is a flattened vector 12.923 x 9.261; Figtree
+   Regular's ” has an ink box of 29.50 x 21.15 per 100px, an aspect of 1.3948
+   against the node's 1.3954. Solving that ink height for 9.261 gives 43.79px,
+   at which the ink measures 12.917 x 9.261 — within six thousandths of a pixel
+   on the width.
+ *
+ * THE TWO OFFSETS PLACE INK, NOT A BOX. At 43.79/1 the baseline sits 37.219
+ * below the content box's top and the ink 30.651 above the baseline, so the ink
+ * top is 6.568 down from the box; the ink's left edge is 0.788 right of it.
+ * The node wants the ink at 9,10 inside the badge, hence 8.212 and 3.432. The
+ * box itself overflows the disc and is invisible; only the ink is inside. */
+.testimonial-card__badge::before {
+  content: "”";
+  position: absolute;
+  left: 8.212px;
+  top: 3.432px;
+  font-size: 43.79px;
+  line-height: 1;
+  font-weight: var(--weight-regular);
+  color: #000000;
+}
+
+/* Body Medium 14/20, three lines, 414 wide. Gray 6. */
+.testimonial-card__quote {
+  width: 100%;
+  margin-block-start: 16px;
+  font-size: var(--m3-body-md);
+  line-height: var(--m3-body-md-leading);
+  letter-spacing: var(--m3-body-md-tracking);
+  color: #f2f2f7;
+}
+
+.testimonial-card__rule {
+  flex: none;
+  width: 120px;
+  height: 1px;
+  margin-block-start: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.testimonial-card__name {
+  width: 100%;
+  margin-block-start: 16px;
+  font-size: var(--m3-title-lg);
+  line-height: var(--m3-title-lg-leading);
+  letter-spacing: var(--m3-title-lg-tracking);
+  color: var(--white);
+}
+
+/* BODY LARGE, NOT TITLE MEDIUM. Both are 16/24, so the node's height reads the
+   same either way — but get_variable_defs binds Body Large here, and the two
+   steps differ on tracking: 0.5 against 0.15. Over a 414 line that is visible. */
+.testimonial-card__role {
+  width: 100%;
+  margin-block-start: 4px;
+  font-size: var(--m3-body-lg);
+  line-height: var(--m3-body-lg-leading);
+  letter-spacing: var(--m3-body-lg-tracking);
+  color: #c7c7cc;
+}
+
+/* ---- Static regimes -------------------------------------------------------
+ * THREE BLOCKS, NOT ONE, and the split is the point. The marquee has to stop
+ * under reduced motion at every width — but what replaces it differs: on a
+ * desktop the three real cards are a row you can push, and at 900 and below they
+ * are a list. The old single block made every reduced-motion reader a 1456px
+ * card wide, which is the bug this separation also fixes.
+ *
+ * THE CLONE SET IS REMOVED IN BOTH, not merely hidden: with no animation the
+ * second copy is three more cards to scroll past, and it is already out of the
+ * accessibility tree, so a sighted reader would be the only person who ever saw
+ * the duplication. */
+
+/* SHARED — whatever the width, reduced motion stops the strip dead and deletes
+   the copy that only existed to make the loop seamless. Everything in here is
+   what BOTH static regimes need, and .testimonials__content is the reason this
+   block exists at all: _story.css makes the stage static under the identical
+   query, so the row has to come back into flow with it. Splitting this rule into
+   the two blocks below left it absolutely positioned at 757.73 with nothing
+   pinned underneath — caught in the static probe, not by reading. */
+@media (prefers-reduced-motion: reduce), (max-width: 900px) {
+  .testimonials__content {
+    position: relative;
+    left: 0;
+    right: 0;
+    top: auto;
+    padding: var(--space-6) 28px;
+  }
+
+  .testimonials__track {
+    animation: none;
+    transform: none;
+    width: auto;
+    will-change: auto;
+  }
+
+  .testimonials__item--clone {
+    display: none;
+  }
+
+  .testimonial-card {
+    transition: none;
+  }
+}
+
+/* REDUCED MOTION ABOVE 900 — the three real cards, static, as a row the reader
+   pushes rather than one that pushes itself. overflow-x:auto here and not the
+   marquee's `clip`: this is the one regime where the viewport SHOULD scroll. */
+@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
+  .testimonials__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .testimonials__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonials__track {
+    flex-direction: row;
+  }
+}
+
+/* ---- 900 and below — 681:1678 --------------------------------------------
+ * The composition is the mobile node's: the photo becomes the section's own
+ * background and the three cards stack down it at full width inside 28px
+ * margins. The row stops being a row at all — three 480px cards on a phone is a
+ * list, and a horizontal swipe inside a vertical scroll is a fight.
+ *
+ * AFTER the reduced-motion block, so a phone with reduce turned on gets the
+ * stack rather than the desktop scroller. Same specificity, later wins. */
+@media (max-width: 900px) {
+  .testimonials__viewport {
+    margin-block-start: var(--space-6);
+    overflow: visible;
+  }
+
+  .testimonials__track {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .testimonials__item {
+    flex: 1 1 auto;
+    margin-inline-end: 0;
+  }
+
+  .testimonial-card {
+    min-height: 0;
+  }
+}
+
+/* 390 — the page margin is already gone; only the type steps move, and they move
+   in tokens.css, which drops Headline Large to 24/36 and Title Large to 18/27
+   for every band at once. Nothing to restate here but the tighter inset. */
+@media (max-width: 480px) {
+  .testimonials__content {
+    padding-inline: var(--space-4);
+  }
+}

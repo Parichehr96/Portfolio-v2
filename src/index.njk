@@ -10,13 +10,12 @@ permalink: /
   which ones render and in what order. No content and no styling decisions
   belong here: strings live in src/_data/, colours in styles/tokens.css.
 
-  THE PAGE ENDING AFTER ABOUT ME IS EXPECTED, NOT BROKEN. The v2 blocks that
-  used to follow — the 3-column panel shell, At a Glance, the Projects
-  carousel, Testimonials, the milestone timeline, How I Think, Skills and the
-  old contact footer — were all removed in the cleanup sweep. The redesign is a
-  single-column stack of full-bleed sections and none of them survive in that
-  form. Testimonials (Figma 187:2301) and Footer (289:2233) are the only two
-  coming back, each as its own new section, and they slot in below About Me.
+  THE PAGE IS COMPLETE. The v2 blocks that used to follow About Me — the
+  3-column panel shell, At a Glance, the Projects carousel, Testimonials, the
+  milestone timeline, How I Think, Skills and the old contact footer — were all
+  removed in the cleanup sweep, and the two that were coming back have both
+  landed: Testimonials, which is now the second half of the About supersection
+  rather than a section of its own, and the Footer.
 
   THERE IS NO NAV CONTRACT ANY MORE. This file used to carry one: the ids
   #summary, #featured-works, #all-about-me and #contact had to appear in that
@@ -44,10 +43,14 @@ permalink: /
    does, the work proves it, and About explains who was behind it. #}
 {% include "partials/work.njk" %}
 
-{# ---- ABOUT ME ------------------------------------------------------------ #}
-{% include "partials/about.njk" %}
-
-{# ---- TESTIMONIALS — Figma 187:2301. Not built yet. ------------------------ #}
+{# ---- ABOUT ME -> TESTIMONIALS — Figma 664:61547, 666:61738, 673:1638 ------ #}
+{# ONE SECTION, NOT TWO, AND THE MERGE IS THE POINT. As separate sections each
+   carried its own background, so the second painted a 60px band between the two
+   photographs and flipped the ±120 page margins from white to black at the join.
+   partials/story.njk pins ONE image band for the whole sequence: the About copy
+   settles over the first photograph, leaves off the top as the band crossfades,
+   and the cards rise into the second. #}
+{% include "partials/story.njk" %}
 
 {# ---- FOOTER — Figma 275:57838 --------------------------------------------- #}
 {# LAST, and carrying #contact. Every "Contact" link on the site points here,

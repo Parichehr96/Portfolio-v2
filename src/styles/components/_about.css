@@ -1,113 +1,41 @@
-/* ABOUT ME — Figma 664:61547 (desktop layout) and 666:61738 (mobile, scrolled).
+/* ABOUT ME, THE CONTENT LAYER — Figma 664:61547 (resting) and 666:61738 (arrived).
  *
  * A PARALLAX BETWEEN TWO COMPS. 664:61547 is the resting state — photo in a
  * rounded box at the top of the band, summary below it, every line muted.
- * 666:61738 is the arrival — photo dimmed, summary over it in white. The section
- * is the travel between them, and --about-progress (0 to 1) is where it is.
+ * 666:61738 is the arrival — photo dimmed, summary over it in white. Beat A of
+ * the supersection is the travel between them, and --about-progress (0 to 1) is
+ * where it is.
  *
- * ONE PROPERTY DRIVES EVERYTHING. scripts/about-parallax.js writes
- * --about-progress on this element and nothing else; the dim opacity, all six
- * colour ramps and the summary's translate are calc() off it. That is what keeps
- * the handler out of layout entirely — it never reads a size, never writes one.
+ * THE SECTION, THE STAGE, THE PHOTO, THE DIM AND THE RUNWAY MOVED TO _story.css,
+ * which pins one band for the whole About -> Testimonials sequence. What is left
+ * here is the copy and the clock. The merge is why: as two sections the second
+ * one painted its own background between the two photos and flipped the +-120
+ * margins from white to black at the join.
  *
- * THE RULES ARE THE PAGE FRAME, unchanged: the outer pair at +-120 continue the
- * header's and the hero's, and the clock column keeps its border-top. They are
- * pseudo-elements rather than borders for the hero's reason — a real
- * border-inline eats 1px per side off the content box and shifts the columns.
+ * --about-progress STILL DRIVES EVERYTHING AND IS STILL THE SAME NUMBER. It is
+ * derived in _story.css from the first 678.86px of --story-progress, so every
+ * rule below — the six colour ramps and the summary's translate — reads the
+ * property it always read and gets the value it always got. Beat A is the
+ * committed behaviour, verified bit-identical at every sample from -300 to 679.
+ *
+ * THE RULES ARE THE PAGE FRAME and they moved too, to .story::before/::after —
+ * one continuous pair down both photographs instead of two that changed colour
+ * at a join. The clock column keeps its own border-top, here.
  */
+/* THE COLOUR RAMP, declared on the layer the six rules below live in. --about-mix
+   and the three pairs used to sit on the section; the section is .story now and
+   these belong with their consumers rather than two files away.
 
-.about {
-  position: relative;
-  padding-block-start: 60px;
-
-  /* 0 at rest, 1 at the end of the pin. Declared here so every rule below has a
-     value before the script runs — with JS off the section renders as the light
-     resting comp rather than as an unstyled stack. */
-  --about-progress: 0;
+   The comps specify: everything starts at Tertiary and only the emphasis ends
+   white. Written as tokens so the ramp is stated once and the six rules that use
+   it cannot drift apart. */
+.about__summary {
   --about-mix: calc(var(--about-progress) * 100%);
-
-  /* THE SETTLE TRAVEL, AND IT IS ONE NUMBER FOR A REASON. The summary rests 40px
-     under the photo (797.73 inside the stage) and lands centred on it
-     ((757.73 - 520) / 2 = 118.87), so it has 678.86 to travel. The runway is the
-     same number, which is what makes the pin end exactly as the content settles:
-     scroll distance in, translate distance out. Change one and the other follows.
-     Previously these were two independent 680s and the pin outlasted the settle
-     by ~430px, which is the gap the content spent sliding off the top. */
-  --about-travel: 678.86px;
-
-  /* The three colour pairs the comps specify: everything starts at Tertiary and
-     only the emphasis ends white. Written as tokens so the ramp is stated once
-     and the six rules that use it cannot drift apart. */
   --about-ink: color-mix(in srgb, #ffffff var(--about-mix), var(--fig-gray-tertiary-on-dark));
   --about-body: color-mix(in srgb, var(--fig-gray-3) var(--about-mix), var(--fig-gray-tertiary-on-dark));
   --about-muted: var(--fig-gray-tertiary-on-dark);
 }
 
-.about::before,
-.about::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: var(--border-width);
-  background-color: var(--border-strong);
-  pointer-events: none;
-  z-index: 2;
-}
-.about::before { left: var(--space-11); }
-.about::after { right: var(--space-11); }
-
-/* ---- The stage ------------------------------------------------------------ */
-/* Pinned for exactly --about-travel and then released. Its height is the photo's
-   because the photo fills it; the summary hangs below it at rest and is drawn up
-   into it as progress runs, which overflow:visible allows. */
-.about__stage {
-  position: sticky;
-  top: 60px;
-  height: 757.73px;
-}
-
-/* ---- The photo ------------------------------------------------------------ */
-/* STICKY, NOT FIXED, and bounded by .about — so it pins for exactly the length
-   of this section and releases with it, the same mechanic the hero board and the
-   work card-stack use. 757.73 and the 1px inset inside the 1272 container are
-   666:61669's own numbers. */
-.about__media {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--space-11);
-  right: var(--space-11);
-
-  /* EDGE TO EDGE BETWEEN THE RULES, SQUARE. --space-11 exactly, not +1px: the
-     image runs the full 120-to-120 span so its outer pixels sit UNDER the two
-     gutter rules rather than starting after them, and the rules (z-index 2 over
-     this layer's 0) draw on top as the frame. That is the whole treatment — no
-     radius and no stroke of its own; the side borders are what contain it. */
-  overflow: hidden;
-  z-index: 0;
-}
-
-/* The source is PORTRAIT (2160x3840 upright) and both comps are cover crops of
-   it — wide here, near-full on mobile. object-position keeps the skyline and the
-   reflected figure in frame rather than centring on empty sky. */
-.about__photo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 38%;
-}
-
-.about__media-dim {
-  position: absolute;
-  inset: 0;
-  background-color: #000;
-  /* 0.82, not 0.6. At 0.6 the arrived state still read as a bright photo with
-     text on it; 666:61738 has the buildings barely legible and the copy plainly
-     dominant, which is what this lands. */
-  opacity: calc(var(--about-progress) * 0.82);
-}
 
 /* ---- The summary ---------------------------------------------------------- */
 /* TRANSLATED, NOT RE-LAID-OUT. The summary starts 40px below the photo, which is
@@ -117,15 +45,26 @@
 .about__summary {
   /* ABSOLUTE INSIDE THE STAGE, not sticky in its own right. 797.73 is the comp's
      resting offset — 757.73 of photo plus the 40 gap — and the transform lifts it
-     to 118.87, centred on the photo. The travel is --about-travel and progress is
-     clamped 0..1 by the handler, so the translate CANNOT exceed the centred
-     position: the content stops there and never rides up off the image. */
+     to 118.87, centred on the photo. The travel is --story-a-travel, declared
+     once in _story.css beside the rest of the beat map rather than a second copy
+     of 678.86 here that could drift from it. Progress is clamped 0..1 by the
+     handler, so the settle term CANNOT overshoot the centred position. */
   position: absolute;
   left: 0;
   right: 0;
   top: 797.73px;
   z-index: 1;
-  transform: translateY(calc(var(--about-progress) * -1 * var(--about-travel)));
+  /* TWO TERMS, TWO BEATS. The first is the settle, unchanged and still clamped
+     0..1 by the handler so it cannot overshoot the centred position. The second
+     is beat B: once the copy is centred it keeps going, 639.60 further, until
+     its last row clears the band's top edge — .story__layer--about clips there,
+     so it slides under the header and is gone rather than riding up over Work. */
+  transform: translateY(
+    calc(
+      var(--about-progress) * -1 * var(--story-a-travel) +
+      var(--story-exit) * -1 * var(--story-b-travel)
+    )
+  );
   will-change: transform;
 }
 
@@ -176,13 +115,6 @@
   color: var(--about-ink);
 }
 
-/* THE PIN'S SCROLL DISTANCE, and it is what sets how long the dim takes. 680 is
-   the summary's own travel — the distance from resting (857.73 from the band
-   top) to sitting centred over the photo — so the ramp finishes exactly as the
-   content lands rather than before or after it. */
-.about__runway {
-  height: var(--about-travel);
-}
 
 /* ---- The clock column ----------------------------------------------------- */
 /* 123.43 down and the rule across its top — 666:61716's origin and stroke. The
@@ -363,25 +295,8 @@
  * whole band, the rules dropped the way every other band drops them here.
  * That is also the reduced-motion answer, which is why the two share a block. */
 @media (prefers-reduced-motion: reduce), (max-width: 900px) {
-  .about {
-    --about-progress: 1;
-    padding-block-start: 0;
-  }
-  .about::before,
-  .about::after {
-    display: none;
-  }
-  .about__stage {
-    position: static;
-    height: auto;
-  }
-  .about__media {
-    position: absolute;
-    inset: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-  }
+  /* The section, its rules, the stage and the photo are _story.css's now, and it
+     drops them under this same query. What is left here is the copy. */
   .about__summary {
     position: relative;
     top: auto;
@@ -405,5 +320,57 @@
   }
   .about__runway {
     height: 0;
+  }
+}
+
+/* ---- 900 and below — the phone, 666:61738 ---------------------------------
+ * WIDTH ONLY, NOT (reduce OR <=900), and after the block above so it wins on
+ * later-wins. The shared block turns the pinned layout into a stacked one at
+ * both opt-outs; this one is the phone's own typography and rhythm, and a
+ * desktop reader with reduced motion should not inherit it.
+ *
+ * The node is 390 wide with a 32px margin, so every horizontal number here is
+ * the same 32 the heading, the copy and the clock all sit on. */
+@media (max-width: 900px) {
+  /* 32 top and sides, and NOTHING at the bottom: the gap down to the clock is
+     the clock's own margin, declared once below. Two paddings meeting in the
+     middle was what made it 64. */
+  .about__content {
+    padding: var(--space-6) var(--space-6) 0;
+  }
+
+  /* 16/24/0.5 — Body Large as the node draws it. Declared in px rather than
+     through --m3-body-lg because that token is 14/21 below 480 for the whole
+     site, and the hero, the statement and the footer all read it. This is the
+     one band the node puts back up to 16. */
+  .about__bio {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  /* NO RULE ON THE PHONE. border-left is the desktop's two-column divider, and
+     on one column it draws a 1px white line down the left edge of the clock and
+     pushes its contents 1px off the 32 everything else sits on. */
+  .about__clock {
+    margin-block-start: var(--space-6);
+    padding: 0 var(--space-6) var(--space-6);
+    border-left: 0;
+  }
+
+  /* Body Large 16 semibold, where the desktop uses Title Medium 16 regular. Same
+     size, but the node sets the status word apart by weight — and Title Medium's
+     0.15 tracking is Body Large's 0.5 here. */
+  .about__clock-headline {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.5px;
+    font-weight: var(--weight-semibold);
+  }
+
+  /* Gray 3, one step up from --about-muted's #BFBFBF. The node gives the
+     sub-line its own value; "At" and "I'm" keep the muted step. */
+  .about__clock-detail {
+    color: var(--fig-gray-3);
   }
 }

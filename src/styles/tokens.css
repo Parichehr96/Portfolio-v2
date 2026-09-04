@@ -871,7 +871,7 @@
 .hero,
 .statement,
 .case,
-.about,
+.story,
 .fourohfour {
   --surface: var(--white);
   --surface-raised: var(--fig-elevated);
@@ -897,7 +897,7 @@
    node measures a multiple of 21, every band title 30, the persona key and the
    stat values 27. That is 14 / 20 / 18 at 150%.
 
-   A SEPARATE BLOCK FROM `.case, .about` ABOVE, deliberately. That rule is shared
+   A SEPARATE BLOCK FROM `.case, .story` ABOVE, deliberately. That rule is shared
    with the About section, which lives on the homepage and keeps the homepage's
    scale; folding these three steps into it would drag About down with them. The
    colour tokens genuinely are shared, so that block stays exactly as it is.

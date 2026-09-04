@@ -1,0 +1,365 @@
+/* THE ABOUT -> TESTIMONIALS SUPERSECTION — the band, the beats, the crossfade.
+ *
+ * Owns the frame and the choreography; _about.css and _testimonials.css own what
+ * rides over it. Nothing about the About copy, the clock or the cards is here.
+ *
+ * ONE SECTION IN THE LIGHT SCOPE, and that is the fix as much as the merge is.
+ * As two sections the second one carried its own dark background, so the ±120
+ * margins flipped white to black at the join and its 60px lead-in painted a band
+ * between the two photos. .story joins .hero/.statement/.case/.fourohfour in
+ * tokens.css, so --surface is white for the whole run: white above the band,
+ * white beside it, white below it, and no seam anywhere because there is no
+ * second section to seam against.
+ */
+.story {
+  position: relative;
+
+  /* The 60 above the pin. The stage sticks at the same 60, so the band arrives
+     at its pinned position rather than jumping to it. */
+  padding-block-start: 60px;
+
+  /* DECLARED AT 0 SO THE SECTION SURVIVES WITHOUT JAVASCRIPT. parallax.js
+     overwrites this every frame; if it never loads, the section renders as its
+     resting state — the About photo undimmed with the copy below it, which is
+     664:61547 — rather than unstyled. */
+  --story-progress: 0;
+
+  /* ---- The beat map, in scroll pixels ------------------------------------
+     UNITLESS ON PURPOSE. calc() will divide a length by a NUMBER but not by
+     another length, so a progress ramp written as `calc(var(--px) / 678.86px)`
+     is invalid and silently drops the rule. Every number below is scroll pixels
+     carried as a bare number, multiplied back to px only where it is used. */
+  /* AN INTEGER, AND THAT IS LOAD-BEARING. parallax.js normalises against
+     runway.offsetHeight, which is an integer — so if this constant is 1478.46
+     the handler divides by 1478 and CSS multiplies back by 1478.46, and every
+     derived beat lands 0.03% late. Measured: 0.38px of drift on the About
+     settle. A whole number makes the measurement and the constant the same
+     number and the conversion exact. The 0.46 it gives up comes out of the
+     hold, which is the one segment where nothing moves. */
+  --story-total: 1478; /* the runway, and the whole travel A -> hold */
+
+  --story-a-end: 678.86; /* A: About settles                              */
+  --story-b-end: 1318.46; /* B: About has fully left the top              */
+  --story-c-start: 797.73; /* C: cards start rising — see the note below   */
+  --story-fade-start: 797.73;
+  --story-fade-len: 320;
+
+  /* The distances the three movers actually cover. */
+  --story-a-travel: 678.86px; /* About text 797.73 -> 118.87 */
+  --story-b-travel: 639.60px; /* About text 118.87 -> -520.73, i.e. gone   */
+  --story-c-travel: 520.73px; /* cards 757.73 -> 237                       */
+
+  /* Where we are, in those same scroll pixels. */
+  --story-px: calc(var(--story-progress) * var(--story-total));
+
+  /* ---- The three sub-progressions ----------------------------------------
+     BEAT C STARTS ON THE FRAME THE ABOUT TEXT CROSSES THE BAND'S TOP EDGE, and
+     797.73 is not a number to keep in step by hand: the text sits at 118.87 when
+     beat A ends, so it needs 118.87 of beat B to reach the edge — 678.86 +
+     118.87 = 797.73. Because the cards then take 520.73 and the text takes the
+     remaining 520.73 of its own 639.60, both land on 1318.46 together. The last
+     of the old copy leaves as the first of the new content settles. */
+  --about-progress: clamp(0, calc(var(--story-px) / var(--story-a-end)), 1);
+  --story-exit: clamp(
+    0,
+    calc(
+      (var(--story-px) - var(--story-a-end)) /
+        (var(--story-b-end) - var(--story-a-end))
+    ),
+    1
+  );
+  --story-cards: clamp(
+    0,
+    calc(
+      (var(--story-px) - var(--story-c-start)) /
+        (var(--story-b-end) - var(--story-c-start))
+    ),
+    1
+  );
+  --story-fade: clamp(
+    0,
+    calc((var(--story-px) - var(--story-fade-start)) / var(--story-fade-len)),
+    1
+  );
+}
+
+/* --about-progress IS DERIVED, NOT REPLACED, and that is what makes beat A the
+   committed behaviour rather than a reimplementation of it. Every consumer in
+   _about.css — the dim, all six colour ramps, the settle translate — reads the
+   property it always read.
+ *
+ * IT IS NOT BIT-IDENTICAL TO THE ABOUT-ONLY VERSION, and the reason is worth
+ * knowing before someone "fixes" it. parallax.js normalises against
+ * runway.offsetHeight, an INTEGER, so the About-only build divided by 679 for a
+ * runway designed at 678.86 — a 0.021% skew baked into the committed values.
+ * Nothing here can reproduce that without hardcoding 679, so beat A now lands on
+ * the number the design actually asks for. Measured residual against the
+ * committed build: 0.13px of translate and 0.00016 of dim opacity at worst,
+ * every colour identical to the byte. */
+
+/* The page frame — the same pair and the same x positions the header, hero, work
+   and footer carry, and here they land on the band's two edges because the band
+   IS the space between them. They run the whole supersection, so there is one
+   continuous rule down the side of both photos instead of two that changed
+   colour at a join. */
+.story::before,
+.story::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--border-width);
+  background-color: var(--border-strong);
+  z-index: 2;
+  pointer-events: none;
+}
+.story::before { left: var(--space-11); }
+.story::after { right: var(--space-11); }
+
+/* ---- The pin -------------------------------------------------------------- */
+/* Sticky range = the container's content box (757.73 + 1478) less this box's
+   own height, which is 1478 — the runway, exactly. So the stage releases on
+   the frame the hold ends, and beat D is the band and the settled cards leaving
+   as one element because they ARE one element. */
+.story__stage {
+  position: sticky;
+  top: 60px;
+  height: 757.73px;
+}
+
+/* NO BOX AT ALL WHILE PINNED. The panel exists for the static regime, where each
+   photo has to back its own copy; under the pin its two children have to sit in
+   the stage's own stacking context so shot/shot/layer/layer interleave. A
+   positioned wrapper with a z-index would trap them. */
+.story__panel {
+  display: contents;
+}
+
+/* ---- The two photographs -------------------------------------------------- */
+/* EDGE TO EDGE BETWEEN THE RULES, SQUARE. --space-11 exactly, not +1px: each
+   image runs the full 120-to-120 span so its outer pixels sit UNDER the two
+   gutter rules rather than starting after them, and the rules (z-index 2) draw
+   on top as the frame. No radius, no stroke of their own. */
+.story__shot {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--space-11);
+  right: var(--space-11);
+  overflow: hidden;
+}
+
+.story__shot--about { z-index: 0; }
+
+/* THE ONE THAT FADES, AND ONLY THIS ONE. Its dim is inside it, so at any opacity
+   the pair reads as one image rather than as a photo and a shadow arriving at
+   different rates — and because the layer beneath stays fully opaque there is no
+   halfway point where the band shows through to the page. */
+.story__shot--testi {
+  z-index: 1;
+  opacity: var(--story-fade);
+}
+
+.story__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The About source is PORTRAIT (2160x3840 upright) and both comps are cover
+     crops of it. object-position keeps the skyline and the reflected figure in
+     frame rather than centring on empty sky. */
+  object-position: 50% 38%;
+}
+
+/* 50% 50% IS the Testimonials node's crop, not a default left in place: at 1272
+   wide the cover scale is 1.06 and the centred window lands on source rows
+   443-1157, which is the poster headline down to the "Video Call Effect" panel —
+   what 673:1638 shows. */
+.story__photo--testi {
+  object-position: 50% 50%;
+}
+
+.story__dim {
+  position: absolute;
+  inset: 0;
+  background-color: #000000;
+}
+
+/* 0.82, not 0.6. At 0.6 the arrived state still read as a bright photo with text
+   on it; 666:61738 has the buildings barely legible and the copy plainly
+   dominant, which is what this lands. Ramped, because beat A is the dimming. */
+.story__dim--about {
+  opacity: calc(var(--about-progress) * 0.82);
+}
+
+/* FLAT, NOT RAMPED. The About photo ramps because it starts undimmed with black
+   copy on white beside it. This one is only ever seen through the crossfade,
+   which is already a ramp — dimming it again on the way in would mean the cards
+   arrive over a photo that is still darkening under them. Held flat from the
+   first frame it is visible.
+ *
+ * 0.64, RAISED FROM 0.55 WHEN THE CARDS BECAME GLASS. A card that is a tenth of
+ * an alpha of white over a blur has almost no fill of its own — what sits behind
+ * it IS the card, so the photograph has to carry the contrast the old grey fill
+ * used to. */
+.story__dim--testi {
+  opacity: 0.64;
+}
+
+/* ---- The two content layers ----------------------------------------------- */
+/* Full section width, not band width: .about__inner carries its own 120 margin
+   and .testimonials__content its own 120 inset, both unchanged from when these
+   were sections. The layers only decide WHERE THE CONTENT IS CLIPPED. */
+.story__layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+/* CLIPPED AT THE TOP ONLY, and the asymmetry is the whole of beat B. The layer's
+   top edge IS the band's top edge, so the copy is cut the moment it rises past
+   it — it slides under the header and is gone, rather than riding up over the
+   Work section.
+ *
+ * THE BOTTOM IS OPEN BY EXACTLY 560px, which is the summary's resting overhang:
+ * it sits at 797.73 and is 520 tall, so its last row is 1317.73 from the band
+ * top and 560.00 below the band's own bottom. That is what 664:61547 draws — the
+ * photo in its box with the copy below it — and clipping the bottom as well
+ * would delete the resting comp to solve a problem the resting comp does not
+ * have. Not 100vh: an open-ended box would hang over the whole runway for no
+ * reason. */
+.story__layer--about {
+  top: 0;
+  bottom: -560px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* CLIPPED AT BOTH EDGES, and this one is legibility rather than composition. The
+   cards are rgba(46,46,46,0.55) with white type — a fill designed to sit on a
+   dimmed photograph. Unclipped they would spend 520px of scroll as pale grey
+   boxes with near-invisible text floating on the white page below the band.
+   Clipped, they rise out of the band's bottom edge and are only ever seen where
+   they were designed to be seen.
+ *
+ * ABOVE THE ABOUT LAYER, so during the overlap the arriving content covers the
+ * departing content rather than the other way round. */
+.story__layer--testi {
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 3;
+}
+
+/* The card row rides 757.73 -> 237, which is where 673:1638 puts it. */
+.testimonials__content {
+  transform: translateY(calc(var(--story-cards) * -1 * var(--story-c-travel)));
+  will-change: transform;
+}
+
+/* ---- The runway and the sub-anchor ---------------------------------------- */
+.story__runway {
+  height: calc(var(--story-total) * 1px);
+}
+
+/* ZERO HEIGHT, AT THE OFFSET THE CARDS SETTLE. Scrolling this to the top of the
+   viewport puts --story-progress at 1318.46/1478 = 0.892: cards settled, hold
+   under way, stage still pinned. An id on the card layer would resolve to the
+   stage's own offset and land the reader 1318px earlier. */
+.story__anchor {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 0;
+  top: calc(var(--story-b-end) * 1px);
+  pointer-events: none;
+}
+
+/* ---- Static regime — reduced motion, and 900 and below --------------------
+ * BELOW THIS BLOCK NOTHING ANIMATES, and it has to come after the rules it
+ * overrides: same specificity, later wins. Progress is pinned to 1 by CSS, which
+ * is also why parallax.js checks the identical query and does not run rather
+ * than fighting it every frame.
+ *
+ * THE PANELS COME BACK AS BOXES and that is the whole switch. Each becomes a
+ * block with its photo absolutely filling it and its copy in flow above — two
+ * stacked bands, About then Testimonials, which is what both mobile nodes draw
+ * and what this looked like before the merge. */
+@media (prefers-reduced-motion: reduce), (max-width: 900px) {
+  .story {
+    --story-progress: 1;
+    padding-block-start: 0;
+  }
+
+  .story::before,
+  .story::after {
+    display: none;
+  }
+
+  .story__stage {
+    position: static;
+    height: auto;
+  }
+
+  .story__panel {
+    display: block;
+    position: relative;
+  }
+
+  /* Both fully opaque now: there is no crossfade to be halfway through, and each
+     photo backs only its own panel. */
+  .story__shot {
+    position: absolute;
+    inset: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .story__layer {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow: visible;
+    z-index: 1;
+  }
+
+  .testimonials__content {
+    transform: none;
+  }
+
+  .story__runway {
+    height: 0;
+  }
+
+  .story__anchor {
+    position: static;
+  }
+}
+
+/* ---- 900 and below — the About band only ---------------------------------
+ * A SECOND BLOCK, NARROWER THAN THE ONE ABOVE, and the narrowing is the point.
+ * That query is (reduce OR <=900); this one is width only, so a desktop reader
+ * with reduced motion keeps the dim the pinned sequence arrives at. Everything
+ * here is the phone.
+ *
+ * THE DIM WAS NEVER SCROLL-DRIVEN DOWN HERE. --story-progress is pinned to 1 by
+ * the block above, so --about-progress already computes to 1 and the ramp is
+ * frozen at its top. What changes is the constant it is frozen at, and it is a
+ * token rather than a literal because it is the one number in this band anybody
+ * will want to move.
+ *
+ * MEASURED BEFORE CHANGING IT: at 0.82 the photograph behind the copy runs
+ * rgb(10,14,15) to rgb(29,33,34), which is 9.7:1 to 19.1:1 against the type. At
+ * 0.68 that becomes 6.9:1 to 17.1:1, and 5.8:1 on the brightest twentieth of the
+ * frame. Still AA, no longer AAA. */
+@media (max-width: 900px) {
+  .story {
+    --about-dim-static: 0.68;
+  }
+
+  .story__dim--about {
+    opacity: var(--about-dim-static);
+  }
+}

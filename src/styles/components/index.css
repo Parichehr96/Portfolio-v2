@@ -26,7 +26,11 @@
 @import "_hero.css";
 @import "_statement.css";
 @import "_work.css";
+/* The supersection frame, before the two content layers it pins: both read
+   --story-* and --about-progress from it. */
+@import "_story.css";
 @import "_about.css";
+@import "_testimonials.css";
 @import "_case-study-v2.css";
 @import "_case-challenquiz.css";
 @import "_case-connect2wow.css";
