@@ -13,9 +13,11 @@
   aria-hidden for the same reason: "01" read aloud before the title adds
   nothing a sighted user gets from it.
 
-  The whole row is NOT one link. Only the pill is, because the screenshot has
-  no accessible name and wrapping both in a single anchor would put the image
-  inside the link's text alternative for no benefit.
+  THE WHOLE ROW IS CLICKABLE, AND IT IS STILL ONE ANCHOR. The pill below is the
+  only <a>; _work.css stretches its ::after across the row so a click anywhere
+  follows it. The row is deliberately NOT wrapped in an anchor: that would nest
+  this one inside another — invalid, and repaired by splitting the outer — and
+  would put the screenshot inside the link's text alternative for no benefit.
 
   THE MEDIA SLOT IS EITHER A LOOP OR A STILL, decided by whether projects.js
   found encodes on disk. Both branches carry .work-card__image so _work.css
@@ -114,12 +116,19 @@
       </div>
 
       {%- if project.url %}
+        {#- data-card-link IS THE HOOK FOR THE STRETCHED LINK. _work.css grows
+            this anchor an ::after that covers the whole row, so a click anywhere
+            on the card follows this href; scripts/card-link.js reads the same
+            attribute to tell a tap from a drag. The pill still looks and reads
+            exactly as it did — one link per row, same aria-label, same keyboard
+            behaviour. -#}
         {{ button(
           label="Read more",
           href=project.url,
           iconName="arrow-right",
           variant="solid",
-          aria="Read more about " + project.title
+          aria="Read more about " + project.title,
+          attrs='data-card-link'
         ) }}
       {%- endif %}
     </div>

@@ -243,6 +243,65 @@
   padding: var(--work-row-pad) var(--space-6);
 }
 
+/* ---- THE WHOLE ROW IS THE LINK -------------------------------------------
+ * A STRETCHED LINK, NOT A WRAPPING <a>. Wrapping the row would nest the pill's
+ * anchor inside another anchor — invalid, and browsers repair it by splitting
+ * the outer element — and it would drag the media into the link's text
+ * alternative, which is the reason project-card.njk gives for not doing it.
+ * Instead the pill's own anchor grows an empty ::after that covers the row, so
+ * there is still exactly ONE link per card and its href, its aria-label and its
+ * keyboard behaviour are untouched.
+ *
+ * position:static ON THE PILL IS THE MECHANISM, and it is the whole trick. An
+ * absolutely positioned ::after resolves against the nearest positioned
+ * ancestor of its OWN element — so while .btn-primary keeps its base
+ * position:relative the overlay can only ever be pill-sized. Unsetting it here
+ * hands the containing block to .work-card, which is sticky (and therefore
+ * positioned) on desktop and relative below 900.
+ *
+ * SAFE TO UNSET, CHECKED: nothing inside a solid pill needs the relative.
+ * .btn-border-svg is appended by button-fill.js only to buttons that are NOT
+ * --solid, and it carries no CSS rule anywhere in this codebase; no other
+ * descendant of .btn-primary is absolutely positioned.
+ *
+ * THE COST IS TEXT SELECTION. An overlay across the row means the title and
+ * body can no longer be selected with the mouse — the standard trade for this
+ * pattern, and the reason it is scoped to .work-card and not to every button.
+ */
+.work-card {
+  cursor: pointer;
+}
+
+.work-card .btn-primary {
+  position: static;
+}
+
+.work-card .btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* THE RING GOES ROUND THE ROW, NOT THE PILL. base.css draws :focus-visible on
+   the focused element, which is still the 200px-wide pill — but the hit area is
+   the whole row now, so the indicator has to say so.
+ *
+ * BEHIND @supports, because the fallback matters: without :has() the first rule
+ * never matches, and if the second still applied a keyboard user would be left
+ * with no focus indicator at all. Gated, they either both work or neither does
+ * and the pill keeps base.css's ring. */
+@supports selector(:has(*)) {
+  .work-card:has(.btn-primary:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-sm);
+  }
+  .work-card .btn-primary:focus-visible {
+    outline: none;
+  }
+}
+
 /* The closing rule under each row. Spans the full container, not the padded
    content box, which is what makes the four lines align with the gutters. */
 /* ---- Making the stack fit a laptop ----------------------------------------
@@ -493,9 +552,33 @@ video.work-card__image {
    one. This was 900 until the padding could give way, which disabled the stack on
    every laptop window; see the clamp above. */
 @media (prefers-reduced-motion: reduce), (max-width: 900px), (max-height: 600px) {
-  .work__rows > .work-card,
   .work__heading {
     position: static;
+  }
+
+  /* RELATIVE, NOT STATIC, and the reason is the stretched link above: the
+     overlay's containing block is this box, and `static` would hand it to
+     .work__rows and stretch every row's hit area across the whole list.
+     `top: auto` cancels the base rule's --work-stack-top, which a relative box
+     would otherwise apply as a real offset. */
+  .work__rows > .work-card {
+    position: relative;
+    top: auto;
+  }
+
+  /* AND THE HAIRLINE HAS TO CLIMB BACK OVER THEM. The rows above carry
+     z-index 1/2/3 for the desktop stack; positioning them here promotes their
+     black backgrounds into the same painting layer, and .work__rows::before —
+     the line closing the top of the list — went under row 1. Measured: it was
+     rgb(41,41,41) and became rgb(0,0,0). 4 clears all three.
+
+     The two hairlines BETWEEN the rows move as well, and that one is a fix
+     rather than a repair: .work-card::after is bottom:0 on the card, so while
+     the rows were static both resolved against .work__rows and stacked on top of
+     each other at the bottom of the list. They now close row 1 and row 2, which
+     is what the rule above them describes. */
+  .work__rows::before {
+    z-index: 4;
   }
   /* The gap is the stack's spacing, not the list's: with nothing sticking there
      is no "next card below the fold" to arrange, and 160-plus pixels between
@@ -546,16 +629,25 @@ video.work-card__image {
 }
 
 /* ---- Mobile — 566:39198 --------------------------------------------------- */
-/* THE INSET IS TWO NUMBERS, AND THE COMP SPLITS THEM THAT WAY. The Project frame
-   is 390 wide with its Container at x=16 (358), and inside that each row puts its
-   image at x=32 — so 16 of page gutter plus 32 of row padding, 48 from the page
-   edge, and a 294-wide media box. The 900 tier collapses both into a single 40 on
-   .work__inner and leaves the row at 0, which lands the media at 40 and 310 wide.
-   Reproducing the split rather than one 48 keeps the gutter the same value every
-   other section uses.
+/* THE ROW BECOMES A CARD, AND TWO NUMBERS ARE THE WHOLE OF IT. The border box
+   sits 16 off each screen edge and every child sits 12 inside the border:
+   390 - 16 - 16 = 358, and 358 - 12 - 12 = 334, which are exactly the widths
+   566:39199 (Container) and 566:39205 (image) report. The 16 is .work__inner's
+   margin, already the gutter every other section uses; the 12 is the card's own
+   padding below.
 
-   The row's 80 block padding is the 900 tier's; 566:39204 is 621 tall = 32 + 236
-   image + 40 + 281 details + 32, so 32 is the comp's. */
+   THIS REPLACES A 16 + 32 SPLIT. The note that stood here read the comp as a
+   16px gutter plus 32px of row padding — 48 from the page edge and a 294-wide
+   media box. That was a previous revision of the frame: the image is at x=12
+   inside the card now, not x=32, so the media is 334 and lands 28 from the
+   edge. The card's stroke is what the extra 20px went into.
+
+   HEIGHT IS THE CONTENT'S. 566:39204 draws all three cards at a fixed 640 with
+   the content centred inside — which is why its top and bottom insets read
+   25.42 on cards 1 and 2 and 14.92 on card 3, whose body runs to four lines.
+   Those are not spacing decisions, they are what centring leaves over, so the
+   padding here is the flat 12 the sides use and each card ends where its own
+   copy does. */
 @media (max-width: 480px) {
   .work__inner {
     margin-inline: var(--space-4);
