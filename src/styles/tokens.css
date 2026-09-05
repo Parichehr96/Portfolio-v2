@@ -48,6 +48,12 @@
      tuned rather than derived. */
   --fig-rule-soft-on-dark: rgba(255, 255, 255, 0.12);
   --fig-rule-strong-on-dark: rgba(255, 255, 255, 0.16);
+  /* AND A CREAM ONE, for the mobile My Work card's edge (566:39204). Pure white
+     at this alpha reads cold against the section's warm cream type; the card
+     border is the only stroke on the page long enough to show that, which is why
+     it gets its own primitive rather than reusing the pair above. 0.14 is the
+     middle of the range the comp's stroke measures at. */
+  --fig-rule-cream-on-dark: rgba(249, 245, 235, 0.14);
   /* THE PERSONA ACCENTS — Figma's accents/* variables, used by the ONTON case
      study's persona key and the dots that tie each row of its Why table to a
      persona. Named after the Figma variable rather than the persona so they
@@ -262,6 +268,10 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  /* 566:39204 — the mobile My Work card. One step above the 16 its own
+     thumbnail uses, which is what keeps the two corners from reading as the
+     same radius nested inside itself. */
+  --radius-xl: 24px;
   /* 432:11655 — the hero's "My Expertise" pill is 12, between md and lg. */
   --radius-pill-sm: 12px;
   --radius-pill: 999px;
@@ -550,6 +560,47 @@
   );
   --work-media-w: 594;
   --work-media-h: 476;
+  /* THE MOBILE THUMBNAIL IS THE COMP'S OWN CROP, not the desktop box narrowed.
+     566:39205 is 334x268 inside a 358 card — 1.246:1 against the desktop box's
+     1.248:1, near enough to be the same shape, but the numbers are the comp's
+     and are kept as the comp's. */
+  --work-media-w-mobile: 334;
+  --work-media-h-mobile: 268;
+
+  /* ---- The mobile stack ----------------------------------------------------
+     WHERE A STACKED CARD RESTS ON A PHONE. The desktop token reserves the
+     heading's band as well as the header's, because the heading pins up there.
+     On mobile it does not — the opt-out leaves .work__heading static and this
+     batch does not change that — so the only thing a card has to clear is the
+     48px header, plus enough air that its top edge is not flush against it.
+     Same reasoning and the same 16 as the scroll-margin on .work-card. */
+  --work-stack-top-mobile: calc(var(--header-height-mobile) + var(--space-4));
+
+  /* THE SEPARATION BETWEEN TWO MOBILE CARDS, AND IT IS NOT THE DESKTOP GAP'S
+     JOB. Desktop sizes its gap to push the next row to the fold, so one card is
+     on screen at a time; that expression needs a card height to subtract, and it
+     produced 64-180px here depending on the window. Both ends of that range were
+     wrong. Large, and a pinned card sits above an obvious hole with the next
+     card's ring across it — two borders and a gap, which is what this looked
+     like. Zero, which is what the flat fallback used, and the two rings meet
+     flush: card N's bottom corners curve in and card N+1's top corners curve out
+     against them, a pinched double line at every seam.
+
+     16 IS THE PAGE GUTTER, deliberately. The cards already sit 16 off each
+     screen edge, so the same number between them reads as the grid's own rhythm
+     rather than a third spacing value — each card closes its ring, and the next
+     one opens its own clear of it. In the stack it is also small enough that the
+     arriving card is overlapping its predecessor within 16px of scroll, so there
+     is never a hole to look at. */
+  --work-card-gap-mobile: var(--space-4);
+
+  /* THE LAST CARD'S RUNWAY, WHICH USED TO BE THE GAP AND CANNOT BE ANY MORE.
+     Card 3's sticky range is exactly .work__rows' trailing space, so with the
+     gap down at 16 it would pin for 16px of scroll and effectively not pin at
+     all. Desktop can reuse its gap here because that gap is 160+; this is the
+     same idea with the number stated rather than borrowed, and it is what buys
+     card 3 the same held beat cards 1 and 2 get before the section releases. */
+  --work-runway-mobile: var(--space-11);
   /* The WHOLE track list, not two separate numbers. `fr` is a flex unit and is
      not valid inside calc(), and `var(--x)fr` does not concatenate either — so
      the only way to keep these numbers in the token layer is to hold the
@@ -740,6 +791,12 @@
 
   --border-subtle: var(--fig-rule-soft-on-dark);
   --border-strong: var(--fig-rule-strong-on-dark);
+
+  /* The mobile card's edge. Its own alias rather than --border-subtle because
+     the two are not the same stroke: --border-subtle is also the media slot's
+     backing colour (see .work-card__media), and pointing both at one value
+     would tie the card's outline to the colour behind its own thumbnail. */
+  --work-card-edge: var(--fig-rule-cream-on-dark);
 
   --accent: var(--white);
 

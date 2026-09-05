@@ -655,8 +655,139 @@ video.work-card__image {
   }
 
   .work-card {
-    padding: var(--space-6);
+    padding: var(--space-3);
+    border-radius: var(--radius-xl);
+    /* AN INSET RING, NOT A BORDER, AND THE 2px IS THE WHOLE REASON. Everything
+       on this page is border-box, so a real `border: 1px` is paid for out of the
+       358 — content lands at 13 from the card's edge and measures 332, against
+       the 12 and 334 that 566:39205 gives. Rounding the padding to 11 would get
+       the numbers back but describes the geometry wrongly: it is not that the
+       content sits 11 inside a border, it is that the stroke takes no room.
+       An inset shadow is drawn in the first pixel of the padding box and takes
+       none, which is exactly how Figma paints an inside stroke — so `content
+       width = card - 24` holds exactly, and the ring still follows the radius. */
+    box-shadow: inset 0 0 0 var(--border-width) var(--work-card-edge);
     /* The header is 48 here, not 88 — see the note on .work-card above. */
     scroll-margin-top: calc(var(--header-height-mobile) + var(--space-4));
+  }
+
+  /* 16 BETWEEN THE CARDS, IN BOTH LAYOUTS, and it lives here rather than in the
+     stack block below because the flat fallback is where its absence showed.
+     The opt-out sets this margin to 0 for everything under 900 — right for rows
+     divided by a hairline, wrong the moment each row draws its own rounded ring:
+     card N's bottom corners curve in and card N+1's top corners curve out flush
+     against them, which reads as one pinched, doubled line at every seam rather
+     than as two cards.
+
+     IT IS ALSO WHAT KEEPS THE STACK CLEAN. At 16 the arriving card is over its
+     predecessor within 16px of scroll, so there is no gap to look at — the
+     behaviour asked for, and the reason this is not the desktop gap's 160. */
+  .work__rows > .work-card:not(:last-of-type) {
+    margin-bottom: var(--work-card-gap-mobile);
+  }
+
+  /* THE DIVIDERS GO WHEN THE BORDERS ARRIVE. Three hairlines describe a flat
+     ruled list — the rule above row 1, the one closing each row, and the leading
+     edge an arriving row draws once the stack runs. Against a bordered card each
+     is a second line sitting a pixel off a stroke that is already there, and the
+     closing rule is worse than redundant: it runs edge to edge through a box
+     whose own border has already turned the corner. */
+  .work__rows::before,
+  .work-card:not(:last-of-type)::after,
+  .work__rows > .work-card:not(:first-child)::before {
+    display: none;
+  }
+
+  .work-card__media {
+    aspect-ratio: var(--work-media-w-mobile) / var(--work-media-h-mobile);
+  }
+
+  /* A STATED GAP, NOT space-between. The desktop rule pins the text and the pill
+     to the two ends of a Details box whose height the media column fixes; here
+     the card is as tall as its own content, so there is no slack for
+     space-between to distribute and it would collapse the two together.
+     566:39207 puts the button at y=233 under a 185-tall text frame — 48. */
+  .work-card__details {
+    justify-content: flex-start;
+    gap: var(--space-8);
+  }
+
+  /* 22/28 — Title Large, down from the desktop row's Headline Large 32.
+     566:39211 is 54 tall for its two lines. The number above it is already
+     Headline Medium 28/36 in --text-secondary and the body already Body Medium
+     14 in the same colour, so neither needs a rule here. */
+  .work-card__title {
+    font-size: var(--m3-title-lg);
+    line-height: var(--m3-title-lg-leading);
+    letter-spacing: var(--m3-title-lg-tracking);
+  }
+
+  /* 20, not the 1.5 the desktop body rides — 566:39212 is 63 tall for three
+     lines and 566:39236 is 84 for four, which is 21 a line at --leading-body
+     and exactly 20 here. */
+  .work-card__body {
+    line-height: var(--m3-body-md-leading);
+  }
+
+  /* THE PILL IS 146 WIDE BECAUSE ITS LABEL IS 70, and the label is 70 because it
+     is Title Small. Nothing else in this rule changes: 566:39213 is
+     16 + label + 16 + 32 + 12, and _button.css already sets every one of those
+     four numbers on .btn-primary--solid. At the desktop step's 16px "Read more"
+     renders 79 and the pill comes out 155 — the only value out is the type, and
+     566:39214's 21px text box is a 14 at 1.5, not a 16.
+
+     SCOPED THROUGH .work-card ON PURPOSE. --solid is a shared variant; the CTA
+     that uses it elsewhere is not in this comp and must keep the desktop step. */
+  .work-card .btn-primary--solid {
+    font-size: var(--m3-title-sm);
+    line-height: var(--m3-title-sm-leading);
+    letter-spacing: var(--m3-title-sm-tracking);
+  }
+}
+
+/* ---- The stack, on a phone ------------------------------------------------
+ * THE SAME MECHANISM AS THE DESKTOP STACK, NOT A SECOND ONE: sticky siblings in
+ * one relative parent, ascending z-index, opaque backgrounds. All four of those
+ * are already declared on .work-card and .work__rows for every width — the
+ * opt-out above only ever switched `position` off — so this block turns it back
+ * on and restates the two spacings that came off with it.
+ *
+ * IT HAS TO SIT AFTER THE OPT-OUT AND MATCH ITS SELECTORS. Every rule here is
+ * the same specificity as the one it overrides; order is what decides them, and
+ * moving this block above that one silently disables the whole feature.
+ *
+ * THE min-height WAS 768 AND THAT WAS THE BUG, not a tuning choice. It was
+ * derived the safe-looking way — stack top, plus the tallest card the tier can
+ * produce (688, at 480 wide), plus 16 clear of the fold — and then verified at
+ * 390x844, which passes. Every real short phone fails it: 390x667 is a stock
+ * iPhone viewport with browser chrome, and a window squeezed by a terminal or
+ * devtools panel lands near 620. Both fell back to the flat list, which is the
+ * "overlay never engages" this was reported as.
+ *
+ * THE PREMISE WAS WRONG TOO, NOT JUST THE ARITHMETIC. Desktop has no
+ * min-height gate at all — it has (max-height: 600), which is a floor, not a
+ * fit test — and a pinned card whose bottom sits a little below a short fold is
+ * not broken: the page still scrolls, the next card still rises over it, and
+ * the reader still reaches everything. 561 keeps that one real floor, for the
+ * window so short that a pinned card would leave nothing of itself on screen,
+ * and lets every actual phone have the stack. At 390x620 the card is 612 and
+ * rests at 64, so 56px of it sit under the fold — accepted, and the behaviour
+ * desktop has always had.
+ *
+ * prefers-reduced-motion: no-preference RATHER THAN A SECOND OPT-OUT BELOW.
+ * Scroll-coupled overlap is exactly what the preference asks us not to do, and
+ * stating it in the query means a browser that does not understand the feature
+ * fails the whole condition and gets the flat list — the safe way round. */
+@media (max-width: 480px) and (min-height: 561px) and (prefers-reduced-motion: no-preference) {
+  .work__rows > .work-card {
+    position: sticky;
+    top: var(--work-stack-top-mobile);
+  }
+
+  /* THE LAST CARD NEEDS ITS RUNWAY BACK. Card 3's sticky range is bounded by
+     .work__rows' bottom edge; with the runway at 0 that edge is card 3's own
+     bottom, the range is zero pixels and it never pins at all. */
+  .work__runway {
+    height: var(--work-runway-mobile);
   }
 }
