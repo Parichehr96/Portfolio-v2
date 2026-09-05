@@ -59,7 +59,24 @@
 
   <div class="story__stage">
 
-    <div class="story__panel story__panel--about">
+    {#- THE ABOUT PANEL IS A SECOND PARALLAX ITEM, AND ONLY ON THE PHONE.
+        Desktop pins the STAGE, and both panels ride it — that is what the four
+        interleaved layers need. Mobile cannot: testimonials is a separate static
+        block down there, and it is nested inside this same stage, so pinning the
+        stage would drag it into the pin. The pin moves one level down instead —
+        this panel gets its own sticky band and its own runway, and the
+        testimonials panel below is left alone in flow.
+
+        data-parallax-media IS WHAT KEEPS DESKTOP FREE OF IT. Above 900 this
+        element is display:contents and reports a zero rect; the attribute makes
+        parallax.js skip the item outright rather than spend a measure and a
+        style write per frame on a number nothing reads. It also carries the
+        reduced-motion opt-out, so that regime keeps the static stack. -#}
+    <div
+      class="story__panel story__panel--about"
+      data-parallax="--about-m-progress"
+      data-parallax-media="(min-width: 380px) and (max-width: 900px) and (min-height: 820px) and (prefers-reduced-motion: no-preference), (max-width: 379.98px) and (min-height: 890px) and (prefers-reduced-motion: no-preference)"
+    >
       {#- aria-hidden with an empty alt: the photo is atmosphere, and the three
           paragraphs beside it already say everything it says. -#}
       <div class="story__shot story__shot--about" aria-hidden="true">
@@ -78,6 +95,16 @@
       <div class="story__layer story__layer--about">
         {% include "partials/about.njk" %}
       </div>
+
+      {#- THIS PANEL'S OWN RUNWAY. .story__runway below is a sibling of the stage
+          and sits AFTER testimonials, so its height cannot buy this band a pin —
+          it would open a hole at the bottom of the section instead.
+
+          DELIBERATELY NOT .story__runway. That class is 1478px tall; this
+          element is inside a panel that is display:contents above 900, so the
+          height would land inside the sticky stage and move every desktop beat.
+          Its own class, display:none until the mobile block turns it on. -#}
+      <div class="story__about-runway" data-parallax-runway aria-hidden="true"></div>
     </div>
 
     <div class="story__panel story__panel--testi">

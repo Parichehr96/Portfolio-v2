@@ -10,11 +10,24 @@
  *   data-parallax-flip="0.16"          optional. Past this fraction the section
  *                                      flips data-header-theme to dark. OMIT IT
  *                                      and the attribute is never touched.
+ *   data-parallax-media="(max-width: 900px)"
+ *                                      optional. When present it REPLACES the
+ *                                      shared opt-out below for that item: the
+ *                                      item runs only while this query matches.
+ *                                      An item that declares one has stated its
+ *                                      own condition, so the default no longer
+ *                                      applies to it.
  *
- * ONE SECTION USES IT TODAY — .story, the About -> Testimonials supersection,
- * which derives four sub-beats from the single number written here. It read as
- * two sections for one revision and the attributes are what let them merge
- * without this file caring.
+ * TWO ITEMS USE IT TODAY, AND THEY NEST.
+ *   .story                the About -> Testimonials supersection, which derives
+ *                         four sub-beats from the single number written here.
+ *   .story__panel--about  the About band alone, mobile only — down there
+ *                         testimonials is a separate static block and only the
+ *                         About half is pinned, so the pin cannot be the stage.
+ * Neither knows about the other. The panel carries a data-parallax-media so it
+ * is skipped entirely above 900, where it is display:contents and would report a
+ * zero rect; .story carries none, so it keeps the shared opt-out and behaves
+ * exactly as it did when it was the only item.
  *
  * Everything visible is CSS reading that number: the photo's dim, the colour
  * ramps and the content's translate all live in the section's own stylesheet.
@@ -58,6 +71,16 @@
      query the CSS uses, and it costs no layout. */
   var OPT_OUT = "(prefers-reduced-motion: reduce), (max-width: 900px)";
 
+  function matches(q) {
+    return !!(window.matchMedia && window.matchMedia(q).matches);
+  }
+
+  /* An item with its own query answers to that and nothing else; an item without
+     one answers to the shared opt-out, exactly as before. */
+  function active(item) {
+    return item.media ? matches(item.media) : !matches(OPT_OUT);
+  }
+
   var frame = 0;
 
   var items = sections.map(function (el) {
@@ -65,7 +88,14 @@
     return {
       el: el,
       prop: el.getAttribute("data-parallax"),
-      runway: el.querySelector("[data-parallax-runway]"),
+      media: el.getAttribute("data-parallax-media"),
+      /* :scope > — A DIRECT CHILD, NOT ANY DESCENDANT, and the difference is
+         load-bearing now that two items nest. .story contains the About panel,
+         which owns a runway sitting EARLIER in the document than .story's own;
+         a bare descendant query would hand .story the panel's runway and measure
+         the desktop beat map against the wrong element. Each runway is a direct
+         child of the item it belongs to. */
+      runway: el.querySelector(":scope > [data-parallax-runway]"),
       /* NaN when the attribute is absent, and that is the "never flip" signal —
          not a default of 0, which would flip on the first pixel. */
       flip: isNaN(flip) ? null : flip,
@@ -86,6 +116,7 @@
     frame = 0;
 
     items.forEach(function (item) {
+      if (!active(item)) return;
       var r = item.el.getBoundingClientRect();
       /* PROGRESS IS MEASURED OVER THE PIN, NOT OVER THE SECTION. This was
          `r.height - innerHeight`, which on a 950 window ran to about 1108px
@@ -134,17 +165,20 @@
   }
 
   function start() {
-    if (window.matchMedia && window.matchMedia(OPT_OUT).matches) {
-      /* Leave the attribute where the CSS wants it. A ramping section's arrived
-         state is dark, so it must be told once even though nothing will
-         animate; a section with no flip already says what it is in markup. */
-      items.forEach(function (item) {
-        if (item.flip === null) return;
-        item.el.setAttribute("data-header-theme", "dark");
-        item.theme = "dark";
-      });
-      return;
-    }
+    /* Leave the attribute where the CSS wants it, per DORMANT item. A ramping
+       section's arrived state is dark, so it must be told once even though
+       nothing will animate; a section with no flip already says what it is in
+       markup. */
+    items.forEach(function (item) {
+      if (active(item) || item.flip === null) return;
+      item.el.setAttribute("data-header-theme", "dark");
+      item.theme = "dark";
+    });
+
+    /* The old early return, generalised from "the one section is opted out" to
+       "every item is dormant". */
+    if (!items.some(active)) return;
+
     measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
@@ -158,7 +192,12 @@
      listeners are idempotent by name and the opt-out branch returns before
      adding any. */
   if (window.matchMedia) {
-    var mq = window.matchMedia(OPT_OUT);
+    /* Every query any item depends on, deduped — crossing ANY of them changes
+       which regime applies to at least one item. */
+    var queries = [OPT_OUT];
+    items.forEach(function (item) {
+      if (item.media && queries.indexOf(item.media) === -1) queries.push(item.media);
+    });
     var sync = function () {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
@@ -168,7 +207,10 @@
       });
       start();
     };
-    if (mq.addEventListener) mq.addEventListener("change", sync);
-    else if (mq.addListener) mq.addListener(sync);
+    queries.forEach(function (q) {
+      var mq = window.matchMedia(q);
+      if (mq.addEventListener) mq.addEventListener("change", sync);
+      else if (mq.addListener) mq.addListener(sync);
+    });
   }
 })(window, document);

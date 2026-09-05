@@ -332,20 +332,33 @@
  * The node is 390 wide with a 32px margin, so every horizontal number here is
  * the same 32 the heading, the copy and the clock all sit on. */
 @media (max-width: 900px) {
-  /* 32 top and sides, and NOTHING at the bottom: the gap down to the clock is
-     the clock's own margin, declared once below. Two paddings meeting in the
-     middle was what made it 64. */
+  /* 28 ON THE SIDES, NOT 32, and the change is the node's: 666:61743 puts the
+     heading, the copy and the clock at x=28 in a 390 frame. --about-inset-mobile
+     is that 28 written as the 16 + 12 it is made of — see tokens.css.
+     32 STAYS ON TOP, and nothing at the bottom: the gap down to the clock is the
+     clock's own margin, declared once below. Two paddings meeting in the middle
+     was what made it 64. */
   .about__content {
-    padding: var(--space-6) var(--space-6) 0;
+    padding: var(--space-6) var(--about-inset-mobile) 0;
   }
 
-  /* 16/24/0.5 — Body Large as the node draws it. Declared in px rather than
-     through --m3-body-lg because that token is 14/21 below 480 for the whole
-     site, and the hero, the statement and the footer all read it. This is the
-     one band the node puts back up to 16. */
+  /* 16/21/0.5, AND THE 21 IS MEASURED OFF THE NODE RATHER THAN ASSUMED. This
+     said 24 — Body Large's token leading — and the comp disagrees: 666:61746 is
+     147 tall and 666:61748 is 84, which are exactly 7 and 4 of our own rendered
+     lines at 21.00 each, and are not multiples of 24 (they would be 168 and 96,
+     which is what we were drawing). 21 is Figtree's own default leading at 16px,
+     i.e. the node has line-height Auto.
+
+     IT IS ALSO THE DIFFERENCE BETWEEN FITTING AND NOT. The band is the window
+     once the section pins, so the whole composition has to be legible at once;
+     at 24 it measured 849 against an 844 phone and clipped at both ends, at 21
+     it is 783 and clears the fold with room. Declared in px rather than through
+     --m3-body-lg because that token is 14/21 below 480 site-wide and the hero,
+     the statement and the footer all read it; this is the one band the node puts
+     back up to 16. */
   .about__bio {
     font-size: 16px;
-    line-height: 24px;
+    line-height: 21px;
     letter-spacing: 0.5px;
   }
 
@@ -354,8 +367,16 @@
      pushes its contents 1px off the 32 everything else sits on. */
   .about__clock {
     margin-block-start: var(--space-6);
-    padding: 0 var(--space-6) var(--space-6);
+    padding: 0 var(--about-inset-mobile) var(--space-6);
     border-left: 0;
+  }
+
+  /* 12, NOT THE DESKTOP'S 24. 666:61751 (the face and the timestamp) ends at
+     113.14 and 666:61762 (the status lines) starts at 125.14. The 24 was ours.
+     It matters more than 12px usually would: the band is the window once the
+     section pins, so every gap in here is paid for out of the fold. */
+  .about__clock-body {
+    margin-block-start: var(--space-3);
   }
 
   /* Body Large 16 semibold, where the desktop uses Title Medium 16 regular. Same
@@ -372,5 +393,35 @@
      sub-line its own value; "At" and "I'm" keep the muted step. */
   .about__clock-detail {
     color: var(--fig-gray-3);
+  }
+}
+
+/* ---- The phone's About beat — the copy's half of it -----------------------
+ * _story.css pins the photo and centres this block over it; all that is left is
+ * where it starts. THE SAME TWO CONDITIONS AS THAT BLOCK, and they have to stay
+ * the same two: a phone with reduced motion keeps the static stack and must not
+ * get a transform driven by a progress number nothing is writing.
+ */
+/* The same guard as _story.css, verbatim — see the long note there. */
+@media
+  (min-width: 380px) and (max-width: 900px) and (min-height: 820px) and (prefers-reduced-motion: no-preference),
+  (max-width: 379.98px) and (min-height: 890px) and (prefers-reduced-motion: no-preference) {
+  /* PUSHED DOWN AT THE START, RATHER THAN LIFTED AT THE END, and the inversion
+     is what lets the layer's flex centring decide the resting place. The desktop
+     rule states both ends — top: 797.73 and a lift of exactly 678.86 — because
+     its comp is a fixed frame. Here the copy reflows with the width, so the
+     settled position is asked for (align-items: center) and this only says how
+     far below it the copy waits: one band, which puts it under the fold.
+
+     AT PROGRESS 1 THE TRANSFORM IS ZERO, so the copy rests exactly where the
+     centring put it and no rounding can leave it a pixel off. */
+  .about__summary {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    transform: translateY(
+      calc((1 - var(--about-progress)) * var(--about-m-travel))
+    );
+    will-change: transform;
   }
 }

@@ -262,6 +262,13 @@
   height: calc(var(--story-total) * 1px);
 }
 
+/* THE ABOUT PANEL'S OWN RUNWAY, OFF BY DEFAULT. It only exists for the phone's
+   pin; up here the panel is display:contents, so any height on this box would
+   land inside the sticky stage and move every beat in the map above. */
+.story__about-runway {
+  display: none;
+}
+
 /* ZERO HEIGHT, AT THE OFFSET THE CARDS SETTLE. Scrolling this to the top of the
    viewport puts --story-progress at 1318.46/1478 = 0.892: cards settled, hold
    under way, stage still pinned. An id on the card layer would resolve to the
@@ -361,5 +368,128 @@
 
   .story__dim--about {
     opacity: var(--about-dim-static);
+  }
+}
+
+/* ---- The phone's About beat — 666:61738 -----------------------------------
+ * THIS REVERSES THE CONSTANT DIM ABOVE, DELIBERATELY. The block before this one
+ * freezes the ramp at 0.68 because nothing on the phone was driving it. Something
+ * is now: the About panel is its own parallax item (see story.njk), so the same
+ * beat A the desktop runs — copy rising over the photo, dim climbing under it —
+ * runs down here too, and the 0.82 the ramp was always written against is what
+ * it arrives at.
+ *
+ * WIDTH AND no-preference, WHICH IS WHY IT IS A THIRD BLOCK RATHER THAN AN EDIT
+ * TO THE SECOND. A phone with reduced motion has to keep the static stack the
+ * (reduce OR <=900) block builds, and it does: this query excludes it, and
+ * story.njk puts the same condition on data-parallax-media so the handler does
+ * not run there either. The two have to agree — if this block applied where the
+ * handler does not, --about-m-progress would fall back to its default and the
+ * copy would sit wherever that put it.
+ *
+ * THE PIN IS THE PANEL, NOT THE STAGE. The stage holds both panels and
+ * testimonials is the second one, so pinning it would take the cards along.
+ * .story__panel--about becomes the scroll container and its two children pin
+ * inside it; .story__panel--testi is untouched and stays a block in flow below.
+ */
+/* THE ACTIVATION GUARD, AND IT IS A FIT TEST BECAUSE THIS ONE HAS TO BE.
+ * The Work stack's guard is a floor — a card hanging a little under the fold
+ * still scrolls past. This band cannot borrow that reasoning: it HOLDS at the
+ * settle, so anything below the fold at that moment is unreadable and the reader
+ * has no way to reach it. The copy therefore has to fit the window, and where it
+ * does not the section keeps the static stack, which scrolls normally and shows
+ * everything.
+ *
+ * TWO TIERS BECAUSE THE COPY REFLOWS. Measured with the comp's leading: 807 at
+ * 390 and up, 870 at 360, where the same words take three more lines. One
+ * threshold would either cut the narrow phones' band off or lock every 844-tall
+ * phone out of the effect, so the width picks the height.
+ *   >= 380 wide   needs 820   390x844 +37, 412x915 +129, 430x932 +167
+ *   <  380 wide   needs 890   360x932 +62; 360x800 (-70) keeps the stack
+ *
+ * IT IS REPEATED VERBATIM IN THREE PLACES — here, _about.css, and
+ * data-parallax-media in story.njk — and the three have to agree. If the CSS
+ * applied where the handler does not, --about-m-progress would fall back to its
+ * default and the copy would sit wherever that put it. */
+@media
+  (min-width: 380px) and (max-width: 900px) and (min-height: 820px) and (prefers-reduced-motion: no-preference),
+  (max-width: 379.98px) and (min-height: 890px) and (prefers-reduced-motion: no-preference) {
+  /* --about-progress IS REDERIVED HERE, NOT REPLACED, and that is the whole
+     reason this costs _about.css almost nothing. Up top it is a slice of
+     --story-px; here it is a slice of this panel's own progress. Every consumer
+     — the dim below, the six colour ramps and the settle transform in
+     _about.css — reads the same property it always read.
+
+     ON THE PANEL, NOT ON .story. Custom properties inherit DOWN, and
+     --about-m-progress is written by parallax.js on the panel itself, so a
+     definition up on .story could not see it.
+
+     DEFAULTING TO 1, NOT 0. If the script never loads there is no ramp to be at
+     the start of — the honest resting state is the arrived one, which is what
+     666:61738 draws. The desktop declaration defaults to 0 because up there the
+     resting comp 664:61547 is genuinely the undimmed photo. */
+  .story__panel--about {
+    position: relative;
+    --about-progress: clamp(
+      0,
+      calc(var(--about-m-progress, 1) / var(--about-m-settle)),
+      1
+    );
+  }
+
+  /* THE BAND. Sticky rather than absolute — the static block above makes it
+     inset:0 over a panel that is only as tall as its content, and this needs a
+     box that holds still while the panel scrolls past it. top:0 puts it against
+     the viewport edge, full bleed under the sticky 48px header, which is what
+     the node draws: 390 wide, no border, no radius.
+     `bottom: auto` cancels the inset:0 that block sets; without it the height
+     below never applies. */
+  .story__shot--about {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    height: var(--about-m-band);
+    z-index: 0;
+  }
+
+  /* THE COPY'S BAND, PINNED ON TOP OF THE PHOTO'S. Two sticky siblings would
+     stack vertically and the panel would be two bands tall, so the negative
+     margin pulls this one back over the shot — they occupy one band between
+     them and pin together.
+
+     THE FLEX CENTRING IS THE SETTLE, and it is why nothing here has to know how
+     tall the copy is. Desktop can state 118.87 because its comp is fixed; the
+     phone's copy reflows with the width, so "centred over the photo" is asked
+     for rather than computed, and _about.css only has to say how far below that
+     resting place the copy starts.
+
+     overflow: hidden IS THE SAME CLIP THE DESKTOP LAYER HAS, for the same
+     reason: without it the copy is legible over the Work section above and the
+     testimonials block below while it is still travelling. */
+  .story__layer--about {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    height: var(--about-m-band);
+    margin-block-start: calc(-1 * var(--about-m-band));
+    overflow: hidden;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+  }
+
+  /* The pin's scroll distance — travel plus the hold. The panel is one band tall
+     plus this, so the two sticky children hold for exactly this many pixels and
+     then release, and the photo and the copy leave together because they are
+     two boxes in the same box that stopped sticking. */
+  .story__about-runway {
+    display: block;
+    height: var(--about-m-runway);
+  }
+
+  /* 0 -> 0.82, the desktop value, back under a real ramp. This overrides
+     --about-dim-static in the block above on later-wins. */
+  .story__dim--about {
+    opacity: calc(var(--about-progress) * 0.82);
   }
 }

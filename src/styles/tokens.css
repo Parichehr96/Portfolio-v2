@@ -607,6 +607,35 @@
      finished value here and let the component substitute it verbatim. */
   --work-columns: 594fr 574fr;
 
+  /* ---- 3e-ter. THE MOBILE ABOUT BEAT — 666:61738 --------------------------
+     THE PHONE'S VERSION OF BEAT A, and every number is a viewport unit rather
+     than the desktop beat map's scroll pixels. Desktop can hardcode 678.86
+     because the comp is a fixed 1272-wide frame with a fixed 757.73 band; a
+     phone's band IS the window, so the travel has to be the window too.
+
+     svh, NOT vh. 100vh on a phone is the LARGE viewport — the height with the
+     browser chrome retracted — so a band sized in vh is taller than the screen
+     for as long as the address bar is showing, and the settled copy sits with
+     its last line under the fold. svh is the small viewport, the height with
+     the chrome out, which is the one the reader always has.
+
+     THE SETTLE FRACTION IS THE RATIO OF THE TWO LENGTHS AND CANNOT BE COMPUTED.
+     calc() will not divide a length by a length, so --about-m-settle has to be
+     written out: it is travel / runway = 100 / 125 = 0.8. If either length
+     moves, this moves with it or the copy stops landing on the dim. */
+  --about-m-band: 100svh; /* the pinned photo, and the frame the copy settles in */
+  --about-m-travel: 100svh; /* the rise: from just under the fold to centred */
+  --about-m-hold: 25svh; /* reading time once it has arrived, then release */
+  --about-m-runway: calc(var(--about-m-travel) + var(--about-m-hold));
+  --about-m-settle: 0.8;
+
+  /* 666:61743 puts the copy at x=28 in a 390 frame. Written as the two numbers
+     it is made of rather than as 28: 16 is the page gutter every band uses and
+     12 is the inset the My Work card puts its content on, so the About copy
+     lands on the same left edge as a Work card's title rather than on a third
+     value that happens to sit between them. */
+  --about-inset-mobile: calc(var(--space-4) + var(--space-3));
+
   /* ---- 3e-quater. CASE STUDY GEOMETRY ------------------------------------
      193:4660. Every band on a case study pads 60px top and bottom inside the
      ruled column. 60 is off the 4px scale — it sits between --space-9 (64) and
