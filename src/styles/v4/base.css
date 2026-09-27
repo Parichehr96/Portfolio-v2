@@ -1,0 +1,65 @@
+/* ============================================================================
+   V4 BASE — reset and document defaults. Nothing component-specific.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--v4-surface);
+  color: var(--v4-text);
+  font-family: var(--v4-font);
+  font-weight: var(--v4-weight-regular);
+  -webkit-font-smoothing: antialiased;
+  /* `clip`, not `hidden`: `hidden` makes the element a scroll container and
+     breaks position: sticky, which later sections will use. */
+  overflow-x: clip;
+}
+
+body {
+  padding-top: var(--v4-page-top);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--v4-focus);
+  outline-offset: 2px;
+}
+
+/* Hidden from sight, kept for screen readers. */
+.v4-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

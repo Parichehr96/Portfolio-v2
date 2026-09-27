@@ -1,0 +1,44 @@
+{#
+  V4 LAYOUT — the light, single-column redesign (Figma B8Kfu0nGgUIG0REVlQTD5C).
+
+  A SEPARATE LAYOUT, NOT A THEME OF base.njk, AND ON PURPOSE. V4 shares almost
+  nothing with the V3 pages still on base.njk: no dark header, no hero, no
+  parallax. Pointing base.njk's stylesheets at a new palette would restyle the
+  three case studies that have not been redesigned yet. So V4 gets its own
+  stylesheet entry (styles/v4/index.css) and its own short script list, and the
+  V3 pages keep rendering exactly as they did until each one moves over.
+
+  Shared with base.njk, so the two cannot drift: head-seo (meta, fonts) and
+  head-analytics (GA4, Clarity).
+#}
+<!DOCTYPE html>
+<html lang="{{ site.lang }}">
+<head>
+  {% include "partials/head-seo.njk" %}
+
+  <link rel="stylesheet" href="/styles/v4/index.css" />
+
+  {#- Before first paint: hide the toast for a visitor who already dismissed
+      it, so it never flashes in and back out. See v4/toast.njk. -#}
+  <script>
+    try { if (localStorage.getItem("v4-toast-dismissed:{{ home.toast.id }}")) document.documentElement.classList.add("is-toast-dismissed"); } catch (e) {}
+  </script>
+
+  {% include "partials/head-analytics.njk" %}
+</head>
+
+<body class="v4" data-page="{{ pageId or 'home' }}" id="top">
+  {{ content | safe }}
+
+  <script defer src="/scripts/mailto-fallback.js"></script>
+  <script defer src="/scripts/clock.js"></script>
+  <script defer src="/scripts/v4-toast.js"></script>
+
+  {%- if site.analytics.vercel %}
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  {%- endif %}
+</body>
+</html>

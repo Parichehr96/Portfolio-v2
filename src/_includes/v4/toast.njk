@@ -1,0 +1,28 @@
+{#
+  TOAST — Figma 1126:30853. "Portfolio '26 is in progress."
+
+  Rendered visible, so a first visit never sees the page jump when it appears.
+  A visitor who dismissed this `home.toast.id` is caught BEFORE first paint by
+  the inline check in layouts/v4.njk, which marks <html> and lets CSS hide it;
+  scripts/v4-toast.js handles the close button and remembers the dismissal.
+
+  The ring is two exported assets, not a drawn progress arc: the comp's arc is a
+  fixed shape (with the spark at its tip), not a value-driven one.
+#}
+<aside class="v4-toast" data-toast="{{ home.toast.id }}" aria-label="Site status">
+  <div class="v4-toast__body">
+    <div class="v4-toast__ring" aria-hidden="true">
+      <img class="v4-toast__ring-track" src="/Assets/v4/icons/toast-ring-track.svg" width="40" height="40" alt="" />
+      <img class="v4-toast__ring-arc" src="/Assets/v4/icons/toast-ring-progress.svg" width="20" height="36" alt="" />
+      <img class="v4-toast__ring-spark" src="/Assets/v4/icons/toast-spark.svg" width="6" height="6" alt="" />
+      <span class="v4-toast__ring-value">{{ home.toast.progress }}</span>
+    </div>
+    <div class="v4-toast__text">
+      <p class="v4-toast__title">{{ home.toast.title }}</p>
+      <p class="v4-toast__detail">{{ home.toast.body }}</p>
+    </div>
+  </div>
+  <button class="v4-toast__close" type="button" data-toast-close aria-label="Dismiss">
+    <img src="/Assets/v4/icons/cross.svg" width="20" height="20" alt="" />
+  </button>
+</aside>

@@ -46,8 +46,10 @@
   /* THE HANDS' PIVOT, and it must match the hub in about.njk's SVG. The <line>s
      are authored pointing at 12 and rotated about this point; the <circle> that
      draws the hub sits on it too. Both are in the 118 x 80 viewBox from
-     543:1205, so this is a coordinate in that space, not in CSS pixels. */
-  var PIVOT = "52 30";
+     543:1205, so this is a coordinate in that space, not in CSS pixels. A face
+     drawn in a different viewBox (V4's, in v4/top.njk) declares its own hub
+     through data-clock-pivot. */
+  var PIVOT = root.getAttribute("data-clock-pivot") || "52 30";
 
   /* THE SECOND HAND IS CSS'S, AND THIS IS THE ONLY THING JS DOES FOR IT: hand it
      a negative animation-delay equal to the seconds already elapsed, so the 60s

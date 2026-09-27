@@ -1,58 +1,19 @@
 ---
-layout: layouts/base.njk
+layout: layouts/v4.njk
 pageId: home
 permalink: /
 ---
 {#
-  HOMEPAGE — composition only.
+  HOMEPAGE — V4, Figma B8Kfu0nGgUIG0REVlQTD5C node 911:527 "Homepage".
 
-  Each section is a partial that owns its own markup; this file decides only
-  which ones render and in what order. No content and no styling decisions
-  belong here: strings live in src/_data/, colours in styles/tokens.css.
+  Composition only: each section is a partial under _includes/v4/ that owns its
+  markup, strings live in _data/home.js, values in styles/v4/tokens.css. V3's
+  homepage is archived on the `V3` branch.
 
-  THE PAGE IS COMPLETE. The v2 blocks that used to follow About Me — the
-  3-column panel shell, At a Glance, the Projects carousel, Testimonials, the
-  milestone timeline, How I Think, Skills and the old contact footer — were all
-  removed in the cleanup sweep, and the two that were coming back have both
-  landed: Testimonials, which is now the second half of the About supersection
-  rather than a section of its own, and the Footer.
-
-  THERE IS NO NAV CONTRACT ANY MORE. This file used to carry one: the ids
-  #summary, #featured-works, #all-about-me and #contact had to appear in that
-  document order because scripts/nav.js walked site.nav to highlight the active
-  bottom-nav item. That bar and that script are both gone — the header in
-  partials/nav.njk is plain anchors with no JS — so section order here is now a
-  design decision and nothing else.
-
-  One header anchor still points at nothing: /#contact has no target until the
-  Footer is rebuilt. /#featured-works resolves again as of the My Work section
-  below, which carries that id.
+  BUILT SO FAR: toast, the top band (rail, intro, status clock, theme toggle).
+  STILL TO COME, in the comp's order: project rows (Connect2WOW, Onton,
+  Challenquiz, WOW design system), About, My process, Experience, CTA + footer.
 #}
 
-{# ---- HERO ---------------------------------------------------------------- #}
-{% include "partials/hero.njk" %}
-
-{# ---- STATEMENT — Figma 6:25758 -------------------------------------------- #}
-{# DIRECTLY UNDER THE HERO, which is the comp's own order: the Bio Container
-   sits at y=1413 and the Hero Section (y=88, h=1325) ends at exactly 1413. #}
-{% include "partials/statement.njk" %}
-
-{# ---- MY WORK -------------------------------------------------------------- #}
-{# BEFORE About, which is the comp's order (Project sits at y=1504, Bio at
-   y=4132). It reads as the stronger sequence too: the hero states what she
-   does, the work proves it, and About explains who was behind it. #}
-{% include "partials/work.njk" %}
-
-{# ---- ABOUT ME -> TESTIMONIALS — Figma 664:61547, 666:61738, 673:1638 ------ #}
-{# ONE SECTION, NOT TWO, AND THE MERGE IS THE POINT. As separate sections each
-   carried its own background, so the second painted a 60px band between the two
-   photographs and flipped the ±120 page margins from white to black at the join.
-   partials/story.njk pins ONE image band for the whole sequence: the About copy
-   settles over the first photograph, leaves off the top as the band crossfades,
-   and the cards rise into the second. #}
-{% include "partials/story.njk" %}
-
-{# ---- FOOTER — Figma 275:57838 --------------------------------------------- #}
-{# LAST, and carrying #contact. Every "Contact" link on the site points here,
-   and until this landed that anchor resolved to nothing on the homepage. #}
-{% include "partials/footer.njk" %}
+{% include "v4/toast.njk" %}
+{% include "v4/top.njk" %}

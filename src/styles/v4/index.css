@@ -1,0 +1,11 @@
+/* V4 stylesheet manifest — the only stylesheet layouts/v4.njk loads.
+ *
+ * ORDER IS LOAD-BEARING: tokens → base → sections. Every section file reads
+ * custom properties tokens.css defines.
+ *
+ * One file per partial in _includes/v4/: add foo.njk, add _foo.css here.
+ */
+@import "tokens.css";
+@import "base.css";
+@import "_toast.css";
+@import "_top.css";

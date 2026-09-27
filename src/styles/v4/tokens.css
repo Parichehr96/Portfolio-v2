@@ -1,0 +1,89 @@
+/* ============================================================================
+   V4 TOKENS — Figma B8Kfu0nGgUIG0REVlQTD5C, node 911:527 "Homepage".
+   ============================================================================
+
+   Same rule as the V3 tokens.css: no V4 component file may contain a raw
+   colour, font size or spacing number. Separate from styles/tokens.css because
+   V3's pages still read that file's dark palette; the two never load together.
+
+   ORGANISATION
+     1. Primitives   raw values, named by what they ARE (Figma variable noted)
+     2. Semantics    roles, named by what they DO  ← components use only these
+     3. Scale        type, spacing, radius, layout
+   ========================================================================== */
+
+:root {
+  /* ---- 1. PRIMITIVES ----------------------------------------------------- */
+  --v4-white: #FFFFFF;
+  --v4-black: #000000;
+  --v4-navy-950: #080B22;   /* the rail's active mark */
+  --v4-navy-900: #0D1233;   /* headings and labels (typed in, no variable) */
+  --v4-slate-900: #0F172A;  /* bold runs inside body copy */
+  --v4-slate-600: #475569;  /* text/color-text-primary-subdued */
+  --v4-slate-600-50: rgba(71, 85, 105, 0.5);
+  --v4-gray-400: #9E9FA6;   /* clock ticks */
+  --v4-mist-100: #F3F6F8;   /* toast and toggle fill */
+  --v4-mist-200: #E8ECF0;   /* toast's left band */
+  --v4-indigo-600: #3F3DB6; /* clock second hand and hub */
+
+  /* ---- 2. SEMANTICS ------------------------------------------------------ */
+  --v4-surface: var(--v4-white);
+  --v4-surface-muted: var(--v4-mist-100);
+  --v4-surface-muted-strong: var(--v4-mist-200);
+  --v4-text: var(--v4-navy-900);
+  --v4-text-strong: var(--v4-slate-900);
+  --v4-text-muted: var(--v4-slate-600);
+  --v4-text-max: var(--v4-black);
+  --v4-mark-active: var(--v4-navy-950);
+  --v4-mark-idle: var(--v4-slate-600-50);
+  --v4-clock-tick: var(--v4-gray-400);
+  --v4-clock-hand: var(--v4-black);
+  --v4-accent: var(--v4-indigo-600);
+  --v4-focus: var(--v4-indigo-600);
+
+  /* ---- 3. SCALE ---------------------------------------------------------- */
+  --v4-font: "Figtree", system-ui, -apple-system, sans-serif;
+  --v4-font-label: "Sora", "Figtree", system-ui, sans-serif;
+
+  --v4-weight-regular: 400;
+  --v4-weight-medium: 500;
+  --v4-weight-semibold: 600;
+  --v4-weight-bold: 700;
+
+  /* size / line-height pairs, named for the comp's role */
+  --v4-text-title: 20px;   --v4-leading-title: 24px;
+  --v4-text-lead: 16px;    --v4-leading-lead: 24px;
+  --v4-text-body: 15px;    --v4-leading-body: 22px;
+  --v4-leading-body-loose: 24px; /* the toast's 15px title sits on a 24px line */
+  --v4-text-ui: 14px;      --v4-leading-ui: 20px;
+  --v4-leading-ui-loose: 24px;
+  --v4-text-label: 13px;
+  --v4-text-caption: 12px; --v4-leading-caption: 18px;
+
+  --v4-space-1: 4px;
+  --v4-space-2: 8px;
+  --v4-space-3: 12px;
+  --v4-space-4: 16px;
+  --v4-space-6: 24px;
+  --v4-space-10: 40px;
+  --v4-space-11: 44px;
+
+  --v4-radius-toast: 24px;
+  --v4-radius-round: 999px;
+
+  /* Layout. The column is the comp's 600px; the edge is its 40px outer margin.
+     --v4-status-offset is the clock's distance from the column (1110 − 1056). */
+  --v4-column: 600px;
+  --v4-edge: var(--v4-space-10);
+  --v4-page-top: var(--v4-space-4);
+  --v4-status-offset: 54px;
+  --v4-status-text: 190px;
+  --v4-toast-band: 151px;
+
+  --v4-icon-sm: 12px;
+  --v4-icon-md: 16px;
+  --v4-icon-lg: 20px;
+  --v4-ring: 40px;
+  --v4-clock: 100px;
+  --v4-toggle: 40px;
+}

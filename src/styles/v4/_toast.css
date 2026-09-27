@@ -1,0 +1,104 @@
+/* ============================================================================
+   TOAST — Figma 1126:30853 (600 × 72, centred in the column, 16px from the top)
+   ========================================================================== */
+
+.v4-toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-2);
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin: 0 auto var(--v4-space-11);
+  padding: var(--v4-space-3) var(--v4-space-6);
+  overflow: clip;
+  background: var(--v4-surface-muted);
+  border-radius: var(--v4-radius-toast);
+}
+
+/* Rectangle 4513: the darker band down the left, behind the ring. */
+.v4-toast::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--v4-toast-band);
+  background: var(--v4-surface-muted-strong);
+}
+
+.v4-toast[hidden],
+.is-toast-dismissed .v4-toast {
+  display: none;
+}
+
+.v4-toast__body {
+  position: relative; /* above the band */
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--v4-space-2);
+  min-width: 0;
+}
+
+.v4-toast__ring {
+  position: relative;
+  flex: none;
+  width: var(--v4-ring);
+  height: var(--v4-ring);
+}
+
+.v4-toast__ring-track {
+  position: absolute;
+  inset: 0;
+}
+
+/* The arc covers the left half, stopping 10.37% short of the bottom. */
+.v4-toast__ring-arc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 89.63%;
+}
+
+/* logos:spark at the arc's lower tip, turned 82° as in the comp. */
+.v4-toast__ring-spark {
+  position: absolute;
+  top: 38px;
+  left: 8px;
+  width: 6.2px;
+  height: 6.2px;
+  transform: rotate(82deg);
+}
+
+.v4-toast__ring-value {
+  position: absolute;
+  top: var(--v4-space-2);
+  left: var(--v4-space-3);
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-ui-loose);
+  color: var(--v4-text);
+}
+
+.v4-toast__text {
+  min-width: 0;
+}
+
+.v4-toast__title {
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-body-loose);
+  color: var(--v4-text);
+}
+
+.v4-toast__detail {
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui-loose);
+  color: var(--v4-text-muted);
+}
+
+.v4-toast__close {
+  position: relative;
+  flex: none;
+  width: var(--v4-icon-lg);
+  height: var(--v4-icon-lg);
+}

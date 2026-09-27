@@ -1,0 +1,277 @@
+/* ============================================================================
+   TOP BAND — Figma 911:530 rail, 911:547 intro, 911:577 status, 911:820 toggle
+   ============================================================================
+
+   Three columns with the centre fixed at the comp's 600px, so the intro stays
+   centred and the rail and clock ride the gutters. At 1512 that puts the
+   column at x=456, the rail at 40, the clock at 1110 and the toggle at 1432:
+   the comp's own positions.
+
+   BELOW 1420 THE CLOCK DROPS UNDER THE INTRO. The right gutter has to hold the
+   clock (298), the gap to the toggle and the toggle with its 40px margin; under
+   1420 it cannot, so the clock joins the column rather than slide under the
+   toggle. Below 900 there is no room for the rail either.
+   ========================================================================== */
+
+.v4-top {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr min(var(--v4-column), calc(100% - 2 * var(--v4-space-4))) 1fr;
+  align-items: start;
+}
+
+/* ---- Rail ---------------------------------------------------------------- */
+.v4-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-3);
+  padding-left: var(--v4-edge);
+}
+
+.v4-rail__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--v4-icon-lg);
+  height: var(--v4-icon-lg);
+}
+
+.v4-rail__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-3);
+}
+
+.v4-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-2);
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+  transition: color 0.2s ease;
+}
+
+.v4-rail__item.is-active {
+  font-weight: var(--v4-weight-bold);
+  color: var(--v4-text);
+}
+
+/* The mark is a line: 8px and faint at rest, 20px and solid when active. */
+.v4-rail__mark {
+  width: var(--v4-space-2);
+  height: 1px;
+  border-radius: var(--v4-radius-round);
+  background: var(--v4-mark-idle);
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.v4-rail__item.is-active .v4-rail__mark {
+  width: var(--v4-icon-lg);
+  background: var(--v4-mark-active);
+}
+
+.v4-rail__item:not(.is-active):hover {
+  color: var(--v4-text);
+}
+
+.v4-rail__item:not(.is-active):hover .v4-rail__mark {
+  width: var(--v4-space-3);
+  background: var(--v4-text-muted);
+}
+
+/* ---- Intro --------------------------------------------------------------- */
+.v4-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-4);
+  min-width: 0;
+}
+
+.v4-intro__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-2);
+}
+
+.v4-intro__name {
+  font-size: var(--v4-text-title);
+  font-weight: var(--v4-weight-semibold);
+  line-height: var(--v4-leading-title);
+  color: var(--v4-text);
+}
+
+.v4-intro__bio {
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text-muted);
+}
+
+.v4-intro__bio strong {
+  font-weight: var(--v4-weight-bold);
+  color: var(--v4-text-strong);
+}
+
+.v4-intro__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v4-space-2) var(--v4-space-4);
+}
+
+.v4-intro__location {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-2);
+  font-family: var(--v4-font-label);
+  font-size: var(--v4-text-label);
+  text-transform: uppercase;
+  color: var(--v4-text-muted);
+}
+
+.v4-intro__email {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-1);
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui-loose);
+  color: var(--v4-text-muted);
+  text-decoration: underline dotted;
+  text-underline-position: from-font;
+  transition: color 0.2s ease;
+}
+
+.v4-intro__email:hover {
+  color: var(--v4-text);
+}
+
+/* ---- Status clock -------------------------------------------------------- */
+/* Padding in %, which resolves against this grid area, i.e. the gutter: the
+   54px offset shrinks only as far as the gutter forces it to. */
+.v4-status {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-2);
+  padding-left: clamp(var(--v4-space-4), 100% - 394px, var(--v4-status-offset));
+}
+
+.v4-status__face {
+  flex: none;
+  width: var(--v4-clock);
+  height: var(--v4-clock);
+  overflow: visible;
+}
+
+.v4-status__tick {
+  stroke: var(--v4-clock-tick);
+  stroke-width: 0.708;
+}
+
+.v4-status__hand {
+  stroke: var(--v4-clock-hand);
+  stroke-width: 1.239;
+  stroke-linecap: round;
+}
+
+/* The sweep is CSS; clock.js only sets the start offset (see clock.js). */
+.v4-status__hand--second {
+  stroke: var(--v4-accent);
+  stroke-width: 0.885;
+  stroke-linecap: butt;
+  transform-origin: 50.5px 50.5px;
+  animation: v4-clock-sweep 60s linear infinite;
+  animation-delay: var(--clock-second-offset, 0s);
+}
+
+@keyframes v4-clock-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-status__hand--second { animation: none; }
+}
+
+.v4-status__hub {
+  fill: var(--v4-accent);
+  stroke: var(--v4-surface);
+  stroke-width: 0.952;
+}
+
+.v4-status__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-2);
+  width: var(--v4-status-text);
+}
+
+.v4-status__time {
+  font-size: var(--v4-text-lead);
+  line-height: var(--v4-leading-lead);
+  color: var(--v4-text-muted);
+}
+
+.v4-status__time strong {
+  font-weight: var(--v4-weight-semibold);
+  color: var(--v4-text-max);
+}
+
+.v4-status__line {
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-caption);
+  color: var(--v4-text-muted);
+}
+
+.v4-status__line strong {
+  font-weight: var(--v4-weight-bold);
+  color: var(--v4-text-max);
+}
+
+/* ---- Theme toggle -------------------------------------------------------- */
+.v4-theme {
+  position: absolute;
+  top: 0;
+  right: var(--v4-edge);
+  width: var(--v4-toggle);
+  height: var(--v4-toggle);
+  border-radius: var(--v4-radius-round);
+  cursor: default;
+}
+
+/* ---- Narrower screens ---------------------------------------------------- */
+@media (max-width: 1419px) {
+  .v4-status {
+    grid-column: 2;
+    grid-row: 2;
+    padding-left: 0;
+    margin-top: var(--v4-space-10);
+  }
+}
+
+@media (max-width: 899px) {
+  .v4-top {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 var(--v4-space-4);
+  }
+
+  .v4-rail {
+    display: none;
+  }
+
+  .v4-intro,
+  .v4-status {
+    grid-column: 1;
+  }
+
+  /* Clear the toggle, which now sits over the name's line. */
+  .v4-intro__head {
+    padding-right: calc(var(--v4-toggle) + var(--v4-space-2));
+  }
+
+  .v4-theme {
+    right: var(--v4-space-4);
+  }
+}
