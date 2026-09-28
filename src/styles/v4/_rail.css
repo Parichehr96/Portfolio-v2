@@ -1,0 +1,94 @@
+/* ============================================================================
+   RAIL — Figma 911:530, sticky for the whole page
+   ============================================================================
+
+   .v4-shell wraps everything from the top band down (not the toast, so the
+   rail starts level with the intro, like the comp). .v4-rail-track is a
+   full-height column down its left edge and the rail sticks inside it, so it
+   rides the viewport until the shell ends.
+
+   THE RAIL OWNS ITS COLUMN. --v4-rail-clear is the rail's column plus a gap;
+   nothing else may enter it, which is what keeps a sticky rail off the project
+   media. At 1512 it is 184 (40 edge + 120 rail + 24).
+   ========================================================================== */
+
+.v4-shell {
+  position: relative;
+}
+
+.v4-rail-track {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 1;
+  width: var(--v4-rail-clear);
+  pointer-events: none;
+}
+
+.v4-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-3);
+  position: sticky;
+  top: var(--v4-edge);
+  padding-left: var(--v4-edge);
+  pointer-events: auto;
+}
+
+.v4-rail__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--v4-icon-lg);
+  height: var(--v4-icon-lg);
+}
+
+.v4-rail__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-3);
+}
+
+.v4-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-2);
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+  transition: color 0.2s ease;
+}
+
+.v4-rail__item.is-active {
+  font-weight: var(--v4-weight-bold);
+  color: var(--v4-text);
+}
+
+/* The mark is a line: 8px and faint at rest, 20px and solid when active. */
+.v4-rail__mark {
+  width: var(--v4-space-2);
+  height: 1px;
+  border-radius: var(--v4-radius-round);
+  background: var(--v4-mark-idle);
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.v4-rail__item.is-active .v4-rail__mark {
+  width: var(--v4-icon-lg);
+  background: var(--v4-mark-active);
+}
+
+.v4-rail__item:not(.is-active):hover {
+  color: var(--v4-text);
+}
+
+.v4-rail__item:not(.is-active):hover .v4-rail__mark {
+  width: var(--v4-space-3);
+  background: var(--v4-text-muted);
+}
+
+/* Below 900 there is no gutter to give the rail; the page is one column. */
+@media (max-width: 899px) {
+  .v4-rail-track {
+    display: none;
+  }
+}

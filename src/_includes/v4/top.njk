@@ -1,15 +1,16 @@
 {#
-  TOP BAND — Figma 911:530 (rail), 911:547 (intro), 911:577 (status clock),
-  911:820 (theme toggle). All four share the comp's y=132 top edge.
+  TOP BAND — Figma 911:547 (intro), 911:577 (status clock), 911:820 (theme
+  toggle). With the rail (v4/rail.njk) all four share the comp's y=132 edge.
 
-  THREE COLUMNS, CENTRE FIXED. The intro is the page's 600px reading column;
-  the rail and the clock sit in the flexible gutters either side, so the
-  column stays centred at every width (456px in at 1512, which is the comp).
+  THE INTRO IS THE PAGE'S 600px READING COLUMN, centred at every width (456px
+  in at 1512, which is the comp). It scrolls with the page.
 
-  THE RAIL SCROLLS WITH THE PAGE. It looks like a sticky nav, but the project
-  rows below run the full 1432px width, straight through the rail's column. A
-  sticky rail would sit on top of their media, so it stays at the top like the
-  comp draws it.
+  THE CLOCK AND THE TOGGLE ARE STICKY, as a pair, like the rail on the left.
+  They sit in .v4-aside-track, a full-height column down the right of
+  .v4-shell, top-aligned with the rail and 24px apart (the comp's 1408 → 1432).
+  Nothing else may enter that column (--v4-aside-clear). Below 1436 the right
+  gutter cannot hold the clock, so the track drops into the flow under the intro
+  and nothing on the right is sticky; see _top.css.
 
   THE CLOCK IS scripts/clock.js, UNCHANGED IN BEHAVIOUR. Every data-clock-*
   hook below is the one it binds; data-clock-pivot tells it where this face's
@@ -17,22 +18,6 @@
   at 12 and rotated by the script; the lengths, strokes and hub are the comp's.
 #}
 <header class="v4-top">
-  <nav class="v4-rail" aria-label="Page">
-    <a class="v4-rail__logo" href="/" aria-label="{{ site.name }}, home">
-      <img src="/Assets/v4/icons/logo.svg" width="12.5" height="17.36" alt="" />
-    </a>
-    <ul class="v4-rail__list">
-      {%- for item in home.rail %}
-      <li>
-        <a class="v4-rail__item{% if loop.first %} is-active{% endif %}" href="#{{ item.target }}"{% if loop.first %} aria-current="true"{% endif %}>
-          <span class="v4-rail__mark" aria-hidden="true"></span>
-          {{ item.label }}
-        </a>
-      </li>
-      {%- endfor %}
-    </ul>
-  </nav>
-
   <div class="v4-intro">
     <div class="v4-intro__head">
       <h1 class="v4-intro__name">{{ site.name }}</h1>
@@ -53,32 +38,36 @@
       </a>
     </div>
   </div>
-
-  <div class="v4-status" data-clock data-clock-pivot="50.5 50.5">
-    <svg class="v4-status__face" viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
-      <line class="v4-status__tick" x1="50.354" y1="8" x2="50.354" y2="18" />
-      <line class="v4-status__tick" x1="50.354" y1="81" x2="50.354" y2="91" />
-      <line class="v4-status__tick" x1="80" y1="49.646" x2="90" y2="49.646" />
-      <line class="v4-status__tick" x1="9" y1="49.646" x2="19" y2="49.646" />
-      <line class="v4-status__hand" data-clock-hour x1="50.5" y1="50.5" x2="50.5" y2="29.5" />
-      <line class="v4-status__hand" data-clock-minute x1="50.5" y1="50.5" x2="50.5" y2="21.7" />
-      <line class="v4-status__hand v4-status__hand--second" data-clock-second x1="50.5" y1="57.6" x2="50.5" y2="16.6" />
-      <circle class="v4-status__hub" cx="50.5" cy="50.5" r="2.976" />
-    </svg>
-    <div class="v4-status__text">
-      <p class="v4-status__time">At <strong data-clock-time>{{ home.status.time }}</strong></p>
-      <p class="v4-status__line">
-        <span data-clock-lead>{{ home.status.lead }}</span>
-        <strong data-clock-status>{{ home.status.headline }}</strong>
-      </p>
-      <p class="v4-status__line" data-clock-detail>{{ home.status.detail }}</p>
-    </div>
-  </div>
-
-  {# No dark-mode frame exists in the comp yet, so the toggle is drawn but
-     inert. aria-disabled rather than `disabled` keeps it focusable and
-     announced, so nobody is surprised when it does nothing. #}
-  <button class="v4-theme" type="button" aria-label="Dark mode (coming soon)" aria-disabled="true">
-    <img src="/Assets/v4/icons/theme-moon.svg" width="40" height="40" alt="" />
-  </button>
 </header>
+
+<div class="v4-aside-track">
+  <div class="v4-aside">
+    <div class="v4-status" data-clock data-clock-pivot="50.5 50.5">
+      <svg class="v4-status__face" viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
+        <line class="v4-status__tick" x1="50.354" y1="8" x2="50.354" y2="18" />
+        <line class="v4-status__tick" x1="50.354" y1="81" x2="50.354" y2="91" />
+        <line class="v4-status__tick" x1="80" y1="49.646" x2="90" y2="49.646" />
+        <line class="v4-status__tick" x1="9" y1="49.646" x2="19" y2="49.646" />
+        <line class="v4-status__hand" data-clock-hour x1="50.5" y1="50.5" x2="50.5" y2="29.5" />
+        <line class="v4-status__hand" data-clock-minute x1="50.5" y1="50.5" x2="50.5" y2="21.7" />
+        <line class="v4-status__hand v4-status__hand--second" data-clock-second x1="50.5" y1="57.6" x2="50.5" y2="16.6" />
+        <circle class="v4-status__hub" cx="50.5" cy="50.5" r="2.976" />
+      </svg>
+      <div class="v4-status__text">
+        <p class="v4-status__time">At <strong data-clock-time>{{ home.status.time }}</strong></p>
+        <p class="v4-status__line">
+          <span data-clock-lead>{{ home.status.lead }}</span>
+          <strong data-clock-status>{{ home.status.headline }}</strong>
+        </p>
+        <p class="v4-status__line" data-clock-detail>{{ home.status.detail }}</p>
+      </div>
+    </div>
+
+    {# No dark-mode frame exists in the comp yet, so the toggle is drawn but
+       inert. aria-disabled rather than `disabled` keeps it focusable and
+       announced, so nobody is surprised when it does nothing. #}
+    <button class="v4-theme" type="button" aria-label="Dark mode (coming soon)" aria-disabled="true">
+      <img src="/Assets/v4/icons/theme-moon.svg" width="40" height="40" alt="" />
+    </button>
+  </div>
+</div>

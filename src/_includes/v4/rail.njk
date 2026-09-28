@@ -1,0 +1,31 @@
+{#
+  RAIL — Figma 911:530. The page's left menu: logo, then one item per section.
+
+  STICKY FOR THE WHOLE PAGE. It sits in .v4-rail-track, a full-height column
+  down the left of .v4-shell, and sticks inside it; the header's left gutter is
+  left empty so the rail starts exactly where the comp draws it (x=40, y=132).
+
+  IT NEVER COVERS CONTENT. Nothing else on the page may enter the rail's column
+  (--v4-rail-clear). The project strips, which in the comp run from x=40, start
+  past it instead; see _work.css.
+
+  scripts/v4-rail.js moves .is-active / aria-current to the item whose section
+  is under the top of the viewport. Without JS the first item stays active.
+#}
+<div class="v4-rail-track">
+  <nav class="v4-rail" aria-label="Page">
+    <a class="v4-rail__logo" href="/" aria-label="{{ site.name }}, home">
+      <img src="/Assets/v4/icons/logo.svg" width="12.5" height="17.36" alt="" />
+    </a>
+    <ul class="v4-rail__list">
+      {%- for item in home.rail %}
+      <li>
+        <a class="v4-rail__item{% if loop.first %} is-active{% endif %}" href="#{{ item.target }}" data-rail-target="{{ item.target }}"{% if loop.first %} aria-current="true"{% endif %}>
+          <span class="v4-rail__mark" aria-hidden="true"></span>
+          {{ item.label }}
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </nav>
+</div>

@@ -71,12 +71,18 @@
   --v4-radius-toast: 24px;
   --v4-radius-round: 999px;
 
-  /* Layout. The column is the comp's 600px; the edge is its 40px outer margin.
-     --v4-status-offset is the clock's distance from the column (1110 − 1056). */
+  /* Layout. The column is the comp's 600px; the edge is its 40px outer margin. */
   --v4-column: 600px;
   --v4-edge: var(--v4-space-10);
   --v4-page-top: var(--v4-space-4);
-  --v4-status-offset: 54px;
+  /* The rail's column (911:530 is 120 wide) plus a gap; nothing else may
+     enter it, so the sticky rail never covers content. 184 at 1512. */
+  --v4-rail-width: 120px;
+  --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6));
+  /* The right-hand twin: toggle + edge + 24 gap + clock (911:577 is 298 wide).
+     402 at 1512, so the clock starts at 1110 like the comp. */
+  --v4-status-width: 298px;
+  --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-space-6) + var(--v4-toggle) + var(--v4-edge));
   --v4-status-text: 190px;
   --v4-toast-band: 151px;
 

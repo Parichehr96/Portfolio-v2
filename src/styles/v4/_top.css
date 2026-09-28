@@ -1,83 +1,42 @@
 /* ============================================================================
-   TOP BAND — Figma 911:530 rail, 911:547 intro, 911:577 status, 911:820 toggle
+   TOP BAND — Figma 911:547 intro, 911:577 status, 911:820 toggle
    ============================================================================
 
-   Three columns with the centre fixed at the comp's 600px, so the intro stays
-   centred and the rail and clock ride the gutters. At 1512 that puts the
-   column at x=456, the rail at 40, the clock at 1110 and the toggle at 1432:
-   the comp's own positions.
+   The intro is the centred 600px column and scrolls with the page. The clock
+   and the toggle are a sticky pair in .v4-aside-track, the right-hand twin of
+   the rail's track (_rail.css): same top, same edge, and a 24px gap between
+   them. At 1512 that puts the column at x=456, the clock at 1110 and the
+   toggle at 1432: the comp's own positions.
 
-   BELOW 1420 THE CLOCK DROPS UNDER THE INTRO. The right gutter has to hold the
-   clock (298), the gap to the toggle and the toggle with its 40px margin; under
-   1420 it cannot, so the clock joins the column rather than slide under the
-   toggle. Below 900 there is no room for the rail either.
+   BELOW 1436 THE CLOCK DROPS UNDER THE INTRO. The right column (--v4-aside-
+   clear, 402) has to fit beside the reading column with 16px to spare, which
+   needs 1436. Under that the track joins the flow below the intro, the toggle
+   goes back to the top-right corner, and neither is sticky.
    ========================================================================== */
 
 .v4-top {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr min(var(--v4-column), calc(100% - 2 * var(--v4-space-4))) 1fr;
-  align-items: start;
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin: 0 auto;
 }
 
-/* ---- Rail ---------------------------------------------------------------- */
-.v4-rail {
+/* ---- Right column: clock + toggle ---------------------------------------- */
+.v4-aside-track {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 1;
+  width: var(--v4-aside-clear);
+  pointer-events: none;
+}
+
+.v4-aside {
+  position: sticky;
+  top: var(--v4-edge);
   display: flex;
-  flex-direction: column;
-  gap: var(--v4-space-3);
-  padding-left: var(--v4-edge);
-}
-
-.v4-rail__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--v4-icon-lg);
-  height: var(--v4-icon-lg);
-}
-
-.v4-rail__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--v4-space-3);
-}
-
-.v4-rail__item {
-  display: flex;
-  align-items: center;
-  gap: var(--v4-space-2);
-  font-size: var(--v4-text-ui);
-  line-height: var(--v4-leading-ui);
-  color: var(--v4-text-muted);
-  transition: color 0.2s ease;
-}
-
-.v4-rail__item.is-active {
-  font-weight: var(--v4-weight-bold);
-  color: var(--v4-text);
-}
-
-/* The mark is a line: 8px and faint at rest, 20px and solid when active. */
-.v4-rail__mark {
-  width: var(--v4-space-2);
-  height: 1px;
-  border-radius: var(--v4-radius-round);
-  background: var(--v4-mark-idle);
-  transition: width 0.2s ease, background-color 0.2s ease;
-}
-
-.v4-rail__item.is-active .v4-rail__mark {
-  width: var(--v4-icon-lg);
-  background: var(--v4-mark-active);
-}
-
-.v4-rail__item:not(.is-active):hover {
-  color: var(--v4-text);
-}
-
-.v4-rail__item:not(.is-active):hover .v4-rail__mark {
-  width: var(--v4-space-3);
-  background: var(--v4-text-muted);
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--v4-space-6);
+  padding-right: var(--v4-edge);
+  pointer-events: auto;
 }
 
 /* ---- Intro --------------------------------------------------------------- */
@@ -148,13 +107,10 @@
 }
 
 /* ---- Status clock -------------------------------------------------------- */
-/* Padding in %, which resolves against this grid area, i.e. the gutter: the
-   54px offset shrinks only as far as the gutter forces it to. */
 .v4-status {
   display: flex;
   align-items: center;
   gap: var(--v4-space-2);
-  padding-left: clamp(var(--v4-space-4), 100% - 394px, var(--v4-status-offset));
 }
 
 .v4-status__face {
@@ -232,9 +188,7 @@
 
 /* ---- Theme toggle -------------------------------------------------------- */
 .v4-theme {
-  position: absolute;
-  top: 0;
-  right: var(--v4-edge);
+  flex: none;
   width: var(--v4-toggle);
   height: var(--v4-toggle);
   border-radius: var(--v4-radius-round);
@@ -242,30 +196,29 @@
 }
 
 /* ---- Narrower screens ---------------------------------------------------- */
-@media (max-width: 1419px) {
-  .v4-status {
-    grid-column: 2;
-    grid-row: 2;
-    padding-left: 0;
-    margin-top: var(--v4-space-10);
+@media (max-width: 1435px) {
+  .v4-aside-track {
+    position: static;
+    width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+    margin: var(--v4-space-10) auto 0;
+    pointer-events: auto;
+  }
+
+  /* Not positioned, so the toggle below is placed against .v4-shell. */
+  .v4-aside {
+    position: static;
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+
+  .v4-theme {
+    position: absolute;
+    top: 0;
+    right: var(--v4-edge);
   }
 }
 
 @media (max-width: 899px) {
-  .v4-top {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 0 var(--v4-space-4);
-  }
-
-  .v4-rail {
-    display: none;
-  }
-
-  .v4-intro,
-  .v4-status {
-    grid-column: 1;
-  }
-
   /* Clear the toggle, which now sits over the name's line. */
   .v4-intro__head {
     padding-right: calc(var(--v4-toggle) + var(--v4-space-2));
