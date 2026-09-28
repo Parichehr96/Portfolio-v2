@@ -48,7 +48,9 @@
   top: 0;
   width: 20.33%;
   aspect-ratio: 1;
-  padding: 2.75%;
+  /* The comp's 3.35px ring (122 outer, 116 inner). Padding % resolves against
+     the diagram's width, not the circle's, so it is 3.352 / 600. */
+  padding: 0.559%;
   border-radius: 50%;
   background: var(--v4-surface-muted);
 }
