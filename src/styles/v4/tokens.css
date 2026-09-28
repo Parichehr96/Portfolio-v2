@@ -24,6 +24,7 @@
   --v4-gray-400: #9E9FA6;   /* clock ticks */
   --v4-mist-100: #F3F6F8;   /* toast and toggle fill */
   --v4-mist-200: #E8ECF0;   /* toast's left band */
+  --v4-ink-soft: #232323;   /* project years and the name's dashed underline */
   --v4-indigo-600: #3F3DB6; /* clock second hand and hub */
 
   /* ---- 2. SEMANTICS ------------------------------------------------------ */
@@ -34,6 +35,7 @@
   --v4-text-strong: var(--v4-slate-900);
   --v4-text-muted: var(--v4-slate-600);
   --v4-text-max: var(--v4-black);
+  --v4-text-soft: var(--v4-ink-soft);
   --v4-mark-active: var(--v4-navy-950);
   --v4-mark-idle: var(--v4-slate-600-50);
   --v4-clock-tick: var(--v4-gray-400);
@@ -52,6 +54,9 @@
 
   /* size / line-height pairs, named for the comp's role */
   --v4-text-title: 20px;   --v4-leading-title: 24px;
+  --v4-text-name: 18px;    /* project name, on --v4-leading-title */
+  --v4-text-subhead: 16px; /* section labels ("Selected project") */
+  --v4-leading-years: 25.6px;
   --v4-text-lead: 16px;    --v4-leading-lead: 24px;
   --v4-text-body: 15px;    --v4-leading-body: 22px;
   --v4-leading-body-loose: 24px; /* the toast's 15px title sits on a 24px line */
@@ -97,6 +102,17 @@
     100% - var(--v4-aside-clear) - var(--v4-space-4) - var(--v4-column)
   );
   --v4-toast-band: 151px;
+
+  /* Work — 1155:10689, 911:730. The section starts 98 below the intro
+     (346 − 248), rows are 100 apart, and each strip panel is the comp's
+     812 × 520 with 16 between them. */
+  --v4-section-gap: 98px;
+  --v4-row-gap: 100px;
+  --v4-panel-width: 812px;
+  --v4-panel-ratio: 812 / 520;
+  --v4-panel-gap: var(--v4-space-4);
+  --v4-radius-panel: 20px;
+  --v4-radius-placeholder: 12px;
 
   --v4-icon-sm: 12px;
   --v4-icon-md: 16px;

@@ -1,0 +1,161 @@
+/* ============================================================================
+   WORK — Figma 1155:10689 label, 911:757 project row (reused for every row)
+   ============================================================================
+
+   The label and each row's header sit in the 600px reading column, placed by
+   the same --v4-column-inset as the intro, so they move with it.
+
+   THE STRIP (option A) spans from the rail's column to the clock's column and
+   scrolls sideways inside that space: at 1512 that is x=184 to x=1110, 926px,
+   so a little over one 812px panel shows and the next one peeks in. Below
+   1200, where the clock drops into the flow, it runs edge to edge instead.
+   ========================================================================== */
+
+.v4-work {
+  margin-top: var(--v4-section-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-row-gap);
+}
+
+.v4-work__label,
+.v4-project__head {
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin-inline: var(--v4-column-inset) auto;
+}
+
+/* The label is 24 above the first row, not a full row gap. */
+.v4-work__label {
+  margin-bottom: calc(var(--v4-space-6) - var(--v4-row-gap));
+  font-size: var(--v4-text-subhead);
+  font-weight: var(--v4-weight-medium);
+  text-transform: uppercase;
+  color: var(--v4-text-muted);
+}
+
+/* ---- Row ----------------------------------------------------------------- */
+.v4-project {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-4);
+}
+
+.v4-project__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-2);
+}
+
+.v4-project__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--v4-space-2);
+}
+
+.v4-project__name {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-1);
+  font-size: var(--v4-text-name);
+  font-weight: var(--v4-weight-semibold);
+  line-height: var(--v4-leading-title);
+  color: var(--v4-text);
+}
+
+/* The comp's 0.5px dashed rule under the name, 2px below the text. */
+.v4-project__link {
+  padding-bottom: 2px;
+  border-bottom: 0.5px dashed var(--v4-text-soft);
+  transition: border-color 0.2s ease;
+}
+
+a.v4-project__link:hover {
+  border-bottom-style: solid;
+}
+
+.v4-project__verified {
+  flex: none;
+  width: var(--v4-icon-md);
+  height: var(--v4-icon-md);
+}
+
+.v4-project__years {
+  flex: none;
+  font-size: var(--v4-text-body);
+  line-height: var(--v4-leading-years);
+  color: var(--v4-text-soft);
+}
+
+.v4-project__desc {
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text-muted);
+}
+
+.v4-project__desc strong {
+  font-weight: var(--v4-weight-medium);
+  color: var(--v4-text-max);
+}
+
+/* ---- Strip --------------------------------------------------------------- */
+.v4-project__strip {
+  display: flex;
+  gap: var(--v4-panel-gap);
+  margin-left: var(--v4-rail-clear);
+  margin-right: var(--v4-aside-clear);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v4-surface-muted-strong) transparent;
+  border-radius: var(--v4-radius-panel);
+}
+
+.v4-project__strip:focus-visible {
+  outline-offset: 4px;
+}
+
+.v4-project__panel {
+  flex: none;
+  width: var(--v4-panel-width);
+  aspect-ratio: var(--v4-panel-ratio);
+  overflow: hidden;
+  border-radius: var(--v4-radius-panel);
+  background: var(--v4-surface-muted);
+  scroll-snap-align: start;
+}
+
+.v4-project__panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The comp's unfinished panels: a white card inset at 64 / 88 in 812 × 520. */
+.v4-project__panel--empty {
+  position: relative;
+}
+
+.v4-project__panel--empty::after {
+  content: "";
+  position: absolute;
+  inset: 16.9% 7.9%;
+  border-radius: var(--v4-radius-placeholder);
+  background: var(--v4-surface);
+}
+
+/* ---- Narrower screens ---------------------------------------------------- */
+@media (max-width: 1199px) {
+  .v4-project__strip {
+    margin-inline: 0;
+    padding-inline: var(--v4-space-4);
+    scroll-padding-inline: var(--v4-space-4);
+    border-radius: 0;
+  }
+
+  .v4-project__panel {
+    width: min(var(--v4-panel-width), 86vw);
+  }
+}

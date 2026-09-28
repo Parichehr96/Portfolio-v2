@@ -1,0 +1,40 @@
+{#
+  PROJECT ROW — Figma 911:757 (Connect2WOW), reused for every project.
+  Expects `project` from home.work.projects.
+
+  THE HEADER sits in the 600px reading column, like the intro above it.
+
+  THE STRIP IS OPTION A. The comp runs the 812 × 520 panels off the right edge
+  of the page; here they scroll sideways inside the space between the sticky
+  rail and the sticky clock, so neither ever covers a panel. It is a real
+  scroll container (trackpad, shift-wheel, keyboard once focused) with snap
+  points on each panel.
+#}
+<article class="v4-project" aria-labelledby="project-{{ project.id }}">
+  <header class="v4-project__head">
+    <div class="v4-project__title-row">
+      <h3 class="v4-project__name" id="project-{{ project.id }}">
+        {%- if project.href %}
+        <a class="v4-project__link" href="{{ project.href }}">{{ project.name }}</a>
+        {%- else %}
+        <span class="v4-project__link">{{ project.name }}</span>
+        {%- endif %}
+        {%- if project.verified %}
+        <img class="v4-project__verified" src="/Assets/v4/icons/verified.svg" width="16" height="16" alt="Shipped" />
+        {%- endif %}
+      </h3>
+      <p class="v4-project__years">{{ project.years }}</p>
+    </div>
+    <p class="v4-project__desc"><strong>{{ project.lead }}</strong> {{ project.body }}</p>
+  </header>
+
+  <div class="v4-project__strip" tabindex="0" role="region" aria-label="{{ project.name }} screens">
+    {%- for panel in project.panels %}
+    <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}">
+      {%- if panel.src %}
+      <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}"{% if not loop.first %} loading="lazy"{% endif %} decoding="async" />
+      {%- endif %}
+    </figure>
+    {%- endfor %}
+  </div>
+</article>

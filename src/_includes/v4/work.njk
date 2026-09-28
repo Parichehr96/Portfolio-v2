@@ -1,0 +1,12 @@
+{#
+  WORK — Figma 1155:10689 ("Selected project" label) and 911:730 (the rows).
+
+  Inside .v4-shell, so the sticky rail and clock keep riding down beside it.
+  The rows come from home.work.projects; each is v4/project-row.njk.
+#}
+<section class="v4-work" id="work" aria-labelledby="work-label">
+  <h2 class="v4-work__label" id="work-label">{{ home.work.label }}</h2>
+  {%- for project in home.work.projects %}
+  {% include "v4/project-row.njk" %}
+  {%- endfor %}
+</section>

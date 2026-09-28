@@ -44,4 +44,31 @@ module.exports = {
     headline: "probably in deep work",
     detail: "Designing, prototyping, or solving complex product problems.",
   },
+
+  // ---- Work — 1155:10689 (label), 911:730 (project rows) ----------------------
+  // One entry per row, in display order; v4/project-row.njk renders each.
+  // `lead` is the dark first sentence of the description, `body` the rest.
+  // A panel with no `src` renders as an empty placeholder, like the comp's
+  // unfinished panels; give it a `src` (and `alt`) when its image exists.
+  work: {
+    label: "Selected project",
+    projects: [
+      {
+        id: "connect2wow",
+        name: "Connect2WOW",
+        href: "/work/connect2wow/",
+        verified: true,
+        years: "2024-2025",
+        lead: "Designed how an ERP decides what deserves attention.",
+        body: "Co-built a 40–50 component design system and the model that decides how every alert looks and behaves.",
+        panels: [
+          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", alt: "Connect2WOW HR module: a worker profile with the Report to me view open" },
+          // 1126:30583 and 1126:29537 sit past the Homepage frame's edge, which
+          // clips them, so they cannot be exported yet.
+          {},
+          {},
+        ],
+      },
+    ],
+  },
 };
