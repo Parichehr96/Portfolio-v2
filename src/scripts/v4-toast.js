@@ -1,11 +1,13 @@
 /* V4 toast — Figma 1126:30853.
  *
- * Shown on every load. It leaves in one of two ways:
+ * Shown on every load, in the page: the three columns start below it. It
+ * leaves in one of two ways:
  *   - its timer band (the ::before in _toast.css) finishes filling, 10s in;
  *   - the × is pressed.
- * Either way it fades out, then is hidden so it no longer takes focus.
- * Hovering or focusing the toast pauses the timer (CSS), so it never
- * disappears while someone is reading it or reaching for the ×.
+ * Either way it fades, then collapses so the columns glide up to where they
+ * rest without it (--v4-content-top). The collapsed toast stays in the DOM as
+ * an empty spacer and is made inert, so it can no longer take focus.
+ * Hovering or focusing the toast pauses the timer (CSS).
  */
 (function () {
   "use strict";
@@ -14,12 +16,21 @@
   if (!toast) return;
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var FADE = reduced ? 0 : 250;
 
   function dismiss() {
-    if (toast.hidden || toast.classList.contains("is-leaving")) return;
+    if (toast.classList.contains("is-leaving")) return;
     toast.classList.add("is-leaving");
-    // Hide once the fade is done; straight away if motion is reduced.
-    setTimeout(function () { toast.hidden = true; }, reduced ? 0 : 300);
+    setTimeout(function () {
+      // Pin the current height so the collapse has a start value, then let
+      // .is-collapsed take it to 0 on the next frame.
+      toast.style.height = toast.offsetHeight + "px";
+      void toast.offsetHeight;
+      toast.style.height = "";
+      toast.classList.add("is-collapsed");
+      toast.setAttribute("aria-hidden", "true");
+      toast.inert = true;
+    }, FADE);
   }
 
   // The timer is a pseudo-element animation; its end still fires here.

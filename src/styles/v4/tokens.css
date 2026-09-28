@@ -93,10 +93,11 @@
   --v4-column: 600px;
   --v4-edge: var(--v4-space-10);
   --v4-page-top: var(--v4-space-4);
-  /* Where the menu, intro and clock start: a third of the comp's y=132, so the
-     page opens higher. Fixed whether or not the toast is showing, since the
-     toast floats over the page rather than pushing it down. */
-  --v4-content-top: 44px;
+  /* Where the menu, intro and clock rest once the toast has gone. While the
+     toast is up they start below it instead (16 + toast + 44, y=132 at 1512,
+     the comp's line), and glide up to here when it leaves. */
+  --v4-content-top: 64px;
+  --v4-toast-gap: var(--v4-space-11);
   /* The rail's column (911:530 is 120 wide) plus a gap; nothing else may
      enter it, so the sticky rail never covers content. 184 at 1512. */
   --v4-rail-width: 120px;

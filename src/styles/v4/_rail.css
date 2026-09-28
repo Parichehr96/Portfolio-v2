@@ -13,10 +13,15 @@
    ========================================================================== */
 
 /* Margin, not padding: the rail and clock tracks are inset 0 inside the
-   shell, so they start where the intro starts and all three tops line up. */
+   shell, so they start where the intro starts and all three tops line up.
+   After the toast the toast's own margins set this space (_toast.css). */
 .v4-shell {
   position: relative;
   margin-top: var(--v4-content-top);
+}
+
+.v4-toast + .v4-shell {
+  margin-top: 0;
 }
 
 .v4-rail-track {

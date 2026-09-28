@@ -2,21 +2,23 @@
    TOAST — Figma 1126:30853 (600 × 72, centred in the column, 16px from the top)
    ========================================================================== */
 
-/* FIXED TO THE VIEWPORT, 16 from the top: it overlays the page and stays put
-   while the visitor scrolls, until its timer runs out or the x is pressed.
-   It never takes layout space, so closing it never shifts the page. Above the
-   sticky rail and clock (z-index 1). */
+/* STICKY, NOT FIXED. While it is up it takes its place in the page, 16 from the
+   top with 44 under it, so the three columns start below it. Scroll and it
+   stays pinned 16 from the top while the page slides under it (above the
+   sticky rail and clock, z-index 1).
+
+   When it leaves (timer or x, scripts/v4-toast.js) it fades, then collapses to
+   nothing but its margins, which add up to --v4-content-top: the columns glide
+   up to where they rest without a toast. */
 .v4-toast {
-  position: fixed;
+  position: sticky;
   top: var(--v4-page-top);
-  left: 0;
-  right: 0;
   z-index: 10;
   display: flex;
   align-items: center;
   gap: var(--v4-space-2);
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
-  margin-inline: var(--v4-column-inset) auto; /* follows the reading column */
+  margin: var(--v4-page-top) auto var(--v4-toast-gap) var(--v4-column-inset); /* follows the reading column */
   padding: var(--v4-space-3) var(--v4-space-6);
   overflow: clip;
   background: var(--v4-surface-muted);
@@ -46,21 +48,31 @@
   to { transform: scaleX(1); }
 }
 
+/* Leaving: fade (is-leaving), then collapse (is-collapsed). The script pins
+   the height in px first so it has something to transition from. */
 .v4-toast {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.25s ease,
+    height 0.4s ease,
+    padding 0.4s ease,
+    margin 0.4s ease,
+    visibility 0s linear 0s;
 }
 
 .v4-toast.is-leaving {
   opacity: 0;
-  transform: translateY(-8px);
 }
 
-.v4-toast[hidden] {
-  display: none;
+.v4-toast.is-collapsed {
+  height: 0;
+  padding-block: 0;
+  margin-bottom: calc(var(--v4-content-top) - var(--v4-page-top));
+  visibility: hidden;
+  transition-delay: 0s, 0s, 0s, 0s, 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-toast.is-leaving { transform: none; }
+  .v4-toast { transition: none; }
 }
 
 .v4-toast__body {
