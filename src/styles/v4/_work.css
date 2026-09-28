@@ -6,8 +6,9 @@
    the same --v4-column-inset as the intro, so they move with it.
 
    THE STRIP runs from the 40px edge off the right of the page, as in the
-   comp, over the sticky rail and clock, drifting slowly left to right in an
-   endless loop (see project-row.njk for how the loop stays seamless).
+   comp, over the sticky rail and clock. It drifts slowly left to right in an
+   endless loop, and stops to be scrolled by hand while hovered
+   (scripts/v4-strip.js).
    ========================================================================== */
 
 .v4-work {
@@ -110,32 +111,44 @@ a.v4-project__link:hover {
 
 /* ---- Strip --------------------------------------------------------------- */
 /* From the 40px edge off the right side of the page, as the comp draws it, and
-   above the sticky rail and clock (z-index 1) so they slide under it. */
+   above the sticky rail and clock (z-index 1) so they slide under it.
+
+   A REAL SCROLL CONTAINER, so visitors can scroll it themselves: swipe on a
+   trackpad or phone, drag with a mouse. The slow left-to-right drift is
+   scripts/v4-strip.js moving the same scroll position, and it stops while the
+   pointer is over the strip. The scrollbar is hidden; the drift and the
+   cut-off panel at the right edge say "this moves" better than a bar would.
+
+   THE TRACK is the panels twice over. Each panel carries its own trailing gap,
+   so the two halves are identical and the script can wrap the scroll position
+   by exactly one set, in either direction, without a visible jump. Without JS
+   it is simply a strip you can scroll. */
 .v4-project__strip {
   position: relative;
   z-index: 2;
   margin-left: var(--v4-edge);
-  overflow: hidden;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  cursor: grab;
 }
 
-/* The drift. Each panel carries its own trailing gap, so the track is exactly
-   two identical halves and -50% is exactly one set: the loop point is
-   invisible. Left to right means the track starts one set to the left and
-   slides to 0. Duration scales with the panel count, so every row moves at
-   the same slow speed. */
+.v4-project__strip::-webkit-scrollbar {
+  display: none;
+}
+
+.v4-project__strip.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
 .v4-project__track {
   display: flex;
   width: max-content;
-  animation: v4-strip-drift calc(var(--v4-strip-pace) * var(--panels, 3)) linear infinite;
 }
 
-.v4-project__strip:hover .v4-project__track {
-  animation-play-state: paused;
-}
-
-@keyframes v4-strip-drift {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
+.v4-project__panel img {
+  -webkit-user-drag: none;
 }
 
 .v4-project__panel {
@@ -146,16 +159,6 @@ a.v4-project__link:hover {
   overflow: hidden;
   border-radius: var(--v4-radius-panel);
   background: var(--v4-surface-muted);
-}
-
-/* Reduced motion: no drift. The strip scrolls by hand and the copies go. */
-@media (prefers-reduced-motion: reduce) {
-  .v4-project__track { animation: none; }
-  .v4-project__strip {
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
-  .v4-project__panel--clone { display: none; }
 }
 
 .v4-project__panel img {

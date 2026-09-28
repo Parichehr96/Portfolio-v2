@@ -6,10 +6,10 @@
 
   THE STRIP runs as the comp draws it: from the 40px edge off the right side of
   the page, over the sticky rail and clock as they scroll past. It drifts
-  slowly left to right on its own, forever: the panels are rendered twice
-  (the second set aria-hidden) and the track slides by exactly one set, so the
-  jump back to the start lands on an identical frame and is never seen. Hover
-  pauses it; with reduced motion it stands still and scrolls by hand instead.
+  slowly left to right on its own, forever, and while the pointer is over it
+  the drift stops and it scrolls by hand (scripts/v4-strip.js). The panels are
+  rendered twice (the second set aria-hidden), so the scroll position can wrap
+  by exactly one set and land on an identical frame.
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
@@ -36,7 +36,7 @@
     </p>
   </header>
 
-  <div class="v4-project__strip" role="region" aria-label="{{ project.name }} screens">
+  <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track" style="--panels: {{ project.panels | length }}">
       {%- for copy in [false, true] %}
       {%- for panel in project.panels %}
