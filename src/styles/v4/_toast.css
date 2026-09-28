@@ -2,14 +2,16 @@
    TOAST — Figma 1126:30853 (600 × 72, centred in the column, 16px from the top)
    ========================================================================== */
 
-/* FLOATS, so closing it never shifts the page: the content below always starts
-   at --v4-content-top, and the toast sits in that space, 16 from the top. */
+/* FIXED TO THE VIEWPORT, 16 from the top: it overlays the page and stays put
+   while the visitor scrolls, until its timer runs out or the x is pressed.
+   It never takes layout space, so closing it never shifts the page. Above the
+   sticky rail and clock (z-index 1). */
 .v4-toast {
-  position: absolute;
+  position: fixed;
   top: var(--v4-page-top);
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: var(--v4-space-2);
