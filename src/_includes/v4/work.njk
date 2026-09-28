@@ -7,6 +7,9 @@
 #}
 <section class="v4-work" id="work" aria-label="Work">
   {%- for project in home.work.projects %}
+  {#- The first row is on screen at load, so its images (both sets) load at
+      once; later rows stay lazy. -#}
+  {%- set eager = loop.first %}
   {% include "v4/project-row.njk" %}
   {%- endfor %}
 </section>

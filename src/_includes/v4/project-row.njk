@@ -4,11 +4,12 @@
 
   THE HEADER sits in the 600px reading column, like the intro above it.
 
-  THE STRIP IS OPTION A. The comp runs the 812 × 520 panels off the right edge
-  of the page; here they scroll sideways inside the space between the sticky
-  rail and the sticky clock, so neither ever covers a panel. It is a real
-  scroll container (trackpad, shift-wheel, keyboard once focused) with snap
-  points on each panel.
+  THE STRIP runs as the comp draws it: from the 40px edge off the right side of
+  the page, over the sticky rail and clock as they scroll past. It drifts
+  slowly left to right on its own, forever: the panels are rendered twice
+  (the second set aria-hidden) and the track slides by exactly one set, so the
+  jump back to the start lands on an identical frame and is never seen. Hover
+  pauses it; with reduced motion it stands still and scrolls by hand instead.
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
@@ -35,13 +36,17 @@
     </p>
   </header>
 
-  <div class="v4-project__strip" tabindex="0" role="region" aria-label="{{ project.name }} screens">
-    {%- for panel in project.panels %}
-    <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}">
-      {%- if panel.src %}
-      <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}"{% if not loop.first %} loading="lazy"{% endif %} decoding="async" />
-      {%- endif %}
-    </figure>
-    {%- endfor %}
+  <div class="v4-project__strip" role="region" aria-label="{{ project.name }} screens">
+    <div class="v4-project__track" style="--panels: {{ project.panels | length }}">
+      {%- for copy in [false, true] %}
+      {%- for panel in project.panels %}
+      <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}{% if copy %} v4-project__panel--clone{% endif %}"{% if copy %} aria-hidden="true"{% endif %}>
+        {%- if panel.src %}
+        <img src="{{ panel.src }}" width="812" height="520" alt="{{ '' if copy else panel.alt }}"{% if not eager %} loading="lazy"{% endif %} decoding="async" />
+        {%- endif %}
+      </figure>
+      {%- endfor %}
+      {%- endfor %}
+    </div>
   </div>
 </article>
