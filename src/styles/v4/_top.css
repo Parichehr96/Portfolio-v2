@@ -1,20 +1,19 @@
 /* ============================================================================
-   TOP BAND — Figma 911:547 intro, 911:577 status, 911:820 toggle
+   TOP BAND — Figma 911:547 intro, 911:577 status
    ============================================================================
 
    The intro is the 600px reading column and scrolls with the page. The clock
-   and the toggle are a sticky pair in .v4-aside-track, the right-hand twin of
-   the rail's track (_rail.css): same top, same edge, and a 24px gap between
-   them. At 1512 that puts the column at x=456, the clock at 1110 and the
-   toggle at 1432: the comp's own positions.
+   is sticky in .v4-aside-track, the right-hand twin of the rail's track
+   (_rail.css): same top, same 40px edge. The comp's theme switch is removed
+   for now, so the clock sits where the switch was, against the edge (x=1174
+   at 1512). Rail, intro and clock all start on the same line.
 
    NARROWER, THE COLUMN GIVES WAY, NOT THE CLOCK. Below 1436 the intro can no
    longer be centred and still clear the clock, so it slides left towards the
-   rail (--v4-column-inset) while the clock, the toggle and the rail keep their
+   rail (--v4-column-inset) while the clock and the rail keep their
    places and sizes. At 1200 the column meets the rail's column and there is
    nowhere left to slide: only below that does the track join the flow under
-   the intro, the toggle go back to the top-right corner, and neither stay
-   sticky.
+   the intro and stop being sticky.
    ========================================================================== */
 
 .v4-top {
@@ -22,7 +21,7 @@
   margin-inline: var(--v4-column-inset) auto;
 }
 
-/* ---- Right column: clock + toggle ---------------------------------------- */
+/* ---- Right column: clock ---------------------------------------------- */
 .v4-aside-track {
   position: absolute;
   inset: 0 0 0 auto;
@@ -119,9 +118,11 @@
 }
 
 /* ---- Status clock -------------------------------------------------------- */
+/* Top-aligned, so "At 19:07" starts on the same line as the name and the
+   menu's first item. */
 .v4-status {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--v4-space-2);
 }
 
@@ -198,15 +199,6 @@
   color: var(--v4-text-max);
 }
 
-/* ---- Theme toggle -------------------------------------------------------- */
-.v4-theme {
-  flex: none;
-  width: var(--v4-toggle);
-  height: var(--v4-toggle);
-  border-radius: var(--v4-radius-round);
-  cursor: default;
-}
-
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
   .v4-aside-track {
@@ -216,27 +208,11 @@
     pointer-events: auto;
   }
 
-  /* Not positioned, so the toggle below is placed against .v4-shell. */
   .v4-aside {
     position: static;
     padding-right: 0;
     justify-content: flex-start;
   }
 
-  .v4-theme {
-    position: absolute;
-    top: 0;
-    right: var(--v4-edge);
-  }
 }
 
-@media (max-width: 899px) {
-  /* Clear the toggle, which now sits over the name's line. */
-  .v4-intro__head {
-    padding-right: calc(var(--v4-toggle) + var(--v4-space-2));
-  }
-
-  .v4-theme {
-    right: var(--v4-space-4);
-  }
-}

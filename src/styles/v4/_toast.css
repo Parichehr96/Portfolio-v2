@@ -2,14 +2,19 @@
    TOAST — Figma 1126:30853 (600 × 72, centred in the column, 16px from the top)
    ========================================================================== */
 
+/* FLOATS, so closing it never shifts the page: the content below always starts
+   at --v4-content-top, and the toast sits in that space, 16 from the top. */
 .v4-toast {
-  position: relative;
+  position: absolute;
+  top: var(--v4-page-top);
+  left: 0;
+  right: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: var(--v4-space-2);
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
-  margin: 0 auto var(--v4-space-11);
-  margin-left: var(--v4-column-inset); /* follows the reading column */
+  margin-inline: var(--v4-column-inset) auto; /* follows the reading column */
   padding: var(--v4-space-3) var(--v4-space-6);
   overflow: clip;
   background: var(--v4-surface-muted);

@@ -22,10 +22,6 @@ body {
   overflow-x: clip;
 }
 
-body {
-  padding-top: var(--v4-page-top);
-}
-
 img,
 svg {
   display: block;

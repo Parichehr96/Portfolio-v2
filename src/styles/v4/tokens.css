@@ -22,7 +22,7 @@
   --v4-slate-600: #475569;  /* text/color-text-primary-subdued */
   --v4-slate-600-50: rgba(71, 85, 105, 0.5);
   --v4-gray-400: #9E9FA6;   /* clock ticks */
-  --v4-mist-100: #F3F6F8;   /* toast and toggle fill */
+  --v4-mist-100: #F3F6F8;   /* toast and placeholder fill */
   --v4-mist-200: #E8ECF0;   /* toast's left band */
   --v4-ink-soft: #232323;   /* project years and the name's dashed underline */
   --v4-ink-950: #0A0A0A;    /* footer title */
@@ -93,14 +93,18 @@
   --v4-column: 600px;
   --v4-edge: var(--v4-space-10);
   --v4-page-top: var(--v4-space-4);
+  /* Where the menu, intro and clock start: the comp's y=132. Fixed whether or
+     not the toast is showing, since the toast floats above it. */
+  --v4-content-top: 132px;
   /* The rail's column (911:530 is 120 wide) plus a gap; nothing else may
      enter it, so the sticky rail never covers content. 184 at 1512. */
   --v4-rail-width: 120px;
   --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6));
-  /* The right-hand twin: toggle + edge + 24 gap + clock (911:577 is 298 wide).
-     402 at 1512, so the clock starts at 1110 like the comp. */
+  /* The right-hand twin: the clock (911:577 is 298 wide) and the 40px edge.
+     The theme switch that used to sit outside it is gone, so the clock now
+     takes the switch's place against the edge: x=1174 at 1512. */
   --v4-status-width: 298px;
-  --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-space-6) + var(--v4-toggle) + var(--v4-edge));
+  --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-edge));
   --v4-status-text: 190px;
 
   /* Where the reading column starts. Centred on the page while it clears the
@@ -149,7 +153,6 @@
   --v4-icon-lg: 20px;
   --v4-ring: 40px;
   --v4-clock: 100px;
-  --v4-toggle: 40px;
 }
 
 /* Below 1200 there is no room for the side columns; see --v4-column-inset. */

@@ -12,8 +12,11 @@
    media. At 1512 it is 184 (40 edge + 120 rail + 24).
    ========================================================================== */
 
+/* Margin, not padding: the rail and clock tracks are inset 0 inside the
+   shell, so they start where the intro starts and all three tops line up. */
 .v4-shell {
   position: relative;
+  margin-top: var(--v4-content-top);
 }
 
 .v4-rail-track {
