@@ -23,7 +23,7 @@
   --v4-slate-600-50: rgba(71, 85, 105, 0.5);
   --v4-gray-400: #9E9FA6;   /* clock ticks */
   --v4-mist-100: #F3F6F8;   /* toast and placeholder fill */
-  --v4-mist-200: #E8ECF0;   /* toast's left band */
+  --v4-mist-200: #E8ECF0;   /* toast's timer band */
   --v4-ink-soft: #232323;   /* project years and the name's dashed underline */
   --v4-ink-950: #0A0A0A;    /* footer title */
   --v4-button: #101012;     /* footer call button */
@@ -118,7 +118,8 @@
     (100% - var(--v4-column)) / 2,
     100% - var(--v4-aside-clear) - var(--v4-space-4) - var(--v4-column)
   );
-  --v4-toast-band: 151px;
+  /* How long the toast stays up; its timer band fills over exactly this. */
+  --v4-toast-duration: 10s;
 
   /* Work — 1155:10689, 911:730. The section starts 98 below the intro
      (346 − 248), rows are 100 apart, and each strip panel is the comp's

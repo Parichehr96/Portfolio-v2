@@ -18,12 +18,6 @@
 
   <link rel="stylesheet" href="/styles/v4/index.css" />
 
-  {#- Before first paint: hide the toast for a visitor who already dismissed
-      it, so it never flashes in and back out. See v4/toast.njk. -#}
-  <script>
-    try { if (localStorage.getItem("v4-toast-dismissed:{{ home.toast.id }}")) document.documentElement.classList.add("is-toast-dismissed"); } catch (e) {}
-  </script>
-
   {% include "partials/head-analytics.njk" %}
 </head>
 

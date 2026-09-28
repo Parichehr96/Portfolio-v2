@@ -7,10 +7,8 @@
  */
 module.exports = {
   // ---- Toast — 1126:30853 ----------------------------------------------------
-  // Dismissible; the dismissal is remembered per visitor by scripts/v4-toast.js.
-  // Bump `id` when the message changes so returning visitors see the new one.
+  // Shown on every load; closes itself after 10s or on the × (v4/toast.njk).
   toast: {
-    id: "portfolio-26-progress",
     progress: 60,
     title: "Portfolio '26 is in progress.",
     body: "Case studies, writings, and details are actively rolling in.",

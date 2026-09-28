@@ -21,18 +21,44 @@
   border-radius: var(--v4-radius-toast);
 }
 
-/* Rectangle 4513: the darker band down the left, behind the ring. */
+/* THE TIMER — Rectangle 4513, the darker band the comp draws 151px in. It
+   fills the toast from left to right over --v4-toast-duration; when it is full
+   the animation ends and scripts/v4-toast.js fades the toast out. Scaled
+   rather than resized, so it runs on the compositor. Hover or focus pauses it. */
 .v4-toast::before {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--v4-toast-band);
+  inset: 0;
   background: var(--v4-surface-muted-strong);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: v4-toast-timer var(--v4-toast-duration) linear forwards;
 }
 
-.v4-toast[hidden],
-.is-toast-dismissed .v4-toast {
+.v4-toast:hover::before,
+.v4-toast:focus-within::before {
+  animation-play-state: paused;
+}
+
+@keyframes v4-toast-timer {
+  to { transform: scaleX(1); }
+}
+
+.v4-toast {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.v4-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.v4-toast[hidden] {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-toast.is-leaving { transform: none; }
 }
 
 .v4-toast__body {

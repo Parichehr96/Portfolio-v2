@@ -1,15 +1,16 @@
 {#
   TOAST — Figma 1126:30853. "Portfolio '26 is in progress."
 
-  Rendered visible, so a first visit never sees the page jump when it appears.
-  A visitor who dismissed this `home.toast.id` is caught BEFORE first paint by
-  the inline check in layouts/v4.njk, which marks <html> and lets CSS hide it;
-  scripts/v4-toast.js handles the close button and remembers the dismissal.
+  Shown on every page load, and gone after 10 seconds: the darker band behind
+  it is the timer, filling from left to right, and the toast fades out when it
+  is full (_toast.css). The × closes it at once (scripts/v4-toast.js). Nothing
+  is remembered between visits. Hovering or focusing it pauses the timer, so
+  it never vanishes while someone is reading it.
 
   The ring is two exported assets, not a drawn progress arc: the comp's arc is a
   fixed shape (with the spark at its tip), not a value-driven one.
 #}
-<aside class="v4-toast" data-toast="{{ home.toast.id }}" aria-label="Site status">
+<aside class="v4-toast" data-toast aria-label="Site status">
   <div class="v4-toast__body">
     <div class="v4-toast__ring" aria-hidden="true">
       <img class="v4-toast__ring-track" src="/Assets/v4/icons/toast-ring-track.svg" width="40" height="40" alt="" />
