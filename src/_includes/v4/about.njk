@@ -1,0 +1,22 @@
+{#
+  ABOUT — Figma 911:727 (label), 911:854 (text), 918:32037 + 918:32133 (cards).
+
+  The rail's "Parichehr" item scrolls here (#about). The empty band the comp
+  leaves between the label and the text renders as a placeholder, like the
+  unfinished project panels. The comp's floating tool icons (Figma, Notion,
+  Jira, Claude) are hidden in the file, so they are not drawn.
+#}
+<section class="v4-about" id="about" aria-labelledby="about-label">
+  <h2 class="v4-label" id="about-label">{{ home.about.label }}</h2>
+  <div class="v4-about__media" aria-hidden="true"></div>
+  <div class="v4-about__text">
+    {%- for p in home.about.paragraphs %}
+    <p>{{ p }}</p>
+    {%- endfor %}
+  </div>
+  <div class="v4-about__cards">
+    {%- for card in home.about.cards %}
+    <img src="{{ card.src }}" width="{{ card.width }}" height="{{ card.height }}" alt="{{ card.alt }}" loading="lazy" decoding="async" />
+    {%- endfor %}
+  </div>
+</section>

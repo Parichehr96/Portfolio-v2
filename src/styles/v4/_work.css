@@ -18,19 +18,24 @@
   gap: var(--v4-row-gap);
 }
 
-.v4-work__label,
+.v4-label,
 .v4-project__head {
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
   margin-inline: var(--v4-column-inset) auto;
 }
 
-/* The label is 24 above the first row, not a full row gap. */
-.v4-work__label {
-  margin-bottom: calc(var(--v4-space-6) - var(--v4-row-gap));
+/* Section labels ("Selected project", "My works", "Experience" …). Shared by
+   every section; inside .v4-work a label sits 24 above its row, not a full
+   row gap, hence the pull-up there. */
+.v4-label {
   font-size: var(--v4-text-subhead);
   font-weight: var(--v4-weight-medium);
   text-transform: uppercase;
   color: var(--v4-text-muted);
+}
+
+.v4-work > .v4-label {
+  margin-bottom: calc(var(--v4-space-6) - var(--v4-row-gap));
 }
 
 /* ---- Row ----------------------------------------------------------------- */

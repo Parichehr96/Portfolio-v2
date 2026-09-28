@@ -1,0 +1,25 @@
+{#
+  MY PROCESS — Figma 911:681. Four steps joined by a band, with a loop arrow
+  (forward on top, dashed back-arrow underneath) between each pair.
+
+  A LIST, DRAWN AS A DIAGRAM. The steps are a real <ol> so they read in order;
+  the band, the bridges and the arrows are decoration. Every piece is placed in
+  % of the comp's 600 × 122 box, so the whole diagram scales down as one on
+  narrow screens instead of wrapping.
+#}
+<section class="v4-process" aria-labelledby="process-label">
+  <h2 class="v4-label" id="process-label">{{ home.process.label }}</h2>
+  <div class="v4-process__diagram">
+    <img class="v4-process__band" src="/Assets/v4/process/band.svg" alt="" />
+    <ol class="v4-process__steps">
+      {%- for step in home.process.steps %}
+      <li class="v4-process__step"><span>{{ step }}</span></li>
+      {%- endfor %}
+    </ol>
+    {%- for i in [1, 2, 3] %}
+    <img class="v4-process__bridge v4-process__bridge--top v4-process__at-{{ i }}" src="/Assets/v4/process/arrow-top-{{ i }}.svg" alt="" />
+    <img class="v4-process__bridge v4-process__bridge--bottom v4-process__at-{{ i }}" src="/Assets/v4/process/arrow-bottom-{{ i }}.svg" alt="" />
+    <img class="v4-process__loop v4-process__at-{{ i }}" src="/Assets/v4/process/link-{{ i }}.svg" alt="" />
+    {%- endfor %}
+  </div>
+</section>

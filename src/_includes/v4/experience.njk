@@ -1,0 +1,30 @@
+{#
+  EXPERIENCE — Figma 911:593. A timeline: each role's logo sits on a dashed
+  line that runs down to the next one; the last role has no line.
+#}
+<section class="v4-experience" aria-labelledby="experience-label">
+  <h2 class="v4-label" id="experience-label">{{ home.experience.label }}</h2>
+  <ol class="v4-experience__list">
+    {%- for role in home.experience.roles %}
+    <li class="v4-experience__role">
+      <div class="v4-experience__rail" aria-hidden="true">
+        <span class="v4-experience__logo{% if role.logoDark %} v4-experience__logo--dark{% endif %}">
+          <img src="{{ role.logo }}" alt="" />
+        </span>
+        {%- if not loop.last %}
+        <img class="v4-experience__line" src="/Assets/v4/experience/line.svg" alt="" />
+        {%- endif %}
+      </div>
+      <div class="v4-experience__body">
+        <div class="v4-experience__head">
+          <h3 class="v4-experience__company">
+            {%- if role.href %}<a href="{{ role.href }}">{{ role.company }}</a>{% else %}<span>{{ role.company }}</span>{% endif -%}
+          </h3>
+          <p class="v4-experience__dates">{{ role.dates }}</p>
+        </div>
+        <p class="v4-experience__summary">{{ role.summary }}</p>
+      </div>
+    </li>
+    {%- endfor %}
+  </ol>
+</section>

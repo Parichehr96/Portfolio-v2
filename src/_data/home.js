@@ -122,4 +122,77 @@ module.exports = {
       },
     ],
   },
+
+  // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
+  // The comp leaves a tall empty band between the label and the text (where a
+  // photo stack was planned); it renders as a placeholder until that exists.
+  about: {
+    label: "Parichehr (about me)",
+    paragraphs: [
+      "I'm drawn to complex products. Industrial Design taught me to think in systems. My Master's in Interaction Design taught me to ground those systems in evidence.",
+      "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to under 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
+      "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
+      "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
+    ],
+    cards: [
+      { src: "/Assets/v4/about/tools-card.webp", width: 196, height: 195, alt: "My tools: Figma, Claude and the rest of the kit" },
+      { src: "/Assets/v4/about/services-card.webp", width: 304, height: 195, alt: "Services: strategic, product, and interaction and UX design" },
+    ],
+  },
+
+  // ---- My process — 911:681 ---------------------------------------------------
+  process: {
+    label: "My process",
+    steps: ["Define", "Research", "Design", "Validate"],
+  },
+
+  // ---- Experience — 911:593 ---------------------------------------------------
+  // Newest first. `href` is optional: roles with a case study link to it.
+  experience: {
+    label: "Experience",
+    roles: [
+      {
+        company: "Onton",
+        href: "/work/onton/",
+        logo: "/Assets/v4/experience/onton.svg",
+        dates: "Dec 2023 - Jun 2025",
+        summary: "Event management platform serving organizers and attendees (30,000+ users). Sole designer, owning end-to-end product design from discovery to delivery.",
+      },
+      {
+        company: "ChallenQuiz",
+        href: "/work/challenquiz/",
+        logo: "/Assets/v4/experience/challenquiz.svg",
+        logoDark: true,
+        dates: "Jul 2023 - Dec 2023",
+        summary: "Real-time multiplayer gaming platform. Contract product designer focused on onboarding, navigation, and the in-game experience.",
+      },
+      {
+        // The comp repeats ChallenQuiz's summary here; replace when written.
+        company: "TeFarda Studio",
+        logo: "/Assets/v4/experience/tefarda.svg",
+        dates: "Nov 2022 - Jun 2023",
+        summary: "Real-time multiplayer gaming platform. Contract product designer focused on onboarding, navigation, and the in-game experience.",
+      },
+      {
+        company: "RDSysCo",
+        logo: "/Assets/v4/experience/rdsysco.svg",
+        dates: "May 2021 - Sep 2022",
+        summary: "Digital supply chain platform for automotive spare-part distribution.",
+      },
+    ],
+  },
+
+  // ---- Footer — 911:654 ---------------------------------------------------------
+  // "Last updated" and the copyright year are filled in at build time.
+  footer: {
+    title: "Have a complex problem worth solving?",
+    body: "I’m always open to thoughtful conversations, interesting product challenges, and teams that care about making complicated things feel simple. If that sounds like what you’re working on, I’d love to hear about it.",
+    cta: { label: "Book a Call", url: "https://calendar.app.google/esnBYXwJEYMbRyxb6" },
+    socials: [
+      { name: "Dribbble", url: "https://dribbble.com/pariuxd", icon: "/Assets/v4/footer/dribbble.svg" },
+      { name: "Behance", url: "https://behance.net/pariuxd", icon: "/Assets/v4/footer/behance.svg" },
+      { name: "LinkedIn", url: "https://linkedin.com/in/parichehr-talebzadeh", icon: "/Assets/v4/footer/linkedin.svg" },
+    ],
+    owner: "Pari’s portfolio",
+  },
 };

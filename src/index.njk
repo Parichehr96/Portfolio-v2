@@ -10,10 +10,9 @@ permalink: /
   markup, strings live in _data/home.js, values in styles/v4/tokens.css. V3's
   homepage is archived on the `V3` branch.
 
-  BUILT SO FAR: toast, the sticky rail, the top band (intro, status clock,
-  theme toggle).
-  STILL TO COME, in the comp's order: project rows (Connect2WOW, Onton,
-  Challenquiz, WOW design system), About, My process, Experience, CTA + footer.
+  Top to bottom, in the comp's order: toast, the top band (sticky rail, intro,
+  sticky status clock, theme toggle), the four project rows, About, My
+  process, Experience, and the footer with the call to action.
 #}
 
 {% include "v4/toast.njk" %}
@@ -23,4 +22,10 @@ permalink: /
   {% include "v4/rail.njk" %}
   {% include "v4/top.njk" %}
   {% include "v4/work.njk" %}
+  {% include "v4/about.njk" %}
+  {% include "v4/process.njk" %}
+  {% include "v4/experience.njk" %}
 </div>
+
+{#- Outside the shell, so the sticky rail and clock stop before the skyline. -#}
+{% include "v4/footer.njk" %}

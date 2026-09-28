@@ -1,0 +1,111 @@
+/* ============================================================================
+   EXPERIENCE — Figma 911:593
+   ============================================================================
+
+   Each role: a 24px logo column with the dashed line under it, 12px, then the
+   text. Company and dates share a line; the summary sits under them with 32
+   below it (24 on the last role), which is what spaces the timeline.
+   ========================================================================== */
+
+.v4-experience {
+  margin-top: var(--v4-block-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-6);
+}
+
+.v4-experience__role {
+  display: flex;
+  gap: var(--v4-space-3);
+}
+
+.v4-experience__rail {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: var(--v4-space-6);
+}
+
+.v4-experience__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--v4-space-6);
+  height: var(--v4-space-6);
+  overflow: hidden;
+  background: var(--v4-surface);
+}
+
+/* ChallenQuiz's mark is drawn white on a black tile. */
+.v4-experience__logo--dark {
+  border-radius: var(--v4-radius-logo);
+  background: var(--v4-logo-tile);
+}
+
+.v4-experience__logo img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.v4-experience__line {
+  flex: 1;
+  width: var(--v4-space-6);
+  height: auto;
+  min-height: 0;
+  object-fit: fill;
+}
+
+.v4-experience__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-1);
+  padding-bottom: var(--v4-space-8);
+}
+
+.v4-experience__role:last-child .v4-experience__body {
+  padding-bottom: var(--v4-space-6);
+}
+
+.v4-experience__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--v4-space-2);
+}
+
+.v4-experience__company {
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-semibold);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text);
+}
+
+/* inline-block so the 2px under the name counts toward the line, as in the
+   comp; an inline box's padding would not push the summary down. */
+.v4-experience__company > * {
+  display: inline-block;
+  padding-bottom: 2px;
+  border-bottom: 0.5px dashed var(--v4-text);
+}
+
+.v4-experience__company a:hover {
+  border-bottom-style: solid;
+}
+
+.v4-experience__dates {
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-faint);
+}
+
+.v4-experience__summary {
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+}

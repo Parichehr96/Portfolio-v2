@@ -134,7 +134,7 @@ module.exports = {
      bold, which is visibly wrong next to the real 600. Roboto was dropped here
      when the comp moved to Figtree — nothing references it any more. */
   fonts:
-    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Caveat:wght@400;500&family=DM+Mono:wght@400&family=Sora:wght@400&display=swap",
+    "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Caveat:wght@400;500&family=DM+Mono:wght@400&family=Sora:wght@400&family=Kode+Mono:wght@600&display=swap",
 
   // ---- Footer — Figma 275:57838 ---------------------------------------------
   // The two link columns the comp does NOT already have data for. "Case

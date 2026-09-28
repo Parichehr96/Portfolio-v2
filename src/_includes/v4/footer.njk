@@ -1,0 +1,36 @@
+{#
+  FOOTER — Figma 911:654. The call to action, socials, the build stamp, and
+  the Amsterdam skyline fading up into the page behind them.
+
+  Carries #contact, so any "Contact" link lands here. "Last updated" and the
+  year come from _data/build.js, so they are true on every deploy.
+
+  The skyline is pre-flattened onto white at the comp's 20% opacity (see the
+  file's history), so no CSS opacity is needed and it cannot drift darker.
+#}
+<footer class="v4-footer" id="contact">
+  <div class="v4-footer__sky" aria-hidden="true">
+    <img src="/Assets/v4/footer/skyline.jpg" width="1600" height="533" alt="" loading="lazy" decoding="async" />
+  </div>
+  <div class="v4-footer__content">
+    <div class="v4-footer__cta">
+      <div class="v4-footer__text">
+        <h2 class="v4-footer__title">{{ home.footer.title }}</h2>
+        <p class="v4-footer__body">{{ home.footer.body }}</p>
+      </div>
+      <a class="v4-footer__button" href="{{ home.footer.cta.url }}" target="_blank" rel="noopener">
+        {{ home.footer.cta.label }}
+        <img src="/Assets/v4/footer/call-dot.svg" width="11" height="7" alt="" />
+      </a>
+    </div>
+    <div class="v4-footer__meta">
+      <ul class="v4-footer__socials">
+        {%- for s in home.footer.socials %}
+        <li><a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}"><img src="{{ s.icon }}" alt="" /></a></li>
+        {%- endfor %}
+      </ul>
+      <p class="v4-footer__updated">Last updated: {{ build.updated }}</p>
+      <p class="v4-footer__copy">&copy;{{ build.year }} {{ home.footer.owner }}</p>
+    </div>
+  </div>
+</footer>

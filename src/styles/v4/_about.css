@@ -1,0 +1,58 @@
+/* ============================================================================
+   ABOUT — Figma 911:727 label, 911:854 text, 918:32037 + 918:32133 cards
+   ============================================================================
+
+   Every child sits in the reading column, placed by --v4-column-inset like the
+   intro. Vertical rhythm is the comp's: label, 24, the 426px media band, 24,
+   the four paragraphs 24 apart, 31, then the two cards side by side, 24 apart.
+   ========================================================================== */
+
+.v4-about {
+  margin-top: var(--v4-about-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-6);
+}
+
+.v4-about > *,
+.v4-process > *,
+.v4-experience > * {
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin-inline: var(--v4-column-inset) auto;
+}
+
+/* The empty band the comp leaves for a photo stack: the same placeholder
+   language as the unfinished project panels. */
+.v4-about__media {
+  height: var(--v4-about-media);
+  border-radius: var(--v4-radius-panel);
+  background: var(--v4-surface-muted);
+}
+
+.v4-about__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-6);
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text);
+}
+
+.v4-about__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v4-space-6);
+  margin-top: calc(var(--v4-about-cards-gap) - var(--v4-space-6));
+}
+
+.v4-about__cards img {
+  height: auto;
+}
+
+@media (max-width: 899px) {
+  .v4-about__media {
+    height: auto;
+    aspect-ratio: 600 / 426;
+  }
+}
