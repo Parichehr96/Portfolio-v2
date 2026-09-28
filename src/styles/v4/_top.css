@@ -8,10 +8,11 @@
    them. At 1512 that puts the column at x=456, the clock at 1110 and the
    toggle at 1432: the comp's own positions.
 
-   BELOW 1436 THE CLOCK DROPS UNDER THE INTRO. The right column (--v4-aside-
+   BELOW 1344 THE CLOCK DROPS UNDER THE INTRO. The right column (--v4-aside-
    clear, 402) has to fit beside the reading column with 16px to spare, which
-   needs 1436. Under that the track joins the flow below the intro, the toggle
-   goes back to the top-right corner, and neither is sticky.
+   needs 1436; from 1344 to 1435 tokens.css tightens it to 356 so it still
+   fits. Under 1344 the track joins the flow below the intro, the toggle goes
+   back to the top-right corner, and neither is sticky.
    ========================================================================== */
 
 .v4-top {
@@ -196,7 +197,7 @@
 }
 
 /* ---- Narrower screens ---------------------------------------------------- */
-@media (max-width: 1435px) {
+@media (max-width: 1343px) {
   .v4-aside-track {
     position: static;
     width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));

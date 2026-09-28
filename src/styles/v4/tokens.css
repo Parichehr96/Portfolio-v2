@@ -93,3 +93,16 @@
   --v4-clock: 100px;
   --v4-toggle: 40px;
 }
+
+/* LAPTOP WIDTHS (1344–1435): keep the clock on the right. The comp's
+   402px right column only fits beside the reading column from 1436 up, so in
+   this band the outer edge tightens 40 → 24 and the clock's text column
+   narrows 190 → 160, making the column 356. It then fits, with 16px to spare,
+   down to 1344. The 24px clock-to-switch gap is unchanged. */
+@media (min-width: 1344px) and (max-width: 1435px) {
+  :root {
+    --v4-edge: var(--v4-space-6);
+    --v4-status-text: 160px;
+    --v4-status-width: 268px;
+  }
+}
