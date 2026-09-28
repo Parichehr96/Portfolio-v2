@@ -10,6 +10,9 @@
   scroll container (trackpad, shift-wheel, keyboard once focused) with snap
   points on each panel.
 #}
+{%- if project.label %}
+<h2 class="v4-work__label">{{ project.label }}</h2>
+{%- endif %}
 <article class="v4-project" aria-labelledby="project-{{ project.id }}">
   <header class="v4-project__head">
     <div class="v4-project__title-row">
@@ -25,7 +28,11 @@
       </h3>
       <p class="v4-project__years">{{ project.years }}</p>
     </div>
-    <p class="v4-project__desc"><strong>{{ project.lead }}</strong> {{ project.body }}</p>
+    <p class="v4-project__desc">
+      {%- for run in project.desc -%}
+      {%- if run.style -%}<strong class="v4-project__{{ run.style }}">{{ run.text }}</strong>{%- else -%}{{ run.text }}{%- endif -%}
+      {%- endfor -%}
+    </p>
   </header>
 
   <div class="v4-project__strip" tabindex="0" role="region" aria-label="{{ project.name }} screens">

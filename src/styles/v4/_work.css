@@ -94,9 +94,14 @@ a.v4-project__link:hover {
   color: var(--v4-text-muted);
 }
 
-.v4-project__desc strong {
+.v4-project__lead {
   font-weight: var(--v4-weight-medium);
   color: var(--v4-text-max);
+}
+
+.v4-project__stat {
+  font-weight: var(--v4-weight-bold);
+  color: var(--v4-text);
 }
 
 /* ---- Strip --------------------------------------------------------------- */
@@ -142,7 +147,6 @@ a.v4-project__link:hover {
   content: "";
   position: absolute;
   inset: 16.9% 7.9%;
-  border-radius: var(--v4-radius-placeholder);
   background: var(--v4-surface);
 }
 
