@@ -34,14 +34,6 @@
   pointer-events: auto;
 }
 
-.v4-rail__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--v4-icon-lg);
-  height: var(--v4-icon-lg);
-}
-
 .v4-rail__list {
   display: flex;
   flex-direction: column;

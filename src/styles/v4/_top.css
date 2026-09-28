@@ -2,22 +2,24 @@
    TOP BAND — Figma 911:547 intro, 911:577 status, 911:820 toggle
    ============================================================================
 
-   The intro is the centred 600px column and scrolls with the page. The clock
+   The intro is the 600px reading column and scrolls with the page. The clock
    and the toggle are a sticky pair in .v4-aside-track, the right-hand twin of
    the rail's track (_rail.css): same top, same edge, and a 24px gap between
    them. At 1512 that puts the column at x=456, the clock at 1110 and the
    toggle at 1432: the comp's own positions.
 
-   BELOW 1344 THE CLOCK DROPS UNDER THE INTRO. The right column (--v4-aside-
-   clear, 402) has to fit beside the reading column with 16px to spare, which
-   needs 1436; from 1344 to 1435 tokens.css tightens it to 356 so it still
-   fits. Under 1344 the track joins the flow below the intro, the toggle goes
-   back to the top-right corner, and neither is sticky.
+   NARROWER, THE COLUMN GIVES WAY, NOT THE CLOCK. Below 1436 the intro can no
+   longer be centred and still clear the clock, so it slides left towards the
+   rail (--v4-column-inset) while the clock, the toggle and the rail keep their
+   places and sizes. At 1200 the column meets the rail's column and there is
+   nowhere left to slide: only below that does the track join the flow under
+   the intro, the toggle go back to the top-right corner, and neither stay
+   sticky.
    ========================================================================== */
 
 .v4-top {
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
-  margin: 0 auto;
+  margin-inline: var(--v4-column-inset) auto;
 }
 
 /* ---- Right column: clock + toggle ---------------------------------------- */
@@ -55,10 +57,19 @@
 }
 
 .v4-intro__name {
+  display: flex;
+  align-items: center;
+  gap: var(--v4-space-1);
   font-size: var(--v4-text-title);
   font-weight: var(--v4-weight-semibold);
   line-height: var(--v4-leading-title);
   color: var(--v4-text);
+}
+
+/* 1155:10691 is a 20px box with the mark centred in it, like the rail's was. */
+.v4-intro__logo {
+  box-sizing: content-box;
+  padding: calc((var(--v4-icon-lg) - 17.36px) / 2) calc((var(--v4-icon-lg) - 12.5px) / 2);
 }
 
 .v4-intro__bio {
@@ -197,7 +208,7 @@
 }
 
 /* ---- Narrower screens ---------------------------------------------------- */
-@media (max-width: 1343px) {
+@media (max-width: 1199px) {
   .v4-aside-track {
     position: static;
     width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));

@@ -2,15 +2,16 @@
   TOP BAND — Figma 911:547 (intro), 911:577 (status clock), 911:820 (theme
   toggle). With the rail (v4/rail.njk) all four share the comp's y=132 edge.
 
-  THE INTRO IS THE PAGE'S 600px READING COLUMN, centred at every width (456px
-  in at 1512, which is the comp). It scrolls with the page.
+  THE INTRO IS THE PAGE'S 600px READING COLUMN (456px in at 1512, which is
+  the comp). It scrolls with the page.
 
   THE CLOCK AND THE TOGGLE ARE STICKY, as a pair, like the rail on the left.
   They sit in .v4-aside-track, a full-height column down the right of
   .v4-shell, top-aligned with the rail and 24px apart (the comp's 1408 → 1432).
-  Nothing else may enter that column (--v4-aside-clear). Below 1436 the right
-  gutter cannot hold the clock, so the track drops into the flow under the intro
-  and nothing on the right is sticky; see _top.css.
+  Nothing else may enter that column (--v4-aside-clear). As the window
+  narrows the intro slides left to make room, so the pair stays on the right
+  down to 1200; below that the track drops into the flow under the intro and
+  nothing on the right is sticky. See _top.css.
 
   THE CLOCK IS scripts/clock.js, UNCHANGED IN BEHAVIOUR. Every data-clock-*
   hook below is the one it binds; data-clock-pivot tells it where this face's
@@ -20,7 +21,11 @@
 <header class="v4-top">
   <div class="v4-intro">
     <div class="v4-intro__head">
-      <h1 class="v4-intro__name">{{ site.name }}</h1>
+      {#- 1155:10698: the logo follows the name, 4px on, centred on its line. -#}
+      <h1 class="v4-intro__name">
+        {{ site.name }}
+        <img class="v4-intro__logo" src="/Assets/v4/icons/logo.svg" width="12.5" height="17.36" alt="" />
+      </h1>
       <p class="v4-intro__bio">
         {{- home.intro.bio.before -}}
         <strong>{{ home.intro.bio.strong }}</strong>

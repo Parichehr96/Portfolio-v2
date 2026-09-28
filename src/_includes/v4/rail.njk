@@ -1,5 +1,6 @@
 {#
-  RAIL — Figma 911:530. The page's left menu: logo, then one item per section.
+  RAIL — Figma 911:530. The page's left menu, one item per section. The
+  logo moved out of it and now follows the name in the intro (1155:10691).
 
   STICKY FOR THE WHOLE PAGE. It sits in .v4-rail-track, a full-height column
   down the left of .v4-shell, and sticks inside it; the header's left gutter is
@@ -14,9 +15,6 @@
 #}
 <div class="v4-rail-track">
   <nav class="v4-rail" aria-label="Page">
-    <a class="v4-rail__logo" href="/" aria-label="{{ site.name }}, home">
-      <img src="/Assets/v4/icons/logo.svg" width="12.5" height="17.36" alt="" />
-    </a>
     <ul class="v4-rail__list">
       {%- for item in home.rail %}
       <li>

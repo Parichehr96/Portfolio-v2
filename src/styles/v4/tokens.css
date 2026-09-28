@@ -84,6 +84,18 @@
   --v4-status-width: 298px;
   --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-space-6) + var(--v4-toggle) + var(--v4-edge));
   --v4-status-text: 190px;
+
+  /* Where the reading column starts. Centred on the page while it clears the
+     sticky clock column by 16px (x=456 at 1512, the comp); narrower than that
+     (below 1436) it slides left towards the rail instead, down to the rail's
+     column at 1200. Below 1200 the clock drops under the intro and the column
+     simply centres again (the media query below). A %-based custom property:
+     it resolves against whichever block uses it, all of which are page-wide. */
+  --v4-column-inset: clamp(
+    var(--v4-rail-clear),
+    (100% - var(--v4-column)) / 2,
+    100% - var(--v4-aside-clear) - var(--v4-space-4) - var(--v4-column)
+  );
   --v4-toast-band: 151px;
 
   --v4-icon-sm: 12px;
@@ -94,15 +106,9 @@
   --v4-toggle: 40px;
 }
 
-/* LAPTOP WIDTHS (1344–1435): keep the clock on the right. The comp's
-   402px right column only fits beside the reading column from 1436 up, so in
-   this band the outer edge tightens 40 → 24 and the clock's text column
-   narrows 190 → 160, making the column 356. It then fits, with 16px to spare,
-   down to 1344. The 24px clock-to-switch gap is unchanged. */
-@media (min-width: 1344px) and (max-width: 1435px) {
+/* Below 1200 there is no room for the side columns; see --v4-column-inset. */
+@media (max-width: 1199px) {
   :root {
-    --v4-edge: var(--v4-space-6);
-    --v4-status-text: 160px;
-    --v4-status-width: 268px;
+    --v4-column-inset: auto;
   }
 }
