@@ -152,15 +152,16 @@ module.exports = {
         sheet: { x: 20, y: 12, w: 155, h: 147 },
         // The white sheet the icons sit on while the folder is closed.
         card: { x: 14, y: 17, w: 166, h: 156 },
+        // Listed in the comp's stacking order: later icons lie on top.
         icons: [
-          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [-3, 156] },
-          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [49, 107] },
-          { name: "Miro", src: "miro", size: 61, from: [41.13, 138.18], to: [123.18, 74.18] },
-          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [185, 132] },
-          { name: "Claude", src: "claude", size: 60, from: [47.63, 40.43], to: [99.63, 166.62] },
-          { name: "ChatGPT", src: "chatgpt", size: 57, from: [121.21, 95.19], to: [185.21, 39.21] },
-          { name: "Linear", src: "linear", size: 61, from: [155.18, 43.16], to: [4.16, 37.16] },
-          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [98, 12] },
+          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [56, 25] },
+          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [86, -5] },
+          { name: "Miro", src: "miro", size: 61, from: [41.13, 138.18], to: [118.18, 27.18] },
+          { name: "Claude", src: "claude", size: 60, from: [47.63, 40.43], to: [174.63, 31.62] },
+          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [175, -6] },
+          { name: "ChatGPT", src: "chatgpt", size: 57, from: [121.21, 95.19], to: [137.21, -7.79] },
+          { name: "Linear", src: "linear", size: 61, from: [155.18, 43.16], to: [3.16, 28.16] },
+          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [27, -2] },
         ],
       },
       {
