@@ -124,15 +124,24 @@ module.exports = {
   // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
   about: {
     label: "Parichehr (about me)",
-    // 1174:95301: the photo wheel under the label. Left to right as in the
-    // comp; the third sits in the middle at load. Each image is the comp's own
-    // crop, baked to the 224 × 270 card at 2x. Add more and the wheel grows.
+    // 1174:95301 and 1215:17958: the photo wheel under the label, in wheel
+    // order (it turns right to left). Each image is the comp's own crop, baked
+    // to the 224 × 270 card at 2x. Add more and the wheel grows.
+    // photoStart: the photo in the middle at load (Master Graduation).
+    photoStart: 3,
     photos: [
       { src: "/Assets/v4/about/photos/thingscon.webp", alt: "Parichehr at her stand at ThingsCon", caption: "THINGs Con- 2025" },
       { src: "/Assets/v4/about/photos/feedback-feast.webp", alt: "Visitors trying a video-call prototype at Feedback Feast", caption: "Feedback Feast- 2025" },
       { src: "/Assets/v4/about/photos/society-5.webp", alt: "Parichehr at the Society 5.0 Festival", caption: "Society 5.0 Event - 2025" },
       { src: "/Assets/v4/about/photos/master-graduation.webp", alt: "Parichehr with flowers and her diploma at her Master's graduation", caption: "Master Graduation - 2026" },
       { src: "/Assets/v4/about/photos/ai-hackathon.webp", alt: "A small gold trophy from an AI hackathon", caption: "AI Hackathon - 2026" },
+      { src: "/Assets/v4/about/photos/feedback-feast-2026.webp", alt: "Parichehr beside her demo laptops at Feedback Feast", caption: "Feedback Feast - 2026" },
+      { src: "/Assets/v4/about/photos/ikea-sustainability.webp", alt: "A group outside at night by a Christmas tree after the IKEA sustainability event", caption: "Ikea Sustainability Event - 2025" },
+      { src: "/Assets/v4/about/photos/frontrunners.webp", alt: "The FrontRunners group holding boards covered in sticky notes", caption: "FrontRunners - 2025" },
+      { src: "/Assets/v4/about/photos/ux-shiraz.webp", alt: "Parichehr with two others in front of the UX Shiraz conference banner", caption: "UX Shiraz - 2024" },
+      { src: "/Assets/v4/about/photos/presentation.webp", alt: "Parichehr presenting slides on portfolios to a small audience", caption: "Presentation - 2023" },
+      { src: "/Assets/v4/about/photos/fof-hackathon.webp", alt: "Parichehr speaking by a flip chart at the Friends of Figma hackathon", caption: "Friends of Figma Hackathon - 2025" },
+      { src: "/Assets/v4/about/photos/feedback-feast-team.webp", alt: "Parichehr and her team beside their video-call stand at Feedback Feast", caption: "Feedback Feast - 2025" },
     ],
     paragraphs: [
       "I'm drawn to complex products. Industrial Design taught me to think in systems. My Master's in Interaction Design taught me to ground those systems in evidence.",

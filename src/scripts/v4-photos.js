@@ -23,7 +23,7 @@
   if (!n) return;
 
   var SPEED = 0.12;   // steps per second: about 37px/s through the middle
-  var START = 2;      // the third photo sits in the middle at load
+  var START = parseInt(list.getAttribute("data-start"), 10) || 0; // middle at load
   var EASE = 2.5;     // how fast it slows to a stop and picks up again (1/s)
 
   var cards = [];
