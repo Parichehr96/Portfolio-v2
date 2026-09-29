@@ -4,12 +4,9 @@
   THE INTRO IS THE PAGE'S 600px READING COLUMN (456px in at 1512, which is
   the comp). It scrolls with the page.
 
-  THE CLOCK IS STICKY, like the rail on the left. It sits in .v4-aside-track,
-  a full-height column down the right of .v4-shell, top-aligned with the rail,
-  against the 40px edge. Nothing else may enter that column (--v4-aside-clear).
-  As the window narrows the intro slides left to make room, so the clock stays
-  on the right down to 1200; below that the track drops into the flow under
-  the intro and stops being sticky. See _top.css. The markup is v4/status.njk.
+  THE CLOCK lives at the bottom of the left panel (index.njk, v4/status.njk).
+  The right-hand track below only holds it on narrow screens, where there is
+  no left panel: there it drops into the flow under the intro.
 
 #}
 <header class="v4-top">
@@ -40,7 +37,8 @@
 </header>
 
 <div class="v4-aside-track">
-  <div class="v4-aside">
-    {% include "v4/status.njk" %}
-  </div>
+  {#- Empty on wide screens: the clock lives at the bottom of the left panel
+      (index.njk). Below 1200 scripts/v4-clock-dock.js moves it in here, under
+      the intro. -#}
+  <div class="v4-aside" data-clock-home></div>
 </div>

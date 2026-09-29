@@ -41,10 +41,11 @@
   pointer-events: auto;
 }
 
-/* ---- Clock dock: bottom of the left panel once the page scrolls ---------- */
+/* ---- Clock: bottom of the left panel ------------------------------------ */
 /* A full-height track down the left of the shell, like the rail's; the slot
    sticks 40 above the viewport's bottom edge and stops where the shell ends,
-   before the footer. scripts/v4-clock-dock.js moves .v4-status in and out. */
+   before the footer. The clock is rendered here; below 1200 it moves under
+   the intro (scripts/v4-clock-dock.js). */
 .v4-clock-dock {
   position: absolute;
   inset: 0 auto 0 0;
@@ -60,20 +61,6 @@
   bottom: var(--v4-edge);
   padding-left: var(--v4-edge);
   pointer-events: auto;
-}
-
-/* Each move fades the clock in at its new place. */
-.v4-status.is-arriving {
-  animation: v4-clock-arrive 0.35s ease;
-}
-
-@keyframes v4-clock-arrive {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v4-status.is-arriving { animation: none; }
 }
 
 @media (max-width: 1199px) {

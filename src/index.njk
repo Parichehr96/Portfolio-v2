@@ -20,10 +20,12 @@ permalink: /
 {#- The shell carries the sticky rail down the page; see v4/rail.njk. -#}
 <div class="v4-shell">
   {% include "v4/rail.njk" %}
-  {#- Where the clock goes once "Selected project" reaches the top: the bottom
-      of the left panel.
-      scripts/v4-clock-dock.js moves it here and back. -#}
-  <div class="v4-clock-dock"><div class="v4-clock-dock__slot" data-clock-dock></div></div>
+  {#- The clock: bottom of the left panel, sticky, from first paint to the end
+      of the page. Below 1200 there is no left panel and
+      scripts/v4-clock-dock.js moves it under the intro instead. -#}
+  <div class="v4-clock-dock"><div class="v4-clock-dock__slot" data-clock-dock>
+    {% include "v4/status.njk" %}
+  </div></div>
   {% include "v4/top.njk" %}
   {% include "v4/work.njk" %}
   {% include "v4/about.njk" %}
