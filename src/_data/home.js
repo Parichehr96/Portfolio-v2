@@ -203,7 +203,21 @@ module.exports = {
   // Newest first. `href` is optional: roles with a case study link to it.
   experience: {
     label: "Experience",
+    // 911:595. A role without a summary (the open "You Tell Me" slot) is a
+    // shorter row; see _experience.css.
     roles: [
+      {
+        company: "You Tell Me",
+        logo: "/Assets/v4/experience/question.svg",
+        dates: "2027",
+      },
+      {
+        company: "Freelance",
+        href: "https://www.nomadicai.com/",
+        logo: "/Assets/v4/experience/freelance.svg",
+        dates: "Sep 2025 - March 2026",
+        summary: "Nomadic is a vision-AI platform for autonomous-vehicle video data. Co-redesigned the website and brand visual identity.",
+      },
       {
         company: "Onton",
         href: "/work/onton/",
@@ -217,20 +231,26 @@ module.exports = {
         logo: "/Assets/v4/experience/challenquiz.svg",
         logoDark: true,
         dates: "Jul 2023 - Dec 2023",
-        summary: "Real-time multiplayer gaming platform. Contract product designer focused on onboarding, navigation, and the in-game experience.",
+        summary: "Real-time multiplayer gaming platform. Product designer focused on onboarding, navigation, and the in-game experience.",
       },
       {
-        // The comp repeats ChallenQuiz's summary here; replace when written.
         company: "TeFarda Studio",
         logo: "/Assets/v4/experience/tefarda.svg",
         dates: "Nov 2022 - Jun 2023",
-        summary: "Real-time multiplayer gaming platform. Contract product designer focused on onboarding, navigation, and the in-game experience.",
+        summary: "Digital supply chain platform for automotive spare-part distribution.",
       },
       {
         company: "RDSysCo",
         logo: "/Assets/v4/experience/rdsysco.svg",
         dates: "May 2021 - Sep 2022",
-        summary: "Digital supply chain platform for automotive spare-part distribution.",
+        summary: "Enterprise platform for large-scale oil & gas project management, using 7 modules.",
+      },
+      {
+        company: "Poytek",
+        href: "https://poytek.com/",
+        logo: "/Assets/v4/experience/poytek.svg",
+        dates: "Apr 2021 - Nov 2022",
+        summary: "End-to-end experiences for an IoT smart home application and visual design for a children's interactive reading platform.",
       },
     ],
   },

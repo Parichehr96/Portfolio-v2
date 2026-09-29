@@ -6,7 +6,7 @@
   <h2 class="v4-label" id="experience-label">{{ home.experience.label }}</h2>
   <ol class="v4-experience__list">
     {%- for role in home.experience.roles %}
-    <li class="v4-experience__role">
+    <li class="v4-experience__role{% if not role.summary %} v4-experience__role--bare{% endif %}">
       <div class="v4-experience__rail" aria-hidden="true">
         <span class="v4-experience__logo{% if role.logoDark %} v4-experience__logo--dark{% endif %}">
           <img src="{{ role.logo }}" alt="" />
@@ -18,11 +18,13 @@
       <div class="v4-experience__body">
         <div class="v4-experience__head">
           <h3 class="v4-experience__company">
-            {%- if role.href %}<a href="{{ role.href }}">{{ role.company }}</a>{% else %}<span>{{ role.company }}</span>{% endif -%}
+            {%- if role.href %}<a href="{{ role.href }}"{% if role.href.startsWith("http") %} target="_blank" rel="noopener"{% endif %}>{{ role.company }}</a>{% else %}<span>{{ role.company }}</span>{% endif -%}
           </h3>
           <p class="v4-experience__dates">{{ role.dates }}</p>
         </div>
+        {%- if role.summary %}
         <p class="v4-experience__summary">{{ role.summary }}</p>
+        {%- endif %}
       </div>
     </li>
     {%- endfor %}

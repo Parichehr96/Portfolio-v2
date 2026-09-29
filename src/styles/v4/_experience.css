@@ -4,7 +4,8 @@
 
    Each role: a 24px logo column with the dashed line under it, 12px, then the
    text. Company and dates share a line; the summary sits under them with 32
-   below it (24 on the last role), which is what spaces the timeline.
+   below it (24 on the last role). A row is never shorter than the comp's 92
+   (a one-line summary), or 80 for a role with no summary yet.
    ========================================================================== */
 
 .v4-experience {
@@ -17,6 +18,11 @@
 .v4-experience__role {
   display: flex;
   gap: var(--v4-space-3);
+  min-height: var(--v4-experience-row);
+}
+
+.v4-experience__role--bare {
+  min-height: var(--v4-experience-row-bare);
 }
 
 .v4-experience__rail {
@@ -50,9 +56,9 @@
 }
 
 .v4-experience__line {
-  flex: 1;
+  flex: 1 1 0;
   width: var(--v4-space-6);
-  height: auto;
+  height: 0;
   min-height: 0;
   object-fit: fill;
 }
@@ -86,10 +92,11 @@
 }
 
 /* inline-block so the 2px under the name counts toward the line, as in the
-   comp; an inline box's padding would not push the summary down. */
+   comp; an inline box's padding would not push the summary down. Figma draws
+   the 0.5 rule inside that 2px, hence 1.5 here: the line stays 24 tall. */
 .v4-experience__company > * {
   display: inline-block;
-  padding-bottom: 2px;
+  padding-bottom: 1.5px;
   border-bottom: 0.5px dashed var(--v4-text);
 }
 
