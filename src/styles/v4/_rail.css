@@ -86,9 +86,41 @@
   background: var(--v4-text-muted);
 }
 
-/* Below 900 there is no gutter to give the rail; the page is one column. */
+/* ---- Below 900: a sticky bar across the top ------------------------------
+   There is no gutter to give the rail, so it turns on its side: the same
+   items in a row, in a white bar that sticks to the top of the screen for
+   the whole page while the content scrolls beneath it. The track now spans
+   the shell's width and the shell starts at the very top, with the bar's
+   height plus the usual gap free above the intro. Anchor jumps land under the bar
+   (scroll-padding in base.css). Above the page's raised pieces (the About
+   text, an open folder), hence the z-index. */
 @media (max-width: 899px) {
+  .v4-shell {
+    margin-top: 0;
+    padding-top: calc(var(--v4-bar-h) + var(--v4-content-top));
+  }
+
+  .v4-toast + .v4-shell {
+    margin-top: 0;
+  }
+
   .v4-rail-track {
-    display: none;
+    right: 0;
+    z-index: 10;
+    width: auto;
+  }
+
+  .v4-rail {
+    top: 0;
+    height: var(--v4-bar-h);
+    justify-content: center;
+    padding-inline: var(--v4-space-4);
+    background: var(--v4-surface);
+    box-shadow: 0 1px 0 var(--v4-bar-rule);
+  }
+
+  .v4-rail__list {
+    flex-direction: row;
+    gap: var(--v4-space-5);
   }
 }

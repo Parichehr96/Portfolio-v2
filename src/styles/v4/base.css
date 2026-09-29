@@ -67,3 +67,11 @@ ol {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Below 900 the rail is a sticky bar across the top: anchor jumps stop
+   below it rather than under it (_rail.css). */
+@media (max-width: 899px) {
+  html {
+    scroll-padding-top: var(--v4-bar-h);
+  }
+}

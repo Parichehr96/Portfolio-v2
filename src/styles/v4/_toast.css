@@ -85,6 +85,20 @@
   .v4-toast { transition: none; }
 }
 
+/* Below 900 the rail is a sticky bar across the top (_rail.css), and the
+   shell makes its own room above the intro. A toast that is up sticks just
+   under the bar; gone, it keeps no margins, so the bar sits at the very top. */
+@media (max-width: 899px) {
+  .v4-toast {
+    top: calc(var(--v4-bar-h) + var(--v4-page-top));
+  }
+
+  .v4-toast.is-collapsed,
+  .is-toast-skipped .v4-toast {
+    margin-block: 0;
+  }
+}
+
 .v4-toast__body {
   position: relative; /* above the band */
   display: flex;

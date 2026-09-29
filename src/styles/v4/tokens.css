@@ -130,6 +130,9 @@
      enter it, so the sticky rail never covers content. 184 at 1512. */
   --v4-rail-width: 120px;
   --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6));
+  /* Below 900 the rail is a sticky bar across the top (_rail.css). */
+  --v4-bar-h: 48px;
+  --v4-bar-rule: color-mix(in srgb, var(--v4-text) 8%, transparent);
   /* The right-hand twin: the clock (911:577 is 298 wide) and the 40px edge.
      The theme switch that used to sit outside it is gone, so the clock now
      takes the switch's place against the edge: x=1174 at 1512. */
