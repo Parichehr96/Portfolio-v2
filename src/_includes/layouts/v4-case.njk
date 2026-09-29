@@ -9,8 +9,6 @@ layout: layouts/v4.njk
 
     rail (left, sticky)        the case's sections, the one being read lit;
                                the page's own table of contents
-    clock (left, sticky)       pinned to the bottom of the viewport, where the
-                               comp puts it on case pages (40, 793 at 1512 × 900)
     Back / Next                either side of the column's top, as the comp does
     header                     name + live reading progress, cover, facts table
     hook                       the one-line claim, in a bar
@@ -29,12 +27,6 @@ layout: layouts/v4.njk
 
 <div class="v4-shell v4-shell--case">
   {% include "v4/rail.njk" %}
-
-  <div class="v4-case-clock-track">
-    <div class="v4-case-clock">
-      {% include "v4/status.njk" %}
-    </div>
-  </div>
 
   <article class="v4-case" data-read-article>
     <header class="v4-case__head">

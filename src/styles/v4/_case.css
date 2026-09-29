@@ -46,24 +46,6 @@
   margin-bottom: calc(var(--v4-case-head-gap) - var(--v4-case-gap));
 }
 
-/* ---- Clock: bottom of the left column ------------------------------------ */
-.v4-case-clock-track {
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  pointer-events: none;
-}
-
-.v4-case-clock {
-  position: sticky;
-  bottom: var(--v4-edge);
-  padding-left: var(--v4-edge);
-  pointer-events: auto;
-}
-
 /* ---- Header -------------------------------------------------------------- */
 .v4-case__head {
   position: relative;
@@ -792,10 +774,6 @@
 
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
-  .v4-case-clock-track {
-    display: none;
-  }
-
   .v4-case__section > .v4-case__wide {
     width: min(var(--wide), calc(100% - 2 * var(--v4-space-4)));
   }
