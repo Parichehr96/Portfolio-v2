@@ -11,6 +11,13 @@
  *
  * It eases to a stop under the pointer (so a caption can be read) and while
  * the wheel is off screen, and stays still for prefers-reduced-motion.
+ *
+ * BY HAND: drag it with a mouse, swipe it on a touch screen, or scroll it
+ * sideways on a trackpad. The cards follow the pointer (one step is about a
+ * card's spacing, STEP_PX), a fling carries on and eases off, and then the
+ * slow turn picks up again. Vertical swipes still scroll the page
+ * (touch-action: pan-y in _about.css). Reduced motion keeps the hand
+ * control but drops the fling and the turning.
  */
 (function () {
   "use strict";
@@ -25,6 +32,9 @@
   var SPEED = 0.12;   // steps per second: about 37px/s through the middle
   var START = parseInt(list.getAttribute("data-start"), 10) || 0; // middle at load
   var EASE = 2.5;     // how fast it slows to a stop and picks up again (1/s)
+  var STEP_PX = 300;  // pointer travel that moves the wheel one step
+  var FLING_MAX = 4;  // steps per second
+  var HOLD = 600;     // ms the wheel waits after a trackpad scroll
 
   var cards = [];
   var count = 0;      // cards in the loop, a multiple of n
@@ -59,6 +69,8 @@
   var speed = 0;
   var target = SPEED;
   var hovering = false;
+  var dragging = false;
+  var holdUntil = 0;
   var visible = true;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -77,12 +89,13 @@
   function frame(now) {
     var dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
     last = now;
-    target = hovering || !visible || reduce.matches ? 0 : SPEED;
+    target = hovering || dragging || now < holdUntil || !visible || reduce.matches ? 0 : SPEED;
+    if (dragging) speed = 0;
     speed += (target - speed) * Math.min(1, dt * EASE);
     if (Math.abs(speed) < 0.0005 && target === 0) speed = 0;
     offset += speed * dt;
     place();
-    if (speed === 0 && target === 0) {
+    if (speed === 0 && target === 0 && !dragging && now >= holdUntil) {
       running = false;
       last = 0;
       return;
@@ -91,7 +104,7 @@
   }
 
   function wake() {
-    if (running || reduce.matches) return;
+    if (running || (reduce.matches && !dragging)) return;
     running = true;
     requestAnimationFrame(frame);
   }
@@ -107,6 +120,62 @@
     hovering = false;
     wake();
   });
+
+  // ---- By hand ----------------------------------------------------------
+  var startX = 0;
+  var startOffset = 0;
+  var lastX = 0;
+  var lastT = 0;
+  var velocity = 0;   // steps per second, smoothed
+
+  band.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    dragging = true;
+    startX = lastX = e.clientX;
+    startOffset = offset;
+    lastT = e.timeStamp;
+    velocity = 0;
+    band.classList.add("is-dragging");
+    try { band.setPointerCapture(e.pointerId); } catch (err) {}
+    wake();
+  });
+
+  band.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    offset = startOffset - (e.clientX - startX) / STEP_PX;
+    var dt = (e.timeStamp - lastT) / 1000;
+    if (dt > 0) {
+      var v = -(e.clientX - lastX) / STEP_PX / dt;
+      velocity = velocity * 0.6 + v * 0.4;
+    }
+    lastX = e.clientX;
+    lastT = e.timeStamp;
+    place();
+  });
+
+  function release(e) {
+    if (!dragging) return;
+    dragging = false;
+    band.classList.remove("is-dragging");
+    try { band.releasePointerCapture(e.pointerId); } catch (err) {}
+    // A pause before letting go means no fling.
+    var still = e.timeStamp - lastT > 80;
+    speed = still || reduce.matches ? 0 : Math.max(-FLING_MAX, Math.min(FLING_MAX, velocity));
+    wake();
+  }
+  band.addEventListener("pointerup", release);
+  band.addEventListener("pointercancel", release);
+
+  // Sideways trackpad scrolling; vertical scrolling is left to the page.
+  band.addEventListener("wheel", function (e) {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    offset += e.deltaX / STEP_PX;
+    speed = 0;
+    holdUntil = performance.now() + HOLD;
+    place();
+    wake();
+  }, { passive: false });
 
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entries) {

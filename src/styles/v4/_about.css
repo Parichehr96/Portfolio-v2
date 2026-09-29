@@ -32,6 +32,10 @@
    the flex gap; cards and captions overflow it and the page edge clips them. */
 .v4-about__photos {
   position: relative;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
   height: calc(var(--v4-about-photos-band) - var(--v4-space-6));
   margin-top: calc(var(--v4-about-photos-gap) - var(--v4-space-6));
 }
@@ -39,6 +43,10 @@
 .v4-photos {
   position: absolute;
   inset: 0;
+}
+
+.v4-about__photos.is-dragging {
+  cursor: grabbing;
 }
 
 .v4-photo {
