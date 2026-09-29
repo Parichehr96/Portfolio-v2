@@ -56,11 +56,11 @@
   will-change: transform;
 }
 
-/* The veils — 1213:17950 (right), 1213:17951 (left). Outside the reading
-   column the wheel fades into white, so the middle photos hold the eye and
-   the side panels stay clear. Each veil starts at the column's edge and runs
-   to the page edge: a white wash, no blur, that fades in over the first
-   302px at the comp's stops (its 459px veil, measured from the column).
+/* The veils — 1213:17950 (right), 1213:17951 (left). Everything beside the
+   middle photo fades into white, so it holds the eye and the side panels
+   stay clear. Each veil starts at the middle card's edge (the wheel's centre
+   ± half a card) and runs to the page edge: a white wash, no blur, at the
+   comp's stops over its 647px veil, so fully white 426px out.
    Taller than the comp's 434, since cards further out ride lower on the arc
    than the comp shows. No z-index: they cover the cards but stay under the
    rail and the clock, which sit at z 1. */
@@ -71,19 +71,19 @@
   height: var(--v4-photo-veil-h);
   pointer-events: none;
   --wash: transparent 0,
-    color-mix(in srgb, var(--v4-surface) 65.3%, transparent) 132.4px,
-    color-mix(in srgb, var(--v4-surface) 88.4%, transparent) 187.6px,
-    color-mix(in srgb, var(--v4-surface) 94.2%, transparent) 236.1px,
-    var(--v4-surface) 302.3px;
+    color-mix(in srgb, var(--v4-surface) 65.3%, transparent) 186.6px,
+    color-mix(in srgb, var(--v4-surface) 88.4%, transparent) 264.4px,
+    color-mix(in srgb, var(--v4-surface) 94.2%, transparent) 332.8px,
+    var(--v4-surface) 426.1px;
 }
 
 .v4-photos__veil--left {
-  right: 100%;
+  right: calc(50% + var(--v4-photo-w) / 2);
   background: linear-gradient(to left, var(--wash));
 }
 
 .v4-photos__veil--right {
-  left: 100%;
+  left: calc(50% + var(--v4-photo-w) / 2);
   background: linear-gradient(to right, var(--wash));
 }
 
@@ -106,7 +106,11 @@
   color: var(--v4-text);
 }
 
+/* Above the photo wheel's veils, which reach down past the text's top so
+   the tilted outer cards stay covered. */
 .v4-about__text {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: var(--v4-space-6);
