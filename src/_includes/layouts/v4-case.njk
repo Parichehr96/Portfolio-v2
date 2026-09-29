@@ -7,7 +7,8 @@ layout: layouts/v4.njk
   The page sets `caseKey` in front matter; everything it shows comes from
   _data/cases/<caseKey>.js. This file decides only structure:
 
-    rail (left, sticky)        the homepage's menu, "Works" lit, linking back
+    rail (left, sticky)        the case's sections, the one being read lit;
+                               the page's own table of contents
     clock (left, sticky)       pinned to the bottom of the viewport, where the
                                comp puts it on case pages (40, 793 at 1512 × 900)
     Back / Next                either side of the column's top, as the comp does
@@ -20,6 +21,11 @@ layout: layouts/v4.njk
   to the right, like the comp; see _case.css.
 #}
 {%- set c = cases[caseKey] -%}
+{#- The left menu lists this case's sections (see v4/rail.njk). -#}
+{%- set railItems = [] -%}
+{%- for section in c.sections -%}
+  {%- set railItems = (railItems.push({ label: section.nav or section.title, target: section.title | slugify }), railItems) -%}
+{%- endfor -%}
 
 <div class="v4-shell v4-shell--case">
   {% include "v4/rail.njk" %}
@@ -68,8 +74,8 @@ layout: layouts/v4.njk
     <p class="v4-case__hook">{{ c.hook }}</p>
 
     {%- for section in c.sections %}
-    <section class="v4-case__section" aria-labelledby="s{{ loop.index }}">
-      <h2 class="v4-case__heading" id="s{{ loop.index }}">
+    <section class="v4-case__section" id="{{ section.title | slugify }}" aria-labelledby="{{ section.title | slugify }}-title">
+      <h2 class="v4-case__heading" id="{{ section.title | slugify }}-title">
         <span class="v4-case__num">{% if loop.index < 10 %}0{% endif %}{{ loop.index }}</span>
         {{ section.title }}
       </h2>

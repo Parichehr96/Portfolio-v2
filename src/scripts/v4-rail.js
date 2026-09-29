@@ -1,7 +1,9 @@
 /* V4 rail scroll-spy — v4/rail.njk.
  *
  * The rail is sticky, so its active item has to follow the reader. The active
- * section is the last one whose top has passed a line 30% down the viewport;
+ * section is the last one whose top has passed a line 20% down the viewport
+ * (high enough that a short case-study section is not skipped by the one
+ * after it);
  * the first item ("Home", target #top) is the fallback, and it is always the
  * active one while the page sits at the very top, however tall the screen: a
  * visitor who has not scrolled is on Home, even when Work is already in view. Targets that are not on
@@ -21,7 +23,7 @@
 
   function update() {
     queued = false;
-    var line = window.innerHeight * 0.3;
+    var line = window.innerHeight * 0.2;
     var active = links[0];
     if (window.scrollY > 0) {
       links.forEach(function (link) {

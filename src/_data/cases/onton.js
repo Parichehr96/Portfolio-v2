@@ -5,6 +5,10 @@
  * array order and are numbered automatically (01, 02 …), so adding, removing
  * or reordering one never leaves a gap or a repeat in the numbering.
  *
+ * A section's `nav` is its short name in the left menu, which lists the
+ * sections and lights the one being read; its `id` (the page anchor) comes
+ * from the title.
+ *
  * A section's `blocks` are drawn under its paragraph, in order. Each has a
  * `type` that picks a partial: image, metrics, competitors, quotes, changes.
  * An image with no `src` renders as the comp's dotted placeholder.
@@ -31,11 +35,13 @@ module.exports = {
   sections: [
     {
       title: "About ONTON",
+      nav: "About",
       muted: true,
       text: "ONTON is a Telegram Mini App where crypto communities run events and reward attendance with an on-chain badge, a Soulbound Token that proves you showed up. This story is about the first step of that promise: creating the event. For a while, it was a hard part. Organizers weren't only stuck getting the details right, they were stuck making all of them, every single time too.",
     },
     {
       title: "Metrics",
+      nav: "Metrics",
       muted: true,
       text: "Four steps became two, with advanced settings hidden by default and expandable on demand. With only 15% of organizers ever opening the expanded settings, the core bet held: almost no one needed what the old flow forced on everyone.",
       blocks: [
@@ -52,18 +58,22 @@ module.exports = {
     },
     {
       title: "Problem",
+      nav: "Problem",
       text: "Creating a simple event meant four dense steps, 20+ fields, and a \"cannot be changed after creation\" warning on almost every screen. It took about 7 minutes, and organizers dropped off at step 2 or 3. Nothing carried over between events, so regular organizers started from zero every time.",
     },
     {
       title: "How ONTON compared",
+      nav: "How it compared",
       text: "Creating a simple event meant moving through four dense steps and deciding on details most organizers didn't need, a process that pushed people to abandon at step 2 or 3.",
     },
     {
       title: "How did I approach it?",
+      nav: "Approach",
       text: "I built the shared components it relied on and iterated on the live analytics after launch, while working directly with the founder and four developers to ship it.",
     },
     {
       title: "Competitor analysis, before redesign",
+      nav: "Competitors",
       text: "Before redesigning, I benchmarked where ONTON stood on the thing that was breaking; the moment of creating an event.",
       blocks: [
         {
@@ -97,11 +107,13 @@ module.exports = {
     },
     {
       title: "How organizers used to create event",
+      nav: "The old flow",
       text: "Four steps, 20+ fields, and a warning on almost every screen that your choices were permanent.",
       blocks: [{ type: "image" }],
     },
     {
       title: "What did organizers claim?",
+      nav: "Interviews",
       text: "Five interviews, one pattern in two halves: organizers were over-asked, then asked all over again.",
       blocks: [
         {
@@ -127,6 +139,7 @@ module.exports = {
     },
     {
       title: "What changed",
+      nav: "What changed",
       text: "Two steps instead of four, defaults that stick, and one final confirmation instead of a warning on every screen.",
       blocks: [
         {
@@ -187,10 +200,12 @@ module.exports = {
     },
     {
       title: "The new flow",
+      nav: "The new flow",
       blocks: [{ type: "image" }],
     },
     {
       title: "Reflection",
+      nav: "Reflection",
       paragraphs: [
         "The bet, that almost no one needed the old flow's depth, held. The clearest proof is the 15%. Majority of users didn’t need what the old flow forced on everyone, and the ones that did, could find it.",
         "I hold the rest loosely: seasonal demand and ONTON being the only SBT option likely helped too, and removing steps meant a few organizers lost access to settings they might've wanted. That's the trade I chose, and the first thing I'd revisit as the organizer base matures.",

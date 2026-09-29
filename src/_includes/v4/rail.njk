@@ -13,14 +13,16 @@
   scripts/v4-rail.js moves .is-active / aria-current to the item whose section
   is under the top of the viewport. Without JS the first item stays active.
 
-  ON OTHER PAGES (case studies) the page sets `railBase: "/"` so the items link
-  back to the homepage's sections, and `railActive` to the item that should be
-  lit ("work"); the scroll-spy finds none of those sections there and stays out.
+  ITEMS. By default the homepage's (home.rail). A page can pass its own list
+  as `railItems` ({ label, target }); the case studies pass their sections,
+  so the menu becomes the case's table of contents and the scroll-spy lights
+  the section being read. `railBase: "/"` instead makes the items plain links
+  back to the homepage's sections, with `railActive` naming the lit one.
 #}
 <div class="v4-rail-track">
   <nav class="v4-rail" aria-label="Page">
     <ul class="v4-rail__list">
-      {%- for item in home.rail %}
+      {%- for item in (railItems or home.rail) %}
       <li>
         {%- set on = (item.target == railActive) if railActive else loop.first %}
         <a class="v4-rail__item{% if on %} is-active{% endif %}" href="{{ railBase or '' }}#{{ item.target }}"{% if not railBase %} data-rail-target="{{ item.target }}"{% endif %}{% if on %} aria-current="{{ 'page' if railBase else 'true' }}"{% endif %}>

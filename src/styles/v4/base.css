@@ -46,6 +46,13 @@ ol {
   list-style: none;
 }
 
+/* Menu jumps glide rather than cut, unless motion is reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--v4-focus);
   outline-offset: 2px;
