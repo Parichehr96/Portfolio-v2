@@ -155,9 +155,6 @@
   --v4-panel-width: 812px;
   --v4-panel-ratio: 812 / 520;
   --v4-panel-gap: var(--v4-space-4);
-  /* Strip drift: time for one panel to pass. 45s per 828px is ~18px a second,
-     slow enough to read as ambient rather than a carousel. */
-  --v4-strip-pace: 45s;
   --v4-radius-panel: 20px;
 
   /* About, process, experience, footer — 911:727 … 911:654. Gaps are the

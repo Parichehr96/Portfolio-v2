@@ -6,9 +6,8 @@
    the same --v4-column-inset as the intro, so they move with it.
 
    THE STRIP runs from the reading column's left edge off the right of the
-   page, as in the comp, clear of the left panel. It drifts slowly left to right in an
-   endless loop, and stops to be scrolled by hand while hovered
-   (scripts/v4-strip.js).
+   page, as in the comp, clear of the left panel. It stays still; the visitor
+   scrolls it by hand (scripts/v4-strip.js).
    ========================================================================== */
 
 .v4-work {
@@ -114,16 +113,10 @@ a.v4-project__link:hover {
    off the right side of the page. The left panel stays clear for the rail and
    the docked clock; nothing slides under anything.
 
-   A REAL SCROLL CONTAINER, so visitors can scroll it themselves: swipe on a
-   trackpad or phone, drag with a mouse. The slow left-to-right drift is
-   scripts/v4-strip.js moving the same scroll position, and it stops while the
-   pointer is over the strip. The scrollbar is hidden; the drift and the
-   cut-off panel at the right edge say "this moves" better than a bar would.
-
-   THE TRACK is the panels twice over. Each panel carries its own trailing gap,
-   so the two halves are identical and the script can wrap the scroll position
-   by exactly one set, in either direction, without a visible jump. Without JS
-   it is simply a strip you can scroll. */
+   A REAL SCROLL CONTAINER that visitors scroll themselves: swipe on a
+   trackpad or phone, drag with a mouse (scripts/v4-strip.js). It does not
+   move on its own. The scrollbar is hidden; the panel cut off at the right
+   edge says "there is more" better than a bar would. */
 .v4-project__strip {
   position: relative;
   margin-left: var(--v4-column-inset);

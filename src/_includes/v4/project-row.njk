@@ -5,11 +5,9 @@
   THE HEADER sits in the 600px reading column, like the intro above it.
 
   THE STRIP runs as the comp draws it: from the reading column's left edge off
-  the right side of the page, clear of the left panel (rail and docked clock). It drifts
-  slowly left to right on its own, forever, and while the pointer is over it
-  the drift stops and it scrolls by hand (scripts/v4-strip.js). The panels are
-  rendered twice (the second set aria-hidden), so the scroll position can wrap
-  by exactly one set and land on an identical frame.
+  the right side of the page, clear of the left panel (rail and docked clock).
+  It does not move on its own; visitors scroll it themselves (swipe, or drag
+  with a mouse: scripts/v4-strip.js).
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
@@ -37,15 +35,13 @@
   </header>
 
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
-    <div class="v4-project__track" style="--panels: {{ project.panels | length }}">
-      {%- for copy in [false, true] %}
+    <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}{% if copy %} v4-project__panel--clone{% endif %}"{% if copy %} aria-hidden="true"{% endif %}>
+      <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}">
         {%- if panel.src %}
-        <img src="{{ panel.src }}" width="812" height="520" alt="{{ '' if copy else panel.alt }}"{% if not eager %} loading="lazy"{% endif %} decoding="async" />
+        <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}"{% if not eager %} loading="lazy"{% endif %} decoding="async" />
         {%- endif %}
       </figure>
-      {%- endfor %}
       {%- endfor %}
     </div>
   </div>
