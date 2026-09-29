@@ -132,7 +132,7 @@ module.exports = {
       "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
       "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
     ],
-    // The two folders — 918:32037 / 1194:17746 (Tools) and 1190:16880 /
+    // The two folders — 918:32037 / 1194:17746 (Tools, open state revised 29 Sep) and 1190:16880 /
     // 1194:17745 (Services). Click opens, click again closes; see
     // v4/folder.njk for how the pieces are layered and animated.
     //
@@ -149,18 +149,18 @@ module.exports = {
         still: { src: "/Assets/v4/about/folders/tools-closed.webp", x: 0, w: 196.3 },
         front: { src: "/Assets/v4/about/folders/tools-front.svg", x: 0, y: 21.34, w: 196.3, h: 173.66,
           path: "M0 13.718C0 6.14176 6.14175 0 13.718 0H38.7485C43.8522 0 48.8198 1.64641 52.9132 4.69466C57.0067 7.7429 61.9742 9.38931 67.078 9.38931H159.718C179.921 9.38931 196.299 25.7673 196.299 45.9706V137.079C196.299 157.283 179.921 173.661 159.718 173.661H36.5813C16.378 173.661 0 157.283 0 137.079V13.718Z" },
-        sheet: { x: 20, y: 12, w: 155, h: 147, stays: true },
+        sheet: { x: 20, y: 12, w: 155, h: 147 },
         // The white sheet the icons sit on while the folder is closed.
         card: { x: 14, y: 17, w: 166, h: 156 },
         icons: [
-          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [122, 12] },
-          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [87, 63] },
-          { name: "Miro", src: "miro", size: 61, from: [41.13, 138.18], to: [13.18, 56.18] },
-          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [175, 43] },
-          { name: "Claude", src: "claude", size: 60, from: [47.63, 40.43], to: [17.63, -36.37] },
-          { name: "ChatGPT", src: "chatgpt", size: 57, from: [121.21, 95.19], to: [180.21, -24.79] },
-          { name: "Linear", src: "linear", size: 61, from: [155.18, 43.16], to: [105.16, -43.84] },
-          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [52, 16] },
+          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [122, 81] },
+          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [92, 150] },
+          { name: "Miro", src: "miro", size: 61, from: [41.13, 138.18], to: [13.18, 139.18] },
+          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [175, 126] },
+          { name: "Claude", src: "claude", size: 60, from: [47.63, 40.43], to: [17.63, 25.62] },
+          { name: "ChatGPT", src: "chatgpt", size: 57, from: [121.21, 95.19], to: [180.21, 44.21] },
+          { name: "Linear", src: "linear", size: 61, from: [155.18, 43.16], to: [105.16, 18.16] },
+          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [49, 84] },
         ],
       },
       {
