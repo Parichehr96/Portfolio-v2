@@ -17,6 +17,12 @@
   and only then drops them behind the flap again. Positions come from the
   data as centres (icons) or corners (cards), closed and open.
 
+  AT REST, THE COMP'S OWN RENDER. A browser's backdrop blur cannot match
+  Figma's (softer, with grain, and it samples the page around the flap), so
+  the closed folder shows the comp's exported image on top of the layers, and
+  it is pixel-exact. On open it hands over at once to the layers as they start
+  to move; on close it comes back only once they are all home.
+
   It is a real <button> with aria-expanded, so it works from the keyboard.
 #}
 <figure class="v4-about__card">
@@ -44,6 +50,9 @@
       </span>
       {%- endfor %}
     </span>
+
+    <img class="v4-folder__still" src="{{ folder.still.src }}" alt=""
+         style="left: {{ folder.still.x }}px; width: {{ folder.still.w }}px" />
 
     <span class="v4-folder__front"
           style="left: {{ folder.front.x }}px; top: {{ folder.front.y }}px; width: {{ folder.front.w }}px; height: {{ folder.front.h }}px; --flap: path('{{ folder.front.path }}'); --flap-art: url('{{ folder.front.src }}')"></span>

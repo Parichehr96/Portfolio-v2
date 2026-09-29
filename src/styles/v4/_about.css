@@ -235,7 +235,25 @@
   opacity: var(--flap-tint, 0.72);
 }
 
+/* The comp's closed render, over everything while closed. Opening hides it
+   at once; closing brings it back after the pieces have settled (--move plus
+   the stagger), so the swap is never seen. */
+.v4-folder__still {
+  top: 0;
+  z-index: 6;
+  height: 195px;
+  max-width: none;
+  pointer-events: none;
+  transition: opacity 0.15s ease calc(var(--move) + 0.25s);
+}
+
+.v4-folder.is-open .v4-folder__still {
+  opacity: 0;
+  transition: opacity 0.08s ease 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .v4-folder__still,
   .v4-folder,
   .v4-folder__item,
   .v4-folder__items,

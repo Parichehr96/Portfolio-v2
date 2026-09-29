@@ -145,6 +145,8 @@ module.exports = {
         label: "Tools",
         width: 196.3,
         back: "/Assets/v4/about/folders/tools-back.svg",
+        // The comp's own render of the closed folder, shown at rest.
+        still: { src: "/Assets/v4/about/folders/tools-closed.webp", x: 0, w: 196.3 },
         front: { src: "/Assets/v4/about/folders/tools-front.svg", x: 0, y: 21.34, w: 196.3, h: 173.66,
           path: "M0 13.718C0 6.14176 6.14175 0 13.718 0H38.7485C43.8522 0 48.8198 1.64641 52.9132 4.69466C57.0067 7.7429 61.9742 9.38931 67.078 9.38931H159.718C179.921 9.38931 196.299 25.7673 196.299 45.9706V137.079C196.299 157.283 179.921 173.661 159.718 173.661H36.5813C16.378 173.661 0 157.283 0 137.079V13.718Z" },
         sheet: { x: 20, y: 12, w: 155, h: 147, stays: true },
@@ -166,6 +168,7 @@ module.exports = {
         label: "Services",
         width: 384.7,
         back: "/Assets/v4/about/folders/services-back.svg",
+        still: { src: "/Assets/v4/about/folders/services-closed.webp", x: -0.3, w: 385 },
         front: { src: "/Assets/v4/about/folders/services-front.svg", x: -0.3, y: 32, w: 385, h: 163,
           path: "M0 13.718C0 6.14176 6.14175 0 13.718 0H85.0899C89.2746 0 93.4282 0.718006 97.37 2.12277L110.186 6.69015C114.128 8.09492 118.282 8.81292 122.466 8.81292H348.419C368.622 8.81292 385 25.1909 385 45.3942V126.419C385 146.622 368.622 163 348.419 163H36.5813C16.378 163 0 146.622 0 126.419V13.718Z" },
         sheet: { x: 39.2, y: 12, w: 304, h: 147 },
