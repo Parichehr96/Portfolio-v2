@@ -5,8 +5,8 @@
    The label and each row's header sit in the 600px reading column, placed by
    the same --v4-column-inset as the intro, so they move with it.
 
-   THE STRIP runs from the 40px edge off the right of the page, as in the
-   comp, over the sticky rail and clock. It drifts slowly left to right in an
+   THE STRIP runs from the reading column's left edge off the right of the
+   page, as in the comp, clear of the left panel. It drifts slowly left to right in an
    endless loop, and stops to be scrolled by hand while hovered
    (scripts/v4-strip.js).
    ========================================================================== */
@@ -110,8 +110,9 @@ a.v4-project__link:hover {
 }
 
 /* ---- Strip --------------------------------------------------------------- */
-/* From the 40px edge off the right side of the page, as the comp draws it, and
-   above the sticky rail and clock (z-index 1) so they slide under it.
+/* From the reading column's left edge (x=456 at 1512, the comp's 1126:29050)
+   off the right side of the page. The left panel stays clear for the rail and
+   the docked clock; nothing slides under anything.
 
    A REAL SCROLL CONTAINER, so visitors can scroll it themselves: swipe on a
    trackpad or phone, drag with a mouse. The slow left-to-right drift is
@@ -125,8 +126,7 @@ a.v4-project__link:hover {
    it is simply a strip you can scroll. */
 .v4-project__strip {
   position: relative;
-  z-index: 2;
-  margin-left: var(--v4-edge);
+  margin-left: var(--v4-column-inset);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
