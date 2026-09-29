@@ -26,6 +26,8 @@
   --v4-mist-200: #E8ECF0;   /* toast's timer band */
   --v4-ink-soft: #232323;   /* project years and the name's dashed underline */
   --v4-ink-950: #0A0A0A;    /* footer title */
+  --v4-ink-900: #1A1A1A;    /* labels-vibrant/primary: folder card text */
+  --v4-gray-300: #CCCCCC;   /* the grey page inside a folder */
   --v4-button: #101012;     /* footer call button */
   --v4-button-text: #FCFBFB;
   --v4-slate-600-60: rgba(71, 85, 105, 0.6); /* experience dates */
@@ -56,6 +58,8 @@
   --v4-action: var(--v4-button);
   --v4-action-text: var(--v4-button-text);
   --v4-logo-tile: var(--v4-black);
+  --v4-text-card: var(--v4-ink-900);
+  --v4-folder-sheet: var(--v4-gray-300);
   --v4-border: var(--v4-slate-200);
   --v4-text-soft-60: var(--v4-ink-60);
   --v4-surface-tint: var(--v4-mist-100-50);

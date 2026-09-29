@@ -1,5 +1,6 @@
 {#
-  ABOUT — Figma 911:727 (label), 911:854 (text), 918:32037 + 918:32133 (cards).
+  ABOUT — Figma 911:727 (label), 911:854 (text), and the two folders that
+  open on click (v4/folder.njk).
 
   The rail's "Parichehr" item scrolls here (#about). The empty band the comp
   leaves between the label and the text renders as a placeholder, like the
@@ -15,11 +16,8 @@
     {%- endfor %}
   </div>
   <div class="v4-about__cards">
-    {%- for card in home.about.cards %}
-    <figure class="v4-about__card">
-      <img src="{{ card.src }}" width="{{ card.width }}" height="{{ card.height }}" alt="{{ card.alt }}" loading="lazy" decoding="async" />
-      <figcaption>{{ card.label }}</figcaption>
-    </figure>
+    {%- for folder in home.about.folders %}
+    {% include "v4/folder.njk" %}
     {%- endfor %}
   </div>
 </section>

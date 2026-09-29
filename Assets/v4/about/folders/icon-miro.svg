@@ -1,0 +1,28 @@
+<svg width="61" height="61" viewBox="0 0 61 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Tools_open">
+<g id="Profile Content" filter="url(#filter0_d_822_53150)">
+<g id="Claude">
+<g id="Icon">
+<rect id="Icon background" x="18.0465" width="46" height="46" rx="17.209" transform="rotate(23.0986 18.0465 0)" fill="#FFD02F"/>
+<g id="Icon_2">
+<path id="Vector" d="M28.9162 19.1876L38.8841 23.4389C40.9869 24.3358 41.9661 26.7713 41.0692 28.8742L36.8178 38.842C35.9209 40.9449 33.4855 41.924 31.3826 41.0271L21.4147 36.7757C19.3119 35.8788 18.3327 33.4434 19.2296 31.3405L23.481 21.3727C24.3779 19.2698 26.8133 18.2907 28.9162 19.1876Z" fill="#FFD02F"/>
+<path id="Vector_2" d="M36.3915 24.9717L34.4604 24.148L34.8633 27.6604L32.5293 23.3244L30.5982 22.5008L30.8938 26.7118L28.667 21.6771L26.7359 20.8535L26.7911 26.0755L21.1082 34.0485L23.0393 34.8722L30.7606 27.0241L24.9704 35.6958L26.9015 36.5194L34.7279 27.9779L28.8326 37.3431L30.7637 38.1667L38.9941 28.6779L36.3915 24.9717Z" fill="#050038"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_822_53150" x="-6.40211" y="-149.744" width="237.803" height="220.162" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="2.7436" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_822_53150"/>
+<feOffset dy="3.65813"/>
+<feGaussianBlur stdDeviation="1.82906"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.267346 0 0 0 0 0.267346 0 0 0 0 0.267346 0 0 0 0.16 0"/>
+<feBlend mode="hard-light" in2="BackgroundImageFix" result="effect1_dropShadow_822_53150"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_822_53150" result="shape"/>
+</filter>
+</defs>
+</svg>

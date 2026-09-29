@@ -1,0 +1,52 @@
+{#
+  FOLDER — Figma 918:32037 / 1194:17746 (Tools), 1190:16880 / 1194:17745
+  (Services). Expects `folder` from home.about.folders.
+
+  LAYERED, SO THE CONTENTS CAN MOVE. Back to front:
+    back      the dark folder (exported SVG)
+    sheet     the grey page inside
+    card      Tools only: the white sheet the icons sit on while closed
+    items     the icons, or the text cards
+    front     the frosted flap: a real backdrop blur (the comp's 45.7 radius
+              background blur), clipped to the flap's outline, with the
+              exported SVG on top for its tint and inner highlight
+
+  Closed, the items sit inside, behind the flap, so the blur softens them.
+  Opening (click; scripts/v4-folders.js) lifts the items above the flap and
+  slides each to its open position, a few ms apart; closing puts them back
+  and only then drops them behind the flap again. Positions come from the
+  data as centres (icons) or corners (cards), closed and open.
+
+  It is a real <button> with aria-expanded, so it works from the keyboard.
+#}
+<figure class="v4-about__card">
+  <button class="v4-folder v4-folder--{{ folder.id }}" type="button" data-folder aria-expanded="false"
+          aria-label="{{ folder.label }}: open the folder"
+          style="--w: {{ folder.width }}px">
+    <img class="v4-folder__back" src="{{ folder.back }}" alt="" />
+    <span class="v4-folder__sheet{% if folder.sheet.stays %} v4-folder__sheet--stays{% endif %}"
+          style="left: {{ folder.sheet.x }}px; top: {{ folder.sheet.y }}px; width: {{ folder.sheet.w }}px; height: {{ folder.sheet.h }}px"></span>
+    {%- if folder.card %}
+    <span class="v4-folder__card" style="left: {{ folder.card.x }}px; top: {{ folder.card.y }}px; width: {{ folder.card.w }}px; height: {{ folder.card.h }}px"></span>
+    {%- endif %}
+
+    <span class="v4-folder__items"{% if folder.card %} style="--clip: {{ folder.card.y }}px {{ folder.width - folder.card.x - folder.card.w }}px {{ 195 - folder.card.y - folder.card.h }}px {{ folder.card.x }}px"{% endif %}>
+      {%- for icon in folder.icons %}
+      <img class="v4-folder__item v4-folder__icon" src="/Assets/v4/about/folders/icon-{{ icon.src }}.svg" alt="{{ icon.name }}"
+           width="{{ icon.size }}" height="{{ icon.size }}"
+           style="--i: {{ loop.index0 }}; --s: {{ icon.size }}px; --fx: {{ icon.from[0] }}px; --fy: {{ icon.from[1] }}px; --tx: {{ icon.to[0] }}px; --ty: {{ icon.to[1] }}px" />
+      {%- endfor %}
+      {%- for card in folder.cards %}
+      <span class="v4-folder__item v4-folder__paper{% if card.hidden %} v4-folder__paper--tucked{% endif %}"
+            style="--i: {{ loop.index0 }}; --fx: {{ card.from[0] }}px; --fy: {{ card.from[1] }}px; --tx: {{ card.to[0] }}px; --ty: {{ card.to[1] }}px">
+        <span class="v4-folder__paper-title">{{ card.title }}</span>
+        <span class="v4-folder__paper-text">{{ card.text }}</span>
+      </span>
+      {%- endfor %}
+    </span>
+
+    <span class="v4-folder__front"
+          style="left: {{ folder.front.x }}px; top: {{ folder.front.y }}px; width: {{ folder.front.w }}px; height: {{ folder.front.h }}px; --flap: path('{{ folder.front.path }}'); --flap-art: url('{{ folder.front.src }}')"></span>
+  </button>
+  <figcaption>{{ folder.label }}</figcaption>
+</figure>

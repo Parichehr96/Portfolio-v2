@@ -58,15 +58,192 @@
   max-width: 100%;
 }
 
-.v4-about__card img {
-  height: auto;
-}
 
 .v4-about__card figcaption {
   font-size: var(--v4-text-body);
   line-height: var(--v4-leading-years);
   text-transform: capitalize;
   color: var(--v4-text-soft);
+}
+
+/* ---- Folders — v4/folder.njk -------------------------------------------- */
+.v4-folder {
+  --ease-out: cubic-bezier(0.2, 0.9, 0.25, 1.15);
+  --ease-in: cubic-bezier(0.45, 0, 0.55, 1);
+  --move: 0.55s;
+  position: relative;
+  display: block;
+  width: var(--w);
+  height: 195px;
+  border-radius: 36.58px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.v4-folder:hover {
+  transform: translateY(-2px);
+}
+
+.v4-folder:focus-visible {
+  outline-offset: 6px;
+  border-radius: 36.58px;
+}
+
+.v4-folder.is-open {
+  z-index: 5;
+}
+
+.v4-folder > * {
+  position: absolute;
+  display: block;
+}
+
+.v4-folder__back {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.v4-folder__sheet,
+.v4-folder__card,
+.v4-folder__paper {
+  border-radius: 9.419px;
+  box-shadow: 0 3.658px 3.658px 2.744px rgba(68, 68, 68, 0.16);
+}
+
+.v4-folder__sheet {
+  z-index: 1;
+  background: var(--v4-folder-sheet);
+  transition: opacity 0.3s ease;
+}
+
+.v4-folder__card {
+  z-index: 2;
+  background: var(--v4-surface);
+  transition: opacity 0.3s ease 0.1s;
+}
+
+.v4-folder.is-open .v4-folder__card,
+.v4-folder.is-open .v4-folder__sheet:not(.v4-folder__sheet--stays) {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+/* The items layer. Closed it sits under the flap (z 3 < 4) and, for Tools,
+   is clipped to the white sheet; open it rises above the flap and lets go of
+   the clip. Closing, the z-index drops only once everything is back inside. */
+.v4-folder__items {
+  inset: 0;
+  z-index: 3;
+  clip-path: inset(var(--clip, -400px) round 9.419px);
+  transition:
+    z-index 0s linear var(--move),
+    clip-path var(--move) var(--ease-in);
+}
+
+.v4-folder.is-open .v4-folder__items {
+  z-index: 5;
+  clip-path: inset(-400px round 9.419px);
+  transition:
+    z-index 0s linear 0.06s,
+    clip-path var(--move) var(--ease-out);
+}
+
+/* Each item: placed at its closed spot, and moved to its open spot by a
+   transform, so the move runs on the compositor. A little stagger by index. */
+.v4-folder__item {
+  position: absolute;
+  transition: transform var(--move) var(--ease-in) calc(var(--i) * 20ms),
+              opacity 0.3s ease calc(var(--i) * 20ms);
+  will-change: transform;
+}
+
+.v4-folder.is-open .v4-folder__item {
+  transform: translate(calc(var(--tx) - var(--fx)), calc(var(--ty) - var(--fy)));
+  transition: transform var(--move) var(--ease-out) calc(var(--i) * 30ms),
+              opacity 0.3s ease calc(var(--i) * 30ms);
+}
+
+/* The comp's soft shadow under the icons (1190:16995). */
+.v4-folder__icon {
+  filter: drop-shadow(0 3.658px 1.829px rgba(68, 68, 68, 0.16));
+  left: calc(var(--fx) - var(--s) / 2);
+  top: calc(var(--fy) - var(--s) / 2);
+  width: var(--s);
+  height: var(--s);
+  max-width: none;
+}
+
+/* Services' text cards, as in 1194:17745. */
+.v4-folder__paper {
+  left: var(--fx);
+  top: var(--fy);
+  width: 325px;
+  padding: 12px;
+  overflow: hidden;
+  background: var(--v4-surface);
+  text-align: left;
+}
+
+.v4-folder__paper-title {
+  display: block;
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-semibold);
+  line-height: 1.5;
+  color: var(--v4-text-max);
+}
+
+.v4-folder__paper-text {
+  display: block;
+  font-size: 9.197px;
+  line-height: 1.5;
+  letter-spacing: 0.1931px;
+  color: var(--v4-text-card);
+}
+
+/* The second card waits hidden behind the first until the folder opens. */
+.v4-folder__paper--tucked {
+  z-index: -1;
+  opacity: 0;
+}
+
+/* Open, it lies on top of the first, as in 1194:17745. */
+.v4-folder.is-open .v4-folder__paper--tucked {
+  z-index: 1;
+  opacity: 1;
+}
+
+/* The frosted flap: a real backdrop blur, clipped to the flap's outline, with
+   the comp's tint and inner highlight (the exported SVG) laid over it. */
+.v4-folder__front {
+  z-index: 4;
+  clip-path: var(--flap);
+  -webkit-backdrop-filter: blur(22.86px);
+  backdrop-filter: blur(22.86px);
+  pointer-events: none;
+}
+
+/* The tint, a touch lighter than the SVG's own 60%: Figma's blur also
+   samples the white page around the folder, a browser's only what lies
+   behind the flap, so at full strength the glass reads darker than the
+   comp. Tuned by measuring the rendered glass against the comp's export. */
+.v4-folder__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--flap-art) center / 100% 100% no-repeat;
+  opacity: var(--flap-tint, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-folder,
+  .v4-folder__item,
+  .v4-folder__items,
+  .v4-folder__card,
+  .v4-folder__sheet {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
 }
 
 @media (max-width: 639px) {
