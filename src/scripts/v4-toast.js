@@ -8,12 +8,27 @@
  * rest without it (--v4-content-top). The collapsed toast stays in the DOM as
  * an empty spacer and is made inert, so it can no longer take focus.
  * Hovering or focusing the toast pauses the timer (CSS).
+ *
+ * It also notes a hard refresh as its keys are pressed (the page cannot tell
+ * one from a normal refresh afterwards), so the check in v4/toast.njk shows
+ * the toast again on the reload that follows.
  */
 (function () {
   "use strict";
 
   var toast = document.querySelector("[data-toast]");
   if (!toast) return;
+
+  document.addEventListener("keydown", function (e) {
+    var key = (e.key || "").toLowerCase();
+    var hard =
+      (key === "r" && e.shiftKey && (e.metaKey || e.ctrlKey)) ||
+      (key === "f5" && (e.ctrlKey || e.shiftKey));
+    if (!hard) return;
+    try { sessionStorage.setItem("v4-hard-reload", "1"); } catch (err) {}
+  });
+
+  if (document.documentElement.classList.contains("is-toast-skipped")) return;
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var FADE = reduced ? 0 : 250;

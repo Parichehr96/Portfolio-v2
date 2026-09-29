@@ -63,12 +63,22 @@
   opacity: 0;
 }
 
-.v4-toast.is-collapsed {
+.v4-toast.is-collapsed,
+.is-toast-skipped .v4-toast {
   height: 0;
   padding-block: 0;
   margin-bottom: calc(var(--v4-content-top) - var(--v4-page-top));
   visibility: hidden;
   transition-delay: 0s, 0s, 0s, 0s, 0.4s;
+}
+
+/* Skipped (a normal refresh, see v4/toast.njk): already collapsed at first
+   paint, with no timer running and nothing to animate. */
+.is-toast-skipped .v4-toast,
+.is-toast-skipped .v4-toast::before {
+  opacity: 0;
+  transition: none;
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
