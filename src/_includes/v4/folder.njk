@@ -5,7 +5,8 @@
   LAYERED, SO THE CONTENTS CAN MOVE. Back to front:
     back      the dark folder (exported SVG)
     sheet     the grey page inside
-    card      Tools only: the white sheet the icons sit on while closed
+    card      Tools only: the white sheet the icons sit on; open, it rises
+              above the flap and widens under the icon grid
     items     the icons, or the text cards
     front     the frosted flap: a real backdrop blur (the comp's 45.7 radius
               background blur), clipped to the flap's outline, with the
@@ -33,14 +34,14 @@
     <span class="v4-folder__sheet{% if folder.sheet.stays %} v4-folder__sheet--stays{% endif %}"
           style="left: {{ folder.sheet.x }}px; top: {{ folder.sheet.y }}px; width: {{ folder.sheet.w }}px; height: {{ folder.sheet.h }}px"></span>
     {%- if folder.card %}
-    <span class="v4-folder__card" style="left: {{ folder.card.x }}px; top: {{ folder.card.y }}px; width: {{ folder.card.w }}px; height: {{ folder.card.h }}px"></span>
+    <span class="v4-folder__card" style="--x: {{ folder.card.x }}px; --y: {{ folder.card.y }}px; --w: {{ folder.card.w }}px; --h: {{ folder.card.h }}px; --ox: {{ folder.card.open.x }}px; --oy: {{ folder.card.open.y }}px; --ow: {{ folder.card.open.w }}px; --oh: {{ folder.card.open.h }}px"></span>
     {%- endif %}
 
     <span class="v4-folder__items"{% if folder.card %} style="--clip: {{ folder.card.y }}px {{ folder.width - folder.card.x - folder.card.w }}px {{ 195 - folder.card.y - folder.card.h }}px {{ folder.card.x }}px"{% endif %}>
       {%- for icon in folder.icons %}
       <img class="v4-folder__item v4-folder__icon" src="/Assets/v4/about/folders/icon-{{ icon.src }}.svg" alt="{{ icon.name }}"
            width="{{ icon.size }}" height="{{ icon.size }}"
-           style="--i: {{ loop.index0 }}; --s: {{ icon.size }}px; --fx: {{ icon.from[0] }}px; --fy: {{ icon.from[1] }}px; --tx: {{ icon.to[0] }}px; --ty: {{ icon.to[1] }}px" />
+           style="--i: {{ loop.index0 }}; --s: {{ icon.size }}px; --r: {{ icon.rot or 0 }}deg; --fx: {{ icon.from[0] }}px; --fy: {{ icon.from[1] }}px; --tx: {{ icon.to[0] }}px; --ty: {{ icon.to[1] }}px" />
       {%- endfor %}
       {%- for card in folder.cards %}
       <span class="v4-folder__item v4-folder__paper{% if card.hidden %} v4-folder__paper--tucked{% endif %}"

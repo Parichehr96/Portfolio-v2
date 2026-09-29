@@ -163,13 +163,38 @@
   transition: opacity 0.3s ease;
 }
 
+/* The white card. Closed it sits in the folder under the flap; open it
+   rises above the flap (z 5, under the items) and grows to the grid's card.
+   Closing, it drops behind the flap only once it is back in place. */
 .v4-folder__card {
   z-index: 2;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
   background: var(--v4-surface);
-  transition: opacity 0.3s ease 0.1s;
+  transition:
+    z-index 0s linear var(--move),
+    left var(--move) var(--ease-in),
+    top var(--move) var(--ease-in),
+    width var(--move) var(--ease-in),
+    height var(--move) var(--ease-in);
 }
 
-.v4-folder.is-open .v4-folder__card,
+.v4-folder.is-open .v4-folder__card {
+  z-index: 5;
+  left: var(--ox);
+  top: var(--oy);
+  width: var(--ow);
+  height: var(--oh);
+  transition:
+    z-index 0s linear 0.06s,
+    left var(--move) var(--ease-out),
+    top var(--move) var(--ease-out),
+    width var(--move) var(--ease-out),
+    height var(--move) var(--ease-out);
+}
+
 .v4-folder.is-open .v4-folder__sheet:not(.v4-folder__sheet--stays) {
   opacity: 0;
   transition-delay: 0s;
@@ -199,13 +224,14 @@
    transform, so the move runs on the compositor. A little stagger by index. */
 .v4-folder__item {
   position: absolute;
+  transform: translate(0, 0) rotate(var(--r, 0deg));
   transition: transform var(--move) var(--ease-in) calc(var(--i) * 20ms),
               opacity 0.3s ease calc(var(--i) * 20ms);
   will-change: transform;
 }
 
 .v4-folder.is-open .v4-folder__item {
-  transform: translate(calc(var(--tx) - var(--fx)), calc(var(--ty) - var(--fy)));
+  transform: translate(calc(var(--tx) - var(--fx)), calc(var(--ty) - var(--fy))) rotate(0deg);
   transition: transform var(--move) var(--ease-out) calc(var(--i) * 30ms),
               opacity 0.3s ease calc(var(--i) * 30ms);
 }

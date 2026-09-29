@@ -159,18 +159,20 @@ module.exports = {
         front: { src: "/Assets/v4/about/folders/tools-front.svg", x: 0, y: 21.34, w: 196.3, h: 173.66,
           path: "M0 13.718C0 6.14176 6.14175 0 13.718 0H38.7485C43.8522 0 48.8198 1.64641 52.9132 4.69466C57.0067 7.7429 61.9742 9.38931 67.078 9.38931H159.718C179.921 9.38931 196.299 25.7673 196.299 45.9706V137.079C196.299 157.283 179.921 173.661 159.718 173.661H36.5813C16.378 173.661 0 157.283 0 137.079V13.718Z" },
         sheet: { x: 20, y: 12, w: 155, h: 147 },
-        // The white sheet the icons sit on while the folder is closed.
-        card: { x: 14, y: 17, w: 166, h: 156 },
-        // Listed in the comp's stacking order: later icons lie on top.
+        // The white sheet the icons sit on. Open (1194:17746) it rises above
+        // the flap and widens to hold the icons in a 3-3-2 grid.
+        card: { x: 14, y: 17, w: 166, h: 156, open: { x: 5.02, y: 12, w: 186.04, h: 156 } },
+        // Listed in the comp's stacking order: later icons lie on top. Closed,
+        // some lie tilted (rot, degrees); open, all stand straight in the grid.
         icons: [
-          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [61, 42] },
-          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [86, -5] },
-          { name: "Miro", src: "miro", size: 61, from: [41.13, 138.18], to: [118.18, 35.18] },
-          { name: "Claude", src: "claude", size: 60, from: [47.63, 40.43], to: [172.63, 46.62] },
-          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [186, -4] },
-          { name: "ChatGPT", src: "chatgpt", size: 57, from: [121.21, 95.19], to: [136.21, -16.79] },
-          { name: "Linear", src: "linear", size: 61, from: [155.18, 43.16], to: [8.16, 43.16] },
-          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [27, -2] },
+          { name: "Notion", src: "notion", size: 46, from: [93, 142], to: [123, 140] },
+          { name: "Figma", src: "figma", size: 46, from: [95, 43], to: [98, 40] },
+          { name: "Miro", src: "miro", size: 46, rot: 23.1, from: [41.13, 138.18], to: [73, 140] },
+          { name: "Claude", src: "claude", size: 46, rot: -20.62, from: [47.63, 40.43], to: [48, 40] },
+          { name: "GitHub", src: "github", size: 46, from: [151, 140], to: [148, 90] },
+          { name: "ChatGPT", src: "chatgpt", size: 46, rot: -15.14, from: [121.21, 95.19], to: [98, 90] },
+          { name: "Linear", src: "linear", size: 46, rot: 23, from: [155.18, 43.16], to: [48, 90] },
+          { name: "Jira", src: "jira", size: 46, from: [66, 87], to: [148, 40] },
         ],
       },
       {
