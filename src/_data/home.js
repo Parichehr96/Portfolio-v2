@@ -173,17 +173,18 @@ module.exports = {
           path: "M0 13.718C0 6.14176 6.14175 0 13.718 0H85.0899C89.2746 0 93.4282 0.718006 97.37 2.12277L110.186 6.69015C114.128 8.09492 118.282 8.81292 122.466 8.81292H348.419C368.622 8.81292 385 25.1909 385 45.3942V126.419C385 146.622 368.622 163 348.419 163H36.5813C16.378 163 0 146.622 0 126.419V13.718Z" },
         sheet: { x: 39.2, y: 12, w: 304, h: 147 },
         // Cards: top-left corner, closed (`from`) and open (`to`). The second
-        // waits hidden behind the first until the folder opens.
+        // waits hidden behind the first until the folder opens, and stays
+        // under it once open (the first card overlaps its top, as in the comp).
         cards: [
           {
             title: "Interaction and UX Design",
             text: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
-            from: [27.4, 17], to: [-3.3, -20],
+            from: [27.4, 17], to: [18.7, -18],
           },
           {
             title: "Strategic product redesign",
             text: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales. That means auditing the existing system, cutting what doesn't earn its place, and restructuring information so the next feature makes things simpler, not heavier.",
-            from: [39.2, 12], to: [74.7, 69], hidden: true,
+            from: [39.2, 12], to: [40.7, 87], hidden: true,
           },
         ],
       },

@@ -207,9 +207,9 @@
   opacity: 0;
 }
 
-/* Open, it lies on top of the first, as in 1194:17745. */
+/* Open, it lies under the first, whose bottom edge overlaps its top, as in
+   1194:17745. */
 .v4-folder.is-open .v4-folder__paper--tucked {
-  z-index: 1;
   opacity: 1;
 }
 
