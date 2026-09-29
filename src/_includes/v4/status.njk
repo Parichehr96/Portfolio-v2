@@ -1,0 +1,30 @@
+{#
+  STATUS CLOCK — Figma 911:577. Live Amsterdam time and what Pari is probably
+  doing, driven by scripts/clock.js through the data-clock-* hooks. Shared by
+  the homepage (right column, v4/top.njk) and the case studies (bottom of the
+  left column, layouts/v4-case.njk). Strings: home.status (fallbacks only).
+
+  data-clock-pivot tells clock.js where this face's hub is (V3's face used a
+  different viewBox). The hands are authored pointing at 12 and rotated by the
+  script; the lengths, strokes and hub are the comp's.
+#}
+<div class="v4-status" data-clock data-clock-pivot="50.5 50.5">
+  <svg class="v4-status__face" viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
+    <line class="v4-status__tick" x1="50.354" y1="8" x2="50.354" y2="18" />
+    <line class="v4-status__tick" x1="50.354" y1="81" x2="50.354" y2="91" />
+    <line class="v4-status__tick" x1="80" y1="49.646" x2="90" y2="49.646" />
+    <line class="v4-status__tick" x1="9" y1="49.646" x2="19" y2="49.646" />
+    <line class="v4-status__hand" data-clock-hour x1="50.5" y1="50.5" x2="50.5" y2="29.5" />
+    <line class="v4-status__hand" data-clock-minute x1="50.5" y1="50.5" x2="50.5" y2="21.7" />
+    <line class="v4-status__hand v4-status__hand--second" data-clock-second x1="50.5" y1="57.6" x2="50.5" y2="16.6" />
+    <circle class="v4-status__hub" cx="50.5" cy="50.5" r="2.976" />
+  </svg>
+  <div class="v4-status__text">
+    <p class="v4-status__time">At <strong data-clock-time>{{ home.status.time }}</strong></p>
+    <p class="v4-status__line">
+      <span data-clock-lead>{{ home.status.lead }}</span>
+      <strong data-clock-status>{{ home.status.headline }}</strong>
+    </p>
+    <p class="v4-status__line" data-clock-detail>{{ home.status.detail }}</p>
+  </div>
+</div>

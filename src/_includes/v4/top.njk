@@ -4,18 +4,13 @@
   THE INTRO IS THE PAGE'S 600px READING COLUMN (456px in at 1512, which is
   the comp). It scrolls with the page.
 
-  THE CLOCK AND THE TOGGLE ARE STICKY, as a pair, like the rail on the left.
-  They sit in .v4-aside-track, a full-height column down the right of
-  .v4-shell, top-aligned with the rail and 24px apart (the comp's 1408 → 1432).
-  Nothing else may enter that column (--v4-aside-clear). As the window
-  narrows the intro slides left to make room, so the pair stays on the right
-  down to 1200; below that the track drops into the flow under the intro and
-  nothing on the right is sticky. See _top.css.
+  THE CLOCK IS STICKY, like the rail on the left. It sits in .v4-aside-track,
+  a full-height column down the right of .v4-shell, top-aligned with the rail,
+  against the 40px edge. Nothing else may enter that column (--v4-aside-clear).
+  As the window narrows the intro slides left to make room, so the clock stays
+  on the right down to 1200; below that the track drops into the flow under
+  the intro and stops being sticky. See _top.css. The markup is v4/status.njk.
 
-  THE CLOCK IS scripts/clock.js, UNCHANGED IN BEHAVIOUR. Every data-clock-*
-  hook below is the one it binds; data-clock-pivot tells it where this face's
-  hub is (V3's face used a different viewBox). The hands are authored pointing
-  at 12 and rotated by the script; the lengths, strokes and hub are the comp's.
 #}
 <header class="v4-top">
   <div class="v4-intro">
@@ -46,26 +41,6 @@
 
 <div class="v4-aside-track">
   <div class="v4-aside">
-    <div class="v4-status" data-clock data-clock-pivot="50.5 50.5">
-      <svg class="v4-status__face" viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
-        <line class="v4-status__tick" x1="50.354" y1="8" x2="50.354" y2="18" />
-        <line class="v4-status__tick" x1="50.354" y1="81" x2="50.354" y2="91" />
-        <line class="v4-status__tick" x1="80" y1="49.646" x2="90" y2="49.646" />
-        <line class="v4-status__tick" x1="9" y1="49.646" x2="19" y2="49.646" />
-        <line class="v4-status__hand" data-clock-hour x1="50.5" y1="50.5" x2="50.5" y2="29.5" />
-        <line class="v4-status__hand" data-clock-minute x1="50.5" y1="50.5" x2="50.5" y2="21.7" />
-        <line class="v4-status__hand v4-status__hand--second" data-clock-second x1="50.5" y1="57.6" x2="50.5" y2="16.6" />
-        <circle class="v4-status__hub" cx="50.5" cy="50.5" r="2.976" />
-      </svg>
-      <div class="v4-status__text">
-        <p class="v4-status__time">At <strong data-clock-time>{{ home.status.time }}</strong></p>
-        <p class="v4-status__line">
-          <span data-clock-lead>{{ home.status.lead }}</span>
-          <strong data-clock-status>{{ home.status.headline }}</strong>
-        </p>
-        <p class="v4-status__line" data-clock-detail>{{ home.status.detail }}</p>
-      </div>
-    </div>
-
-    </div>
+    {% include "v4/status.njk" %}
+  </div>
 </div>

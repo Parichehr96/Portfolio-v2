@@ -29,6 +29,17 @@
   --v4-button: #101012;     /* footer call button */
   --v4-button-text: #FCFBFB;
   --v4-slate-600-60: rgba(71, 85, 105, 0.6); /* experience dates */
+  /* Case study (918:34271) */
+  --v4-ink-60: rgba(13, 18, 51, 0.6);     /* table cells, quote notes */
+  --v4-slate-200: #E2E8F0;                /* border/color-border-primary */
+  --v4-mist-100-50: rgba(243, 246, 248, 0.5);
+  --v4-mist-50: #F9FBFB;
+  --v4-red-600: #D53434;
+  --v4-green-700: #008000;
+  --v4-blue-500: #0088FF;
+  --v4-blue-500-10: rgba(0, 136, 255, 0.1);
+  --v4-ios-blue: #007AFF;
+  --v4-sand-300: #D1C7BD;                 /* the before/after divider */
   --v4-indigo-600: #3F3DB6; /* clock second hand and hub */
 
   /* ---- 2. SEMANTICS ------------------------------------------------------ */
@@ -45,6 +56,16 @@
   --v4-action: var(--v4-button);
   --v4-action-text: var(--v4-button-text);
   --v4-logo-tile: var(--v4-black);
+  --v4-border: var(--v4-slate-200);
+  --v4-text-soft-60: var(--v4-ink-60);
+  --v4-surface-tint: var(--v4-mist-100-50);
+  --v4-surface-faint: var(--v4-mist-50);
+  --v4-negative: var(--v4-red-600);
+  --v4-positive: var(--v4-green-700);
+  --v4-tag: var(--v4-blue-500);
+  --v4-tag-bg: var(--v4-blue-500-10);
+  --v4-cta: var(--v4-ios-blue);
+  --v4-divider: var(--v4-sand-300);
   --v4-mark-active: var(--v4-navy-950);
   --v4-mark-idle: var(--v4-slate-600-50);
   --v4-clock-tick: var(--v4-gray-400);
@@ -67,6 +88,9 @@
   --v4-text-subhead: 16px; /* section labels ("Selected project") */
   --v4-text-display: 24px; /* footer title, on a 1.5 line */
   --v4-font-mono: "Kode Mono", ui-monospace, monospace;
+  --v4-font-num: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --v4-text-quote: 18px;
+  --v4-text-micro: 11px;
   --v4-leading-years: 25.6px;
   --v4-text-lead: 16px;    --v4-leading-lead: 24px;
   --v4-text-body: 15px;    --v4-leading-body: 22px;
@@ -153,6 +177,27 @@
   --v4-footer-cta-gap: 64px;
   --v4-radius-button: 40px;
   --v4-radius-logo: 4px;
+
+  /* Case study layout — 918:34271. Sections are 80 apart; the header, hook
+     and first section 40 apart. Wide blocks keep the comp's widths and give
+     way to the viewport before the page scrolls sideways. */
+  --v4-case-gap: 80px;
+  --v4-case-head-gap: var(--v4-space-10);
+  --v4-case-label: 120px;
+  --v4-case-pager: 64px;
+  --v4-case-pager-top: 47px;
+  --v4-metrics-card: 240px;
+  --v4-metrics-wide: 1008px;
+  --v4-compare-self: 265px;
+  --v4-compare-market: 560px;
+  --v4-compare-wide: 837px;
+  --v4-changes-wide: 874px;
+  --v4-changes-divider: 80px;
+  --v4-quotes-who: 160px;
+  --v4-radius-card: 16px;
+  --v4-radius-cta: 10px;
+  --v4-radius-soft: 8px;
+  --v4-hairline: 0.8px;
 
   --v4-icon-sm: 12px;
   --v4-icon-md: 16px;

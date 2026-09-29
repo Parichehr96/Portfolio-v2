@@ -1,0 +1,62 @@
+{#- What changed — 945:35193. After (2 steps) on the left, before (4 steps) on
+    the right, a divider with the tallies between them. Each field's dot says
+    what happened to it: kept (blue), moved to Advanced (ring), gone (ring,
+    struck through). Stacks into one column when there is no room. -#}
+{%- macro field(f) -%}
+<li class="v4-changes__field v4-changes__field--{{ f[1] }}"><img src="/Assets/v4/case/dot-{{ 'kept' if f[1] == 'kept' else 'moved' }}.svg" alt="" />{% if f[1] == "gone" %}<s>{{ f[0] }}</s>{% else %}{{ f[0] }}{% endif %}</li>
+{%- endmacro -%}
+<div class="v4-changes v4-case__wide">
+  <div class="v4-changes__top">
+    <div>
+      <p class="v4-changes__title">{{ part.title }}</p>
+      <p class="v4-changes__subtitle">{{ part.subtitle }}</p>
+    </div>
+    <ul class="v4-changes__legend">
+      {%- for l in part.legend %}
+      <li><img src="/Assets/v4/case/dot-{{ l.state }}.svg" alt="" />{{ l.label }}</li>
+      {%- endfor %}
+    </ul>
+  </div>
+
+  <div class="v4-changes__grid">
+    <div class="v4-changes__col">
+      <p class="v4-changes__label">{{ part.after.label }}</p>
+      {%- for step in part.after.steps %}
+      <div class="v4-changes__card">
+        <p class="v4-changes__step"><span>{{ step.n }}</span> · {{ step.title }}</p>
+        <ul class="v4-changes__fields">
+          {%- for f in step.fields %}{{ field(f) }}{% endfor %}
+          {%- if step.advanced %}
+          <li class="v4-changes__advanced"><img src="/Assets/v4/case/dot-moved.svg" alt="" />{{ step.advanced }}</li>
+          {%- endif %}
+        </ul>
+        {%- if step.action %}<p class="v4-changes__action">{{ step.action }}</p>{% endif %}
+      </div>
+      {%- endfor %}
+      <div class="v4-changes__summary">
+        {%- for s in part.after.summary %}
+        <p><span class="v4-changes__big">{{ s.from }} → {{ s.to }}</span><span class="v4-changes__small">{{ s.label }}</span></p>
+        {%- endfor %}
+      </div>
+      <p class="v4-changes__note">{{ part.after.note }}</p>
+    </div>
+
+    <div class="v4-changes__divider" aria-hidden="true">
+      {%- for b in part.badges %}<span>{{ b }}</span>{% endfor %}
+    </div>
+
+    <div class="v4-changes__col">
+      <p class="v4-changes__label">{{ part.before.label }}</p>
+      {%- for step in part.before.steps %}
+      <div class="v4-changes__card v4-changes__card--before">
+        <p class="v4-changes__step"><span>{{ step.n }}</span> · {{ step.title }}</p>
+        <div class="v4-changes__cols">
+          {%- for col in step.columns %}
+          <ul class="v4-changes__fields">{% for f in col %}{{ field(f) }}{% endfor %}</ul>
+          {%- endfor %}
+        </div>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</div>

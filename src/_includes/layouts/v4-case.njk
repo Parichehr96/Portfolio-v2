@@ -1,0 +1,92 @@
+---
+layout: layouts/v4.njk
+---
+{#
+  V4 CASE STUDY — Figma 918:34271 (ONTON), the template for every V4 case.
+
+  The page sets `caseKey` in front matter; everything it shows comes from
+  _data/cases/<caseKey>.js. This file decides only structure:
+
+    rail (left, sticky)        the homepage's menu, "Works" lit, linking back
+    clock (left, sticky)       pinned to the bottom of the viewport, where the
+                               comp puts it on case pages (40, 793 at 1512 × 900)
+    Back / Next                either side of the column's top, as the comp does
+    header                     name + live reading progress, cover, facts table
+    hook                       the one-line claim, in a bar
+    sections                   numbered automatically, each with optional blocks
+    footer                     the shared V4 footer
+
+  Wide blocks (metrics, competitors, what changed) run past the 600px column
+  to the right, like the comp; see _case.css.
+#}
+{%- set c = cases[caseKey] -%}
+
+<div class="v4-shell v4-shell--case">
+  {% include "v4/rail.njk" %}
+
+  <div class="v4-case-clock-track">
+    <div class="v4-case-clock">
+      {% include "v4/status.njk" %}
+    </div>
+  </div>
+
+  <article class="v4-case" data-read-article>
+    <header class="v4-case__head">
+      <nav class="v4-case__pager" aria-label="Case studies">
+        <a class="v4-case__back" href="{{ c.back.href }}">
+          <img src="/Assets/v4/case/back.svg" width="24" height="24" alt="" />
+          {{ c.back.label }}
+        </a>
+        <a class="v4-case__next" href="{{ c.next.href }}">
+          {{ c.next.label }}
+          <img src="/Assets/v4/case/next.svg" width="24" height="24" alt="" />
+        </a>
+      </nav>
+
+      <div class="v4-case__title-row">
+        <h1 class="v4-case__name">{{ c.name }}</h1>
+        <span class="v4-case__progress" data-read-progress aria-hidden="true">0%</span>
+      </div>
+
+      {%- set part = c.hero %}
+      {% include "v4/case/image.njk" %}
+
+      <dl class="v4-case__facts">
+        {%- for row in c.meta %}
+        <div class="v4-case__fact">
+          <dt>{{ row.label }}</dt>
+          {%- if row.chip %}
+          <dd><span class="v4-case__chip">{{ row.chip }}</span></dd>
+          {%- else %}
+          <dd><span class="v4-case__fact-value">{% for v in row.values %}<span>{{ v }}</span>{% endfor %}</span></dd>
+          {%- endif %}
+        </div>
+        {%- endfor %}
+      </dl>
+    </header>
+
+    <p class="v4-case__hook">{{ c.hook }}</p>
+
+    {%- for section in c.sections %}
+    <section class="v4-case__section" aria-labelledby="s{{ loop.index }}">
+      <h2 class="v4-case__heading" id="s{{ loop.index }}">
+        <span class="v4-case__num">{% if loop.index < 10 %}0{% endif %}{{ loop.index }}</span>
+        {{ section.title }}
+      </h2>
+      {%- if section.text %}
+      <p class="v4-case__text{% if section.muted %} v4-case__text--muted{% endif %}">{{ section.text }}</p>
+      {%- endif %}
+      {%- if section.paragraphs %}
+      <div class="v4-case__text v4-case__text--stack">
+        {%- for p in section.paragraphs %}<p>{{ p }}</p>{% endfor %}
+      </div>
+      {%- endif %}
+      {%- for part in section.blocks %}
+      {% include "v4/case/" + part.type + ".njk" %}
+      {%- endfor %}
+    </section>
+    {%- endfor %}
+  </article>
+</div>
+
+{% include "v4/footer.njk" %}

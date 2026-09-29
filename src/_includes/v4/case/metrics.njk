@@ -1,0 +1,14 @@
+{#- Metrics — 918:34634. Four stat cards, 240 wide, running past the column.
+    `trend: "up"` adds the green trend arrow after the change. -#}
+<ul class="v4-metrics v4-case__wide">
+  {%- for m in part.items %}
+  <li class="v4-metrics__card">
+    <p class="v4-metrics__value">
+      {{ m.value }}
+      <span class="v4-metrics__change">{{ m.change }}{% if m.trend == "up" %}<img src="/Assets/v4/case/trend-up.svg" width="20" height="20" alt="" />{% endif %}</span>
+    </p>
+    <p class="v4-metrics__label">{{ m.label }}</p>
+    <p class="v4-metrics__from">{{ m.from }}</p>
+  </li>
+  {%- endfor %}
+</ul>

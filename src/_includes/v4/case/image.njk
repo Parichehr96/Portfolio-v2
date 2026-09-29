@@ -1,0 +1,9 @@
+{#- Case image — 918:34306 / 941:35121 / 945:36077, 600 × 393. With no `src`
+    it shows the comp's dotted placeholder and is hidden from screen readers. -#}
+<figure class="v4-case__image">
+  {%- if part.src %}
+  <img src="{{ part.src }}" width="600" height="393" alt="{{ part.alt }}" loading="lazy" decoding="async" />
+  {%- else %}
+  <img src="/Assets/v4/case/placeholder.png" width="600" height="393" alt="" aria-hidden="true" />
+  {%- endif %}
+</figure>

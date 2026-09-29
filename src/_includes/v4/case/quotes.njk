@@ -1,0 +1,17 @@
+{#- Interviews — 941:35179. Who, what kind of organizer, which half of the
+    pattern they show, then their words and the finding. -#}
+<ul class="v4-quotes">
+  {%- for q in part.items %}
+  <li class="v4-quotes__row">
+    <div class="v4-quotes__who">
+      <p class="v4-quotes__name">{{ q.name }}</p>
+      <p class="v4-quotes__role">{{ q.role }}</p>
+      <span class="v4-quotes__tag">{{ q.tag }}</span>
+    </div>
+    <div class="v4-quotes__body">
+      <blockquote class="v4-quotes__quote"><p>{{ q.quote }}</p></blockquote>
+      <p class="v4-quotes__note">{{ q.note }}</p>
+    </div>
+  </li>
+  {%- endfor %}
+</ul>

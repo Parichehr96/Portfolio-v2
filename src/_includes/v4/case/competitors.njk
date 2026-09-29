@@ -1,0 +1,35 @@
+{#- Competitor analysis — 941:35075. ONTON's card beside a real table of the
+    rest of the market. The table scrolls sideways if the screen is too narrow. -#}
+<div class="v4-compare v4-case__wide">
+  <div class="v4-compare__self">
+    <div class="v4-compare__intro">
+      <p class="v4-compare__brand"><img src="{{ part.self.logo }}" width="24" height="24" alt="" />{{ part.self.name }}</p>
+      <p class="v4-compare__value">
+        {{ part.self.value }}
+        <span class="v4-compare__change">{{ part.self.change }}<img src="/Assets/v4/case/trend-red.svg" width="20" height="20" alt="" /></span>
+      </p>
+      <p class="v4-compare__summary">{{ part.self.summary }}</p>
+    </div>
+    <dl class="v4-compare__rows">
+      {%- for r in part.self.rows %}
+      <div><dt>{{ r[0] }}</dt><dd>{{ r[1] }}</dd></div>
+      {%- endfor %}
+    </dl>
+  </div>
+  <div class="v4-compare__market">
+    <p class="v4-compare__title">{{ part.market.title }}</p>
+    <div class="v4-compare__scroll">
+      <table class="v4-compare__table">
+        <thead>
+          <tr><th scope="col"><span class="v4-sr-only">Product</span></th>{% for col in part.market.columns %}<th scope="col">{{ col }}</th>{% endfor %}</tr>
+        </thead>
+        <tbody>
+          {%- for row in part.market.rows %}
+          <tr>{% for cell in row %}{% if loop.first %}<th scope="row">{{ cell }}</th>{% else %}<td>{{ cell }}</td>{% endif %}{% endfor %}</tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="v4-compare__note">{{ part.market.note }}</p>
+  </div>
+</div>
