@@ -3,7 +3,8 @@
    ============================================================================
 
    Every child sits in the reading column, placed by --v4-column-inset like the
-   intro. Vertical rhythm is the comp's: label, 24, the 426px media band, 24,
+   intro. Vertical rhythm is the comp's: label, 57, the photo wheel's middle
+   card, the text 400 below that card's top,
    the five paragraphs 24 apart, 54, then the two cards side by side, 20 apart.
    ========================================================================== */
 
@@ -21,12 +22,57 @@
   margin-inline: var(--v4-column-inset) auto;
 }
 
-/* The empty band the comp leaves for a photo stack: the same placeholder
-   language as the unfinished project panels. */
-.v4-about__media {
-  height: var(--v4-about-media);
-  border-radius: var(--v4-radius-panel);
+/* ---- Photo wheel — 1174:95301 -------------------------------------------
+   The cards sit on an arc around the column's centre. Each card's place on
+   it is one number, --p: 0 is the middle, ±1 and ±2 the comp's neighbours.
+   The curve below goes through the comp's five spots exactly (x 0, ±311,
+   ±604; y 0, 38, 131; tilt 11.25° a step) and, past ±2, carries on in a
+   straight line, so cards off the screen keep moving away. The script only
+   moves --p; the geometry is all here. The band is the text's offset less
+   the flex gap; cards and captions overflow it and the page edge clips them. */
+.v4-about__photos {
+  position: relative;
+  height: calc(var(--v4-about-photos-band) - var(--v4-space-6));
+  margin-top: calc(var(--v4-about-photos-gap) - var(--v4-space-6));
+}
+
+.v4-photos {
+  position: absolute;
+  inset: 0;
+}
+
+.v4-photo {
+  --q: clamp(-2, var(--p), 2);
+  --e: calc(var(--p) - var(--q));
+  --x: calc(var(--q) * 314.1px - var(--q) * var(--q) * var(--q) * 3.08px + var(--e) * 277px);
+  --y: calc(var(--q) * var(--q) * 40.11px - var(--q) * var(--q) * var(--q) * var(--q) * 1.844px
+        + max(var(--e), -1 * var(--e)) * 101.4px);
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--v4-photo-w) / 2);
+  width: var(--v4-photo-w);
+  transform-origin: calc(var(--v4-photo-w) / 2) calc(var(--v4-photo-h) / 2);
+  transform: translate(var(--x), var(--y)) rotate(calc(var(--p) * 11.25deg));
+  will-change: transform;
+}
+
+.v4-photo img {
+  display: block;
+  width: var(--v4-photo-w);
+  height: var(--v4-photo-h);
+  border-radius: var(--v4-photo-radius);
   background: var(--v4-surface-muted);
+  user-select: none;
+}
+
+.v4-photo figcaption {
+  margin-top: var(--v4-space-1);
+  font-size: var(--v4-text-photo);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-body);
+  text-align: center;
+  white-space: nowrap;
+  color: var(--v4-text);
 }
 
 .v4-about__text {
@@ -270,9 +316,3 @@
   }
 }
 
-@media (max-width: 899px) {
-  .v4-about__media {
-    height: auto;
-    aspect-ratio: 600 / 426;
-  }
-}

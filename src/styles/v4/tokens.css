@@ -163,12 +163,17 @@
 
   /* About, process, experience, footer — 911:727 … 911:654. Gaps are the
      comp's own: 201 from the last project row to About, 100 from the folders'
-     names to Process, 120 between the later sections, 107 above the footer. The About media band is the empty 426px
-     the comp leaves under its label. */
+     names to Process, 120 between the later sections, 107 above the footer. The About photo wheel starts 57
+     under its label and the text 400 under that. */
   --v4-about-gap: 201px;
   --v4-block-gap: 120px;
   --v4-footer-gap: 107px;
-  --v4-about-media: 426px;
+  --v4-about-photos-gap: 57px;   /* label to the middle card's top */
+  --v4-about-photos-band: 400px; /* the middle card's top to the text */
+  --v4-photo-w: 224px;
+  --v4-photo-h: 270px;
+  --v4-photo-radius: 32px;
+  --v4-text-photo: 13px;
   --v4-about-cards-gap: 54px;
   --v4-process-gap: 100px;
   --v4-experience-row: 92px;

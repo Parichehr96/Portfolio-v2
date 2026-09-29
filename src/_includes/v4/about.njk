@@ -2,14 +2,26 @@
   ABOUT — Figma 911:727 (label), 911:854 (text), and the two folders that
   open on click (v4/folder.njk).
 
-  The rail's "Parichehr" item scrolls here (#about). The empty band the comp
-  leaves between the label and the text renders as a placeholder, like the
-  unfinished project panels. The comp's floating tool icons (Figma, Notion,
-  Jira, Claude) are hidden in the file, so they are not drawn.
+  The rail's "Parichehr" item scrolls here (#about). Under the label, the
+  photo wheel (1174:95301): cards on an arc, each tilted 11.25° per step from
+  the middle, turning slowly and endlessly (scripts/v4-photos.js). The comp's
+  floating tool icons (Figma, Notion, Jira, Claude) are hidden in the file,
+  so they are not drawn.
 #}
 <section class="v4-about" id="about" aria-labelledby="about-label">
   <h2 class="v4-label" id="about-label">{{ home.about.label }}</h2>
-  <div class="v4-about__media" aria-hidden="true"></div>
+  <div class="v4-about__photos" data-photos>
+    <ul class="v4-photos" aria-label="Photos">
+      {%- for photo in home.about.photos %}
+      <li class="v4-photo" style="--p: {{ loop.index0 - 2 }}">
+        <figure>
+          <img src="{{ photo.src }}" alt="{{ photo.alt }}" width="224" height="270"{% if loop.index0 > 4 %} loading="lazy"{% endif %} decoding="async" draggable="false" />
+          <figcaption>{{ photo.caption }}</figcaption>
+        </figure>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
   <div class="v4-about__text">
     {%- for p in home.about.paragraphs %}
     <p>{{ p }}</p>

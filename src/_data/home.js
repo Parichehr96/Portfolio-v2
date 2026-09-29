@@ -122,10 +122,18 @@ module.exports = {
   },
 
   // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
-  // The comp leaves a tall empty band between the label and the text (where a
-  // photo stack was planned); it renders as a placeholder until that exists.
   about: {
     label: "Parichehr (about me)",
+    // 1174:95301: the photo wheel under the label. Left to right as in the
+    // comp; the third sits in the middle at load. Each image is the comp's own
+    // crop, baked to the 224 × 270 card at 2x. Add more and the wheel grows.
+    photos: [
+      { src: "/Assets/v4/about/photos/thingscon.webp", alt: "Parichehr at her stand at ThingsCon", caption: "THINGs Con- 2025" },
+      { src: "/Assets/v4/about/photos/feedback-feast.webp", alt: "Visitors trying a video-call prototype at Feedback Feast", caption: "Feedback Feast- 2025" },
+      { src: "/Assets/v4/about/photos/society-5.webp", alt: "Parichehr at the Society 5.0 Festival", caption: "Society 5.0 Event - 2025" },
+      { src: "/Assets/v4/about/photos/master-graduation.webp", alt: "Parichehr with flowers and her diploma at her Master's graduation", caption: "Master Graduation - 2026" },
+      { src: "/Assets/v4/about/photos/ai-hackathon.webp", alt: "A small gold trophy from an AI hackathon", caption: "AI Hackathon - 2026" },
+    ],
     paragraphs: [
       "I'm drawn to complex products. Industrial Design taught me to think in systems. My Master's in Interaction Design taught me to ground those systems in evidence.",
       "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to under 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
