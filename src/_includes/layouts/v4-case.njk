@@ -9,8 +9,9 @@ layout: layouts/v4.njk
 
     rail (left, sticky)        the case's sections, the one being read lit;
                                the page's own table of contents
-    Back / Next                either side of the column's top, as the comp does
-    header                     name + live reading progress, cover, facts table
+    bar (top, sticky)          Back · name + live reading progress · Next;
+                               the page scrolls under it
+    header                     cover, facts table
     hook                       the one-line claim, in a bar
     sections                   numbered automatically, each with optional blocks
     footer                     the shared V4 footer
@@ -29,23 +30,27 @@ layout: layouts/v4.njk
   {% include "v4/rail.njk" %}
 
   <article class="v4-case" data-read-article>
-    <header class="v4-case__head">
-      <nav class="v4-case__pager" aria-label="Case studies">
+    {#- THE BAR: Back, the name with its reading progress, and Next on one line.
+        Sticky at the top of the viewport, with a white ground from the top
+        edge down, so the page scrolls under it and it is never covered. -#}
+    <div class="v4-case__bar">
+      <div class="v4-case__bar-inner">
         <a class="v4-case__back" href="{{ c.back.href }}">
           <img src="/Assets/v4/case/back.svg" width="24" height="24" alt="" />
           {{ c.back.label }}
         </a>
+        <div class="v4-case__title-row">
+          <h1 class="v4-case__name">{{ c.name }}</h1>
+          <span class="v4-case__progress" data-read-progress aria-hidden="true">0%</span>
+        </div>
         <a class="v4-case__next" href="{{ c.next.href }}">
           {{ c.next.label }}
           <img src="/Assets/v4/case/next.svg" width="24" height="24" alt="" />
         </a>
-      </nav>
-
-      <div class="v4-case__title-row">
-        <h1 class="v4-case__name">{{ c.name }}</h1>
-        <span class="v4-case__progress" data-read-progress aria-hidden="true">0%</span>
       </div>
+    </div>
 
+    <header class="v4-case__head">
       {%- set part = c.hero %}
       {% include "v4/case/image.njk" %}
 
