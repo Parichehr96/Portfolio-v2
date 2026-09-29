@@ -56,6 +56,40 @@
   will-change: transform;
 }
 
+/* The veils — 1213:17950 (right), 1213:17951 (left). Outside the reading
+   column the wheel sinks behind frosted white, so the middle photos hold the
+   eye and the side panels stay clear. Each veil starts at the column's edge
+   and runs to the page edge: the comp's 45.7 background blur (22.86 in CSS
+   terms, as on the folders) under a white wash that fades in over the first
+   302px, at the comp's stops (its 459px veil, measured from the column).
+   Taller than the comp's 434, since cards further out ride lower on the arc
+   than the comp shows. No z-index: they cover the cards but stay under the
+   rail and the clock, which sit at z 1. */
+.v4-photos__veil {
+  position: absolute;
+  top: var(--v4-photo-veil-top);
+  width: 100vw;
+  height: var(--v4-photo-veil-h);
+  -webkit-backdrop-filter: blur(22.86px);
+  backdrop-filter: blur(22.86px);
+  pointer-events: none;
+  --wash: transparent 0,
+    color-mix(in srgb, var(--v4-surface) 65.3%, transparent) 132.4px,
+    color-mix(in srgb, var(--v4-surface) 88.4%, transparent) 187.6px,
+    color-mix(in srgb, var(--v4-surface) 94.2%, transparent) 236.1px,
+    var(--v4-surface) 302.3px;
+}
+
+.v4-photos__veil--left {
+  right: 100%;
+  background: linear-gradient(to left, var(--wash));
+}
+
+.v4-photos__veil--right {
+  left: 100%;
+  background: linear-gradient(to right, var(--wash));
+}
+
 .v4-photo img {
   display: block;
   width: var(--v4-photo-w);
