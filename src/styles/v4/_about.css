@@ -39,15 +39,40 @@
   color: var(--v4-text);
 }
 
+/* The two folders (918:32037 Tools, 1190:16880 Services), 20 apart, each
+   with its name centred 4 below it. Side by side they are 601 wide, a pixel
+   past the column, as in the comp, so they only wrap on narrow screens. */
 .v4-about__cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--v4-space-6);
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: var(--v4-space-6) var(--v4-space-5);
   margin-top: calc(var(--v4-about-cards-gap) - var(--v4-space-6));
 }
 
-.v4-about__cards img {
+.v4-about__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--v4-space-1);
+  max-width: 100%;
+}
+
+.v4-about__card img {
   height: auto;
+}
+
+.v4-about__card figcaption {
+  font-size: var(--v4-text-body);
+  line-height: var(--v4-leading-years);
+  text-transform: capitalize;
+  color: var(--v4-text-soft);
+}
+
+@media (max-width: 639px) {
+  .v4-about__cards {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 899px) {

@@ -16,7 +16,10 @@
   </div>
   <div class="v4-about__cards">
     {%- for card in home.about.cards %}
-    <img src="{{ card.src }}" width="{{ card.width }}" height="{{ card.height }}" alt="{{ card.alt }}" loading="lazy" decoding="async" />
+    <figure class="v4-about__card">
+      <img src="{{ card.src }}" width="{{ card.width }}" height="{{ card.height }}" alt="{{ card.alt }}" loading="lazy" decoding="async" />
+      <figcaption>{{ card.label }}</figcaption>
+    </figure>
     {%- endfor %}
   </div>
 </section>

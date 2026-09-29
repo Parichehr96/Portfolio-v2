@@ -132,9 +132,10 @@ module.exports = {
       "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
       "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
     ],
+    // 918:32037 and 1190:16880, each with its label underneath.
     cards: [
-      { src: "/Assets/v4/about/tools-card.webp", width: 196, height: 195, alt: "My tools: Figma, Claude and the rest of the kit" },
-      { src: "/Assets/v4/about/services-card.webp", width: 304, height: 195, alt: "Services: strategic, product, and interaction and UX design" },
+      { label: "Tools", src: "/Assets/v4/about/tools-card.webp", width: 196, height: 195, alt: "A folder of the tools I work with: Figma, Claude and the rest of the kit" },
+      { label: "Services", src: "/Assets/v4/about/services-card.webp", width: 385, height: 195, alt: "A folder of services, with Interaction and UX Design on top" },
     ],
   },
 
