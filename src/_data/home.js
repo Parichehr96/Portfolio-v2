@@ -235,6 +235,7 @@ module.exports = {
       },
       {
         company: "TeFarda Studio",
+        href: "https://tafarda.com/",
         logo: "/Assets/v4/experience/tefarda.svg",
         dates: "Nov 2022 - Jun 2023",
         summary: "Digital supply chain platform for automotive spare-part distribution.",
