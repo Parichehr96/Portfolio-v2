@@ -131,7 +131,7 @@ module.exports = {
     photoStart: 3,
     photos: [
       { src: "/Assets/v4/about/photos/thingscon.webp", alt: "Parichehr at her stand at ThingsCon", caption: "THINGs Con- 2025" },
-      { src: "/Assets/v4/about/photos/feedback-feast.webp", alt: "Visitors trying a video-call prototype at Feedback Feast", caption: "Feedback Feast- 2025" },
+      { src: "/Assets/v4/about/photos/feedback-feast.webp", alt: "Visitors trying a video-call prototype at Feedback Feast", caption: "Feedback Feast - 2025" },
       { src: "/Assets/v4/about/photos/society-5.webp", alt: "Parichehr at the Society 5.0 Festival", caption: "Society 5.0 Event - 2025" },
       { src: "/Assets/v4/about/photos/master-graduation.webp", alt: "Parichehr with flowers and her diploma at her Master's graduation", caption: "Master Graduation - 2026" },
       { src: "/Assets/v4/about/photos/ai-hackathon.webp", alt: "A small gold trophy from an AI hackathon", caption: "AI Hackathon - 2026" },
