@@ -162,14 +162,15 @@
   --v4-radius-panel: 20px;
 
   /* About, process, experience, footer — 911:727 … 911:654. Gaps are the
-     comp's own: 201 from the last project row to About, 120 between the later
-     sections, 107 above the footer. The About media band is the empty 426px
+     comp's own: 201 from the last project row to About, 100 from the folders'
+     names to Process, 120 between the later sections, 107 above the footer. The About media band is the empty 426px
      the comp leaves under its label. */
   --v4-about-gap: 201px;
   --v4-block-gap: 120px;
   --v4-footer-gap: 107px;
   --v4-about-media: 426px;
-  --v4-about-cards-gap: 31px;
+  --v4-about-cards-gap: 54px;
+  --v4-process-gap: 100px;
   --v4-footer-height: 423px;
   --v4-footer-sky: 407px;
   --v4-footer-bottom: 102px;

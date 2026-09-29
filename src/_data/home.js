@@ -131,6 +131,7 @@ module.exports = {
       "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to under 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
       "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
       "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
+      "Click to open the folder and see my ...",
     ],
     // The two folders — 918:32037 / 1194:17746 (Tools, open state revised 29 Sep) and 1190:16880 /
     // 1194:17745 (Services). Click opens, click again closes; see
