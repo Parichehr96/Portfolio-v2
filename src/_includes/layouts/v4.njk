@@ -18,15 +18,13 @@
 
   <link rel="stylesheet" href="/styles/v4/index.css" />
   {%- if (pageId or 'home') == 'home' %}
-  {#- The homepage's entrance (scripts/v4-reveal.js, _reveal.css). Flagged
-      here, before first paint, so the blocks start hidden rather than flash
-      in and out. Not for reduced motion; and if the script never runs, the
-      timer shows everything anyway. -#}
+  {#- The homepage's entrance (_reveal.css, scripts/v4-reveal.js). Flagged
+      here, before first paint, so the first screen's blocks start hidden and
+      rise in by CSS alone, whatever the scripts do. Not for reduced motion. -#}
   <script>
     (function (d) {
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       d.classList.add("js-reveal");
-      setTimeout(function () { d.classList.add("is-revealed"); }, 4000);
     })(document.documentElement);
   </script>
   {%- endif %}

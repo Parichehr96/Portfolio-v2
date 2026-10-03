@@ -196,6 +196,7 @@
   /* The homepage entrance (_reveal.css): quick, but eased to a soft stop. */
   --v4-reveal-rise: 12px;
   --v4-reveal-time: 0.65s;
+  --v4-reveal-stagger: 0.085s;
   --v4-reveal-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   /* Case study layout — 918:34271. Sections are 80 apart; the header, hook

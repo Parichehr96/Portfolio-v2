@@ -3,24 +3,51 @@
    ============================================================================
 
    Only with html.js-reveal (set in layouts/v4.njk before first paint, home
-   only, never for reduced motion). Each block starts a little low and
-   transparent; scripts/v4-reveal.js adds .is-in, with a short stagger in
-   --reveal-delay, as it comes into view: at load the rail, name, bio, meta,
-   clock, then the first project's name and its thumbnails one by one;
-   further down, each heading and project row as it is scrolled to.
-   html.is-revealed (the safety timer) shows everything at once.
+   only, never for reduced motion). Each block rises in from a little low and
+   transparent: at load the rail, name (its logo drawing itself), bio, meta,
+   clock, "Selected project", then the first project's name and its
+   thumbnails one by one; further down, each heading and project row as it
+   is scrolled to.
    ========================================================================== */
 
+/* THE FIRST SCREEN is CSS only: fixed delays, no script involved, so it
+   always finishes (about 1.4s) however late the page's scripts run. */
 .js-reveal :is(
   .v4-rail,
   .v4-intro__name,
   .v4-intro__bio,
   .v4-intro__meta,
   .v4-status,
-  .v4-label,
-  .v4-project__head,
-  .v4-project__panel
+  .v4-work > .v4-label:first-child,
+  .v4-work > .v4-project:first-of-type .v4-project__head,
+  .v4-work > .v4-project:first-of-type .v4-project__panel
 ) {
+  animation: v4-rise var(--v4-reveal-time) var(--v4-reveal-ease) both;
+  animation-delay: calc(var(--n, 0) * var(--v4-reveal-stagger));
+}
+
+.js-reveal .v4-intro__name { --n: 1; }
+.js-reveal .v4-intro__bio { --n: 2; }
+.js-reveal .v4-intro__meta { --n: 3; }
+.js-reveal .v4-status { --n: 4; }
+.js-reveal .v4-work > .v4-label:first-child { --n: 5; }
+.js-reveal .v4-work > .v4-project:first-of-type .v4-project__head { --n: 6; }
+.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(1) { --n: 7; }
+.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(2) { --n: 8; }
+.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(3) { --n: 9; }
+
+@keyframes v4-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--v4-reveal-rise));
+  }
+}
+
+/* FURTHER DOWN, scripts/v4-reveal.js hides only what is still below the
+   screen when it runs (.is-pending), and brings it in as it is scrolled to
+   (.is-in, staggered by --reveal-delay). If the script never runs, nothing
+   is ever hidden. */
+.js-reveal .is-pending {
   opacity: 0;
   transform: translateY(var(--v4-reveal-rise));
   transition:
@@ -28,17 +55,7 @@
     transform var(--v4-reveal-time) var(--v4-reveal-ease) var(--reveal-delay, 0s);
 }
 
-.js-reveal .is-in,
-.js-reveal.is-revealed :is(
-  .v4-rail,
-  .v4-intro__name,
-  .v4-intro__bio,
-  .v4-intro__meta,
-  .v4-status,
-  .v4-label,
-  .v4-project__head,
-  .v4-project__panel
-) {
+.js-reveal .is-pending.is-in {
   opacity: 1;
   transform: none;
 }
@@ -57,14 +74,13 @@
   stroke-dashoffset: 1;
 }
 
-.js-reveal .v4-intro__name.is-in .v4-intro__logo path,
-.js-reveal.is-revealed .v4-intro__logo path {
+.js-reveal .v4-intro__logo path {
   animation:
     v4-logo-trace 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards,
     v4-logo-fill 0.3s ease-out forwards;
   animation-delay:
-    calc(var(--reveal-delay, 0s) + 0.18s + var(--i) * 0.09s),
-    calc(var(--reveal-delay, 0s) + 0.58s + var(--i) * 0.09s);
+    calc(var(--v4-reveal-stagger) + 0.18s + var(--i) * 0.09s),
+    calc(var(--v4-reveal-stagger) + 0.58s + var(--i) * 0.09s);
 }
 
 .v4-intro__logo path:nth-child(1) { --i: 0; }

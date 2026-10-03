@@ -1,11 +1,11 @@
-/* V4 homepage entrance — _reveal.css, layouts/v4.njk.
+/* V4 homepage entrance, below the first screen — _reveal.css.
  *
- * Blocks arrive one after another as they come into view. Whatever comes
- * into view together (the whole first screen at load, or a project row
- * scrolled to) is revealed in page order, STAGGER apart, the clock right
- * after the intro. A project's
- * thumbnails follow its name, one by one, even those still off to the right
- * in the strip. Runs only when the head script set html.js-reveal.
+ * The first screen rises in by CSS alone. This handles the rest: the later
+ * section headings and project rows. As it starts, it hides (.is-pending)
+ * only those still below the screen, so nothing visible ever blinks out and,
+ * if it never runs, nothing is ever hidden. Each is brought in (.is-in) as
+ * it is scrolled to; a project's thumbnails follow its name, one by one.
+ * Positions are measured on every scroll, not left to an observer.
  */
 (function () {
   "use strict";
@@ -13,50 +13,48 @@
   var root = document.documentElement;
   if (!root.classList.contains("js-reveal")) return;
 
-  var STAGGER = 0.085; // s
-  var blocks = Array.prototype.slice.call(document.querySelectorAll(
-    ".v4-rail, .v4-intro__name, .v4-intro__bio, .v4-intro__meta, .v4-status, .v4-label, .v4-project__head"
-  ));
+  var STAGGER = 0.085; // s, --v4-reveal-stagger
+  var LINE = 0.92;     // in view once its top passes 92% down the screen
 
-  // The clock comes earlier in the page source (its dock is a side column)
-  // but should arrive with the intro, just after the location and email.
-  var meta = document.querySelector(".v4-intro__meta");
-  function anchor(el) {
-    return meta && el.classList.contains("v4-status") ? meta : el;
+  var firstRow = document.querySelector(".v4-work > .v4-project");
+  var firstLabel = document.querySelector(".v4-work > .v4-label");
+  var watched = Array.prototype.slice.call(document.querySelectorAll(".v4-label, .v4-project__head"))
+    .filter(function (el) {
+      return el !== firstLabel && !(firstRow && firstRow.contains(el));
+    });
+
+  function panelsOf(head) {
+    var row = head.closest(".v4-project");
+    return row ? Array.prototype.slice.call(row.querySelectorAll(".v4-project__panel")) : [];
   }
 
-  function show(list) {
+  // Hide only what is still below the screen.
+  var pending = watched.filter(function (el) {
+    if (el.getBoundingClientRect().top < window.innerHeight) return false;
+    el.classList.add("is-pending");
+    if (el.classList.contains("v4-project__head")) {
+      panelsOf(el).forEach(function (p) { p.classList.add("is-pending"); });
+    }
+    return true;
+  });
+
+  function check() {
+    if (!pending.length) return;
+    var line = window.innerHeight * LINE;
+    var list = [];
+    pending = pending.filter(function (el) {
+      if (el.getBoundingClientRect().top >= line) return true;
+      list.push(el);
+      if (el.classList.contains("v4-project__head")) list.push.apply(list, panelsOf(el));
+      return false;
+    });
     list.forEach(function (el, i) {
-      el.style.setProperty("--reveal-delay", (i * STAGGER).toFixed(2) + "s");
+      el.style.setProperty("--reveal-delay", (i * STAGGER).toFixed(3) + "s");
       el.classList.add("is-in");
     });
   }
 
-  if (!("IntersectionObserver" in window)) {
-    root.classList.add("is-revealed");
-    return;
-  }
-
-  var io = new IntersectionObserver(function (entries) {
-    var batch = entries
-      .filter(function (e) { return e.isIntersecting; })
-      .map(function (e) { io.unobserve(e.target); return e.target; })
-      .sort(function (a, b) {
-        var pa = anchor(a), pb = anchor(b);
-        if (pa === pb) return a === pa ? -1 : 1;
-        return pa.compareDocumentPosition(pb) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
-      });
-    var list = [];
-    batch.forEach(function (el) {
-      list.push(el);
-      // A project's thumbnails follow its name.
-      if (el.classList.contains("v4-project__head")) {
-        var row = el.closest(".v4-project");
-        if (row) list.push.apply(list, row.querySelectorAll(".v4-project__panel"));
-      }
-    });
-    if (list.length) show(list);
-  }, { rootMargin: "0px 0px -8% 0px" });
-
-  blocks.forEach(function (el) { io.observe(el); });
+  check();
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
 })();
