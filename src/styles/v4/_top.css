@@ -92,9 +92,12 @@
 }
 
 /* 1155:10691 is a 20px box with the mark centred in it, like the rail's was. */
+/* The comp's 20 × 20 logo frame; the mark is centred inside it (top.njk). */
 .v4-intro__logo {
-  box-sizing: content-box;
-  padding: calc((var(--v4-icon-lg) - 17.36px) / 2) calc((var(--v4-icon-lg) - 11.58px) / 2);
+  flex: none;
+  width: var(--v4-icon-lg);
+  height: var(--v4-icon-lg);
+  overflow: visible;
 }
 
 .v4-intro__bio {

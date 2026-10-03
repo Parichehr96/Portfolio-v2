@@ -15,12 +15,15 @@
       {#- 1155:10698: the logo follows the name, 4px on, centred on its line. -#}
       <h1 class="v4-intro__name">
         {{ site.name }}
-        {#- 528:68221. Inline so it can draw itself in at load (_reveal.css):
-            each shape's outline is traced, then filled. Same paths as
-            icons/logo.svg. -#}
-        <svg class="v4-intro__logo" width="11.58" height="17.36" viewBox="0 0 23.1529 34.7285" aria-hidden="true" focusable="false">
+        {#- 528:68221, in the comp's 20 × 20 frame with the mark centred and
+            room around it (so its traced outline is never clipped). Inline
+            so it can draw itself in at load (_reveal.css): each shape's
+            outline is traced, then filled. Same paths as icons/logo.svg. -#}
+        <svg class="v4-intro__logo" width="20" height="20" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <g transform="translate(8.4236 2.6358)">
           <path pathLength="1" d="M23.1529 11.5765C23.1529 16.2466 20.3859 20.2729 16.4028 22.0998C18.0847 20.7144 19.1558 18.6127 19.1558 16.2607C19.1558 12.1289 15.8494 8.76894 11.7355 8.68518C11.6809 8.68141 11.6311 8.68141 11.5765 8.68141C11.5219 8.68141 11.472 8.68141 11.4174 8.68518C9.89082 8.768 8.68235 10.0311 8.68235 11.5755V26.0461C8.68235 30.8395 4.79341 34.7285 0 34.7285V11.5765C0 5.184 5.184 0 11.5765 0C17.9689 0 23.1529 5.184 23.1529 11.5765Z"/>
           <path pathLength="1" d="M13.1235 15.3647C14.7494 13.2313 15.6176 9.85246 14.3767 8.61157C13.1358 7.37069 10.4495 8.0451 8.37671 10.1179C6.30389 12.1907 5.88265 17.1239 7.12354 18.3647C8.36442 19.6056 11.5356 17.4484 13.1235 15.3647Z"/>
+          </g>
         </svg>
       </h1>
       <p class="v4-intro__bio">

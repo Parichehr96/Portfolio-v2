@@ -65,6 +65,7 @@
   fill: var(--v4-logo);
   stroke: var(--v4-logo);
   stroke-width: 0.7;
+  stroke-linejoin: round;
 }
 
 .js-reveal .v4-intro__logo path {
