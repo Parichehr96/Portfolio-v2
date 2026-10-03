@@ -34,7 +34,10 @@
     ".v4-footer__title",
     ".v4-footer__body",
     ".v4-footer__button",
-    ".v4-footer__meta"
+    ".v4-footer__meta",
+    // case studies: the hook, then each section's heading, text and blocks
+    ".v4-case__hook",
+    ".v4-case__section > *"
   ].join(", ")))
     .filter(function (el) {
       return el !== firstLabel && !(firstRow && firstRow.contains(el));

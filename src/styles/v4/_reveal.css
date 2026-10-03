@@ -35,6 +35,23 @@
 .js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(2) { --n: 8; }
 .js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(3) { --n: 9; }
 
+/* A case study's first screen: the rail, then the name with Back and Next,
+   the cover, the facts. Everything after rises in as it is scrolled to. */
+.js-reveal :is(
+  .v4-case__bar-inner,
+  .v4-case__title-row,
+  .v4-case__head > .v4-case__image,
+  .v4-case__facts
+) {
+  animation: v4-rise var(--v4-intro-time) var(--v4-reveal-ease) both;
+  animation-delay: calc(var(--n, 0) * var(--v4-intro-stagger));
+}
+
+.js-reveal .v4-case__bar-inner,
+.js-reveal .v4-case__title-row { --n: 1; }
+.js-reveal .v4-case__head > .v4-case__image { --n: 2; }
+.js-reveal .v4-case__facts { --n: 3; }
+
 @keyframes v4-rise {
   from {
     opacity: 0;

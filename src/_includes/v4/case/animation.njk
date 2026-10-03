@@ -1,0 +1,8 @@
+{#- Case animation — the image block's 600 × 393 slot, holding a page that
+    animates itself (Assets/embeds/...). The page is 620 × 406.1 and scales to
+    whatever width it is given, so the iframe only has to hold that ratio.
+    `loading="lazy"` keeps its ~1.7 MB off the first paint; the page starts
+    playing once half of it is on screen, so nobody scrolls in mid-way. -#}
+<figure class="v4-case__animation">
+  <iframe src="{{ part.src }}" title="{{ part.title }}" loading="lazy" scrolling="no"></iframe>
+</figure>

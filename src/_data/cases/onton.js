@@ -201,7 +201,15 @@ module.exports = {
     {
       title: "The new flow",
       nav: "The new flow",
-      blocks: [{ type: "image" }],
+      blocks: [
+        {
+          type: "animation",
+          // Built from Figma 1316:24717 in Portfolio-v2 (onton-hero-animation).
+          // A self-contained page; it starts when half of it is on screen.
+          src: "/Assets/embeds/onton/hero-animation.html",
+          title: "The new event-creation flow: a poster, a name, a start time and a venue fill one event card, which lands in the organizer's events",
+        },
+      ],
     },
     {
       title: "Reflection",

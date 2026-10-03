@@ -17,8 +17,9 @@
   {% include "partials/head-seo.njk" %}
 
   <link rel="stylesheet" href="/styles/v4/index.css" />
-  {%- if (pageId or 'home') == 'home' %}
-  {#- The homepage's entrance (_reveal.css, scripts/v4-reveal.js). Flagged
+  {%- if (pageId or 'home') == 'home' or caseKey %}
+  {#- The entrance (_reveal.css, scripts/v4-reveal.js), on the homepage and
+      the case studies. Flagged
       here, before first paint, so the first screen's blocks start hidden and
       rise in by CSS alone, whatever the scripts do. Not for reduced motion. -#}
   <script>

@@ -9,19 +9,23 @@ layout: layouts/v4.njk
 
     rail (left, sticky)        the case's sections, the one being read lit;
                                the page's own table of contents
-    bar (top, sticky)          Back · name + live reading progress · Next;
-                               the page scrolls under it
+    bar (sticky, see-through)  Back and Next, pinned either side of the
+                               column; the name below them scrolls away
+                               with the page, and the reading progress
+                               sits at the top of the rail
     header                     cover, facts table
     hook                       the one-line claim, in a bar
     sections                   numbered automatically, each with optional blocks
     footer                     the shared V4 footer
 
-  Wide blocks (metrics, competitors, what changed) run past the 600px column
-  to the right, like the comp; see _case.css.
+  Wide blocks (metrics, competitors, what changed) stay in the 600px column
+  and scroll sideways; see _case.css. Nothing enters the margins, which is
+  what lets Back and Next float there with no ground behind them.
 #}
 {%- set c = cases[caseKey] -%}
 {#- The left menu lists this case's sections (see v4/rail.njk). -#}
 {%- set railItems = [] -%}
+{%- set railProgress = true -%}
 {%- for section in c.sections -%}
   {%- set railItems = (railItems.push({ label: section.nav or section.title, target: section.title | slugify }), railItems) -%}
 {%- endfor -%}
@@ -30,24 +34,26 @@ layout: layouts/v4.njk
   {% include "v4/rail.njk" %}
 
   <article class="v4-case" data-read-article>
-    {#- THE BAR: Back, the name with its reading progress, and Next on one line.
-        Sticky at the top of the viewport, with a white ground from the top
-        edge down, so the page scrolls under it and it is never covered. -#}
+    {#- THE BAR: Back and Next, either side of the name's row. A see-through
+        layer over the whole article whose row sticks at the top, so on wide
+        screens the two stay in the margins while the page, the name included,
+        scrolls past between them. Below 1200 there are no margins: the row
+        stays put and scrolls away with the name. -#}
     <div class="v4-case__bar">
       <div class="v4-case__bar-inner">
         <a class="v4-case__back" href="{{ c.back.href }}">
           <img src="/Assets/v4/case/back.svg" width="24" height="24" alt="" />
           {{ c.back.label }}
         </a>
-        <div class="v4-case__title-row">
-          <h1 class="v4-case__name">{{ c.name }}</h1>
-          <span class="v4-case__progress" data-read-progress aria-hidden="true">0%</span>
-        </div>
         <a class="v4-case__next" href="{{ c.next.href }}">
           {{ c.next.label }}
           <img src="/Assets/v4/case/next.svg" width="24" height="24" alt="" />
         </a>
       </div>
+    </div>
+
+    <div class="v4-case__title-row">
+      <h1 class="v4-case__name">{{ c.name }}</h1>
     </div>
 
     <header class="v4-case__head">

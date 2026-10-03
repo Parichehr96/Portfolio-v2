@@ -18,9 +18,15 @@
   so the menu becomes the case's table of contents and the scroll-spy lights
   the section being read. `railBase: "/"` instead makes the items plain links
   back to the homepage's sections, with `railActive` naming the lit one.
+
+  PROGRESS. `railProgress` puts the case study's reading progress (the "23%"
+  pill, scripts/v4-progress.js) at the top of the menu.
 #}
 <div class="v4-rail-track">
   <nav class="v4-rail" aria-label="Page">
+    {%- if railProgress %}
+    <span class="v4-case__progress v4-rail__progress" data-read-progress aria-hidden="true">0%</span>
+    {%- endif %}
     <ul class="v4-rail__list">
       {%- for item in (railItems or home.rail) %}
       <li>

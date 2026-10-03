@@ -6,11 +6,10 @@
    column placed by --v4-column-inset, the shared footer. Content starts at the
    40px edge (the comp's y=40).
 
-   THE COLUMN RULE is applied to children, not to the article, so a block can
-   break out of it: .v4-case__wide keeps its comp width (metrics 1008,
-   competitors 837, what changed 874) from the column's left edge, and gives
-   way to the viewport (40px from its edge) before the page could scroll
-   sideways.
+   THE COLUMN RULE is applied to children, not to the article. The wide
+   blocks (metrics 1008, competitors 837, what changed 874) do NOT break out
+   of it: each stays the column's width and scrolls sideways inside it, its
+   content kept at the comp width on one row, cut off at the column's edge.
    ========================================================================== */
 
 /* The bar carries the top 40 itself, so the shell starts at 0. The rail sits
@@ -24,6 +23,7 @@
 }
 
 .v4-case {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--v4-case-gap);
@@ -37,14 +37,19 @@
   margin-inline: var(--v4-column-inset) auto;
 }
 
-.v4-case__section > .v4-case__wide {
-  --wide: var(--v4-column);
-  width: min(var(--wide), calc(100% - var(--v4-column-inset) - var(--v4-edge)));
+/* The wide blocks keep the column's width and scroll. A thin bar, so it
+   reads as "there is more" without competing with the content. */
+.v4-case__scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v4-border) transparent;
 }
 
-.v4-metrics.v4-case__wide { --wide: var(--v4-metrics-wide); }
-.v4-compare.v4-case__wide { --wide: var(--v4-compare-wide); }
-.v4-changes.v4-case__wide { --wide: var(--v4-changes-wide); }
+.v4-case__scroll:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 4px;
+}
 
 /* Header, hook and first section sit 40 apart; sections 80. */
 .v4-case__head,
@@ -53,24 +58,35 @@
 }
 
 /* ---- Bar --------------------------------------------------------------- */
-/* Page-wide and sticky at 0: 40 above the name row, 24 below it, on white, so
-   whatever scrolls up ends at the bar's bottom edge (92 at 1512, where the
-   cover starts). Back and Next hang either side of the column, 24 off it,
-   centred on the name. */
+/* A see-through layer the height of the article. Its row is the name's row
+   (40 down, one line of the name tall) and sticks there, so Back and Next,
+   hanging either side of the column 24 off it, stay put while everything
+   scrolls past between them. No ground: nothing enters the margins. */
 .v4-case__bar {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  inset: 0;
   z-index: 3;
-  /* Its own 24 of bottom padding is the gap to the cover. */
-  margin-bottom: calc(0px - var(--v4-case-gap));
-  padding: var(--v4-edge) 0 var(--v4-space-6);
-  background: var(--v4-surface);
+  pointer-events: none;
 }
 
 .v4-case__bar-inner {
-  position: relative;
+  position: sticky;
+  top: var(--v4-edge);
+  height: calc(var(--v4-text-lead) * 1.45);
+  margin-top: var(--v4-edge);
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
   margin-inline: var(--v4-column-inset) auto;
+}
+
+.v4-case__back,
+.v4-case__next {
+  pointer-events: auto;
+}
+
+/* The name's row, in the page: 40 from the top, 24 above the cover. */
+.v4-case__title-row {
+  padding-top: var(--v4-edge);
+  margin-bottom: calc(var(--v4-space-6) - var(--v4-case-gap));
 }
 
 .v4-case__back,
@@ -119,6 +135,13 @@
   gap: var(--v4-space-5);
 }
 
+/* The reading progress, at the top of the rail with a little more air
+   under it than between the menu's items. */
+.v4-rail__progress {
+  align-self: flex-start;
+  margin-bottom: var(--v4-space-3);
+}
+
 .v4-case__name {
   font-size: var(--v4-text-lead);
   font-weight: var(--v4-weight-semibold);
@@ -147,6 +170,23 @@
   height: auto;
   aspect-ratio: 600 / 393;
   object-fit: cover;
+}
+
+/* The animation sits where an image would, on the comp's 600 × 393 slot. Its
+   own frame is white with a 20/620 radius, so on this white page it needs the
+   placeholder's edge to read as a frame; the radius is a percentage of each
+   side so it stays 20/620 at any column width. */
+.v4-case__animation {
+  border: 1px solid var(--v4-border);
+  border-radius: 3.2258% / 4.9249%;
+  overflow: hidden;
+}
+
+.v4-case__animation iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 620 / 406.1;
+  border: 0;
 }
 
 /* The facts table: 120px labels, values on a dashed rule. */
@@ -252,7 +292,6 @@
 /* ---- Metrics — 918:34634 ------------------------------------------------- */
 .v4-metrics {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--v4-space-6) var(--v4-space-4);
   padding-block: var(--v4-space-6);
 }
@@ -261,6 +300,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--v4-space-2);
+  flex: none;
   width: var(--v4-metrics-card);
   padding-inline: var(--v4-space-4);
   border-right: 1px solid var(--v4-border);
@@ -308,7 +348,6 @@
 /* ---- Competitors — 941:35075 --------------------------------------------- */
 .v4-compare {
   display: flex;
-  flex-wrap: wrap;
   align-items: stretch;
   gap: var(--v4-space-3);
 }
@@ -324,6 +363,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 10px;
+  flex: none;
   width: var(--v4-compare-self);
   background: var(--v4-surface-tint);
 }
@@ -412,9 +452,8 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--v4-space-5);
-  flex: 1 1 var(--v4-compare-market);
-  max-width: var(--v4-compare-market);
-  min-width: 0;
+  flex: none;
+  width: var(--v4-compare-market);
   background: var(--v4-surface);
 }
 
@@ -548,7 +587,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--v4-space-8);
-  container-type: inline-size;
 }
 
 .v4-changes__top {
@@ -589,9 +627,12 @@
   gap: 6px;
 }
 
+/* After | divider | before at the comp's 874, side by side; the grid is the
+   scroller, so its fixed tracks run past the column and scroll. */
 .v4-changes__grid {
+  --col: calc((var(--v4-changes-wide) - var(--v4-changes-divider) - 2 * var(--v4-space-6)) / 2);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--v4-changes-divider) minmax(0, 1fr);
+  grid-template-columns: var(--col) var(--v4-changes-divider) var(--col);
   gap: var(--v4-space-6);
 }
 
@@ -766,55 +807,58 @@
 }
 
 /* No room for three columns: after, then the tallies in a row, then before. */
-@container (max-width: 700px) {
-  .v4-changes__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .v4-changes__divider {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--v4-space-2);
-    height: auto;
-    margin: 0;
-    background: none;
-  }
-
-  .v4-changes__divider span {
-    position: static;
-    transform: none;
-  }
-}
-
-@container (max-width: 420px) {
-  .v4-changes__cols {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
-  .v4-case__section > .v4-case__wide {
-    width: min(var(--wide), calc(100% - 2 * var(--v4-space-4)));
-  }
-
-  /* No room either side of the column: Back · name · Next share the row. */
+  /* No room either side of the column: Back · name · Next share the name's
+     row, and it scrolls away with the page. */
   .v4-case__bar-inner {
-    display: flex;
-    align-items: center;
-    gap: var(--v4-space-4);
+    position: relative;
+    top: 0;
   }
 
-  .v4-case__back,
-  .v4-case__next {
-    position: static;
+  .v4-case__back {
+    right: auto;
+    left: 0;
     width: auto;
-    transform: none;
+  }
+
+  .v4-case__next {
+    left: auto;
+    right: 0;
+    width: auto;
   }
 
   .v4-case__title-row {
+    padding-inline: calc(var(--v4-case-pager) + var(--v4-space-4));
+  }
+}
+
+@media (max-width: 899px) {
+  /* The rail is a bar across the top here: the pill leads its row. */
+  .v4-rail:has(.v4-rail__progress) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--v4-space-4);
+  }
+
+  .v4-rail__progress {
+    align-self: center;
+    flex: none;
+    margin-bottom: 0;
+  }
+
+  /* A case has a dozen sections: they run on in one line and scroll
+     sideways after the pill, rather than wrapping in a 48px bar. */
+  .v4-rail:has(.v4-rail__progress) .v4-rail__list {
     flex: 1;
     min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .v4-rail:has(.v4-rail__progress) .v4-rail__item {
+    white-space: nowrap;
   }
 }
 

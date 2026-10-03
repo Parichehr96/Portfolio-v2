@@ -1,11 +1,12 @@
 {#- What changed — 945:35193. After (2 steps) on the left, before (4 steps) on
     the right, a divider with the tallies between them. Each field's dot says
     what happened to it: kept (blue), moved to Advanced (ring), gone (ring,
-    struck through). Stacks into one column when there is no room. -#}
+    struck through). The title and legend stay in the column; the after /
+    before comparison stays side by side and scrolls sideways inside it. -#}
 {%- macro field(f) -%}
 <li class="v4-changes__field v4-changes__field--{{ f[1] }}"><img src="/Assets/v4/case/dot-{{ 'kept' if f[1] == 'kept' else 'moved' }}.svg" alt="" />{% if f[1] == "gone" %}<s>{{ f[0] }}</s>{% else %}{{ f[0] }}{% endif %}</li>
 {%- endmacro -%}
-<div class="v4-changes v4-case__wide">
+<div class="v4-changes">
   <div class="v4-changes__top">
     <div>
       <p class="v4-changes__title">{{ part.title }}</p>
@@ -18,7 +19,7 @@
     </ul>
   </div>
 
-  <div class="v4-changes__grid">
+  <div class="v4-changes__grid v4-case__scroll" tabindex="0">
     <div class="v4-changes__col">
       <p class="v4-changes__label">{{ part.after.label }}</p>
       {%- for step in part.after.steps %}

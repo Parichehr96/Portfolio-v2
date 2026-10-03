@@ -1,6 +1,7 @@
-{#- Metrics — 918:34634. Four stat cards, 240 wide, running past the column.
+{#- Metrics — 918:34634. Four stat cards, 240 wide, on one row that scrolls
+    sideways inside the column.
     `trend: "up"` adds the green trend arrow after the change. -#}
-<ul class="v4-metrics v4-case__wide">
+<ul class="v4-metrics v4-case__scroll" tabindex="0">
   {%- for m in part.items %}
   <li class="v4-metrics__card">
     <p class="v4-metrics__value">
