@@ -94,7 +94,7 @@
 /* 1155:10691 is a 20px box with the mark centred in it, like the rail's was. */
 .v4-intro__logo {
   box-sizing: content-box;
-  padding: calc((var(--v4-icon-lg) - 17.36px) / 2) calc((var(--v4-icon-lg) - 12.5px) / 2);
+  padding: calc((var(--v4-icon-lg) - 17.36px) / 2) calc((var(--v4-icon-lg) - 11.58px) / 2);
 }
 
 .v4-intro__bio {

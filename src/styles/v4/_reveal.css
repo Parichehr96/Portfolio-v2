@@ -64,7 +64,7 @@
 .v4-intro__logo path {
   fill: var(--v4-logo);
   stroke: var(--v4-logo);
-  stroke-width: 0.35;
+  stroke-width: 0.7;
 }
 
 .js-reveal .v4-intro__logo path {
@@ -84,7 +84,6 @@
 
 .v4-intro__logo path:nth-child(1) { --i: 0; }
 .v4-intro__logo path:nth-child(2) { --i: 1; }
-.v4-intro__logo path:nth-child(3) { --i: 2; }
 
 @keyframes v4-logo-trace {
   to { stroke-dashoffset: 0; }
