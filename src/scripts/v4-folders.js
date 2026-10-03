@@ -40,6 +40,10 @@
   folders.forEach(function (folder) {
     var name = (folder.getAttribute("aria-label") || "").split(":")[0];
 
+    // A physics folder (Services) is opened by hover and tap instead, in
+    // scripts/v4-folder-physics.js.
+    if (folder.hasAttribute("data-physics")) return;
+
     folder.addEventListener("click", function () {
       var open = !folder.classList.contains("is-open");
       folder.classList.toggle("is-open", open);

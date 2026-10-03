@@ -196,6 +196,9 @@ module.exports = {
       {
         id: "services",
         label: "Services",
+        // Hover tosses the cards out like the Tools folder's <tool-folder>
+        // (scripts/v4-folder-physics.js); tap on touch, Enter/Space too.
+        physics: true,
         width: 384.7,
         back: "/Assets/v4/about/folders/services-back.svg",
         still: { src: "/Assets/v4/about/folders/services-closed.webp", x: -0.3, w: 385 },

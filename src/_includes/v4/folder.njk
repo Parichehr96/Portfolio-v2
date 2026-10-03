@@ -36,7 +36,7 @@
 </figure>
 {%- else %}
 <figure class="v4-about__card">
-  <button class="v4-folder v4-folder--{{ folder.id }}" type="button" data-folder aria-expanded="false"
+  <button class="v4-folder v4-folder--{{ folder.id }}{% if folder.physics %} v4-folder--physics{% endif %}" type="button" data-folder{% if folder.physics %} data-physics{% endif %} aria-expanded="false"
           aria-label="{{ folder.label }}: open the folder"
           style="--w: {{ folder.width }}px">
     <img class="v4-folder__back" src="{{ folder.back }}" alt="" />

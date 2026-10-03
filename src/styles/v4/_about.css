@@ -381,6 +381,24 @@ tool-folder:not(:defined) {
   transition: opacity 0.08s ease 0s;
 }
 
+/* A physics folder (Services, scripts/v4-folder-physics.js): the script moves
+   the cards frame by frame and takes .is-open off only once they have all
+   landed, so the CSS moves and delays above stand down. */
+.v4-folder--physics {
+  --move: 0s;
+}
+
+.v4-folder--physics .v4-folder__item,
+.v4-folder--physics.is-open .v4-folder__item {
+  transform: none;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.v4-folder--physics:hover {
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v4-folder__still,
   .v4-folder,
