@@ -1,0 +1,80 @@
+/* ============================================================================
+   ENTRANCE — the homepage's blocks arrive one after another
+   ============================================================================
+
+   Only with html.js-reveal (set in layouts/v4.njk before first paint, home
+   only, never for reduced motion). Each block starts a little low and
+   transparent; scripts/v4-reveal.js adds .is-in, with a short stagger in
+   --reveal-delay, as it comes into view: at load the rail, name, bio, meta,
+   clock, then the first project's name and its thumbnails one by one;
+   further down, each heading and project row as it is scrolled to.
+   html.is-revealed (the safety timer) shows everything at once.
+   ========================================================================== */
+
+.js-reveal :is(
+  .v4-rail,
+  .v4-intro__name,
+  .v4-intro__bio,
+  .v4-intro__meta,
+  .v4-status,
+  .v4-label,
+  .v4-project__head,
+  .v4-project__panel
+) {
+  opacity: 0;
+  transform: translateY(var(--v4-reveal-rise));
+  transition:
+    opacity var(--v4-reveal-time) var(--v4-reveal-ease) var(--reveal-delay, 0s),
+    transform var(--v4-reveal-time) var(--v4-reveal-ease) var(--reveal-delay, 0s);
+}
+
+.js-reveal .is-in,
+.js-reveal.is-revealed :is(
+  .v4-rail,
+  .v4-intro__name,
+  .v4-intro__bio,
+  .v4-intro__meta,
+  .v4-status,
+  .v4-label,
+  .v4-project__head,
+  .v4-project__panel
+) {
+  opacity: 1;
+  transform: none;
+}
+
+/* The logo after the name draws itself: each shape's outline is traced
+   quickly, then it fills in. Starts as the name arrives. */
+.v4-intro__logo path {
+  fill: var(--v4-logo);
+  stroke: var(--v4-logo);
+  stroke-width: 0.35;
+}
+
+.js-reveal .v4-intro__logo path {
+  fill-opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.js-reveal .v4-intro__name.is-in .v4-intro__logo path,
+.js-reveal.is-revealed .v4-intro__logo path {
+  animation:
+    v4-logo-trace 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    v4-logo-fill 0.25s ease-out forwards;
+  animation-delay:
+    calc(var(--reveal-delay, 0s) + 0.15s + var(--i) * 0.08s),
+    calc(var(--reveal-delay, 0s) + 0.5s + var(--i) * 0.08s);
+}
+
+.v4-intro__logo path:nth-child(1) { --i: 0; }
+.v4-intro__logo path:nth-child(2) { --i: 1; }
+.v4-intro__logo path:nth-child(3) { --i: 2; }
+
+@keyframes v4-logo-trace {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes v4-logo-fill {
+  to { fill-opacity: 1; }
+}
