@@ -25,7 +25,16 @@
   to move; on close it comes back only once they are all home.
 
   It is a real <button> with aria-expanded, so it works from the keyboard.
+
+  A folder with `component: "tool-folder"` (Tools) is drawn by that web
+  component instead (scripts/vendor/tool-folder.js, loaded in v4/about.njk).
 #}
+{%- if folder.component == "tool-folder" %}
+<figure class="v4-about__card">
+  <tool-folder class="v4-tool-folder"></tool-folder>
+  <figcaption>{{ folder.label }}</figcaption>
+</figure>
+{%- else %}
 <figure class="v4-about__card">
   <button class="v4-folder v4-folder--{{ folder.id }}" type="button" data-folder aria-expanded="false"
           aria-label="{{ folder.label }}: open the folder"
@@ -60,3 +69,4 @@
   </button>
   <figcaption>{{ folder.label }}</figcaption>
 </figure>
+{%- endif %}

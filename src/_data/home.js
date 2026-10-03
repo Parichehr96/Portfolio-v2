@@ -165,6 +165,11 @@ module.exports = {
       {
         id: "tools",
         label: "Tools",
+        // Drawn by <tool-folder> (scripts/vendor/tool-folder.js, a friend's
+        // component from Figma 1322:16543): hover tosses the icons out with
+        // spring and gravity physics, tap does it on touch. The layered data
+        // below is the old click-to-open version, kept for going back to it.
+        component: "tool-folder",
         width: 196.3,
         back: "/Assets/v4/about/folders/tools-back.svg",
         // The comp's own render of the closed folder, shown at rest.

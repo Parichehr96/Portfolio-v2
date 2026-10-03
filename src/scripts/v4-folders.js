@@ -15,15 +15,23 @@
 
   var folders = Array.prototype.slice.call(document.querySelectorAll("[data-folder]"));
   var row = document.querySelector(".v4-about__cards");
+  var toolFolders = Array.prototype.slice.call(document.querySelectorAll("tool-folder"));
+  var TOOL_FOLDER_W = 196.3; // <tool-folder> at scale 1
 
   function fit() {
-    if (!row || !folders.length) return;
+    if (!row || !(folders.length || toolFolders.length)) return;
     var widest = 0;
     folders.forEach(function (f) {
       widest = Math.max(widest, parseFloat(getComputedStyle(f).getPropertyValue("--w")) || 0);
     });
+    if (toolFolders.length) widest = Math.max(widest, TOOL_FOLDER_W);
     var scale = widest ? Math.min(1, row.clientWidth / widest) : 1;
     folders.forEach(function (f) { f.style.zoom = scale < 1 ? scale.toFixed(4) : ""; });
+    // <tool-folder> scales itself (its `scale` attribute), so the same factor.
+    toolFolders.forEach(function (t) {
+      if (scale < 1) t.setAttribute("scale", scale.toFixed(4));
+      else t.removeAttribute("scale");
+    });
   }
 
   fit();
