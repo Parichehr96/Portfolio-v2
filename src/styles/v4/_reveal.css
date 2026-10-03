@@ -11,7 +11,7 @@
    ========================================================================== */
 
 /* THE FIRST SCREEN is CSS only: fixed delays, no script involved, so it
-   always finishes (about 1.4s) however late the page's scripts run. */
+   always finishes (2s) however late the page's scripts run. */
 .js-reveal :is(
   .v4-rail,
   .v4-intro__name,
@@ -22,8 +22,8 @@
   .v4-work > .v4-project:first-of-type .v4-project__head,
   .v4-work > .v4-project:first-of-type .v4-project__panel
 ) {
-  animation: v4-rise var(--v4-reveal-time) var(--v4-reveal-ease) both;
-  animation-delay: calc(var(--n, 0) * var(--v4-reveal-stagger));
+  animation: v4-rise var(--v4-intro-time) var(--v4-reveal-ease) both;
+  animation-delay: calc(var(--n, 0) * var(--v4-intro-stagger));
 }
 
 .js-reveal .v4-intro__name { --n: 1; }
@@ -79,8 +79,8 @@
     v4-logo-trace 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards,
     v4-logo-fill 0.3s ease-out forwards;
   animation-delay:
-    calc(var(--v4-reveal-stagger) + 0.18s + var(--i) * 0.09s),
-    calc(var(--v4-reveal-stagger) + 0.58s + var(--i) * 0.09s);
+    calc(var(--v4-intro-stagger) + 0.25s + var(--i) * 0.09s),
+    calc(var(--v4-intro-stagger) + 0.65s + var(--i) * 0.09s);
 }
 
 .v4-intro__logo path:nth-child(1) { --i: 0; }
