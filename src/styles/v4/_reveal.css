@@ -7,7 +7,10 @@
    transparent; scripts/v4-reveal.js adds .is-in, with a short stagger in
    --reveal-delay, as it comes into view: at load the rail, name, bio, meta,
    clock, then the first project's name and its thumbnails one by one;
-   further down, each heading and project row as it is scrolled to.
+   further down, everything else as it is scrolled to: each heading and
+   project row, the photo wheel, each About paragraph and folder, the process
+   diagram, each Experience role, and the footer's lines.
+   KEEP THIS LIST AND THE ONE IN scripts/v4-reveal.js THE SAME.
    html.is-revealed (the safety timer) shows everything at once.
    ========================================================================== */
 
@@ -19,7 +22,16 @@
   .v4-status,
   .v4-label,
   .v4-project__head,
-  .v4-project__panel
+  .v4-project__panel,
+  .v4-about__photos,
+  .v4-about__text > p,
+  .v4-about__card,
+  .v4-process__diagram,
+  .v4-experience__role,
+  .v4-footer__title,
+  .v4-footer__body,
+  .v4-footer__button,
+  .v4-footer__meta
 ) {
   opacity: 0;
   transform: translateY(var(--v4-reveal-rise));
@@ -37,7 +49,16 @@
   .v4-status,
   .v4-label,
   .v4-project__head,
-  .v4-project__panel
+  .v4-project__panel,
+  .v4-about__photos,
+  .v4-about__text > p,
+  .v4-about__card,
+  .v4-process__diagram,
+  .v4-experience__role,
+  .v4-footer__title,
+  .v4-footer__body,
+  .v4-footer__button,
+  .v4-footer__meta
 ) {
   opacity: 1;
   transform: none;
@@ -77,4 +98,14 @@
 
 @keyframes v4-logo-fill {
   to { fill-opacity: 1; }
+}
+
+/* Once its entrance is over (.is-done, scripts/v4-reveal.js), the footer
+   button gets its quick hover lift back (_footer.css), at its own speed. */
+.js-reveal .v4-footer__button.is-done {
+  transition: transform 0.2s ease;
+}
+
+.js-reveal .v4-footer__button.is-done:hover {
+  transform: translateY(-1px);
 }
