@@ -3,7 +3,8 @@
 
   Inside .v4-shell, so the sticky rail and clock keep riding down beside it.
   The rows come from home.work.projects; each is v4/project-row.njk, and each
-  row that has a `label` draws it above itself ("Selected project", "My works").
+  row that has a `label` draws it above itself (only the first: "Selected
+  project").
 #}
 <section class="v4-work" id="work" aria-label="Work">
   {%- for project in home.work.projects %}

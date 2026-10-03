@@ -46,8 +46,9 @@ module.exports = {
   // ---- Work — 1155:10689 and 911:730 (the four project rows) -----------------
   // One entry per row, in display order; v4/project-row.njk renders each.
   //
-  // `label` is the small uppercase heading a row may carry above it ("Selected
-  // project" over the first, "My works" over the rest, as in the comp).
+  // `label` is the small uppercase heading a row may carry above it; only the
+  // first has one ("Selected project"). The comp's "My works" over the rest
+  // is dropped: one heading for the whole list is enough.
   //
   // `desc` is a list of runs so each can be set the way the comp sets it:
   //   lead  the dark opening claim            (medium, near-black)
@@ -77,7 +78,6 @@ module.exports = {
       },
       {
         id: "onton",
-        label: "My works",
         name: "Onton",
         href: "/work/onton/",
         verified: true,
