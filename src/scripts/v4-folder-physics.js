@@ -3,9 +3,10 @@
  * v4/folder.njk.
  *
  * Hover tosses the cards up out of the folder: springs carry each to its
- * open spot with one soft overshoot, and they sway and lean away from the
- * cursor. Move away and they hop, then fall back in under gravity, bounce
- * and squash as they land, and the folder recoils. Tap toggles on touch;
+ * spot floating just above the folder, with one soft overshoot, and they
+ * sway and lean away from the cursor. Move away and they drop straight back
+ * at once (strong gravity, no stagger), bounce and squash as they land, and
+ * the folder recoils. Tap toggles on touch;
  * Enter or Space toggles from the keyboard. Reduced motion jumps between the
  * two states.
  *
@@ -17,12 +18,14 @@
 (function () {
   "use strict";
 
-  var STAGGER_OUT = 1.6, STAGGER_IN = 1.1;
+  var STAGGER_OUT = 1.6;
   var OUT = { k: 85, c: 11 }, SPIN = { k: 60, c: 9 };
   var SQUASH = { k: 320, c: 18 }, THUD = { k: 380, c: 20 };
-  var GRAVITY = 1300, RESTITUTION = 0.3, TOSS = 340;
+  var RESTITUTION = 0.3, TOSS = 340;
   var PUSH_RADIUS = 80, PUSH = 16, LEAN = 0.04;
-  var D_OUT = 0.06, D_IN = 0.05;     // s between cards, before the staggers
+  var D_OUT = 0.06;                  // s between cards going out
+  var GRAVITY_IN = 6000;             // the drop home: quick, so leaving feels instant
+  var FLOAT_GAP = 12;                // px between the lowest card and the folder
 
   function spring(pos, vel, target, s, dt) {
     return vel + (s.k * (target - pos) - s.c * vel) * dt;
@@ -48,9 +51,18 @@
         el: el, x: 0, y: 0, vx: 0, vy: 0, r: 0, vr: 0, q: 0, vq: 0, mode: "rest", wait: 0,
         dx: num(el, "--tx") - fx, dy: num(el, "--ty") - fy,
         cx: fx + el.offsetWidth / 2, cy: fy + el.offsetHeight / 2,
-        dOut: i * D_OUT, dIn: (n - 1 - i) * D_IN,
+        h: el.offsetHeight, ty: num(el, "--ty"),
+        dOut: i * D_OUT,
         sway: 3 + i * 0.4, phase: i * 1.7
       };
+    });
+
+    // Open, the cards float above the folder: their open layout as drawn,
+    // lifted so the lowest one ends FLOAT_GAP above the folder's top edge.
+    var lowest = Math.max.apply(null, cards.map(function (c) { return c.ty + c.h; }));
+    var lift = -lowest - FLOAT_GAP;
+    cards.forEach(function (c) {
+      c.dy += lift;
     });
 
     function label() {
@@ -65,7 +77,12 @@
       if (open) folder.classList.add("is-open");
       if (reduced.matches) return snap();
       cards.forEach(function (c) {
-        c.wait = (open ? c.dOut * STAGGER_OUT : c.dIn * STAGGER_IN) + 0.0001;
+        if (open) {
+          c.wait = c.dOut * STAGGER_OUT + 0.0001;
+        } else {
+          c.wait = 0;                       // going home starts at once
+          if (c.mode !== "rest") drop(c);
+        }
       });
       kick();
     }
@@ -80,8 +97,8 @@
 
     function drop(c) {
       c.mode = "fall";
-      c.vy = Math.min(c.vy, 0) - 110;
-      var tHit = (-c.vy + Math.sqrt(c.vy * c.vy - 2 * GRAVITY * Math.min(c.y, -1))) / GRAVITY;
+      c.vy = Math.max(c.vy, 0);               // no hop: straight down
+      var tHit = (-c.vy + Math.sqrt(c.vy * c.vy - 2 * GRAVITY_IN * Math.min(c.y, -1))) / GRAVITY_IN;
       c.vx = -c.x / tHit;
       c.vr += (Math.random() - 0.5) * 100;
     }
@@ -110,7 +127,7 @@
         c.vy = spring(c.y, c.vy, ty, OUT, dt);
         c.vr = spring(c.r, c.vr, c.vx * LEAN, SPIN, dt);
       } else if (c.mode === "fall") {
-        c.vy += GRAVITY * dt;
+        c.vy += GRAVITY_IN * dt;
         c.vr = spring(c.r, c.vr, c.vx * LEAN, SPIN, dt);
         if (c.y + c.vy * dt >= 0 && c.vy > 0) {
           var impact = c.vy;
@@ -118,6 +135,7 @@
           c.vy = -impact * RESTITUTION;
           c.vq += Math.min(impact, 1400) * 0.9;
           thud.v += Math.min(impact, 1400) * 0.12;
+          c.vr = 0;
           if (Math.abs(c.vy) < 50) { c.vy = 0; c.mode = "land"; }
         }
       } else if (c.mode === "land") {
