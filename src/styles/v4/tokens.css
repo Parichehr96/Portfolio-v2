@@ -195,7 +195,7 @@
 
   /* The homepage entrance (_reveal.css): quick, but eased to a soft stop. */
   --v4-reveal-rise: 12px;
-  --v4-reveal-time: 0.65s;
+  --v4-reveal-time: 1.3s;
   --v4-reveal-stagger: 0.085s;
   /* The first screen, a little slower: 9 steps apart + one block = 2s. */
   --v4-intro-time: 0.92s;
