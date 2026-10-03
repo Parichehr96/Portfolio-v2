@@ -46,6 +46,9 @@ module.exports = {
   // ---- Work — 1155:10689 and 911:730 (the four project rows) -----------------
   // One entry per row, in display order; v4/project-row.njk renders each.
   //
+  // `soon: true`: the case study is not ready. The name is not a link and a
+  // small "(Coming Soon)" follows it. Swap it for `href` once it is live.
+  //
   // `label` is the small uppercase heading a row may carry above it; only the
   // first has one ("Selected project"). The comp's "My works" over the rest
   // is dropped: one heading for the whole list is enough.
@@ -63,7 +66,7 @@ module.exports = {
         id: "connect2wow",
         label: "Selected project",
         name: "Connect2WOW",
-        href: "/work/connect2wow/",
+        soon: true,
         verified: true,
         years: "2024-2025",
         desc: [
@@ -96,7 +99,7 @@ module.exports = {
       {
         id: "challenquiz",
         name: "Challenquiz",
-        href: "/work/challenquiz/",
+        soon: true,
         verified: true,
         years: "2024-2025",
         desc: [
@@ -110,6 +113,7 @@ module.exports = {
         // WOW design system text is written.
         id: "wow-design-system",
         name: "WOW design system",
+        soon: true,
         verified: true,
         years: "2024-2025",
         desc: [
@@ -246,7 +250,6 @@ module.exports = {
       },
       {
         company: "ChallenQuiz",
-        href: "/work/challenquiz/",
         logo: "/Assets/v4/experience/challenquiz.svg",
         logoDark: true,
         dates: "Jul 2023 - Dec 2023",

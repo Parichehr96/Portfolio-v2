@@ -16,13 +16,16 @@
   <header class="v4-project__head">
     <div class="v4-project__title-row">
       <h3 class="v4-project__name" id="project-{{ project.id }}">
-        {%- if project.href %}
+        {%- if project.href and not project.soon %}
         <a class="v4-project__link" href="{{ project.href }}">{{ project.name }}</a>
         {%- else %}
         <span class="v4-project__link">{{ project.name }}</span>
         {%- endif %}
         {%- if project.verified %}
         <img class="v4-project__verified" src="/Assets/v4/icons/verified.svg" width="16" height="16" alt="Shipped" />
+        {%- endif %}
+        {%- if project.soon %}
+        <span class="v4-project__soon">(Coming Soon)</span>
         {%- endif %}
       </h3>
       <p class="v4-project__years">{{ project.years }}</p>

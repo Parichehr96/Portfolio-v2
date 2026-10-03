@@ -78,6 +78,14 @@ a.v4-project__link:hover {
   border-bottom-style: solid;
 }
 
+/* A case study not ready yet: a quiet note after the name (home.js `soon`). */
+.v4-project__soon {
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-regular);
+  line-height: var(--v4-leading-caption);
+  color: var(--v4-text-faint);
+}
+
 .v4-project__verified {
   flex: none;
   width: var(--v4-icon-md);
