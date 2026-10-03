@@ -60,11 +60,11 @@
 .js-reveal .v4-intro__name.is-in .v4-intro__logo path,
 .js-reveal.is-revealed .v4-intro__logo path {
   animation:
-    v4-logo-trace 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-    v4-logo-fill 0.25s ease-out forwards;
+    v4-logo-trace 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    v4-logo-fill 0.3s ease-out forwards;
   animation-delay:
-    calc(var(--reveal-delay, 0s) + 0.15s + var(--i) * 0.08s),
-    calc(var(--reveal-delay, 0s) + 0.5s + var(--i) * 0.08s);
+    calc(var(--reveal-delay, 0s) + 0.18s + var(--i) * 0.09s),
+    calc(var(--reveal-delay, 0s) + 0.58s + var(--i) * 0.09s);
 }
 
 .v4-intro__logo path:nth-child(1) { --i: 0; }

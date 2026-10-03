@@ -13,7 +13,7 @@
   var root = document.documentElement;
   if (!root.classList.contains("js-reveal")) return;
 
-  var STAGGER = 0.07; // s
+  var STAGGER = 0.085; // s
   var blocks = Array.prototype.slice.call(document.querySelectorAll(
     ".v4-rail, .v4-intro__name, .v4-intro__bio, .v4-intro__meta, .v4-status, .v4-label, .v4-project__head"
   ));

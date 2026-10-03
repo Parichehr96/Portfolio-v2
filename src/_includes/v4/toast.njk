@@ -6,7 +6,8 @@
   when coming back from a case study. A page cannot tell a hard refresh from a
   normal one, so scripts/v4-toast.js notes the hard-refresh keys as they are
   pressed, and the check below reads that note. The check runs before the toast
-  is drawn, so a skipped toast never flashes. It is per tab (sessionStorage):
+  is drawn, so a skipped toast never flashes; a load that shows it starts at
+  the top of the page, so the toast never lies over the intro. It is per tab (sessionStorage):
   a new tab or a new visit shows it again.
 
   Once up, it is gone after 10 seconds: the darker band behind it is the timer,
@@ -23,6 +24,9 @@
     var hard = sessionStorage.getItem("v4-hard-reload");
     sessionStorage.removeItem("v4-hard-reload");
     if (seen && !hard) document.documentElement.classList.add("is-toast-skipped");
+    // Showing it: start at the top. Otherwise the browser restores the last
+    // scroll position, which leaves the sticky toast lying over the intro.
+    else if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     sessionStorage.setItem("v4-toast-seen", "1");
   } catch (e) {}
 </script>
