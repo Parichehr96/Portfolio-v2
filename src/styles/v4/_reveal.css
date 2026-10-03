@@ -6,8 +6,7 @@
    only, never for reduced motion). Each block rises in from a little low and
    transparent: at load the rail, name (its logo drawing itself), bio, meta,
    clock, "Selected project", then the first project's name and its
-   thumbnails one by one; further down, each heading and project row as it
-   is scrolled to.
+   thumbnails one by one; further down, everything as it is scrolled to.
    ========================================================================== */
 
 /* THE FIRST SCREEN is CSS only: fixed delays, no script involved, so it
