@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONTON — creating an event</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:transparent;}
+  /* THE FRAME — Figma 1290:23685, each step a 620 x 406.1 white frame with a
+     20 radius. Everything animates inside it and is clipped by it. The radius
+     is given as a percentage of each side so it stays 20/620 of the frame at
+     any width the host scales it to. */
+  .frame{position:relative;width:100%;max-width:620px;aspect-ratio:620/406.1;margin:0 auto;
+    background:#fff;border-radius:3.2258%/4.9249%;overflow:hidden;}
+  .stage{display:block;width:100%;height:100%;}
+
+  /* Every string in the exports is outlined, so a typed line is one <path>
+     per glyph and typing is revealing them in order. */
+  .g,.v,.w{opacity:0;}
+  .is-typed{opacity:1;}
+  .caret{fill:#000;}
+  .caret--ink{fill:#13212F;}
+  .caret.is-blinking{animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* Anything that arrives: fade up 12px into place. */
+  .rise{opacity:0;transform:translateY(12px);
+    transition:opacity .189s ease,transform .189s cubic-bezier(.2,.7,.2,1);}
+  .rise.is-in{opacity:1;transform:none;}
+  .fades{transition:opacity .126s ease;}
+  .fades.is-gone{opacity:0;}
+
+  /* 01 → 02: the question leaves upward. */
+  #q{transition:transform .294s cubic-bezier(.55,0,.75,0);}
+  #q.is-out{transform:translateY(-260px);}
+
+  /* 02 → 03: the field swaps to its uploading state. */
+  #busy{opacity:0;}
+  #busy.is-in{opacity:1;}
+  #busy.is-in.is-gone{opacity:0;}
+  /* The only live text: the outlined "25%" can't count, so it is rebuilt in
+     the comp's face, right-aligned to where the export's string ends.
+     Proportional digits on purpose: tabular ones run wider than the comp. */
+  #pct{font-family:"Figtree",sans-serif;font-weight:500;font-size:12.4px;
+    fill:#475569;}
+
+  /* 03 → 04: the poster appears inside the upload field at its own framing
+     (a square, the field's height) and the field closes in around it until
+     the field IS the thumbnail. JS drives it; the real poster takes over once
+     they match, which is exact: same box, same border. */
+  #poster{opacity:0;}
+  #poster.is-in{opacity:1;}
+
+  /* 05 → 06: the typed name flies from the field to the card's title slot.
+     The two outlines are the same string at slightly different sizes, so one
+     transform (computed in the build) maps the field's box onto the title's,
+     and the card's own outline takes over once it lands. */
+  #val{transition:transform .45s cubic-bezier(.65,0,.35,1);}
+  #val.is-flown{transform:%%VAL_FLY%%;}
+  #title{opacity:0;}
+  #title.is-in{opacity:1;}
+
+  /* 06 → 07: the wheel opens over the fields; each column rolls a row into
+     place, staggered left to right. */
+  .col{transform:translateY(31px);transition:transform .378s cubic-bezier(.2,.8,.2,1);}
+  #picker.is-in .col{transform:none;}
+  /* Hour, minute and AM/PM are live so they can spin to the chosen time.
+     Tabular digits match the comp's outlines exactly (overlaid and checked). */
+  .wheel-text{font-family:"Figtree",sans-serif;font-weight:400;font-size:16px;
+    font-variant-numeric:tabular-nums;fill:#292D32;}
+
+  /* 06 → 07: START's clock is tapped — the icon dips and a ripple spreads —
+     and the wheel opens from it. */
+  #clock{transform-box:fill-box;transform-origin:center;transition:transform .12s ease;}
+  #clock.is-pressed{transform:scale(.82);}
+
+  /* 07 → 08, in two moves. First the set wheel folds back into the field it
+     came from — its selected row (centre 310,210.5) onto START's time field
+     (centre 436,174.05) — and that field now reads 9:00 PM. Then the values
+     travel into the card's date line (targets computed in the build) while
+     the fields' boxes and labels fade. */
+  /* The wheel opens OUT of the tapped field and folds back INTO it: one box,
+     the START time field (centre 436,174.05), at both ends. */
+  #picker{transform:translate(436px,174.05px) scale(.4375) translate(-310px,-210.5px);opacity:0;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .12s ease;}
+  #picker.is-in{transform:none;opacity:1;}
+  #picker.is-in.is-into-field{transform:translate(436px,174.05px) scale(.4375) translate(-310px,-210.5px);opacity:0;
+    transition:transform .45s cubic-bezier(.65,0,.35,1),opacity .25s ease .2s;}
+  #stime-old{transition:opacity .2s ease;}
+  #stime-new{font-family:"Figtree",sans-serif;font-weight:400;font-size:14.6px;fill:#13212F;
+    opacity:0;transition:opacity .2s ease;}
+  .dt-chrome{transition:opacity .3s ease;}
+  #dt.is-folding .dt-chrome{opacity:0;}
+  .card-line{opacity:0;transition:opacity .168s ease;}
+  .card-line.is-in{opacity:1;}
+
+  /* 08 → 09: the location field takes focus. */
+  #loc-stroke{transition:stroke .126s ease;}
+  #loc-ph{transition:opacity .084s ease;}
+  #loc.is-focused #loc-stroke{stroke:#8E8E93;}
+  #loc.is-focused #loc-ph{opacity:0;}
+
+  /* 09 → 10: the location is outlined only at the card's size, so it is typed
+     in the field as that outline scaled up to the field's text (its placeholder
+     box: 141.6,177.95 at scroll 334, x1.2875), and flies home by scaling back to 1. */
+  .w{fill:#13212F;transition:fill .45s ease,fill-opacity .45s ease;}
+  #loc-val{transform:translate(141.6px,177.951px) scale(1.2875) translate(-243px,-89.1px);
+    transition:transform .45s cubic-bezier(.25,.8,.25,1);}
+  /* It lands in the card's own ink, so the swap to the card's outline is
+     invisible rather than a colour pop. */
+  #loc-val.is-flown{transform:translate(0px,0px) scale(1) translate(0px,0px);}
+  #loc-val.is-flown .w{fill:#475569;fill-opacity:.9;}
+
+  /* The live venue search under the location field. Its box, border and
+     shadow are the comp's suggestions menu (09); the rows are live text. */
+  .menu-label{font-family:"Figtree",sans-serif;font-weight:500;font-size:12px;fill:#475569;}
+  .menu-row text{font-family:"Figtree",sans-serif;font-weight:400;font-size:14px;fill:#475569;}
+  .menu-row .hit{font-weight:500;fill:#13212F;}
+  .menu-row .row-bg{opacity:0;transition:opacity .084s ease;}
+  .menu-row.is-picked .row-bg{opacity:1;}
+
+  /* 09 → 10: as the card fills to 100% it drops to the centre (40 → 169.05). */
+  #event{transition:transform .252s cubic-bezier(.65,0,.35,1),opacity .147s ease .084s;}
+  #event.is-centred{transform:translateY(129.051px);}
+  /* 10 → 11: ONE card grows. The small card scales 1.5x about its centre onto
+     the big one's (310,74 → 310,203.05), and each part of it (background,
+     thumbnail, title, date and location lines) gets its own correcting
+     transform, measured at runtime, so it lands exactly on 11's version of
+     itself. The swap to 11's card is then invisible; only its "Hosting" badge
+     is new, and it fades in. */
+  #event.is-grown{transform:translate(310px,203.05px) scale(1.5) translate(-310px,-74px);
+    transition:transform .8s cubic-bezier(.4,0,.2,1);}
+  #card11{opacity:0;}
+  #card11.is-in{opacity:1;}
+  #c11-badge{opacity:0;transition:opacity .3s ease;}
+  #card11.is-badged #c11-badge{opacity:1;}
+  /* 11 → 12: it loses its background and settles into its row in the phone,
+     mapped thumbnail-onto-thumbnail (82,159 @90 → 198.4,259.5 @42.65). */
+  #card11-bg{transition:opacity .126s ease;}
+  #card11.is-plain #card11-bg{opacity:0;}
+  #card11.is-docked{transform:translate(198.4px,259.5px) scale(.4739) translate(-82px,-159px);
+    transition:transform .378s cubic-bezier(.3,.7,.2,1);}
+  #phone{transform:translateY(420px);transition:transform .378s cubic-bezier(.3,.7,.2,1);}
+  #phone.is-up{transform:none;}
+  #phone-item{opacity:0;}
+  #phone-item.is-in{opacity:1;}
+
+  /* 11: the confetti is Portfolio-v4's animated SVG, laid over the frame in
+     Figma's box for it (145,35, 331 square). It runs on its own SMIL clock, so
+     it is held at 0 until the toast arrives. */
+  #confetti{position:absolute;left:23.387%;top:8.618%;width:53.387%;height:81.507%;
+    pointer-events:none;opacity:0;transition:opacity .126s ease;}
+  #confetti.is-on{opacity:1;}
+</style>
+</head>
+<body>
+  <div class="frame">
+  <svg class="stage" viewBox="0 0 620 406.1" fill="none" role="img"
+       aria-label="Creating an event in ONTON: a poster uploaded, a name typed in, a start and end date and time picked, then a location">
+    <defs>
+      <clipPath id="poster-clip"><rect x="158" y="44" width="60" height="60" rx="10"/></clipPath>
+      <!-- the card's highlight is its progress bar: one full-width shape,
+           revealed left to right by this clip's width -->
+      <clipPath id="hl-clip"><rect id="hl" x="150" y="40" width="0" height="68"/></clipPath>
+      %%MASKS%%
+      %%DEFS7_9%%
+      <!-- the location dropdown unrolls downward through this -->
+      <!-- 03 → 04: the morphing upload box, and the image clipped inside it -->
+      <clipPath id="pm-clip"><rect id="pm-rect" x="150.5" y="167.551" width="319" height="71" rx="9.5"/></clipPath>
+      <clipPath id="pm-sq"><rect id="pm-sq-rect" x="0" y="0" width="0" height="0" rx="9.5"/></clipPath>
+      <clipPath id="list-clip"><rect x="0" y="-200" width="620" height="583.05"/></clipPath>
+      <clipPath id="dd-clip"><rect id="dd-reveal" x="120" y="229" width="380" height="0"/></clipPath>
+      %%PIN%%
+      %%FIG_DEFS%%
+    </defs>
+
+    <!-- 01 — the question -->
+    <g id="q">
+        %%Q_GLYPHS%%
+      <rect class="caret is-blinking" id="q-caret" x="%%Q_START%%" y="174" width="1.5" height="23"/>
+    </g>
+
+    <!-- 04 + — the event card at the top -->
+    <g id="event">
+      <rect id="event-bg" clip-path="url(#hl-clip)" x="150" y="40" width="320" height="68" rx="12" fill="#475569" fill-opacity="0.04"/>
+      <g id="poster">
+        <g clip-path="url(#poster-clip)">
+          <rect x="158.083" y="44.0825" width="59.835" height="59.835" rx="3.9175" stroke="#D9D9D9" stroke-width="0.165"/>
+          <image id="poster-img" x="158" y="44" width="60" height="60" preserveAspectRatio="xMidYMid slice" href="data:image/jpeg;base64,%%POSTER%%"/>
+        </g>
+        %%POSTER_BORDER%%
+      </g>
+      %%TITLE%%
+      <g id="when" class="card-line">
+        %%WHEN%%
+      </g>
+      <g id="where" class="card-line">
+        %%WHERE%%
+      </g>
+    </g>
+
+    <!-- 02 – 09 — THE LIST (Figma 1316:24717): Upload, Name, Start/End and
+         Location stacked at 0 / 92 / 174 / 334. It scrolls each one up to the
+         window's top (y 143.05) in turn. Clipped only at the window's bottom
+         (383.05): what leaves upward is on its way into the card. -->
+    <g clip-path="url(#list-clip)">
+    <g id="media-wrap" class="rise">
+    <!-- Upload: outside the scrolling list, so the list can scroll Name up
+         while this morphs into the card -->
+      <g id="media">
+        <g clip-path="url(#pm-clip)"><g clip-path="url(#pm-sq)"><use id="pm-img" href="#poster-img" opacity="0"/></g></g>
+        <rect id="media-box" x="124.5" y="143.551" width="371" height="71" rx="9.5" stroke="#E2E8F0" stroke-dasharray="8 3" fill="none"/>
+        <g id="idle" class="fades">
+          %%IDLE%%
+        </g>
+        <g id="busy" class="fades">
+          %%BUSY%%
+          <text id="pct" x="411" y="183.2" text-anchor="end">0%</text>
+          <rect x="423" y="177.051" width="60" height="4" rx="2" fill="#E2E8F0"/>
+          <rect id="bar" x="423" y="177.051" width="0" height="4" rx="2" fill="#00962A"/>
+        </g>
+      </g>
+    </g>
+    <g id="list" class="rise">
+      <!-- Name: drawn as it shows at scroll 92 -->
+      <g transform="translate(0 92)">
+        <g id="field">
+          <g id="field-chrome" class="fades">
+            %%FIELD%%
+          </g>
+        </g>
+      </g>
+      <!-- Start / End: the frame-06 pieces, 3.05 lower at scroll 174 -->
+      <g transform="translate(0 %%DT_DY%%)">
+        <g id="dt">
+          <g id="dt-start">
+            %%START_ROW%%
+            <text id="stime-new" x="389.7" y="185.2">9:00 PM</text>
+            <circle id="tap" cx="472" cy="171" r="0" fill="#475569" opacity="0"/>
+          </g>
+          <g id="dt-end">
+            %%END_ROW%%
+          </g>
+        </g>
+      </g>
+      <!-- Location: the frame-08 pieces, 24.95 higher at scroll 334 -->
+      <g transform="translate(0 %%LOC_DY%%)">
+        <g id="loc">
+          <g id="loc-chrome" class="fades">
+            %%LOC%%
+            <rect class="caret caret--ink" id="loc-caret" x="142.2" y="201.9" width="1.2" height="14.2" opacity="0"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    </g>
+    <!-- the list's fade at the bottom of its window: fixed, the list moves under it -->
+    <g id="list-fade" class="rise">
+      %%LIST_FADE%%
+    </g>
+
+    <!-- 05 — the name, typed: in screen coordinates for scroll 92, outside the
+         list so it can leave the field and fly into the card -->
+    <g id="val">
+        %%V_GLYPHS%%
+      <rect class="caret caret--ink" id="v-caret" x="%%V_START%%" y="0" width="1.5" height="19" opacity="0"/>
+    </g>
+
+    <!-- 07 — the date/time wheel, opened over the fields -->
+    <g id="picker">
+      <rect x="109" y="121" width="402" height="232" fill="white"/>
+      <g clip-path="url(#clip1_1280_21459)">
+        <g opacity="0.6"><rect x="174" y="194" width="272" height="33" rx="8" fill="#747480" fill-opacity="0.08"/></g>
+        %%DATE_COL%%
+        <g id="wheel-live"></g>
+      </g>
+      %%PICKER_FADES%%
+      %%CURRENT_TIME%%
+    </g>
+
+    <!-- 09 — the venue search, under the location field at scroll 334
+         (drawn in the frame-08 coordinates, shifted to match) -->
+    <g transform="translate(0 -24.949)">
+      <g clip-path="url(#dd-clip)">
+        <g id="menu" filter="url(#filter0_dd_1280_21685)">
+          <rect id="menu-box" x="129" y="230" width="362" height="70" rx="8" fill="white" shape-rendering="crispEdges"/>
+          <rect id="menu-edge" x="129.5" y="230.5" width="361" height="69" rx="7.5" stroke="#E2E8F0" shape-rendering="crispEdges"/>
+        </g>
+        <text class="menu-label" x="142" y="255">Search results</text>
+        <g id="menu-rows"></g>
+      </g>
+    </g>
+    <!-- 10 — the location, typed (in card coordinates; see #loc-val above) -->
+    <g id="loc-val">
+        %%W_GLYPHS%%
+      <rect class="caret caret--ink" id="w-caret" x="%%W_START%%" y="87.5" width="1.2" height="12" opacity="0"/>
+    </g>
+
+    <!-- 12 — the phone, coming up from below -->
+    <g id="phone">
+      %%PHONE%%
+    </g>
+    <!-- 11 — the card, grown; later docked in the phone -->
+    %%CARD11%%
+    <!-- 11 — the toast -->
+    <g id="toast" class="rise">
+      %%TOAST%%
+    </g>
+  </svg>
+  <div id="confetti" aria-hidden="true"></div>
+  </div>
+
+<script>
+(() => {
+  // Per sentence: steps are [glyph index | null for a space or line break,
+  // caret x after the step, line]; lineY is the caret's top/bottom per line.
+  const SEQ = %%SEQ%%;
+  // 07 → 08: each date/time value's [centre x, y] in its field, [centre x, y]
+  // of its run on the card's date line, and the scale between them.
+  const DT_FLY = %%DT_FLY%%;
+
+  const Q_TYPE_MS = 750;                           // the question, start to end
+  const STEP_MS = Q_TYPE_MS / SEQ.q.steps.length;  // every caption types at the same hand
+  const NAME_STEP_MS = 22;                         // "the user" typing in a field: a touch slower
+  const BAR_MS = 500;                              // upload, 0 → 100%
+  const CARD_W = 320;                              // event card, for the % highlight
+
+  const $ = (s) => document.querySelector(s);
+  // The stage as authored. Each loop swaps a fresh copy of it back in, so every
+  // cycle starts from exactly the first frame.
+  const pristine = $(".stage").cloneNode(true);
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    $("#q").querySelectorAll(".g").forEach((g) => g.classList.add("is-typed"));
+    $("#q-caret").remove();
+    return;
+  }
+
+  // One rAF loop from 0 → 1 over `ms`, eased, handing progress to `step`.
+  function tween(ms, step, ease = (t) => t) {
+    return new Promise((done) => {
+      let t0 = null;
+      const tick = (now) => {
+        if (t0 === null) t0 = now;
+        const p = Math.min(1, (now - t0) / ms);
+        step(ease(p));
+        if (p < 1) requestAnimationFrame(tick); else done();
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+  const lerp = (a, b, p) => a + (b - a) * p;
+
+  // Types seq.steps[from, to). onStep(n) runs after each step with the number
+  // of characters typed so far — the location search listens on it.
+  function type(scope, cls, caret, seq, stepMs = STEP_MS, { from = 0, to = seq.steps.length, onStep } = {}) {
+    const glyphs = scope.querySelectorAll("." + cls);
+    const place = (x, line) => {
+      caret.setAttribute("x", x);
+      caret.setAttribute("y", seq.lineY[line][0]);
+      caret.setAttribute("height", seq.lineY[line][1] - seq.lineY[line][0]);
+    };
+    caret.setAttribute("opacity", 1);
+    caret.classList.remove("is-blinking");
+    return new Promise((done) => {
+      let i = from, last = null;
+      const tick = (now) => {
+        if (last === null) last = now;
+        // Catch up on any steps owed, so a dropped frame never stretches the run.
+        while (i < to && now - last >= stepMs) {
+          const [g, x, line] = seq.steps[i++];
+          if (g !== null) glyphs[g].classList.add("is-typed");
+          place(x, line);
+          if (onStep) onStep(i);
+          last += stepMs;
+        }
+        if (i < to) requestAnimationFrame(tick);
+        else { caret.classList.add("is-blinking"); done(); }
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+
+
+  // Snap the rest of a sentence in at once (a picked suggestion fills the field).
+  function complete(scope, cls, caret, seq) {
+    scope.querySelectorAll("." + cls).forEach((g) => g.classList.add("is-typed"));
+    const [, x, line] = seq.steps[seq.steps.length - 1];
+    caret.setAttribute("x", x);
+    caret.setAttribute("y", seq.lineY[line][0]);
+  }
+
+  /* ---- 07: the time wheel ---------------------------------------------------
+     Three live columns that spin from the comp's 6:51 AM to the event's start,
+     9:00 PM (21:00). `pos` is a fractional row index; the row on pos sits in
+     the selection band at baseline 216, rows are 31 apart, and a row dims to
+     the comp's 0.5 as it leaves the band. Hours and minutes wrap. */
+  const NS = "http://www.w3.org/2000/svg";
+  const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  const WHEEL = [
+    { x: 320.1, values: range(1, 12), from: 5, to: 8, wrap: true, fmt: String },    // 6 → 9
+    { x: 365.1, values: range(0, 59), from: 51, to: 60, wrap: true,                  // 51 → 00
+      fmt: (v) => String(v).padStart(2, "0") },
+    { x: 412.3, values: ["AM", "PM"], from: 0, to: 1, wrap: false, fmt: String },   // AM → PM
+  ];
+  function buildWheel() {
+   WHEEL.forEach((col) => {
+    col.rows = range(-4, 4).map(() => {
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("class", "wheel-text");
+      t.setAttribute("x", col.x);
+      t.setAttribute("text-anchor", "middle");
+      $("#wheel-live").appendChild(t);
+      return t;
+    });
+   });
+   WHEEL.forEach((col) => drawWheel(col, col.from));
+  }
+  function drawWheel(col, pos) {
+    const n = col.values.length, base = Math.round(pos);
+    col.rows.forEach((t, j) => {
+      const k = base + j - 4;
+      if (!col.wrap && (k < 0 || k >= n)) { t.setAttribute("opacity", 0); return; }
+      const d = Math.abs(k - pos);
+      t.textContent = col.fmt(col.values[((k % n) + n) % n]);
+      t.setAttribute("y", (216 + 31 * (k - pos)).toFixed(2));
+      t.setAttribute("opacity", (1 - 0.5 * Math.min(1, d)).toFixed(3));
+    });
+  }
+  const spinWheel = () => Promise.all(WHEEL.map(async (col, i) => {
+    await wait(i * 59);
+    await tween(462, (p) => drawWheel(col, lerp(col.from, col.to, p)), easeInOut);
+  }));
+
+  /* ---- 09: live venue search ------------------------------------------------
+     The menu opens on the first letter and re-filters on every one after it.
+     Matches that START with the query rank above ones that only contain it;
+     the matched run is set in ink. At 3 letters ("Hel") the user picks the
+     top result. */
+  const VENUE = "Helsinki convention center";
+  const VENUES = [VENUE, "Helsinki Music Centre", "Helsinki Central Library Oodi",
+    "Hartwall Arena", "Heureka Science Centre", "Messukeskus Helsinki", "Hotel Kämp"];
+  const PICK_AT = 3;                               // letters typed before the pick
+  const ROW_H = 32, MENU_TOP = 230, MENU_HEAD = 38, MAX_ROWS = 4;
+  let menuRows = [];
+  const buildMenu = () => range(0, MAX_ROWS - 1).map((i) => {
+    const y = 283 + ROW_H * i;                     // baseline, from the comp's row rhythm
+    const g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "menu-row");
+    g.innerHTML =
+      `<rect class="row-bg" x="133" y="${y - 19}" width="354" height="28" rx="6" fill="#F1F5F9"/>` +
+      `<use href="#pin" x="142.5" y="${y - 12.5}" width="11.3" height="13" opacity="0.7"/>` +
+      `<text x="162" y="${y}"><tspan></tspan><tspan class="hit"></tspan><tspan></tspan></text>`;
+    $("#menu-rows").appendChild(g);
+    return g;
+  });
+  let menuH = 0;
+  function search(query) {
+    const q = query.toLowerCase();
+    const hits = VENUES.map((v) => ({ v, at: v.toLowerCase().indexOf(q) }))
+      .filter((h) => h.at >= 0)
+      .sort((a, b) => (a.at > 0) - (b.at > 0))
+      .slice(0, MAX_ROWS);
+    menuRows.forEach((row, i) => {
+      const h = hits[i];
+      row.style.display = h ? "" : "none";
+      if (!h) return;
+      const [pre, hit, post] = row.querySelectorAll("tspan");
+      pre.textContent = h.v.slice(0, h.at);
+      hit.textContent = h.v.slice(h.at, h.at + q.length);
+      post.textContent = h.v.slice(h.at + q.length);
+    });
+    // the box follows the result count
+    const target = MENU_HEAD + ROW_H * hits.length;
+    const from = menuH;
+    menuH = target;
+    tween(67, (p) => {
+      const h = lerp(from || target, target, p);
+      $("#menu-box").setAttribute("height", h);
+      $("#menu-edge").setAttribute("height", h - 1);
+    }, easeOut);
+  }
+  const letters = (s) => s.replace(/\s/g, "").length;
+
+  // Confetti: fetched now, parked at t=0, started by burst(). If it is still
+  // loading when its moment comes, it starts the moment it lands instead.
+  let confetti = null, burstWanted = false;
+  function burst() {
+    burstWanted = true;
+    if (!confetti) return;
+    confetti.setCurrentTime(0);
+    confetti.unpauseAnimations();
+    $("#confetti").classList.add("is-on");
+  }
+  fetch("confetti.svg").then((r) => (r.ok ? r.text() : "")).then((txt) => {
+    if (!txt) return;
+    $("#confetti").innerHTML = txt;
+    confetti = $("#confetti svg");
+    confetti.pauseAnimations();
+    confetti.setCurrentTime(0);
+    if (burstWanted && $("#toast").classList.contains("is-in")) burst();
+  }).catch(() => {});
+
+  // The list scrolls the next field up to the window's top.
+  let list = null, scrolled = 0;
+  // It runs alongside the move before it, for the same time, so the next
+  // field arrives as the last one lands in the card.
+  async function scrollList(to, ms) {
+    const from = scrolled;
+    scrolled = to;
+    list.style.transition = "none";
+    await tween(ms, (p) => { list.style.transform = `translateY(${-lerp(from, to, p)}px)`; }, easeInOut);
+  }
+
+  let hl = null;
+  // The card's background IS the progress bar. At 4% it is a quiet tint; each
+  // time it grows to the next level it lifts to 20% for the move, then settles
+  // back — a moment of emphasis on the step just completed.
+  let eventBg = null;
+
+  // Everything the timeline builds into or holds onto, made fresh per cycle.
+  function setup() {
+    buildWheel();
+    menuRows = buildMenu();
+    menuH = 0;
+    list = $("#list");
+    scrolled = 0;
+    hl = $("#hl");
+    eventBg = $("#event-bg");
+    burstWanted = false;
+  }
+  const highlight = async (from, to) => {
+    eventBg.style.transition = "fill-opacity .12s ease";
+    eventBg.style.fillOpacity = 0.2;
+    await tween(252, (p) => hl.setAttribute("width", lerp(from, to, p) * CARD_W), easeOut);
+    eventBg.style.transition = "fill-opacity .45s ease";
+    eventBg.style.fillOpacity = 0.04;
+  };
+
+  // One cycle, 01 → 12.
+  async function play() {
+    // 01 — type the question
+    await wait(168);
+    await type($("#q"), "g", $("#q-caret"), SEQ.q);
+    await wait(150);
+
+    // 01 → 02 — the question leaves upward; the list of fields comes in
+    $("#q-caret").remove();
+    $("#q").classList.add("is-out");
+    await wait(189);                 // the question has cleared the list's window
+    $("#list").classList.add("is-in");
+    $("#media-wrap").classList.add("is-in");
+    $("#list-fade").classList.add("is-in");
+    await wait(450);
+
+    // 02 → 03 — the upload runs 0 → 100
+    $("#idle").classList.add("is-gone");
+    $("#busy").classList.add("is-in");
+    await wait(126);
+    const bar = $("#bar"), pct = $("#pct");
+    await tween(BAR_MS, (p) => {
+      bar.setAttribute("width", (60 * p).toFixed(2));
+      pct.textContent = Math.round(100 * p) + "%";
+    });
+    await wait(168);
+
+    // 03 → 04 — the poster appears in the upload field at its own framing and
+    // the field closes in around it, becoming the card's thumbnail
+    // (158.5,44.5 · 59 · r9.5 — the poster's own border)
+    const box = $("#media-box"), pmRect = $("#pm-rect"), pmImg = $("#pm-img"), busy = $("#busy");
+    const pmSq = $("#pm-sq-rect");
+    const smooth = (a, b, p) => { const t = Math.min(1, Math.max(0, (p - a) / (b - a))); return t * t * (3 - 2 * t); };
+    busy.style.transition = "none";
+    const scrolling = scrollList(92, 800);   // Name rises as the upload leaves
+    await tween(800, (p) => {
+      const e = easeInOut(p);
+      const x = lerp(124.5, 158.5, e), y = lerp(143.551, 44.5, e);
+      const w = lerp(371, 59, e), h = lerp(71, 59, e);
+      for (const el of [box, pmRect]) {
+        el.setAttribute("x", x); el.setAttribute("y", y);
+        el.setAttribute("width", w); el.setAttribute("height", h);
+      }
+      // a square of the field's height, centred: the poster as it is, never
+      // a zoomed crop. By the end the field is that square.
+      pmImg.setAttribute("transform",
+        `translate(${x + w / 2} ${y + h / 2}) scale(${h / 60}) translate(-188 -74)`);
+      // ...with the thumbnail's rounded corners the whole way
+      pmSq.setAttribute("x", x + w / 2 - h / 2); pmSq.setAttribute("y", y);
+      pmSq.setAttribute("width", h); pmSq.setAttribute("height", h);
+      pmImg.setAttribute("opacity", smooth(0.05, 0.45, p));
+      busy.style.opacity = 1 - smooth(0, 0.3, p);
+      box.setAttribute("stroke-dasharray", p > 0.55 ? "none" : "8 3");
+    });
+    $("#poster").classList.add("is-in");
+    pmImg.remove();
+    box.remove();
+    await wait(60);
+    await scrolling;
+    await highlight(0, 0.25);        // the card's background fills to 25%
+    await wait(150);
+
+    // 04 → 05 — the name is typed into the field
+    $("#ph").style.transition = "opacity .2s ease";
+    $("#ph").style.opacity = 0;
+    await wait(126);
+    await type($("#val"), "v", $("#v-caret"), SEQ.v, NAME_STEP_MS);
+    await wait(294);
+
+    // 05 → 06 — the name lifts into the card, 50%, Start/End come up
+    $("#v-caret").remove();
+    $("#field-chrome").classList.add("is-gone");
+    $("#val").classList.add("is-flown");
+    await scrollList(174, 450);      // Start/End rise as the name flies
+    $("#title").classList.add("is-in");
+    $("#val").style.opacity = 0;
+    await highlight(0.25, 0.5);
+    await wait(200);
+
+    // 06 → 07 — START's clock is tapped, the wheel opens and counts to the
+    // start time
+    const tap = $("#tap");
+    $("#clock").classList.add("is-pressed");
+    tween(380, (p) => {
+      tap.setAttribute("r", 4 + 14 * p);
+      tap.setAttribute("opacity", 0.22 * (1 - p));
+    }, easeOut);
+    await wait(130);
+    $("#clock").classList.remove("is-pressed");
+    await wait(120);
+    $("#picker").classList.add("is-in");
+    await wait(210);
+    await spinWheel();               // counts to 9:00 PM, the event's 21:00
+    await wait(300);
+
+    // 07 → 08 — the set wheel folds back into START's time field, which now
+    // reads 9:00 PM; a beat on the filled-in fields; then the values travel
+    // into the card's date line as the fields go
+    $("#picker").classList.add("is-into-field");
+    await wait(250);
+    $("#stime-old").style.opacity = 0;
+    $("#stime-new").style.opacity = 1;
+    await wait(450);
+    $("#dt").classList.add("is-folding");
+    const ride = 334 - scrolled;     // how far the list carries them meanwhile
+    for (const [key, [sx, sy, tx, ty, k]] of Object.entries(DT_FLY)) {
+      const el = key === "stime" ? $("#stime-new") : $("#" + key);
+      el.style.transition = "transform .6s cubic-bezier(.65,0,.35,1), opacity .3s ease .3s";
+      el.style.transform = `translate(${tx}px,${ty + ride}px) scale(${k}) translate(${-sx}px,${-sy}px)`;
+      el.style.opacity = 0;
+    }
+    const scrolling2 = scrollList(334, 600);   // Location rises as they go
+    await wait(330);
+    $("#when").style.transition = "opacity .3s ease";
+    $("#when").classList.add("is-in");
+    await scrolling2;
+    await highlight(0.5, 0.75);
+    await wait(200);
+
+    // 08 → 09 — the field takes focus
+    $("#loc").classList.add("is-focused");
+    const locCaret = $("#loc-caret");
+    locCaret.setAttribute("opacity", 1);
+    locCaret.classList.add("is-blinking");
+    await wait(294);
+
+    // 09 — typing opens the search, which narrows live; at 3 letters the
+    // venue is picked and fills the field
+    locCaret.remove();
+    const dd = $("#dd-reveal");
+    const stopAt = SEQ.w.steps.findIndex((_, i) => letters(VENUE.slice(0, i + 1)) === PICK_AT) + 1;
+    await type($("#loc-val"), "w", $("#w-caret"), SEQ.w, NAME_STEP_MS * 2, {
+      to: stopAt,
+      onStep: (n) => {
+        search(VENUE.slice(0, n));
+        if (n === 1) tween(92, (p) => dd.setAttribute("height", p * 179), easeOut);
+      },
+    });
+    await wait(210);
+    menuRows[0].classList.add("is-picked");
+    await wait(189);
+    complete($("#loc-val"), "w", $("#w-caret"), SEQ.w);
+    $("#w-caret").remove();
+
+    // 09 → 10 — no pause: as the menu folds away the venue glides into the
+    // card, settling into the card's ink; then the card fills to 100% as it
+    // drops to the centre
+    tween(150, (p) => dd.setAttribute("height", (1 - p) * 179), easeInOut);
+    $("#loc-chrome").classList.add("is-gone");
+    $("#loc-val").classList.add("is-flown");
+    await wait(460);
+    $("#where").style.transition = "none";
+    $("#where").classList.add("is-in");
+    $("#loc-val").style.opacity = 0;
+    $("#event").classList.add("is-centred");
+    await highlight(0.75, 1);
+    await wait(120);
+
+    // 10 → 11 — the card grows into its full size, then confetti and the
+    // toast land together
+    const G = { cx: 310, cy: 74, tx: 310, ty: 203.05, s: 1.5 };  // #event.is-grown
+    // the transform that, under G, puts part a exactly on part b
+    const onto = (a, b, uniform = true) => {
+      const A = a.getBBox(), B = b.getBBox();
+      const sx = B.width / A.width / G.s, sy = (uniform ? B.width / A.width : B.height / A.height) / G.s;
+      const ax = A.x + A.width / 2, ay = A.y + A.height / 2;
+      const dx = G.cx + (B.x + B.width / 2 - G.tx) / G.s, dy = G.cy + (B.y + B.height / 2 - G.ty) / G.s;
+      return `translate(${dx}px,${dy}px) scale(${sx},${sy}) translate(${-ax}px,${-ay}px)`;
+    };
+    const parts = [["#event-bg", "#card11-bg", false], ["#poster", "#c11-thumb"], ["#title", "#c11-title"],
+      ["#when", "#c11-when"], ["#where", "#c11-where"]];
+    const moves = parts.map(([a, b, u]) => [$(a), onto($(a), $(b), u)]);
+    $("#event").classList.add("is-grown");
+    for (const [el, t] of moves) {
+      el.style.transition = "transform .8s cubic-bezier(.4,0,.2,1)";
+      el.style.transform = t;
+    }
+    await wait(800);
+    $("#event").style.transition = "none";
+    $("#event").style.opacity = 0;
+    $("#card11").classList.add("is-in");
+    $("#card11").classList.add("is-badged");
+    await wait(150);
+    burst();
+    $("#toast").classList.add("is-in");
+    await wait(2000);                // frame 11 holds: the showcase
+
+    // 11 → 12 — the card drops its background, everything else goes, and the
+    // card shrinks into its row as the phone comes up under it
+    $("#card11").classList.add("is-plain");
+    $("#toast").classList.remove("is-in");
+    $("#confetti").classList.remove("is-on");
+    await wait(168);
+    $("#phone").classList.add("is-up");
+    $("#card11").classList.add("is-docked");
+    await wait(399);
+    $("#phone-item").classList.add("is-in");
+    $("#card11").style.opacity = 0;
+    if (confetti) confetti.pauseAnimations();
+
+    // 12 holds for 3s, then the phone drops out of the frame and the whole
+    // thing starts again from the question
+    await wait(3000);
+    const phone = $("#phone");
+    phone.style.transition = "transform .55s cubic-bezier(.55,0,.75,0)";
+    phone.classList.remove("is-up");
+    await wait(650);
+  }
+
+  // Plays when at least half of the frame is on screen, and loops. Inside an
+  // iframe (the case study) the observer measures against the top-level
+  // viewport: it waits for the reader to scroll to it, and a new cycle only
+  // starts while it is in view. Opened on its own it starts straight away.
+  let visible = false, wake = null;
+  new IntersectionObserver((entries) => {
+    visible = entries[entries.length - 1].isIntersecting;
+    if (visible && wake) { wake(); wake = null; }
+  }, { threshold: 0.5 }).observe($(".frame"));
+  const inView = () => (visible ? Promise.resolve() : new Promise((r) => { wake = r; }));
+
+  (async () => {
+    setup();
+    for (;;) {
+      await inView();
+      await play();
+      $(".stage").replaceWith(pristine.cloneNode(true));
+      setup();
+    }
+  })();
+})();
+</script>
+</body>
+</html>
