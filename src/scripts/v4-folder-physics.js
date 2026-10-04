@@ -10,6 +10,9 @@
  * Enter or Space toggles from the keyboard. Reduced motion jumps between the
  * two states.
  *
+ * Falling home, the cards slide in behind the folder's frosted flap, as the
+ * icons do (_about.css keeps them under it).
+ *
  * The tuning is tool-folder's own (supremeio/tool-folder, src/element.js),
  * so the two folders feel the same. The script moves the cards; the folder's
  * .is-open class still does the layering (cards over the flap, the closed

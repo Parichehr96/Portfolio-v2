@@ -399,6 +399,15 @@ tool-folder:not(:defined) {
   transform: none;
 }
 
+/* Like <tool-folder>'s icons, the cards always stay behind the frosted flap
+   (z 3 < 4): open they float clear above the folder, and falling home they
+   slide in behind the flap, blurring as they go. */
+.v4-folder--physics .v4-folder__items,
+.v4-folder--physics.is-open .v4-folder__items {
+  z-index: 3;
+  transition: none;
+}
+
 /* Closing is immediate: once the cards are home, the closed render and the
    tucked card snap back with no fade. */
 .v4-folder--physics:not(.is-open) .v4-folder__item,
