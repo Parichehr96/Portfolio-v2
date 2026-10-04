@@ -42,12 +42,12 @@ layout: layouts/v4.njk
     <div class="v4-case__bar">
       <div class="v4-case__bar-inner">
         <a class="v4-case__back" href="{{ c.back.href }}">
-          <img src="/Assets/v4/case/back.svg" width="24" height="24" alt="" />
+          <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
           {{ c.back.label }}
         </a>
         <a class="v4-case__next" href="{{ c.next.href }}">
           {{ c.next.label }}
-          <img src="/Assets/v4/case/next.svg" width="24" height="24" alt="" />
+          <img src="/Assets/v4/case/next.svg" width="20" height="20" alt="" />
         </a>
       </div>
     </div>
@@ -58,7 +58,8 @@ layout: layouts/v4.njk
 
     <header class="v4-case__head">
       {%- set part = c.hero %}
-      {% include "v4/case/image.njk" %}
+      {#- An image by default; a case can give its cover a `type` (animation). -#}
+      {% include "v4/case/" + (part.type or "image") + ".njk" %}
 
       <dl class="v4-case__facts">
         {%- for row in c.meta %}

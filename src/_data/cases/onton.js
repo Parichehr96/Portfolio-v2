@@ -19,7 +19,13 @@ module.exports = {
   back: { label: "Back", href: "/#work" },
   next: { label: "Next", href: "/work/challenquiz/" },
 
-  hero: {}, // placeholder until the cover image exists
+  // The cover: the Discover screen, animated. Built from Figma 1329:26318 in
+  // Portfolio-v2 (tools/onton-animation/build_hero.py); starts when in view.
+  hero: {
+    type: "animation",
+    src: "/Assets/embeds/onton/hero-screens.html",
+    title: "The ONTON app's Discover screen: the Nearby filter opens and runs through its distance options",
+  },
 
   meta: [
     { label: "Platforms", chip: "Telegram Mini App (web-based)" },

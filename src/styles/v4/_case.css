@@ -117,11 +117,6 @@
   left: calc(100% + var(--v4-space-6));
 }
 
-/* The comp reuses the back icon for Next, mirrored (918:34420). */
-.v4-case__next img {
-  transform: scaleX(-1);
-}
-
 /* ---- Header -------------------------------------------------------------- */
 .v4-case__head {
   display: flex;

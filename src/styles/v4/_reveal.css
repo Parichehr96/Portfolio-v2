@@ -41,6 +41,7 @@
   .v4-case__bar-inner,
   .v4-case__title-row,
   .v4-case__head > .v4-case__image,
+  .v4-case__head > .v4-case__animation,
   .v4-case__facts
 ) {
   animation: v4-rise var(--v4-intro-time) var(--v4-reveal-ease) both;
@@ -49,7 +50,8 @@
 
 .js-reveal .v4-case__bar-inner,
 .js-reveal .v4-case__title-row { --n: 1; }
-.js-reveal .v4-case__head > .v4-case__image { --n: 2; }
+.js-reveal .v4-case__head > .v4-case__image,
+.js-reveal .v4-case__head > .v4-case__animation { --n: 2; }
 .js-reveal .v4-case__facts { --n: 3; }
 
 @keyframes v4-rise {
