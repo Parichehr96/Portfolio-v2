@@ -5,8 +5,8 @@
  * Hover tosses the cards up out of the folder: springs carry each to its
  * spot floating just above the folder, with one soft overshoot, and they
  * sway and lean away from the cursor. Move away and they drop straight back
- * at once (strong gravity, no stagger), bounce and squash as they land, and
- * the folder recoils. Tap toggles on touch;
+ * at once (strong gravity, no stagger) and stop dead as they land; the
+ * moment both are in, the folder is closed again. Tap toggles on touch;
  * Enter or Space toggles from the keyboard. Reduced motion jumps between the
  * two states.
  *
@@ -21,7 +21,7 @@
   var STAGGER_OUT = 1.6;
   var OUT = { k: 85, c: 11 }, SPIN = { k: 60, c: 9 };
   var SQUASH = { k: 320, c: 18 }, THUD = { k: 380, c: 20 };
-  var RESTITUTION = 0.3, TOSS = 340;
+  var TOSS = 340;
   var PUSH_RADIUS = 80, PUSH = 16, LEAN = 0.04;
   var D_OUT = 0.06;                  // s between cards going out
   var GRAVITY_IN = 6000;             // the drop home: quick, so leaving feels instant
@@ -100,7 +100,6 @@
       c.vy = Math.max(c.vy, 0);               // no hop: straight down
       var tHit = (-c.vy + Math.sqrt(c.vy * c.vy - 2 * GRAVITY_IN * Math.min(c.y, -1))) / GRAVITY_IN;
       c.vx = -c.x / tHit;
-      c.vr += (Math.random() - 0.5) * 100;
     }
 
     function step(c, dt) {
@@ -130,13 +129,10 @@
         c.vy += GRAVITY_IN * dt;
         c.vr = spring(c.r, c.vr, c.vx * LEAN, SPIN, dt);
         if (c.y + c.vy * dt >= 0 && c.vy > 0) {
-          var impact = c.vy;
-          c.y = 0; c.x = 0; c.vx = 0;
-          c.vy = -impact * RESTITUTION;
-          c.vq += Math.min(impact, 1400) * 0.9;
-          thud.v += Math.min(impact, 1400) * 0.12;
-          c.vr = 0;
-          if (Math.abs(c.vy) < 50) { c.vy = 0; c.mode = "land"; }
+          // Home: it stops dead, no bounce or squash to wait out.
+          c.x = c.y = c.vx = c.vy = c.r = c.vr = c.q = c.vq = 0;
+          c.mode = "rest";
+          return false;
         }
       } else if (c.mode === "land") {
         c.vr = spring(c.r, c.vr, 0, SPIN, dt);
@@ -170,7 +166,8 @@
 
     function settled() {
       // Every card is home: hand the layering back to the closed state.
-      if (!isOpen && cards.every(function (c) { return c.mode === "rest"; })) {
+      if (!isOpen && folder.classList.contains("is-open") &&
+          cards.every(function (c) { return c.mode === "rest"; })) {
         folder.classList.remove("is-open");
       }
     }
@@ -180,8 +177,8 @@
       var SUB = 4, dt = elapsed / SUB, busy = false;
       for (var i = 0; i < SUB; i++) busy = tick(dt) || busy;
       render();
-      if (busy) raf = requestAnimationFrame(frame);
-      else { raf = 0; settled(); }
+      settled();
+      raf = busy ? requestAnimationFrame(frame) : 0;
     }
 
     function kick() {

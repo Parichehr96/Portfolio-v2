@@ -399,6 +399,13 @@ tool-folder:not(:defined) {
   transform: none;
 }
 
+/* Closing is immediate: once the cards are home, the closed render and the
+   tucked card snap back with no fade. */
+.v4-folder--physics:not(.is-open) .v4-folder__item,
+.v4-folder--physics:not(.is-open) .v4-folder__still {
+  transition: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v4-folder__still,
   .v4-folder,
