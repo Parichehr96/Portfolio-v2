@@ -30,20 +30,25 @@
   </script>
   {%- endif %}
   {%- if (pageId or 'home') == 'home' %}
-  {#- The splash (v4/splash.njk): on arrival at the homepage and on every
-      reload (a hard refresh included, #anchor or not). Not when going back
-      or forward through history, nor when a link from another page lands
-      on a section (/#about from a case study). Flagged before first paint
-      so the page never flashes first. When it shows, any #anchor is dropped
-      first, so the page underneath starts at the top, as on a plain visit,
-      and the cover lifts onto the toast and the intro. If its script has
-      not started in 3s, the cover gets out of the way. -#}
+  {#- The splash (v4/splash.njk), like the toast (v4/toast.njk): the first
+      homepage load in a browser tab, and again after a hard refresh
+      (Cmd+Shift+R / Ctrl+Shift+R / Ctrl+F5, noted by scripts/v4-toast.js as
+      the keys are pressed). Not on a normal reload, not going back/forward,
+      not a section link from another page (/#about from a case study).
+      Runs before first paint, and before the toast's own check (which
+      clears the hard-refresh note), so the page never flashes first. When
+      it shows, any #anchor is dropped, so the page beneath starts at the
+      top. If its script has not started in 3s, the cover gets out of the way. -#}
   <script>
     (function (d) {
       try {
         var nav = (performance.getEntriesByType("navigation")[0] || {}).type;
+        var hard = sessionStorage.getItem("v4-hard-reload");
+        var seen = sessionStorage.getItem("v4-splash-seen");
         if (nav === "back_forward") return;
-        if (location.hash && nav !== "reload") return;
+        if (seen && !hard) return;
+        if (location.hash && !hard && nav !== "reload") return;
+        sessionStorage.setItem("v4-splash-seen", "1");
       } catch (e) {}
       d.classList.add("has-splash");
       if (location.hash) history.replaceState(null, "", location.pathname + location.search);
