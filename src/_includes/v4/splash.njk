@@ -9,11 +9,12 @@
   track: the sun's real path through the day, crossing the horizon at sunrise
   and sunset, with a dot to drag.
 
-  Any scroll, swipe or page key slides the cover up and the homepage below
-  plays its entrance; "See My Work" does the same, then goes to Works.
+  Any scroll, swipe or page key, or "See My Work", slides the cover up; once
+  it is out of view the homepage plays its entrance from the top.
 
-  Shown only when the head script set html.has-splash (homepage, arriving
-  fresh: no #anchor, not a back/forward visit). Without that, or if the
+  Shown only when the head script set html.has-splash (homepage on arrival
+  and on every reload; not a back/forward visit, nor a section link from
+  another page). Without that, or if the
   script never starts, it stays out of the way (_splash.css).
 #}
 <section class="v4-splash" data-splash aria-label="Welcome">

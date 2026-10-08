@@ -5,8 +5,8 @@
    A cover over the homepage, only while html.has-splash is set (head script,
    layouts/v4.njk). The page underneath is laid out as usual but cannot
    scroll, and its entrance waits (paused) until the cover lifts. Lifting:
-   .is-leaving slides the cover up; html.has-splash comes off part-way, so
-   the homepage starts rising in as the cover clears it.
+   .is-leaving slides the cover up; html.has-splash comes off once it is
+   fully out of view, and the homepage's entrance starts then, in order.
 
    Sizes are the comp's at 1512. The card's open state is the rest state
    scaled 1.2, so the sizes inside it are the rest sizes.

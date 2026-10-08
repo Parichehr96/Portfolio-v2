@@ -8,9 +8,9 @@
  *   2. THE CARD. At rest it wobbles (CSS). Hover (mouse), tap (touch) or
  *      keyboard focus opens it: upright, larger, with the hour track (the
  *      sun's real path through the day) to drag. Closing returns to now.
- *   3. THE COVER. Any scroll, swipe or page key lifts the splash and the
- *      homepage below plays its entrance; "See My Work" lifts it, then goes
- *      to Works.
+ *   3. THE COVER. Any scroll, swipe or page key, or "See My Work", slides
+ *      the splash up; once it is fully out of view the homepage plays its
+ *      entrance from the top, as on a plain visit.
  */
 (function () {
   "use strict";
@@ -204,8 +204,7 @@
 
   // ---------- 3. The cover ----------
   // While the splash is up the page beneath is inert; lifting it hands
-  // everything back. The homepage starts its entrance part-way through the
-  // lift, so it rises in as the cover clears it.
+  // everything back.
   var others = Array.prototype.slice.call(document.body.children).filter(function (el) {
     return el !== splash && el.tagName !== "SCRIPT";
   });
@@ -213,7 +212,7 @@
 
   var LIFT = reduce.matches ? 0 : (parseFloat(getComputedStyle(root).getPropertyValue("--v4-splash-lift")) || .8) * 1000;
   var lifted = false;
-  function lift(then) {
+  function lift() {
     if (lifted) return;
     lifted = true;
     clearInterval(tick);
@@ -221,21 +220,20 @@
     window.scrollTo(0, 0);
     splash.classList.add("is-leaving");
     root.classList.add("splash-lifting");                 // keeps scroll locked until it is gone
-    setTimeout(function () { root.classList.remove("has-splash"); }, LIFT * .45);
+    // Once the cover is fully out of view, hand over: the homepage's entrance
+    // (paused under .has-splash) starts from its first step, in order.
     setTimeout(function () {
       splash.classList.remove("is-leaving");
       splash.hidden = true;
+      root.classList.remove("has-splash");
       root.classList.remove("splash-lifting");
-      if (then) then();
-    }, LIFT + 120);                                        // a beat for trackpad momentum to die out
+    }, LIFT + 60);
   }
 
+  // "See My Work" lifts the cover too, onto the top of the homepage.
   splash.querySelector("[data-splash-cta]").addEventListener("click", function (e) {
     e.preventDefault();
-    lift(function () {
-      var work = document.getElementById("work");
-      if (work) work.scrollIntoView({ behavior: reduce.matches ? "auto" : "smooth", block: "start" });
-    });
+    lift();
   });
 
   // Any scroll, either way, lifts it.
