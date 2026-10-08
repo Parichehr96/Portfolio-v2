@@ -35,7 +35,8 @@
   pointer-events: none;
 }
 
-/* The homepage's entrance waits under the cover (_reveal.css, the toast's timer). */
+/* The homepage's entrance waits under the cover (_reveal.css, the toast's timer).
+   This file loads after _reveal.css (index.css) so the pause wins. */
 .has-splash :is(
   .v4-rail,
   .v4-intro__name,

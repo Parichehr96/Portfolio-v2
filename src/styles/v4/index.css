@@ -16,5 +16,7 @@
 @import "_experience.css";
 @import "_footer.css";
 @import "_case.css";
-@import "_splash.css";
 @import "_reveal.css";
+/* After _reveal.css: its paused entrance (under html.has-splash) must win
+   over the reveal rules, which restart the animations. */
+@import "_splash.css";
