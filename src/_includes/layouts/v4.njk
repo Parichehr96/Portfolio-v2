@@ -34,8 +34,10 @@
       reload (a hard refresh included, #anchor or not). Not when going back
       or forward through history, nor when a link from another page lands
       on a section (/#about from a case study). Flagged before first paint
-      so the page never flashes first. If its script has not started in 3s,
-      the cover gets out of the way. -#}
+      so the page never flashes first. When it shows, any #anchor is dropped
+      first, so the page underneath starts at the top, as on a plain visit,
+      and the cover lifts onto the toast and the intro. If its script has
+      not started in 3s, the cover gets out of the way. -#}
   <script>
     (function (d) {
       try {
@@ -44,6 +46,7 @@
         if (location.hash && nav !== "reload") return;
       } catch (e) {}
       d.classList.add("has-splash");
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
       setTimeout(function () { if (!d.classList.contains("splash-ready")) d.classList.remove("has-splash"); }, 3000);
     })(document.documentElement);
   </script>
