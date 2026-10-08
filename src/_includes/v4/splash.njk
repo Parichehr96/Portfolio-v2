@@ -1,0 +1,52 @@
+{#
+  SPLASH — Figma 1404:67411 (rest) and 1407:67433 (card hovered).
+
+  A cover over the homepage on arrival: the introduction on the left and,
+  on the right, a postcard of the visitor's sky right now (scripts/v4-splash.js
+  works it out from their time zone and clock, sun glow included). At rest
+  the card wobbles now and then to invite a touch; hovered (tapped on touch,
+  focused from the keyboard) it turns upright, grows, and shows the hour
+  track: the sun's real path through the day, crossing the horizon at sunrise
+  and sunset, with a dot to drag.
+
+  Any scroll, swipe or page key slides the cover up and the homepage below
+  plays its entrance; "See My Work" does the same, then goes to Works.
+
+  Shown only when the head script set html.has-splash (homepage, arriving
+  fresh: no #anchor, not a back/forward visit). Without that, or if the
+  script never starts, it stays out of the way (_splash.css).
+#}
+<section class="v4-splash" data-splash aria-label="Welcome">
+  <div class="v4-splash__inner">
+    <div class="v4-splash__intro">
+      <p class="v4-splash__hello">Hi I’m <b>Pari</b> - a</p>
+      <h2 class="v4-splash__title">Product<br>Designer</h2>
+      <p class="v4-splash__lede">I make complex products simple to use.</p>
+      <a class="v4-splash__cta" href="#work" data-splash-cta>See My Work <span class="v4-splash__dot" aria-hidden="true"></span></a>
+    </div>
+
+    <figure class="v4-splash__card" data-splash-card tabindex="0" aria-label="Your sky right now. Open it to see the sky at other times.">
+      <div class="v4-splash__sky">
+        <span class="v4-splash__time" data-splash-time aria-live="polite">12:00</span>
+        <div class="v4-splash__control">
+          <div class="v4-splash__slider">
+            <label for="splash-hour">Hour</label>
+            <div class="v4-splash__track">
+              <svg viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
+                <line class="v4-splash__horizon" x1="0" y1="50" x2="1440" y2="50"></line>
+                <path class="v4-splash__path" data-splash-path d="M0 96 C360 96 480 4 720 4 C960 4 1080 96 1440 96"></path>
+              </svg>
+              <span class="v4-splash__knob" aria-hidden="true"></span>
+              <input class="v4-splash__hour" id="splash-hour" type="range" min="0" max="1439" step="5" value="720">
+            </div>
+          </div>
+          <button class="v4-splash__now" type="button" data-splash-now aria-pressed="true">Now</button>
+        </div>
+      </div>
+      <figcaption class="v4-splash__caption">
+        <span>In case you’re too busy to look up, this is your sky right now!</span>
+        <span aria-hidden="true">You can see the sky in other times, by dragging the handle.</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>

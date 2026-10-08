@@ -29,6 +29,22 @@
     })(document.documentElement);
   </script>
   {%- endif %}
+  {%- if (pageId or 'home') == 'home' %}
+  {#- The splash (v4/splash.njk): on a fresh arrival at the homepage, not
+      when coming to an #anchor or back/forward through history. Flagged
+      before first paint so the page never flashes first. If its script has
+      not started in 3s, the cover gets out of the way. -#}
+  <script>
+    (function (d) {
+      try {
+        var nav = (performance.getEntriesByType("navigation")[0] || {}).type;
+        if (location.hash || nav === "back_forward") return;
+      } catch (e) {}
+      d.classList.add("has-splash");
+      setTimeout(function () { if (!d.classList.contains("splash-ready")) d.classList.remove("has-splash"); }, 3000);
+    })(document.documentElement);
+  </script>
+  {%- endif %}
 
   {% include "partials/head-analytics.njk" %}
 </head>
@@ -47,6 +63,7 @@
   <script defer src="/scripts/v4-folder-physics.js"></script>
   <script defer src="/scripts/v4-photos.js"></script>
   <script defer src="/scripts/v4-reveal.js"></script>
+  <script defer src="/scripts/v4-splash.js"></script>
 
   {%- if site.analytics.vercel %}
   <script>
