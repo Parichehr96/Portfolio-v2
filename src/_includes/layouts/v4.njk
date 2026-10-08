@@ -30,15 +30,18 @@
   </script>
   {%- endif %}
   {%- if (pageId or 'home') == 'home' %}
-  {#- The splash (v4/splash.njk): on a fresh arrival at the homepage, not
-      when coming to an #anchor or back/forward through history. Flagged
-      before first paint so the page never flashes first. If its script has
-      not started in 3s, the cover gets out of the way. -#}
+  {#- The splash (v4/splash.njk): on arrival at the homepage and on every
+      reload (a hard refresh included, #anchor or not). Not when going back
+      or forward through history, nor when a link from another page lands
+      on a section (/#about from a case study). Flagged before first paint
+      so the page never flashes first. If its script has not started in 3s,
+      the cover gets out of the way. -#}
   <script>
     (function (d) {
       try {
         var nav = (performance.getEntriesByType("navigation")[0] || {}).type;
-        if (location.hash || nav === "back_forward") return;
+        if (nav === "back_forward") return;
+        if (location.hash && nav !== "reload") return;
       } catch (e) {}
       d.classList.add("has-splash");
       setTimeout(function () { if (!d.classList.contains("splash-ready")) d.classList.remove("has-splash"); }, 3000);

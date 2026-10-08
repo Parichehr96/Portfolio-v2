@@ -227,6 +227,10 @@
       splash.hidden = true;
       root.classList.remove("splash-lifting");
       if (then) then();
+      else if (location.hash.length > 1) {                // a reload at /#section: go back to it
+        var target = document.getElementById(location.hash.slice(1));
+        if (target) target.scrollIntoView({ behavior: reduce.matches ? "auto" : "smooth", block: "start" });
+      }
     }, LIFT + 120);                                        // a beat for trackpad momentum to die out
   }
 
