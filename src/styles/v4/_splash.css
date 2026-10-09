@@ -53,15 +53,18 @@
   animation-play-state: paused;
 }
 
+/* One centred row, 320 in from each side and 240 from top and bottom at
+   1512 x 982 (scaling down with the window): the introduction takes the
+   width left over, the card sits against the right edge. */
 .v4-splash__inner {
   min-height: 100%;
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: minmax(0, 622px) minmax(0, 1fr);
-  gap: 40px;
-  padding-block: 48px;
-  padding-inline: clamp(16px, 9.92vw, 150px) clamp(16px, 6vw, 96px);
+  justify-content: center;
+  padding-block: clamp(48px, 24.4vh, 240px);
+  padding-inline: clamp(16px, 21.16vw, 320px);
 }
+.v4-splash__intro { flex: 1 1 0; min-width: 0; }
 
 /* ---- Introduction (1404:67413) ------------------------------------------ */
 /* 12 between the three lines, 40 down to the button. */
@@ -85,8 +88,9 @@
 
 /* ---- Sky card ----------------------------------------------------------- */
 .v4-splash__card {
-  justify-self: center; position: relative; display: flex; flex-direction: column; gap: 11.2px;
+  flex: none; position: relative; display: flex; flex-direction: column; gap: 11.2px;
   width: min(339.825px, 100%); aspect-ratio: 339.825 / 343; padding: 11.2px;
+  margin: 8.66px 8.74px;    /* the tilted card's 357.31 x 360.32 box in the comp */
   background: var(--v4-splash-bg); border-radius: 14px; cursor: pointer; outline: none;
   rotate: -3deg; scale: 1;
   box-shadow: -.7px -2.8px 8.4px rgb(0 0 0 / .03), .7px 16px 19.6px rgb(12 12 13 / .12);
@@ -108,9 +112,14 @@
 .v4-splash__card.is-settling,
 .v4-splash__card.is-open {
   animation: none; translate: 0 0; scale: 1;
-  transition: rotate .6s cubic-bezier(.2, .8, .2, 1), scale .6s cubic-bezier(.2, .8, .2, 1);
+  transition:
+    rotate .6s cubic-bezier(.2, .8, .2, 1),
+    scale .6s cubic-bezier(.2, .8, .2, 1),
+    translate .6s cubic-bezier(.2, .8, .2, 1);
 }
-.v4-splash__card.is-open { scale: 1.2; cursor: default; z-index: 1; }
+/* Open (1407:67444), 407.79 wide and still against the right edge, so it
+   grows leftward: half the extra width over the rest box. */
+.v4-splash__card.is-open { scale: 1.2; translate: -25.24px 0; cursor: default; z-index: 1; }
 .v4-splash__card:focus-visible {
   box-shadow: 0 0 0 2px var(--v4-splash-bg), 0 0 0 4px var(--v4-splash-ink), .7px 16px 19.6px rgb(12 12 13 / .12);
 }
@@ -199,9 +208,10 @@
 .v4-splash__card.is-open .v4-splash__caption span + span { opacity: 1; }
 
 @media (max-width: 900px) {
-  .v4-splash__inner { grid-template-columns: minmax(0, 1fr); gap: 56px; padding-block: 64px; }
-  .v4-splash__card { width: min(339.825px, calc(100% - 40px)); }
-  .v4-splash__card.is-open { scale: 1.08; }
+  .v4-splash__inner { flex-direction: column; align-items: stretch; gap: 56px; padding-block: 64px; }
+  .v4-splash__intro { flex: none; }
+  .v4-splash__card { align-self: center; width: min(339.825px, calc(100% - 40px)); }
+  .v4-splash__card.is-open { scale: 1.08; translate: 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
