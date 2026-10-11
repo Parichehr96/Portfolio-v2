@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — from head office to site</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Audiences (4.B): one line from head office to remote site. Each persona
+     sits where they work; the spotlight cycles, or follows hover. */
+  .canvas { height: 340px; }
+  .axis { position: absolute; left: 50px; right: 50px; top: 150px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #94A3B8, #DD6B20); }
+  .end { position: absolute; top: 164px; display: flex; gap: 6px; align-items: center; font: 600 11px/1 "Figtree"; color: var(--pg-muted); }
+  .p { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 5px; cursor: pointer; }
+  .p .av { width: 36px; height: 36px; font-size: 12px; box-shadow: 0 0 0 4px #fff; transition: box-shadow .3s, transform .45s var(--e-out); }
+  .p small { font: 500 10px/1.2 "Figtree"; color: var(--pg-muted); white-space: nowrap; transition: color .3s; }
+  .p.on .av { transform: scale(1.16); box-shadow: 0 0 0 4px #fff, 0 0 0 6px currentColor; }
+  .p.on small { color: var(--pg-ink); }
+  .stem { position: absolute; width: 1px; background: #CBD5E1; }
+  .spot { position: absolute; left: 50px; right: 50px; top: 206px; min-height: 108px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-content: start; transition: opacity .22s ease; }
+  .spot.out { opacity: 0; }
+  .spot b { font: 600 14px/18px "Figtree"; }
+  .spot .r { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
+  .spot p { margin: 0; grid-column: 1 / -1; font: 400 13px/19px "Figtree"; color: var(--pg-ink-60); }
+  .spot .mods { display: flex; gap: 4px; align-items: start; grid-row: 1; grid-column: 2; }
+  .spot .mods span { font: 500 10.5px/1 "Figtree"; background: var(--pg-mist); color: var(--pg-ink); padding: 5px 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="axis"></div>
+    <div class="end" style="left:50px">%A% Head office · Calgary</div>
+    <div class="end" style="right:50px">Remote &amp; offshore sites %B%</div>
+    <div class="card spot" id="spot"></div>
+  </div>
+</div>
+<script>
+  var c = document.getElementById("c"), spot = document.getElementById("spot"), els = [];
+  c.innerHTML = c.innerHTML.replace("%A%", I("hugeicons:new-job", 14)).replace("%B%", I("ant-design:safety-outlined", 14));
+  spot = document.getElementById("spot");
+  var Y = [52, 112, 52, 112, 52, 112];
+  var SHORT = { sarah: "HR manager", nadia: "Admin", graham: "Ops manager", ryan: "Project manager", daniel: "HSE lead", mark: "Welder" };
+  C2W.people.forEach(function (p, i) {
+    var x = 50 + 500 * p.site, y = Y[i];
+    c.insertAdjacentHTML("beforeend", '<span class="stem" style="left:' + x + "px;top:" + (y + 34) + "px;height:" + (150 - y - 34) + 'px"></span>');
+    var d = document.createElement("div"); d.className = "p"; d.style.left = x + "px"; d.style.top = y + "px"; d.style.color = p.c;
+    d.innerHTML = '<span class="av" style="background:' + p.c + '">' + p.i + "</span><small>" + SHORT[p.id] + "</small>";
+    c.appendChild(d); els.push(d);
+    d.addEventListener("mouseenter", function () { auto = false; show(i); });
+  });
+  var cur = -1, auto = true;
+  async function show(i) {
+    if (i === cur) return; cur = i; var p = C2W.people[i];
+    els.forEach(function (e, k) { e.classList.toggle("on", k === i); });
+    spot.classList.add("out"); await sleep(200);
+    spot.innerHTML = "<div><b>" + p.name + '</b> <span class="r">· ' + p.role + " · " + p.where + '</span></div><div class="mods">' + p.mods.map(function (m) { return "<span>" + m + "</span>"; }).join("") + "</div><p>“" + p.quote + "”</p>";
+    spot.classList.remove("out");
+  }
+  show(0);
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { await sleep(3000); if (!auto) break; i = (i + 1) % els.length; show(i); } });
+</script>
+</body>
+</html>

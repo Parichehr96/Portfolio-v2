@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — the structure, layer by layer</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Structure (8: B then A). The four layers stand exploded; click one and it
+     opens into its report — its items across the top, the hovered item's
+     tree below. Click the report and the layers come back. */
+  .canvas { height: 460px; }
+
+  /* ---- layers ---- */
+  .layers { position: absolute; inset: 0; transition: opacity .35s var(--e-out), transform .45s var(--e-out); }
+  .report-on .layers { opacity: 0; transform: scale(.96); pointer-events: none; }
+  .stage { position: absolute; left: 236px; top: 150px; width: 300px; height: 210px; perspective: 1400px; }
+  .stack { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(56deg) rotateZ(-38deg); }
+  .ly { position: absolute; inset: 0; border-radius: 16px; display: grid; gap: 8px; padding: 18px; align-content: center; cursor: pointer;
+    transition: transform .9s var(--e-out), box-shadow .25s ease, filter .25s ease; }
+  .ly .tile { height: 44px; border-radius: 9px; display: grid; place-items: center; }
+  .ly.ws { background: rgba(255, 255, 255, .97); box-shadow: 0 0 0 1px var(--pg-border); grid-template-columns: repeat(5, 1fr); }
+  .ly.ws .tile { background: var(--pg-mist); color: var(--pg-ink); }
+  .ly.md { background: rgba(230, 238, 252, .97); box-shadow: 0 0 0 1px #C7D9FB; grid-template-columns: repeat(4, 1fr); }
+  .ly.md .tile { background: #fff; color: var(--ui-primary); }
+  .ly.ad { background: rgba(244, 239, 255, .96); box-shadow: 0 0 0 1px #DCCFFB; grid-template-columns: repeat(4, 1fr); }
+  .ly.ad .tile { background: #fff; color: var(--ui-purple); }
+  .ly.ds { background: rgba(13, 18, 51, .95); grid-template-columns: repeat(3, 1fr); }
+  .ly.ds .tile { background: rgba(255, 255, 255, .1); color: #fff; }
+  .ly:hover { box-shadow: 0 0 0 2px var(--pg-accent); }
+  .is-in .ly.ws { transform: translateZ(156px); } .is-in .ly.md { transform: translateZ(104px); } .is-in .ly.ad { transform: translateZ(52px); }
+  .lab { position: absolute; left: 28px; width: 170px; cursor: pointer; opacity: 0; transition: opacity .5s .7s; }
+  .is-in .lab { opacity: 1; }
+  .lab i.bar { display: block; width: 18px; height: 3px; border-radius: 2px; margin-bottom: 6px; }
+  .lab b { display: block; font: 600 13px/1.25 "Figtree"; }
+  .lab span { font: 400 11.5px/16px "Figtree"; color: var(--pg-muted); }
+  .lab:hover b { color: var(--pg-accent); }
+  .hint { position: absolute; left: 28px; bottom: 18px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
+
+  /* ---- report ---- */
+  .report { position: absolute; inset: 0; padding: 22px 24px; opacity: 0; transform: translateY(8px); pointer-events: none; cursor: pointer;
+    transition: opacity .35s var(--e-out), transform .45s var(--e-out); }
+  .report-on .report { opacity: 1; transform: none; pointer-events: auto; }
+  .rh { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .rh h3 { margin: 4px 0 2px; font: 600 17px/1.2 "Figtree"; }
+  .rh p { margin: 0; font: 400 12px/17px "Figtree"; color: var(--pg-muted); max-width: 380px; }
+  .back { font: 500 11px/1 "Figtree"; color: var(--pg-muted); background: #fff; border-radius: 999px; padding: 7px 11px; box-shadow: 0 0 0 1px var(--pg-border); white-space: nowrap; }
+  .items { display: grid; gap: 8px; margin: 16px 0 0; }
+  .it { border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); padding: 10px 6px; display: grid; justify-items: center; gap: 6px; font: 500 11px/1.2 "Figtree"; text-align: center; cursor: pointer;
+    transition: background .2s, color .2s, box-shadow .2s, transform .2s var(--e-out); }
+  .it .ic { color: var(--k); }
+  .it.on { background: var(--k); color: #fff; box-shadow: none; transform: translateY(-1px); }
+  .it.on .ic { color: #fff; }
+  .tree { position: relative; height: 230px; margin-top: 6px; }
+  .tree svg { position: absolute; inset: 0; }
+  .tree path { fill: none; stroke: #C3CDDB; stroke-width: 1.2; }
+  .nd { position: absolute; transform: translate(-50%, 0); padding: 7px 10px; border-radius: 8px; font: 500 11px/1.1 "Figtree"; white-space: nowrap;
+    opacity: 0; translate: 0 6px; transition: opacity .3s, translate .4s var(--e-out); }
+  .nd.on { opacity: 1; translate: 0 0; }
+  .nd.root { background: var(--pg-ink); color: #fff; }
+  .nd.kid { background: #fff; box-shadow: 0 0 0 1px var(--pg-border); color: var(--pg-ink); }
+  .rf { position: absolute; left: 24px; bottom: 16px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="layers">
+      <div class="stage"><div class="stack" id="stack"></div></div>
+      <div id="labels"></div>
+      <div class="hint">Click a layer to open it</div>
+    </div>
+    <div class="report" id="report"></div>
+  </div>
+</div>
+<script>
+  var L = [
+    { k: "ws", name: "Workspace", desc: "Mine: what needs me, my profile, my alerts, my week, my conversations. Always one click away, in the top bar.", items: C2W.workspace, color: "#0D1233", bar: "#CBD5E1" },
+    { k: "md", name: "4 modules", desc: "Where the work gets done. Every sidebar item is a type of record the module owns.", items: C2W.modules, color: "#2563EB", bar: "#93B4F5" },
+    { k: "ad", name: "Admin console", desc: "Setup, not work. Who can see and do what, across every module.", items: C2W.admin, color: "#7C3AED", bar: "#C4B5FD" },
+    { k: "ds", name: "Design system", desc: "Under all of it: foundations, 40–50 components and the patterns they make.", items: C2W.system, color: "#3F3DB6", bar: "#0D1233" }
+  ];
+  var stack = document.getElementById("stack"), labels = document.getElementById("labels"), report = document.getElementById("report"), c = document.getElementById("c");
+  /* bottom layer first so the top one paints last */
+  stack.innerHTML = L.slice().reverse().map(function (l) { return '<div class="ly ' + l.k + '" data-k="' + l.k + '">' + l.items.map(function (it) { return '<div class="tile">' + I(it.icon, 18) + "</div>"; }).join("") + "</div>"; }).join("");
+  var TOPS = { ws: 74, md: 168, ad: 262, ds: 356 };
+  labels.innerHTML = L.map(function (l) { return '<div class="lab" data-k="' + l.k + '" style="top:' + TOPS[l.k] + 'px"><i class="bar" style="background:' + l.bar + '"></i><b>' + l.name + "</b><span>" + l.items.map(function (i) { return i.name; }).join(" · ") + "</span></div>"; }).join("");
+
+  function tree(layer, idx) {
+    var it = layer.items[idx], kids = it.items, W = 552, root = W / 2, n = kids.length, step = W / n, s = "", h = "";
+    h += '<div class="nd root" style="left:' + root + 'px;top:0">' + (it.long || it.name) + "</div>";
+    kids.forEach(function (k, j) {
+      var x = step * (j + .5), y = 92 + (n > 4 && j % 2 ? 44 : 0);
+      s += '<path d="M' + root + " 30 C" + root + " 60 " + x + " 52 " + x + " " + y + '"/>';
+      h += '<div class="nd kid" style="left:' + x + "px;top:" + y + 'px">' + k + "</div>";
+    });
+    return '<svg viewBox="0 0 ' + W + ' 230" width="' + W + '" height="230">' + s + "</svg>" + h;
+  }
+  function open(k) {
+    var l = L.filter(function (x) { return x.k === k; })[0];
+    report.innerHTML = '<div class="rh"><div><div class="eyebrow">Layer</div><h3>' + l.name + "</h3><p>" + l.desc + '</p></div><span class="back">← All layers</span></div>' +
+      '<div class="items" style="grid-template-columns:repeat(' + l.items.length + ',1fr)">' + l.items.map(function (it, i) { return '<div class="it" data-i="' + i + '" style="--k:' + l.color + '">' + I(it.icon, 18) + it.name + "</div>"; }).join("") + "</div>" +
+      '<div class="tree" id="tree"></div><div class="rf">Hover an item to see what it holds · click to go back</div>';
+    report.dataset.k = k; c.classList.add("report-on"); pick(0);
+  }
+  function pick(i) {
+    var l = L.filter(function (x) { return x.k === report.dataset.k; })[0];
+    report.querySelectorAll(".it").forEach(function (e) { e.classList.toggle("on", +e.dataset.i === i); });
+    var t = document.getElementById("tree"); t.innerHTML = tree(l, i);
+    t.querySelectorAll(".nd").forEach(function (n, j) { setTimeout(function () { n.classList.add("on"); }, (END || reduced) ? 0 : 30 + j * 40); });
+  }
+  c.addEventListener("click", function (e) {
+    if (c.classList.contains("report-on")) { c.classList.remove("report-on"); return; }
+    var t = e.target.closest("[data-k]"); if (t) open(t.dataset.k);
+  });
+  report.addEventListener("mouseover", function (e) { var it = e.target.closest(".it"); if (it && !it.classList.contains("on")) pick(+it.dataset.i); });
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

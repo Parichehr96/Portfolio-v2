@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — foundations</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Foundations (10.A): the system's tokens on one sheet, taken from the
+     prototype — colour, status, type, icons, spacing, radius and motion. */
+  .canvas { height: 520px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto auto; align-content: start; gap: 12px; }
+  .card { padding: 14px; }
+  .t { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .t span { font: 500 10.5px/1 "Figtree"; color: var(--pg-faint); }
+  .ramp { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 8px; }
+  .ramp div { height: 38px; border-radius: 7px; position: relative; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05); }
+  .ramp em { position: absolute; left: 5px; bottom: 4px; font: 500 8px/1 "Inter"; font-style: normal; }
+  .nrm { display: grid; grid-template-columns: repeat(8, 1fr); height: 22px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05); }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ladder { font-family: "Inter"; color: var(--ui-ink); display: grid; gap: 5px; }
+  .ladder div { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--pg-border); padding-bottom: 4px; }
+  .ladder small { font: 400 9.5px/1 "Figtree"; color: var(--pg-faint); white-space: nowrap; }
+  .wall { grid-column: 1 / -1; overflow: hidden; position: relative; }
+  .track { display: flex; gap: 6px; width: max-content; animation: run 30s linear infinite; }
+  .track span { width: 34px; height: 34px; border-radius: 8px; background: var(--pg-mist); display: grid; place-items: center; color: var(--ui-ink); flex: none; }
+  @keyframes run { to { transform: translateX(-50%); } }
+  .wall::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fff, transparent 10%, transparent 90%, #fff); pointer-events: none; }
+  .meas { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 16px; }
+  .meas h4 { margin: 0 0 8px; font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .sp { display: flex; align-items: flex-end; gap: 6px; height: 40px; }
+  .sp i { display: block; background: #93B4F5; border-radius: 2px; width: 10px; }
+  .sp b { font: 500 9px/1 "Inter"; color: var(--pg-muted); display: block; text-align: center; margin-top: 4px; }
+  .rad { display: flex; gap: 8px; align-items: flex-end; }
+  .rad div { width: 38px; height: 30px; background: var(--ui-primary-bg); border: 1px solid #C7D9FB; display: grid; place-items: end center; font: 500 8.5px/1 "Inter"; color: var(--ui-primary); padding-bottom: 3px; }
+  .mo { font: 400 10.5px/16px "Figtree"; color: var(--pg-muted); }
+  .mo b { color: var(--pg-ink); font-weight: 600; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ui-primary); animation: mv 2.4s var(--e-out) infinite; }
+  @keyframes mv { 0%, 20% { transform: translateX(0); } 50%, 70% { transform: translateX(60px); } 100% { transform: translateX(0); } }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="card"><div class="t"><span class="eyebrow">Colour</span><span>one blue, a quiet grey ramp</span></div>
+      <div class="ramp" id="ramp"></div><div class="nrm" id="nrm"></div></div>
+    <div class="card"><div class="t"><span class="eyebrow">Type</span><span>Inter · 6 roles</span></div>
+      <div class="ladder">
+        <div style="font-size:20px;font-weight:600;letter-spacing:-.01em">Page title<small>20 / 28 · 600</small></div>
+        <div style="font-size:15px;font-weight:600">Section<small>15 / 22 · 600</small></div>
+        <div style="font-size:13px">Body and table text<small>13 / 19</small></div>
+        <div style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.02em;color:#374151">Eyebrow<small>12 · caps</small></div>
+        <div style="font-size:12px;color:#6B7280">Caption and hints<small>12 / 16</small></div>
+      </div></div>
+    <div class="card" style="grid-column:1/-1;padding-bottom:12px"><div class="t"><span class="eyebrow">Status</span><span>the only places colour carries meaning</span></div>
+      <div class="pills" id="pills"></div></div>
+    <div class="card wall"><div class="t"><span class="eyebrow">Icons</span><span>six Iconify sets · one 1.5 px stroke · 370 in the full library</span></div><div class="track" id="track"></div></div>
+    <div class="card meas">
+      <div><h4>Spacing</h4><div class="sp" id="sp"></div></div>
+      <div><h4>Radius</h4><div class="rad"><div style="border-radius:8px">8</div><div style="border-radius:12px">12</div><div style="border-radius:999px">pill</div></div></div>
+      <div><h4>Motion</h4><div class="mo"><b>Enter</b> .22–.32 s, ease out<br><b>Leave</b> .16–.20 s, ease in<br><span class="dot"></span></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById("ramp").innerHTML = [["#1D4ED8", "#fff", "700"], ["#2563EB", "#fff", "600"], ["#93B4F5", "#1D2433", "300"], ["#E6EEFC", "#2563EB", "100"], ["#F2F6FE", "#2563EB", "50"]].map(function (r) { return '<div style="background:' + r[0] + '"><em style="color:' + r[1] + '">' + r[2] + "</em></div>"; }).join("");
+  document.getElementById("nrm").innerHTML = ["#1D2433", "#374151", "#6B7280", "#9CA3AF", "#E5E7EB", "#F3F4F6", "#F9FAFB", "#FFFFFF"].map(function (c) { return '<span style="background:' + c + '"></span>'; }).join("");
+  document.getElementById("pills").innerHTML = [["blue", "Active"], ["orange", "Expires in 12 days"], ["purple", "In progress"], ["green", "Approved"], ["red", "Expired"], ["red", "High"], ["orange", "Medium"], ["green", "Low"]].map(function (p) { return '<span class="ui-pill ' + p[0] + '" style="height:22px;font-size:11px;padding:0 9px">' + p[1] + "</span>"; }).join("");
+  var K = Object.keys(window.ICONS || {}), h = "";
+  for (var r = 0; r < 2; r++) K.forEach(function (k) { h += "<span>" + I(k, 18) + "</span>"; });
+  document.getElementById("track").innerHTML = h;
+  document.getElementById("sp").innerHTML = [4, 8, 12, 16, 24, 32].map(function (v) { return '<div><i style="height:' + v + 'px"></i><b>' + v + "</b></div>"; }).join("");
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

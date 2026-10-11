@@ -7,7 +7,7 @@
       <p class="v4-compare__brand"><img src="{{ part.self.logo }}" width="24" height="24" alt="" />{{ part.self.name }}</p>
       <p class="v4-compare__value">
         {{ part.self.value }}
-        <span class="v4-compare__change">{{ part.self.change }}<img src="/Assets/v4/case/trend-red.svg" width="20" height="20" alt="" /></span>
+        <span class="v4-compare__change">{{ part.self.change }}{% if part.self.trend !== false %}<img src="/Assets/v4/case/trend-red.svg" width="20" height="20" alt="" />{% endif %}</span>
       </p>
       <p class="v4-compare__summary">{{ part.self.summary }}</p>
     </div>

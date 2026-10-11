@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — one shell, every module</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Cover (1.C): the module index drives the real prototype screens, which
+     bleed off the right edge. Same 620 × 406.1 slot as ONTON's cover. */
+  .canvas { height: 393px; }
+  .glow { position: absolute; right: -120px; top: -140px; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, .14), transparent 62%); }
+  .index { position: absolute; left: 32px; top: 40px; width: 170px; }
+  .index .eyebrow { margin-bottom: 16px; }
+  .index ul { margin: 0; padding: 0; }
+  .index li { list-style: none; display: flex; align-items: center; gap: 10px; font: 600 20px/34px "Figtree"; color: rgba(13, 18, 51, .22); transition: color .4s ease; }
+  .index li::before { content: ""; width: 0; height: 2px; border-radius: 1px; background: var(--ui-primary); transition: width .5s var(--e-out); }
+  .index li.on { color: var(--pg-ink); }
+  .index li.on::before { width: 14px; }
+  .foot { position: absolute; left: 32px; bottom: 32px; width: 168px; font: 400 11.5px/17px "Figtree"; color: var(--pg-muted); }
+  .screens { position: absolute; left: 214px; top: 40px; width: 520px; aspect-ratio: 1440 / 900; }
+  .screens img { position: absolute; inset: 0; width: 100%; opacity: 0; transform: translateX(10px); transition: opacity .5s ease, transform .7s var(--e-out); }
+  .screens img.on { opacity: 1; transform: none; }
+  .screens::after { content: ""; position: absolute; inset: 0; border-radius: 10px; box-shadow: 0 0 0 1px rgba(16, 24, 40, .06), 0 24px 48px -20px rgba(16, 24, 40, .4); pointer-events: none; }
+  .screens img { border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="glow"></div>
+    <div class="index"><div class="eyebrow">4 modules · 1 workspace</div><ul id="list"></ul></div>
+    <div class="foot">One shell for every module. Notifications, calendar, chat and your profile stay in the top bar.</div>
+    <div class="screens" id="screens"></div>
+  </div>
+</div>
+<script>
+  var S = [["Home", "home"], ["HR", "hr-people"], ["HSE", "hse-overview"], ["Courses", "courses-certs"], ["Engineering", "eng-wo"]];
+  var list = document.getElementById("list"), box = document.getElementById("screens");
+  list.innerHTML = S.map(function (s) { return "<li>" + s[0] + "</li>"; }).join("");
+  box.innerHTML = S.map(function (s, i) { return '<img src="/Assets/v4/case/connect2wow/screens/' + s[1] + '.webp" alt="" decoding="async"' + ">"; }).join("");
+  function show(i) {
+    list.querySelectorAll("li").forEach(function (l, k) { l.classList.toggle("on", k === i); });
+    box.querySelectorAll("img").forEach(function (m, k) { m.classList.toggle("on", k === i); });
+  }
+  show(0);
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (true) { await sleep(2800); i = (i + 1) % S.length; show(i); } });
+</script>
+</body>
+</html>

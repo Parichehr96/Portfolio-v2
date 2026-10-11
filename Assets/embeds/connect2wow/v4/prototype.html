@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — try the prototype</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* The product (13, part two): the live prototype, framed as a window the
+     reader can use. Persona and flow controls sit in the window's bar, so
+     they stay readable at this scale; full screen opens it in a new tab. */
+  html, body { background: #fff; }
+  .canvas { height: 419px; }
+  .bar { position: absolute; left: 0; right: 0; top: 0; height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-bottom: 1px solid var(--pg-border); background: #fff; font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .dots { display: flex; gap: 5px; margin-right: 4px; } .dots i { width: 9px; height: 9px; border-radius: 50%; background: #E2E8F0; }
+  .ctl { display: flex; align-items: center; gap: 6px; }
+  .ctl select { font: 500 11px/1 "Figtree"; color: var(--pg-ink); border: 0; border-radius: 7px; padding: 6px 8px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); cursor: pointer; max-width: 170px; }
+  .open { margin-left: auto; font: 600 11px/1 "Figtree"; color: var(--pg-ink); text-decoration: none; background: #fff; padding: 7px 10px; border-radius: 7px; box-shadow: 0 0 0 1px var(--pg-border); white-space: nowrap; transition: box-shadow .15s; }
+  .open:hover { box-shadow: 0 0 0 1px var(--pg-ink); }
+  .win { position: absolute; left: 0; top: 44px; width: 600px; height: 375px; overflow: hidden; }
+  .win iframe { width: 1440px; height: 900px; border: 0; transform: scale(.41667); transform-origin: 0 0; display: block; }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <div class="bar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <label class="ctl">As <select id="as"></select></label>
+      <label class="ctl">Try <select id="flow"><option value="">a flow…</option></select></label>
+      <a class="open" id="open" href="app/index.html#/home" target="_blank" rel="noopener">Full screen ↗</a>
+    </div>
+    <div class="win"><iframe id="app" title="Connect2WOW interactive prototype" src="app/index.html?shot#/home?as=sarah"></iframe></div>
+  </div>
+</div>
+<script>
+  var P = [["sarah", "Sarah · HR Manager"], ["mark", "Mark · Welder"], ["daniel", "Daniel · HSE Lead"], ["ryan", "Ryan · Project Manager"], ["graham", "Graham · Ops Manager"], ["nadia", "Nadia · Admin"]];
+  var F = [["Sarah approves an offboarding", "sarah", "#/home"], ["Mark reports an incident", "mark", "#/hse/incidents?report=1"], ["Ryan creates a work order", "ryan", "#/eng/work-orders?new=1"],
+    ["Graham approves the work order", "graham", "#/home"], ["Mark renews a certificate", "mark", "#/courses/certificates"], ["Daniel checks a blocked permit", "daniel", "#/hse/permits/PTW-031"], ["Sarah accepts a partner", "sarah", "#/hr/partners"]];
+  var as = document.getElementById("as"), flow = document.getElementById("flow"), app = document.getElementById("app"), open = document.getElementById("open");
+  as.innerHTML = P.map(function (p) { return '<option value="' + p[0] + '">' + p[1] + "</option>"; }).join("");
+  flow.innerHTML += F.map(function (f, i) { return '<option value="' + i + '">' + f[0] + "</option>"; }).join("");
+  function nav(hash, who) {
+    var sep = hash.indexOf("?") > -1 ? "&" : "?";
+    app.contentWindow.location.hash = hash + sep + "as=" + who;
+    as.value = who; open.href = "app/index.html" + hash;
+  }
+  as.addEventListener("change", function () { var h = (app.contentWindow.location.hash || "#/home").replace(/[?&]as=\w+/, ""); nav(h.split("?")[0], as.value); });
+  flow.addEventListener("change", function () { if (flow.value === "") return; var f = F[+flow.value]; nav(f[2], f[1]); flow.value = ""; });
+  /* keep "Full screen" pointed at wherever the reader is */
+  app.addEventListener("load", function () { app.contentWindow.addEventListener("hashchange", function () { open.href = "app/index.html" + app.contentWindow.location.hash.replace(/[?&]as=\w+/, ""); }); });
+</script>
+</body>
+</html>

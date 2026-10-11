@@ -184,6 +184,12 @@
   border: 0;
 }
 
+/* Visuals with their own box (Connect2WOW): the ratio comes from the block,
+   the corner is a plain 20px so it stays round at any shape. */
+.v4-case__animation--free {
+  border-radius: 20px;
+}
+
 /* The facts table: 120px labels, values on a dashed rule. */
 .v4-case__facts {
   display: flex;

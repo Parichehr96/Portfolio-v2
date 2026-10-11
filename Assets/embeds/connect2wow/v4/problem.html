@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — every tool finds its home</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Problem (3.A): six loose tools drift, then each flies to its home in the
+     product: HR, HSE, Courses, Engineering on the rail; calendar and chat in
+     the top bar. Replays on click. */
+  .canvas { height: 380px; }
+  .tool { position: absolute; width: 140px; padding: 10px 12px; display: flex; gap: 9px; align-items: center; background: #fff; border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--pg-border), 0 8px 20px -10px rgba(13, 18, 51, .25); z-index: 3;
+    transition: left .9s var(--e-out), top .9s var(--e-out), width .9s var(--e-out), padding .9s var(--e-out), border-radius .9s var(--e-out), box-shadow .5s, background .5s, transform .9s var(--e-out);
+    animation: drift 5s ease-in-out infinite alternate; }
+  .tool .i { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; flex: none; transition: background .5s, color .5s, width .9s var(--e-out), height .9s var(--e-out); }
+  .tool .t { font: 500 11px/14px "Figtree"; white-space: nowrap; transition: opacity .25s; }
+  .tool .t small { display: block; font-weight: 400; color: var(--pg-faint); font-size: 10px; }
+  @keyframes drift { to { translate: 0 -6px; } }
+  .tool.land { width: 26px; padding: 0; border-radius: 7px; box-shadow: none; background: transparent; animation: none; transform: none !important; }
+  .tool.land .t { opacity: 0; width: 0; overflow: hidden; }
+  .tool.land .i { background: transparent !important; color: var(--ui-ink) !important; }
+  .tool.land.mod .i { background: var(--ui-primary-bg) !important; color: var(--ui-primary) !important; }
+
+  /* the product shell (prototype look) */
+  .app { position: absolute; left: 150px; top: 34px; width: 300px; height: 300px; background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(16, 24, 40, .06), 0 20px 40px -20px rgba(16, 24, 40, .35); opacity: 0; transform: scale(.96); transition: opacity .6s .35s, transform .8s .35s var(--e-out); }
+  .done .app { opacity: 1; transform: none; }
+  .rail { position: absolute; left: 0; top: 0; bottom: 0; width: 44px; border-right: 1px solid var(--ui-line); display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 8px; }
+  .rail .slot { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--ui-ink); }
+  .top { position: absolute; left: 44px; right: 0; top: 0; height: 38px; border-bottom: 1px solid var(--ui-line); display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 0 12px; color: var(--ui-ink); }
+  .top .srch { margin-right: auto; width: 110px; height: 20px; border: 1px solid var(--ui-line); border-radius: 6px; }
+  .top .slot { width: 26px; height: 26px; display: grid; place-items: center; }
+  .body { position: absolute; left: 56px; right: 12px; top: 50px; display: grid; gap: 8px; }
+  .sk { height: 8px; border-radius: 4px; background: #EEF1F5; } .box { height: 54px; border-radius: 8px; border: 1px solid var(--ui-line); }
+  .msg { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font: 500 12px/1 "Figtree"; color: var(--pg-muted); }
+  .replay { position: absolute; right: 14px; top: 12px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); background: #fff; border: 0; border-radius: 999px; padding: 6px 10px; box-shadow: 0 0 0 1px var(--pg-border); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="app" id="app">
+      <div class="rail"><span class="slot">%LOGO%</span><span class="slot" id="s-home">%HOME%</span><span class="slot" id="s-hr"></span><span class="slot" id="s-hse"></span><span class="slot" id="s-courses"></span><span class="slot" id="s-eng"></span></div>
+      <div class="top"><span class="srch"></span><span class="slot">%BELL%</span><span class="slot" id="s-cal"></span><span class="slot" id="s-chat"></span></div>
+      <div class="body"><div class="sk" style="width:40%"></div><div class="box"></div><div class="sk"></div><div class="sk" style="width:80%"></div><div class="box"></div><div class="sk" style="width:60%"></div></div>
+    </div>
+    <button class="replay" id="replay">↻ Replay</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+  var app = document.getElementById("app");
+  app.innerHTML = app.innerHTML.replace("%LOGO%", LOGO(22)).replace("%HOME%", I("iconoir:home-simple", 18)).replace("%BELL%", I("iconoir:bell-notification", 16));
+  /* [from icon, label, note, tint, ink, x, y, rot, home slot, module?, home icon] */
+  var T = [
+    ["hugeicons:table-01", "Payroll.xlsx", "HR in spreadsheets", "#E7F6EC", "#1F8A4C", 18, 30, -6, "hr", 1, "hugeicons:new-job"],
+    ["hugeicons:clipboard", "Incident form", "safety on paper", "#FDECEC", "#C81E1E", 440, 26, 5, "hse", 1, "ant-design:safety-outlined"],
+    ["hugeicons:folder-03", "Certificates.pdf", "in a shared drive", "#EEF1F5", "#475569", 14, 150, 4, "courses", 1, "solar:square-academic-cap-2-linear"],
+    ["hugeicons:mail-01", "Work order emails", "approval by reply", "#EAF1FF", "#2563EB", 448, 146, -4, "eng", 1, "hugeicons:drawing-compass"],
+    ["hugeicons:calendar-03", "Shift calendar", "a separate app", "#FFF4DE", "#B36B00", 24, 270, -3, "cal", 0, "akar-icons:calendar"],
+    ["hugeicons:bubble-chat", "Group chat", "field ↔ office", "#F1ECFF", "#6E56CF", 440, 266, 6, "chat", 0, "hugeicons:message-01"]
+  ];
+  var c = document.getElementById("c"), msg = document.getElementById("msg"), els = [];
+  T.forEach(function (t, i) {
+    var d = document.createElement("div"); d.className = "tool"; d.style.animationDelay = (-i * .8) + "s";
+    d.innerHTML = '<span class="i" style="background:' + t[3] + ";color:" + t[4] + '">' + I(t[0], 15) + '</span><span class="t">' + t[1] + "<small>" + t[2] + "</small></span>";
+    c.appendChild(d); els.push(d);
+  });
+  /* Measured from layout (offsets), so the shell's own entrance scale doesn't skew it. */
+  function slotPos(id) { var n = document.getElementById("s-" + id), x = 0, y = 0, w = n.offsetWidth, h = n.offsetHeight;
+    while (n && n !== c) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+    return [x + (w - 26) / 2, y + (h - 26) / 2]; }
+  function scatter() {
+    c.classList.remove("done"); msg.textContent = "Before: six tools, none of them talking to each other";
+    els.forEach(function (d, i) { var t = T[i]; d.classList.remove("land", "mod"); d.querySelector(".i").innerHTML = I(t[0], 15); d.style.left = t[5] + "px"; d.style.top = t[6] + "px"; d.style.transform = "rotate(" + t[7] + "deg)"; });
+  }
+  async function land() {
+    await sleep(1300); c.classList.add("done"); await sleep(380);
+    els.forEach(function (d, i) { var t = T[i]; setTimeout(function () { var p = slotPos(t[8]); d.classList.add("land"); if (t[9]) d.classList.add("mod"); d.style.left = p[0] + "px"; d.style.top = p[1] + "px"; setTimeout(function () { d.querySelector(".i").innerHTML = I(t[10], 16); }, END ? 0 : 450); }, (END || reduced) ? 0 : i * 130); });
+    await sleep(1100); msg.textContent = "After: every job has a home in one product";
+  }
+  scatter();
+  whenSeen(document.getElementById("f"), land);
+  document.getElementById("replay").onclick = async function () { scatter(); await sleep(700); land(); };
+</script>
+</body>
+</html>
