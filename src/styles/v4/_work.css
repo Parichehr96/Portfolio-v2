@@ -187,33 +187,13 @@ a.v4-project__link:hover {
 /* ONLY THE THUMBNAIL AT THE FRONT PLAYS (scripts/v4-strip.js); the others
    wait on their first still.
 
-   Frames: stills of the prototype stacked, the one showing .is-on. A zoom
-   moves the whole stack (the script sets its transform); the framing never
-   changes otherwise. */
-.v4-project__panel--frames {
-  position: relative;
-}
-
-.v4-project__frames {
-  position: absolute;
-  inset: 0;
-  transform-origin: 0 0;
-  transition: transform var(--v4-zoom-time) var(--v4-zoom-ease);
-}
-
-.v4-project__frame {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity var(--v4-frame-fade) linear;
-}
-
-.v4-project__frame.is-on {
-  opacity: 1;
-}
-
-.v4-project__panel.is-reset :is(.v4-project__frames, .v4-project__frame) {
-  transition: none;
+   Video: a loop recorded from the prototype, on its first frame (the
+   poster) until it plays. */
+.v4-project__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Layers: on the panel's own background, each a full-size transparent

@@ -75,20 +75,14 @@ module.exports = {
         ],
         panels: [
           // Thumbnail motion, played only on the thumbnail at the front
-          // (_work.css, scripts/v4-strip.js). "frames": stills of the
-          // prototype played by steps, each { f: frame, ms: hold, zoom:
-          // [centre x, centre y (0-1 of the panel), scale] }, on a loop.
-          // "layers": transparent layers on bg that rise in one by one.
+          // (_work.css, scripts/v4-strip.js). "video": a loop recorded from the
+          // prototype by tools/connect2wow-thumbs (<video>.webm / .mp4, its
+          // first frame <video>.jpg). "layers": transparent layers on bg that
+          // rise in one by one.
           {
-            motion: "frames",
-            frames: [
-              "/Assets/v4/work/connect2wow/record-overview.webp",
-              "/Assets/v4/work/connect2wow/record-payroll.webp",
-              "/Assets/v4/work/connect2wow/record-documents.webp",
-            ],
-            // The record's tabs, one after another, its content changing with them.
-            steps: [{ f: 0, ms: 2400 }, { f: 1, ms: 2400 }, { f: 2, ms: 2400 }],
-            alt: "Connect2WOW HR module: Mark Rushmore's worker record, moving through its Overview, Payroll and Document tabs",
+            motion: "video",
+            video: "/Assets/v4/work/connect2wow/record",
+            alt: "Connect2WOW: the main navigation moving through Human resource, HSE, Courses and Engineering, each module's menu and page changing with it",
           },
           {
             motion: "layers",
@@ -101,25 +95,9 @@ module.exports = {
             alt: "Connect2WOW Home: offboarding and hiring requests with Decline and Approve, and a partner's connection request",
           },
           {
-            motion: "frames",
-            frames: [
-              "/Assets/v4/work/connect2wow/top-base.webp",
-              "/Assets/v4/work/connect2wow/top-acct.webp",
-              "/Assets/v4/work/connect2wow/top-notif.webp",
-            ],
-            // The profile menu opens, is zoomed into for 1.5s, zooms back out
-            // and closes; then the same for the notifications.
-            steps: [
-              { f: 0, ms: 1400 },
-              { f: 1, ms: 500 },
-              { f: 1, ms: 2200, zoom: [0.737, 0.497, 1.6] },
-              { f: 1, ms: 1000 },
-              { f: 0, ms: 1200 },
-              { f: 2, ms: 500 },
-              { f: 2, ms: 2200, zoom: [0.371, 0.489, 1.54] },
-              { f: 2, ms: 1000 },
-            ],
-            alt: "Connect2WOW top bar on the worker record: the profile menu opens, then the notifications",
+            motion: "video",
+            video: "/Assets/v4/work/connect2wow/top",
+            alt: "Connect2WOW top bar on the worker record: the profile menu opens and scrolls to its end, then the notifications",
           },
         ],
       },

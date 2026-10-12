@@ -1,0 +1,190 @@
+<!doctype html>
+<!--
+  CONNECT2WOW THUMBNAIL STAGE — recorded by record.mjs, played on the homepage
+  strip (src/_data/home.js, panels 1 and 3).
+
+  Puts the real prototype (Assets/embeds/connect2wow/v4/app) in a thumbnail's
+  frame, 812 x 520, over the original panel photo (bg-1.jpg, bg-3.jpg), and
+  draws any moment of its loop on demand: window.setT(seconds) brings the
+  page to exactly that moment, so the recording is frame-exact and smooth
+  whatever the machine. The app's own transitions are switched off; every
+  movement here is a function of t.
+
+  ?p=1  the main navigation: Home, HR, HSE, Courses, Engineering, the rail's
+        highlight gliding between them, each module's sidebar and page fading
+        through as it arrives, on a loop.
+  ?p=3  the top bar: the profile menu opens, the view zooms in on it, it
+        scrolls to its end, closes, the view zooms out; then the same with
+        the notifications.
+
+  Each loop ends exactly where it starts, so the video loops without a seam.
+  Serve the repo root (python3 -m http.server) and open
+  /tools/connect2wow-thumbs/stage.html?p=1.
+-->
+<html><head><meta charset="utf-8"><style>
+html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; background: #fff; }
+#cam { position: absolute; inset: 0; transform-origin: 0 0; }
+#cam > img { position: absolute; inset: 0; width: 812px; height: 520px; }
+.win { position: absolute; top: 40px; height: 440px; overflow: hidden; background: #fff; }
+.win iframe { position: absolute; top: 0; border: 0; transform-origin: 0 0; }
+</style></head><body>
+<div id="cam"></div>
+<script>
+const q = new URLSearchParams(location.search), P = q.get("p") || "1";
+const S = 1.3, W = 1200, H = 440 / S;                  // app scale and viewport, as the stills
+const cam = document.getElementById("cam");
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const span = (t, a, b) => ease((t - a) / (b - a));     // 0 before a, 1 after b, eased between
+const lerp = (a, b, u) => a + (b - a) * u;
+const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+const bg = document.createElement("img"); bg.src = "bg-" + P + ".jpg"; cam.appendChild(bg);
+const win = document.createElement("div"); win.className = "win"; cam.appendChild(win);
+Object.assign(win.style, P === "1"
+  ? { left: "40px", width: "800px", borderRadius: "20px 0 0 20px" }
+  : { left: "-30px", width: "802px", borderRadius: "0 20px 20px 0" });
+const ifr = document.createElement("iframe");
+Object.assign(ifr.style, { width: W + "px", height: H + "px", left: (P === "1" ? 0 : 802 - W * S) + "px", transform: "scale(" + S + ")" });
+ifr.src = "/Assets/embeds/connect2wow/v4/app/index.html#/hr/people/mark?tab=overview";
+win.appendChild(ifr);
+
+let d;                                                 // the app's document
+async function go(hash) {
+  if (d.defaultView.location.hash === hash) return;
+  const changed = new Promise(r => d.defaultView.addEventListener("hashchange", r, { once: true }));
+  d.defaultView.location.hash = hash;
+  await changed; await frame();
+}
+
+/* ---- ?p=1 — the main navigation ----------------------------------------
+   The rail's highlight glides from module to module; each module's sidebar
+   and page fade through (out, then in with a slight rise) as it arrives,
+   and the active icon's colour follows the highlight. */
+const MODS = [                                         // each module on the first page of its menu
+  ["home", "#/home"],
+  ["hr", "#/hr"],
+  ["hse", "#/hse"],
+  ["courses", "#/courses"],
+  ["eng", "#/eng"],
+];
+const SEG = 3.2, MOVE = [2.3, 3.0], SWAP = 2.55;       // per module: hold, then glide and swap
+const INK = [55, 65, 81], BLUE = [37, 99, 235];       // --ink-2, --primary
+let pill, railY = {};
+async function setup1() {
+  const nav = d.querySelector(".rail-nav");
+  nav.style.position = "relative";
+  [...nav.querySelectorAll(".ri")].forEach(r => { railY[r.getAttribute("href").slice(2)] = r.offsetTop; r.style.zIndex = 1; });
+  pill = d.createElement("i"); pill.className = "v4-pill";
+  Object.assign(pill.style, { position: "absolute", left: nav.querySelector(".ri").offsetLeft + "px", top: 0, width: "40px", height: "40px", borderRadius: "10px", background: "#E6EEFC", zIndex: 0 });
+  nav.appendChild(pill);
+}
+async function at1(t) {
+  const n = MODS.length, L = SEG * n; t = ((t % L) + L) % L;
+  const i = Math.floor(t / SEG), u = t - i * SEG, j = (i + 1) % n;
+  await go(MODS[u < SWAP ? i : j][1]);
+  if (!d.querySelector(".v4-pill")) await setup1();     // the app redraws its shell on a module change
+  const k = span(u, ...MOVE);
+  // The highlight, and each icon's colour by how near the highlight is.
+  const y = lerp(railY[MODS[i][0]], railY[MODS[j][0]], k);
+  pill.style.top = y + "px";
+  d.querySelectorAll(".rail-nav .ri").forEach(r => {
+    const w = Math.max(0, 1 - Math.abs(r.offsetTop - y) / 48);
+    r.style.color = "rgb(" + INK.map((c, x) => Math.round(lerp(c, BLUE[x], w))).join(",") + ")";
+  });
+  // Fade through: out quickly, in with a 6px rise.
+  const out = u < SWAP ? 1 - Math.pow((u - MOVE[0]) / (SWAP - MOVE[0]), 2) : 0;
+  const into = u >= SWAP ? span(u, SWAP, MOVE[1] + .15) : 1;
+  const o = u < MOVE[0] ? 1 : u < SWAP ? Math.max(0, out) : into;
+  const rise = u >= SWAP ? (1 - into) * 6 : 0;
+  // Home has no menu, so the menu itself fades with the page (the top bar's
+  // line stays put).
+  d.querySelectorAll(".side, .top > *, .content").forEach(el => {
+    el.style.opacity = o;
+    el.style.transform = rise ? "translateY(" + rise + "px)" : "";
+  });
+}
+
+/* ---- ?p=3 — the profile menu, then the notifications --------------------- */
+const MENUS = [
+  { btn: "acct", start: 1.0 },
+  { btn: "notif", start: 7.4 },
+];
+const LOOP3 = 13.8;
+// Within one menu: open .25, zoom in .9, hold, scroll 1.4, hold, close .25, zoom out .9.
+const O = { open: [0, .25], zin: [.3, 1.2], scroll: [1.6, 3.0], close: [4.0, 4.25], zout: [4.3, 5.2] };
+let fit = {};
+function pop() { return d.querySelector("#pop"); }
+function scroller(p) { return p.classList.contains("menu") ? p : p.querySelector("div[style*=max-height]") || p; }
+async function ensure(btn, want) {
+  const p = pop(), mine = p && p.dataset.v4 === btn;
+  if (want && !mine) {
+    if (p) p.remove();
+    d.querySelector("[data-a=" + btn + "]").click();
+    const n = pop(); n.dataset.v4 = btn;
+    // Fit the menu inside the app window, so it can be scrolled to its end:
+    // the profile menu scrolls itself, the notifications their list.
+    const room = H - n.getBoundingClientRect().top - 10;
+    n.style.maxHeight = room + "px";
+    if (n.classList.contains("menu")) n.style.overflowY = "auto";
+    else {
+      n.style.overflow = "hidden";
+      const sc = scroller(n);
+      sc.style.maxHeight = (room - (sc.getBoundingClientRect().top - n.getBoundingClientRect().top)) + "px";
+    }
+    await frame();
+    {                                                  // the zoom that frames the whole menu, as it is now
+      const r = n.getBoundingClientRect(), f = ifr.getBoundingClientRect();
+      const x0 = f.left + r.left * S, y0 = f.top + r.top * S, w = r.width * S, h = r.height * S;
+      const s = Math.min(812 * .9 / w, 520 * .9 / h, 1.7);
+      const cx = x0 + w / 2, cy = y0 + h / 2;
+      fit[btn] = { s, tx: Math.max(812 * (1 - s), Math.min(0, 406 - s * cx)), ty: Math.max(520 * (1 - s), Math.min(0, 260 - s * cy)) };
+    }
+  }
+  if (!want && mine) p.remove();
+}
+async function at3(t) {
+  t = ((t % LOOP3) + LOOP3) % LOOP3;
+  let zoom = 0, open = null;
+  for (const m of MENUS) {
+    const u = t - m.start;
+    if (u < 0 || u > O.zout[1]) continue;
+    zoom = span(u, ...O.zin) - span(u, ...O.zout);
+    if (u < O.close[1]) {
+      await ensure(m.btn, true); open = m.btn;
+      const p = pop(), k = span(u, ...O.open) - span(u, ...O.close);
+      p.style.opacity = k;
+      p.style.transformOrigin = "top right";
+      p.style.transform = "translateY(" + (1 - k) * -4 + "px) scale(" + lerp(.96, 1, k) + ")";
+      const s = scroller(p);
+      s.scrollTop = (s.scrollHeight - s.clientHeight) * span(u, ...O.scroll);
+    }
+    const f = fit[m.btn] || { s: 1, tx: 0, ty: 0 };
+    cam.style.transform = "translate(" + f.tx * zoom + "px," + f.ty * zoom + "px) scale(" + lerp(1, f.s, zoom) + ")";
+  }
+  if (!open) { const p = pop(); if (p) p.remove(); }
+  if (!zoom) cam.style.transform = "none";
+}
+
+window.setT = async function (t) {
+  if (P === "1") await at1(t); else await at3(t);
+  await frame();
+};
+window.LOOP = P === "1" ? SEG * MODS.length : LOOP3;
+
+ifr.addEventListener("load", async () => {
+  d = ifr.contentDocument;
+  const st = d.createElement("style");                // the app's own motion, off: t drives everything
+  st.textContent = "*,*::before,*::after{transition:none!important;animation:none!important}" +
+    ".ri.on{background:transparent!important}" +             // the highlight is drawn here
+    "::-webkit-scrollbar{display:none}*{scrollbar-width:none}" +
+    ".flowtag{display:none!important}";                 // the prototype's persona switcher
+  d.head.appendChild(st);
+  await d.fonts.ready; await frame();                  // measure with the real type
+  if (P === "1") { await go(MODS[0][1]); await setup1(); }
+  // Measure each menu's zoom once, then close it.
+  if (P === "3") { for (const m of MENUS) { await ensure(m.btn, true); await ensure(m.btn, false); } }
+  await window.setT(0);
+  document.title = "ready";
+});
+</script>
+</body></html>

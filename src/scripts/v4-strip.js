@@ -8,9 +8,8 @@
  * copy it jumps, unseen, to the real one.
  *
  * ONLY THE THUMBNAIL AT THE FRONT PLAYS, once the strip is on screen. A
- * "frames" panel plays its steps (data-steps: which still shows, for how
- * long, and a zoom into part of it), on a loop; anywhere else it waits on
- * its first still. A "layers" panel brings its layers in one by one
+ * "video" panel plays its loop from the start; anywhere else it waits on its
+ * first frame. Its file loads once the strip is near, so it is ready. A "layers" panel brings its layers in one by one
  * (.is-play) the first time it comes to the front, and keeps them up while
  * it stays in sight (.is-held); until then they are hidden. Out of sight,
  * both reset, so they play again next time. Reduced motion: no slide, no
@@ -29,39 +28,21 @@
   var SWIPE = 40;                                             // px of drag or swipe for one step
   var WHEEL = 24;                                             // px of sideways scroll for one step
 
-  // A "frames" panel's steps: show still f for ms, zoomed into [x, y, scale]
-  // (x, y the centre to zoom on, 0-1 of the panel) or not at all.
-  function zoomTo(z) {
-    if (!z) return "none";
-    var s = z[2];
-    var tx = Math.max(1 - s, Math.min(0, 0.5 - s * z[0]));
-    var ty = Math.max(1 - s, Math.min(0, 0.5 - s * z[1]));
-    return "translate(" + (tx * 100).toFixed(2) + "%," + (ty * 100).toFixed(2) + "%) scale(" + s + ")";
-  }
+  // A "video" panel: from its start when it comes to the front, back on its
+  // first frame anywhere else.
   function play(panel) {
-    if (panel._seq || reduce) return;
-    var steps = JSON.parse(panel.getAttribute("data-steps") || "[]");
-    var stack = panel.querySelector(".v4-project__frames");
-    var frames = stack ? stack.children : [];
-    if (!steps.length || !frames.length) return;
-    var i = 0;
-    panel.classList.remove("is-reset");
-    (function next() {
-      var st = steps[i];
-      Array.prototype.forEach.call(frames, function (f, k) { f.classList.toggle("is-on", k === st.f); });
-      stack.style.transform = zoomTo(st.zoom);
-      i = (i + 1) % steps.length;
-      panel._seq = setTimeout(next, st.ms);
-    })();
+    var v = panel.querySelector("video");
+    if (!v || reduce || !v.paused) return;
+    v.preload = "auto";
+    try { v.currentTime = 0; } catch (e) {}
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
   }
   function stop(panel) {
-    if (!panel._seq) return;
-    clearTimeout(panel._seq);
-    panel._seq = 0;
-    panel.classList.add("is-reset");
-    var stack = panel.querySelector(".v4-project__frames");
-    stack.style.transform = "none";
-    Array.prototype.forEach.call(stack.children, function (f, k) { f.classList.toggle("is-on", k === 0); });
+    var v = panel.querySelector("video");
+    if (!v || (v.paused && !v.currentTime)) return;
+    v.pause();
+    try { v.currentTime = 0; } catch (e) {}
   }
 
   Array.prototype.slice.call(document.querySelectorAll("[data-strip]")).forEach(function (strip) {
@@ -76,6 +57,7 @@
       c.setAttribute("aria-hidden", "true");
       c.inert = true;
       Array.prototype.forEach.call(c.querySelectorAll("img"), function (i) { i.loading = "eager"; });
+      Array.prototype.forEach.call(c.querySelectorAll("video"), function (v) { v.preload = "none"; v.removeAttribute("loop"); });
       return c;
     }
     real.forEach(function (el) { track.insertBefore(copy(el), real[0]); });
@@ -102,7 +84,7 @@
         var vis = onScreen && left < w - 1 && left + el.offsetWidth > 1;
         var front = onScreen && k === idx;
         if (vis) seen[L] = true;
-        if (el.classList.contains("v4-project__panel--frames")) {
+        if (el.classList.contains("v4-project__panel--video")) {
           if (front) play(el); else stop(el);
         } else if (el.classList.contains("v4-project__panel--layers")) {
           if (front) {
@@ -197,11 +179,15 @@
     });
 
     window.addEventListener("resize", function () { place(false); update(); });
+    // A browser may hold a video back while the page is hidden: start the
+    // one at the front again when it shows.
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) update(); });
     place(false);
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
         onScreen = entries[0].intersectionRatio >= 0.35;
+        if (entries[0].isIntersecting) real.forEach(function (el) { var v = el.querySelector("video"); if (v && v.preload === "none") v.preload = "auto"; });
         update();
       }, { threshold: [0, 0.35, 0.7] }).observe(strip);
     } else {

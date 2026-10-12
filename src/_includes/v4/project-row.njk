@@ -7,9 +7,9 @@
   THE STRIP runs as the comp draws it: from the reading column's left edge,
   cut off at its right. It is an endless carousel (scripts/v4-strip.js): one
   small swipe, scroll or drag moves it one thumbnail either way, and the
-  thumbnail at the front plays its motion (panel.motion: "frames", stills
-  played by steps, or "layers" appearing one by one). Without the script it
-  is a plain horizontal scroller, each thumbnail on its first still.
+  thumbnail at the front plays its motion (panel.motion: a "video" loop, or
+  "layers" appearing one by one). Without the script it is a plain
+  horizontal scroller, each thumbnail on its first frame.
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
@@ -46,13 +46,12 @@
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.frames %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}"{% if panel.steps %} data-steps="{{ panel.steps | dump | escape }}"{% endif %}>
-        {%- if panel.frames %}
-        <div class="v4-project__frames" role="img" aria-label="{{ panel.alt }}">
-          {%- for frame in panel.frames %}
-          <img class="v4-project__frame{% if loop.first %} is-on{% endif %}" src="{{ frame }}" width="812" height="520" alt=""{% if not eager %} loading="lazy"{% endif %} decoding="async" />
-          {%- endfor %}
-        </div>
+      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
+        {%- if panel.video %}
+        <video class="v4-project__video" muted playsinline loop preload="none" disablepictureinpicture width="812" height="520" poster="{{ panel.video }}.jpg" role="img" aria-label="{{ panel.alt }}">
+          <source src="{{ panel.video }}.webm" type="video/webm" />
+          <source src="{{ panel.video }}.mp4" type="video/mp4" />
+        </video>
         {%- elif panel.layers %}
         <div class="v4-project__layers" role="img" aria-label="{{ panel.alt }}">
           {%- for layer in panel.layers %}
