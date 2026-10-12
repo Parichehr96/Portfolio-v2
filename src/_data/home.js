@@ -68,7 +68,7 @@ module.exports = {
         name: "Connect2WOW",
         href: "/work/connect2wow/",
         verified: true,
-        years: "2024-2025",
+        years: "2021-2022",
         desc: [
           { style: "lead", text: "Designed how an ERP decides what deserves attention." },
           { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
@@ -109,16 +109,14 @@ module.exports = {
         panels: [{}, {}, {}],
       },
       {
-        // The comp repeats Connect2WOW's copy here; placeholder until the real
-        // WOW design system text is written.
         id: "wow-design-system",
         name: "WOW design system",
-        soon: true,
+        href: "/work/wow-design-system/",
         verified: true,
-        years: "2024-2025",
+        years: "2021-2022",
         desc: [
-          { style: "lead", text: "Designed how an ERP decides what deserves attention." },
-          { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
+          { style: "lead", text: "Made three designers draw like one." },
+          { text: " Co-built the library behind Connect2WOW: 65 component sets, 370 icons, and the rules that decide how everything looks and behaves." },
         ],
         panels: [{}, {}, {}],
       },

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WOW design system — the button, from every angle</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<style>
+  /* Cover, Apple product-page style: one component shown like a product.
+     Edge-on (its states fanned like a side profile), a macro close-up (focus
+     ring, radius, padding), and the front view in context — with a swatch row
+     that re-skins every tile at once, the way a colour picker changes a laptop.
+     The product inside is the revisited WOW library, as in the prototype:
+     Inter, its blue (tools/connect2wow-app/app.css). */
+  :root { --w-blue: #2563EB; --w-blue-0: #1D4ED8; --w-blue-30: #E6EEFC; --w-ink: #1D2433; --w-sub: #6B7280; --w-line: #E5E7EB; --w-red: #C81E1E; --tile: #F5F5F7; }
+  .canvas { height: 393px; }
+  .tile { position: absolute; background: var(--tile); border-radius: 18px; overflow: hidden; }
+  .t1 { left: 8px; top: 8px; width: 288px; height: 184px; }
+  .t2 { left: 8px; top: 201px; width: 288px; height: 184px; }
+  .t3 { left: 304px; top: 8px; width: 288px; height: 377px; }
+  .cap { position: absolute; left: 14px; top: 12px; font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: rgba(13, 18, 51, .38); }
+
+  /* the WOW button, every priority as a skin */
+  .b { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 16px; border-radius: 8px; font: 500 13px/1 "Inter"; white-space: nowrap; transition: background .45s ease, color .45s ease, box-shadow .45s ease; }
+  .b .ic { width: 16px; height: 16px; }
+  [data-p="primary"] .b { background: var(--w-blue); color: #fff; }
+  [data-p="secondary"] .b { background: var(--w-blue-30); color: var(--w-blue-0); }
+  [data-p="outline"] .b { background: #fff; color: var(--w-ink); box-shadow: inset 0 0 0 1px #D1D5DB; }
+  [data-p="danger"] .b { background: var(--w-red); color: #fff; }
+  .b.hover { filter: brightness(1.08); }
+  .b.press { filter: brightness(.9); transform: translateY(1px); }
+  .b.focus { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--w-blue) !important; }
+  .b.off { opacity: .4; }
+
+  /* t1 — edge-on: the states fanned like a side profile */
+  .fan { position: absolute; left: 0; right: 0; top: 40px; height: 130px; perspective: 520px; display: flex; justify-content: center; gap: 12px; padding-top: 22px; }
+  .fan .s { display: grid; justify-items: center; gap: 12px; transform-style: preserve-3d; transition: transform 1s var(--e-out), opacity .6s ease; }
+  .fan .s .b { width: 42px; height: 42px; padding: 0; border-radius: 10px; }
+  .fan .s .b .ic { width: 18px; height: 18px; }
+  .fan .s::after { content: ""; width: 36px; height: 6px; border-radius: 50%; background: radial-gradient(rgba(13, 18, 51, .18), transparent 70%); order: 1; }
+  .fan .lab { order: 2; font: 500 9.5px/1 "Figtree"; color: rgba(13, 18, 51, .55); white-space: nowrap; transition: opacity .6s ease; }
+
+  /* t2 — macro close-up of the left edge */
+  .macro { position: absolute; left: 30px; top: 46px; transform-origin: 0 0; transform: scale(2.7); }
+  .macro .b { padding: 0 16px; }
+  .red { position: absolute; font: 600 9.5px/1 "Figtree"; color: #E05F2B; display: flex; align-items: center; gap: 4px; }
+  .red::before { content: ""; display: block; background: #E05F2B; }
+  .red.h::before { width: 22px; height: 1px; }
+  .red.v::before { width: 1px; height: 18px; }
+
+  /* t3 — front view, edge view, in context, and the picker */
+  .front { position: absolute; left: 0; right: 0; top: 64px; display: grid; justify-items: center; }
+  .front .b { transform: scale(1.5); }
+  .edge { position: absolute; left: 50%; top: 128px; width: 162px; height: 6px; margin-left: -81px; border-radius: 3px; transition: background .45s ease; }
+  [data-p="primary"] .edge { background: linear-gradient(90deg, #1D4ED8, #2563EB 40%, #6E9BFA 52%, #2563EB 60%, #1D4ED8); }
+  [data-p="secondary"] .edge { background: linear-gradient(90deg, #C7D9FB, #E6EEFC 45%, #fff 52%, #E6EEFC 60%, #C7D9FB); }
+  [data-p="outline"] .edge { background: linear-gradient(90deg, #D1D5DB, #fff 50%, #D1D5DB); }
+  [data-p="danger"] .edge { background: linear-gradient(90deg, #9B1515, #C81E1E 45%, #E86A6A 52%, #C81E1E 60%, #9B1515); }
+  .ctx { position: absolute; left: 24px; right: 24px; top: 158px; background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 10px 24px -14px rgba(13, 18, 51, .3); font-family: "Inter"; }
+  .ctx .who { display: flex; gap: 8px; align-items: center; }
+  .ctx .who i { width: 26px; height: 26px; border-radius: 50%; background: #7A5AF8; color: #fff; font: 600 9px/26px "Figtree"; text-align: center; font-style: normal; }
+  .ctx b { display: block; font: 500 11px/1.2 "Inter"; color: var(--w-ink); }
+  .ctx small { white-space: nowrap; font: 400 9.5px/1.2 "Inter"; color: var(--w-sub); }
+  .ctx .row { display: flex; gap: 6px; margin-top: 12px; }
+  .ctx .row .b { flex: 1; height: 28px; font-size: 11px; }
+  .ctx .row .q { background: #fff !important; color: var(--w-ink) !important; box-shadow: inset 0 0 0 1px #D1D5DB !important; }
+  .picker { position: absolute; left: 0; right: 0; bottom: 22px; display: grid; justify-items: center; gap: 10px; }
+  .sw { display: flex; gap: 18px; }
+  .sw button { width: 26px; height: 26px; border-radius: 50%; border: 0; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); transition: box-shadow .25s ease, transform .15s var(--e-out); }
+  .sw button:active { transform: scale(.92); }
+  .sw button.on { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0071E3; }
+  .picker span { font: 500 12px/1 "Figtree"; color: var(--pg-ink); transition: opacity .2s; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c" data-p="primary">
+    <div class="tile t1"><span class="cap">Every state</span><div class="fan" id="fan"></div></div>
+    <div class="tile t2"><span class="cap">Up close</span>
+      <div class="macro"><span class="b focus">%ICON%Approve</span></div>
+      <span class="red h" style="left:150px;top:22px">2 px focus ring</span>
+      <span class="red h" style="left:14px;top:164px">8 px radius · 16 px padding · Inter 500</span>
+    </div>
+    <div class="tile t3"><span class="cap">In use</span>
+      <div class="front"><span class="b">%ICON%Approve</span></div>
+      <div class="edge"></div>
+      <div class="ctx"><div class="who"><i>RM</i><div><b>2 welders · North Pad</b><small>Requested by Ryan Mitchell · Sep 25–27</small></div></div>
+        <div class="row"><span class="b q">Decline</span><span class="b">Approve</span></div></div>
+      <div class="picker"><div class="sw" id="sw"></div><span id="name">Primary</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  var c = document.getElementById("c"), ICON = I("hugeicons:check", 16);
+  c.innerHTML = c.innerHTML.replace(/%ICON%/g, ICON);
+  var STATES = [["Default", ""], ["Hover", "hover"], ["Pressed", "press"], ["Focus", "focus"], ["Disabled", "off"]];
+  var fan = document.getElementById("fan");
+  fan.innerHTML = STATES.map(function (s) { return '<div class="s"><span class="b ' + s[1] + '">' + ICON + '</span><span class="lab">' + s[0] + "</span></div>"; }).join("");
+  /* fanned: each state turned a little more, like a lid opening */
+  function lay(open) {
+    /* closed: the five stand edge-on in a line; open: they turn to face you */
+    fan.querySelectorAll(".s").forEach(function (el, i) {
+      el.style.transform = open ? "rotateX(14deg) translateY(0)" : "rotateY(78deg) translateY(6px)";
+      el.style.transitionDelay = (open ? i * 90 : 0) + "ms";
+      el.querySelector(".lab").style.opacity = open ? 1 : 0;
+    });
+  }
+  var SW = [["primary", "Primary", "#2563EB"], ["secondary", "Secondary", "#E6EEFC"], ["outline", "Outline", "#FFFFFF"], ["danger", "Danger", "#C81E1E"]];
+  var sw = document.getElementById("sw"), label = document.getElementById("name"), auto = true;
+  sw.innerHTML = SW.map(function (s, i) { return '<button aria-label="' + s[1] + '" data-i="' + i + '" style="background:' + s[2] + '"></button>'; }).join("");
+  function pick(i) {
+    c.dataset.p = SW[i][0]; label.textContent = SW[i][1];
+    sw.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.dataset.i === i); });
+  }
+  sw.addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; auto = false; pick(+b.dataset.i); });
+  pick(0); lay(false);
+  whenSeen(document.getElementById("f"), async function () {
+    await sleep(300); lay(true);
+    var i = 0; while (auto) { await sleep(2600); if (!auto) break; i = (i + 1) % SW.length; pick(i); }
+  });
+</script>
+</body>
+</html>

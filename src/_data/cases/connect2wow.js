@@ -30,7 +30,7 @@ module.exports = {
     { label: "Craft", values: ["Information architecture,", "design system,", "product design"] },
     { label: "Role", values: ["One of three product designers,", "co-owner of the design system"] },
     { label: "Team", values: ["3 product designers, design director, engineering"] },
-    { label: "Timeline", values: ["May 2021 – Sep 2022,", "design system in 6 months"] },
+    { label: "Timeline", values: ["May 2021 – Sep 2022,", "design system from Jul 2021"] },
     { label: "Outcome", values: ["4 modules on one shell,", "40–50 components,", "never launched"] },
   ],
 
@@ -139,7 +139,9 @@ module.exports = {
       nav: "Components",
       text: "40–50 components, built from the bottom up: 65 sets in the Figma library once the 15 icon sets are counted, from buttons, inputs and mega-selects to org charts, steppers and a chat system. A status pill goes into a crew row, the row into a crew card, the card into a work order. Because every module is assembled from the same parts, an expired certificate looks the same in HSE, Courses and Engineering, and nobody can tell which of us designed which screen.",
       blocks: [{ type: "animation", src: E + "components.html", ratio: "600 / 392",
-        title: "A camera over the live prototype pulls back from one status pill to a crew row, the crew card, and the whole work order" }],
+        title: "A camera over the live prototype pulls back from one status pill to a crew row, the crew card, and the whole work order" },
+        { type: "related", href: "/work/wow-design-system/", eyebrow: "The library behind it", title: "WOW design system",
+          text: "65 component sets, 370 icons and the rules that kept three designers drawing like one.", cta: "Read the design system case study" }],
     },
     {
       title: "The stress test: notifications",

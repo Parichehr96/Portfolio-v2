@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Compare, Apple ‘compare models’ style: four columns for Carbon, Material, Polaris and Atlassian, the same rows for each, and the bottom row — what WOW took — highlighted.">
+<title>WOW design system — compare the four</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 470px; }
+  .cols { position: absolute; left: 16px; right: 16px; top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .col { background: #F5F5F7; border-radius: 16px; padding: 14px 12px; display: grid; gap: 12px; align-content: start; opacity: 0; transform: translateY(8px); transition: opacity .5s var(--e-out), transform .6s var(--e-out); }
+  .is-in .col { opacity: 1; transform: none; }
+  .col h4 { margin: 0; display: flex; align-items: center; gap: 7px; font: 700 14px/1 "Figtree"; }
+  .col h4 i { width: 10px; height: 10px; border-radius: 3px; }
+  .k { font: 600 9px/1 "Figtree"; letter-spacing: .07em; text-transform: uppercase; color: var(--pg-faint); margin-bottom: 4px; }
+  .v { font: 400 11px/1.4 "Figtree"; color: var(--pg-ink); }
+  .took { background: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 0 0 1px #C7D9FB; }
+  .took .k { color: #2563EB; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="cols" id="cols"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("cols").innerHTML = W.RESEARCH.map(function (r, i) {
+    return '<div class="col" style="transition-delay:' + i * 90 + 'ms"><h4><i style="background:' + r.c + '"></i>' + r.name + '</h4><div><div class="k">Feedback components</div><div class="v">' + r.comp + '</div></div><div><div class="k">Severity</div><div class="v">' + r.sev + '</div></div><div><div class="k">Default</div><div class="v">' + r.def + '</div></div><div class="took"><div class="k">What WOW took</div><div class="v">' + r.took + "</div></div></div>";
+  }).join("");
+  whenSeen(f);
+</script>
+</body>
+</html>

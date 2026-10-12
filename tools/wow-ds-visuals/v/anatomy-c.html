@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Numbered callouts, like an annotated product diagram: six numbers on the card, a legend beside it. Hover a legend line to light its part.">
+<title>WOW design system — numbered callouts</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .card { position: absolute; left: 30px; top: 70px; width: 290px; }
+  .num { position: absolute; width: 20px; height: 20px; margin: -10px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 700 10px/1 "Figtree"; box-shadow: 0 0 0 3px #fff; transition: transform .25s var(--e-out), background .25s; z-index: 2; }
+  .num.on { transform: scale(1.25); background: #2563EB; }
+  .legend { position: absolute; left: 350px; right: 20px; top: 56px; display: grid; gap: 4px; }
+  .legend div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 7px 8px; border-radius: 10px; cursor: default; transition: background .2s; }
+  .legend div.on { background: #F5F5F7; }
+  .legend span { width: 20px; height: 20px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 700 10px/1 "Figtree"; }
+  .legend b { display: block; font: 700 12px/1.2 "Figtree"; } .legend small { font: 400 10.5px/1.35 "Figtree"; color: var(--pg-muted); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="card w" id="cd"></div>
+    <div class="legend" id="lg"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("cd").innerHTML = W.req();
+  var N = [[30, 70, "Card", "surface/card · 12 radius"], [74, 98, "Avatar", "28 px · initials fallback"], [200, 92, "Title & meta", "text/primary · text/secondary"], [140, 124, "Status pills", "one colour per meaning"], [100, 166, "Secondary action", "button/outline"], [250, 166, "Primary action", "button/primary · always right"]];
+  c.insertAdjacentHTML("beforeend", N.map(function (n, i) { return '<span class="num" data-i="' + i + '" style="left:' + n[0] + "px;top:" + n[1] + 'px">' + (i + 1) + "</span>"; }).join(""));
+  var lg = document.getElementById("lg"), auto = true;
+  lg.innerHTML = N.map(function (n, i) { return '<div data-i="' + i + '"><span>' + (i + 1) + "</span><div><b>" + n[2] + "</b><small>" + n[3] + "</small></div></div>"; }).join("");
+  function hl(i) { c.querySelectorAll("[data-i]").forEach(function (e) { e.classList.toggle("on", +e.dataset.i === i); }); }
+  lg.addEventListener("mouseover", function (e) { var d = e.target.closest("[data-i]"); if (d) { auto = false; hl(+d.dataset.i); } });
+  whenSeen(f, async function () { var i = 0; while (auto) { hl(i); i = (i + 1) % N.length; await sleep(1500); } });
+</script>
+</body>
+</html>

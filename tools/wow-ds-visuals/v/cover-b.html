@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Exploded stack: four planes float apart — tokens, components, patterns and the finished screen on top — the whole system in one image, like Apple’s layered device teardown.">
+<title>WOW design system — foundations to screen, exploded</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .stage { position: absolute; left: 210px; top: 140px; width: 300px; height: 188px; perspective: 1500px; }
+  .stack { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(57deg) rotateZ(-36deg); }
+  .pl { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; transition: transform 1.2s var(--e-out); box-shadow: 0 0 0 1px rgba(13,18,51,.08); }
+  .p0 { background: #0D1233; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 18px; align-content: center; }
+  .p0 i { height: 30px; border-radius: 6px; }
+  .p1 { background: #F5F5F7; display: flex; flex-wrap: wrap; gap: 8px; padding: 18px; align-content: center; justify-content: center; }
+  .p2 { background: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; align-content: center; }
+  .p3 { background: #fff; }
+  .p3 img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .is-in .p1 { transform: translateZ(46px); } .is-in .p2 { transform: translateZ(92px); } .is-in .p3 { transform: translateZ(138px); }
+  .lab { position: absolute; left: 26px; width: 150px; opacity: 0; transition: opacity .5s 1s; }
+  .is-in .lab { opacity: 1; }
+  .lab b { display: block; font: 600 12.5px/1.25 "Figtree"; } .lab span { font: 400 11px/15px "Figtree"; color: var(--pg-muted); }
+  .lab i { display: block; width: 16px; height: 3px; border-radius: 2px; margin-bottom: 5px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="stage"><div class="stack">
+      <div class="pl p0" id="p0"></div><div class="pl p1" id="p1"></div><div class="pl p2" id="p2"></div>
+      <div class="pl p3"><img src="/Assets/v4/case/connect2wow/screens/hr-people.webp" alt=""></div>
+    </div></div>
+    <div class="lab" style="top:52px"><i style="background:#93B4F5"></i><b>Screens</b><span>every module, from the same parts</span></div>
+    <div class="lab" style="top:136px"><i style="background:#C7D9FB"></i><b>Patterns</b><span>record header, form, table, request</span></div>
+    <div class="lab" style="top:220px"><i style="background:#D1D5DB"></i><b>Components</b><span>50, in five families</span></div>
+    <div class="lab" style="top:304px"><i style="background:#0D1233"></i><b>Foundations</b><span>tokens: colour, type, space, motion</span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var C = ["#1D4ED8", "#2563EB", "#93B4F5", "#E6EEFC", "#1D2433", "#6B7280", "#E5E7EB", "#F3F4F6", "#C81E1E", "#15803D", "#DD6B20", "#7C3AED"];
+  document.getElementById("p0").innerHTML = C.map(function (x) { return '<i style="background:' + x + '"></i>'; }).join("");
+  document.getElementById("p1").innerHTML = W.btn("Approve") + W.btn("Decline", "outline") + W.pill("Active") + W.pill("Expired", "red") + W.chip("North Pad", true) + '<span class="w-switch on"></span><span class="w-check on">' + I("hugeicons:check", 11) + "</span>";
+  document.getElementById("p2").innerHTML = W.req() + '<div class="w-card" style="display:grid;gap:8px">' + W.field("Full name", "Mark Rushmore", "focus", "") + W.tabs() + "</div>";
+  whenSeen(f);
+</script>
+</body>
+</html>

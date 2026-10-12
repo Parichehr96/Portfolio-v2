@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WOW design system — visual options</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #0D1233; --muted: #475569; --faint: rgba(71,85,105,.6); --line: #E2E8F0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: "Figtree", system-ui, sans-serif; }
+  header { padding: 40px 32px 8px; max-width: 1900px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 15px; max-width: 820px; line-height: 22px; }
+  nav { position: sticky; top: 0; z-index: 2; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 10px 32px; display: flex; gap: 6px; flex-wrap: wrap; }
+  nav a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 999px; background: #F3F6F8; }
+  section { padding: 36px 32px 20px; max-width: 1900px; margin: 0 auto; border-bottom: 1px solid var(--line); }
+  section h2 { font-size: 18px; margin: 0 0 4px; display: flex; gap: 10px; align-items: baseline; }
+  section h2 small { font-size: 12px; color: var(--faint); font-weight: 500; }
+  section > p { margin: 0 0 18px; color: var(--muted); font-size: 14px; max-width: 860px; line-height: 21px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 28px; align-items: start; }
+  figure { margin: 0; }
+  .fr { border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+  figcaption { margin-top: 10px; font-size: 13px; line-height: 19px; color: var(--muted); }
+  figcaption b { color: var(--ink); }
+  figcaption a { color: var(--muted); font-size: 12px; }
+  iframe { display: block; width: 100%; border: 0; height: 300px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>WOW design system — visual options</h1>
+  <p>Three options for every section with a visual, inspired by Apple's product pages (tiles, close-ups, swatch pickers), Linear, Stripe and the Material and Carbon sites. The product inside is the revisited WOW look from the prototype; everything around it follows the portfolio. Pick one per section (e.g. "Cover B, Foundations A").</p>
+</header>
+<nav id="toc"></nav>
+<main id="sets"></main>
+<script>
+  var SETS = [
+    ["cover", "Cover", "A new cover: one strong image of the system."],
+    ["glance", "02 At a glance", "The numbers: 65 sets, 50 components, 370 icons, two themes, six alert types."],
+    ["problem", "03 Problem", "Three designers, the same card three ways."],
+    ["research", "04 Research", "Carbon, Material, Polaris and Atlassian, and what WOW took from each."],
+    ["principles", "05 Principles", "Structure decides · colour carries meaning · every state ships · one name, one thing."],
+    ["foundations", "06 Foundations", "Colour, type, spacing, radius, motion — and tokens."],
+    ["icons", "07 Icons", "370 glyphs, 14 sets, one grid, one stroke."],
+    ["components", "08 Components", "50 components in five families."],
+    ["states", "09 States", "Every control in every state."],
+    ["anatomy", "10 Anatomy", "Parts, spacing and tokens on one sheet."],
+    ["patterns", "11 Patterns", "Components make patterns, patterns make screens."],
+    ["notifications", "12 Notifications", "Dot → count → statement → alert."],
+    ["themes", "13 Themes", "Light and dark from one set of tokens."],
+    ["team", "14 Team", "Research alone, decide together every day, hand over every week."],
+    ["revisited", "15 Revisited", "2026: tokens became variables, 771 bindings, the audit, a refreshed look."]
+  ];
+  var toc = document.getElementById("toc"), sets = document.getElementById("sets");
+  SETS.forEach(function (s) {
+    toc.insertAdjacentHTML("beforeend", '<a href="#' + s[0] + '">' + s[1] + "</a>");
+    var figs = ["a", "b", "c"].map(function (v) {
+      var src = "v/" + s[0] + "-" + v + ".html";
+      return '<figure><div class="fr"><iframe loading="lazy" src="' + src + '" title="' + s[1] + " option " + v.toUpperCase() + '"></iframe></div><figcaption id="cap-' + s[0] + "-" + v + '"><b>' + v.toUpperCase() + '</b> · <a href="' + src + '" target="_blank">open alone ↗</a></figcaption></figure>';
+    }).join("");
+    sets.insertAdjacentHTML("beforeend", '<section id="' + s[0] + '"><h2>' + s[1] + "</h2><p>" + s[2] + '</p><div class="row">' + figs + "</div></section>");
+  });
+  function size(f) {
+    try {
+      var d = f.contentDocument; if (!d || !d.body) return;
+      f.style.height = Math.ceil(d.documentElement.scrollHeight) + "px";
+      var m = d.querySelector('meta[name="description"]'), id = f.getAttribute("src").replace(/^v\/|\.html$/g, ""), cap = document.getElementById("cap-" + id);
+      if (m && cap && !cap.dataset.done) { cap.dataset.done = 1; cap.querySelector("b").insertAdjacentText("afterend", " " + m.content); }
+    } catch (e) {}
+  }
+  document.querySelectorAll("iframe").forEach(function (f) { f.addEventListener("load", function () { size(f); setTimeout(function () { size(f); }, 500); setTimeout(function () { size(f); }, 1500); }); });
+  addEventListener("resize", function () { document.querySelectorAll("iframe").forEach(size); });
+</script>
+</body>
+</html>

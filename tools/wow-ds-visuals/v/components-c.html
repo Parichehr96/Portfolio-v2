@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Spotlight carousel: one component per slide, large and live, with its family, variant count and a row of its states — like a product page’s feature carousel.">
+<title>WOW design system — spotlight</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .slide { position: absolute; left: 16px; right: 16px; top: 16px; height: 290px; border-radius: 20px; background: #F5F5F7; overflow: hidden; transition: opacity .3s ease; }
+  .slide.out { opacity: 0; }
+  .meta { position: absolute; left: 22px; top: 20px; }
+  .meta span { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .meta h3 { margin: 6px 0 0; font: 700 28px/1 "Figtree"; letter-spacing: -.02em; }
+  .meta p { margin: 6px 0 0; font: 500 12px/1.4 "Figtree"; color: var(--pg-muted); }
+  .hero { position: absolute; left: 0; right: 0; top: 110px; display: grid; place-items: center; transform: scale(1.5); }
+  .row { position: absolute; left: 0; right: 0; bottom: 18px; display: flex; justify-content: center; gap: 10px; }
+  .nav { position: absolute; right: 16px; bottom: 16px; display: flex; gap: 6px; }
+  .nav button { width: 30px; height: 30px; border-radius: 50%; border: 0; background: #F5F5F7; cursor: pointer; font: 600 14px/1 "Figtree"; color: var(--pg-ink); }
+  .ct { position: absolute; left: 16px; bottom: 24px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="slide w" id="sl"></div>
+    <div class="ct" id="ct"></div>
+    <div class="nav"><button id="pv" aria-label="Previous">‹</button><button id="nx" aria-label="Next">›</button></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var LIVE = {
+    "Button": W.btn("Approve"), "Text input": W.field("Site", "North Pad", "", ""), "Text field": W.field("Notes", "Gas test done", "focus", ""), "Select": W.field("Discipline", "Welding ▾", "", ""),
+    "Mega-select": '<span class="w-chip on">Welders ×</span><span class="w-chip on">Pipefitters ×</span>', "Select menu item": '<span class="w-chip">North Pad</span>', "Checkbox": '<span class="w-check on">' + I("hugeicons:check", 11) + '</span><span class="w-check"></span>',
+    "Radio button": '<span class="w-radio on"></span><span class="w-radio"></span>', "Switch": '<span class="w-switch on"></span><span class="w-switch"></span>', "Suffix / prefix": W.field("Rate", "$ 62 / h", "", ""),
+    "Table": W.table(), "List": W.who("SL", "#E2558E", "Sarah Lim", "HR Manager"), "List item": W.who("MR", "#2563EB", "Mark Rushmore", "Welder"), "Avatar": W.av("SL", "#E2558E", 30) + W.av("DO", "#D97706", 30),
+    "Avatar + name": W.who("GW", "#3F3DB6", "Graham Whitfield", "Ops Manager"), "Chip": W.chip("Contractors", true), "Badge": '<span class="w-badge">3</span><span class="w-badge">12</span>', "Notification badge": '<span style="position:relative">' + I("iconoir:bell-notification", 22) + '<span class="w-dot" style="position:absolute;top:0;right:0"></span></span>',
+    "User status": W.pill("On site", "green"), "Progress bar": '<div style="width:140px;height:6px;border-radius:3px;background:var(--w-line)"><div style="width:62%;height:100%;border-radius:3px;background:var(--w-blue)"></div></div>',
+    "Stepper": '<span style="display:flex;gap:4px"><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-line);border-radius:2px"></i></span>',
+    "Alert": W.banner("Scheduled maintenance", "warn"), "Tooltip": '<span style="background:#1F2937;color:#fff;font:400 10px Inter;padding:6px 8px;border-radius:6px">Copied</span>', "Dialog": '<div style="transform:scale(.7)">' + W.modal() + "</div>", "Tab": W.tabs(),
+    "Breadcrumb": '<span style="font:400 11px Inter;color:var(--w-sub)">HR / People / <b style="color:var(--w-ink);font-weight:500">Mark</b></span>', "Chat list": W.who("NP", "#2563EB", "North Pad crew", "Daniel: gas test first"), "Message item": '<span style="background:var(--w-blue);color:#fff;font:400 11px Inter;padding:7px 10px;border-radius:12px">Copy, swapping it now</span>'
+  };
+  var FAM = C2W.system.filter(function (g) { return g.id !== "found" && g.id !== "pat"; });
+  var S = [
+    ["Actions & forms", "Button", "24 variants · 4 priorities × 6 states", W.btn("Approve", "primary", "", "hugeicons:check"), ["primary", "secondary", "outline", "danger"].map(function (p) { return W.btn("Approve", p); }).join("")],
+    ["Actions & forms", "Text input", "12 variants · type × state", '<div style="width:220px">' + W.field("Full name", "Mark Rushmore", "focus", "As on the work permit") + "</div>", ["", "error", "warn", "off"].map(function (s) { return '<div style="width:110px">' + W.field("", s || "Default", s, "") + "</div>"; }).join("")],
+    ["Data display", "Badge", "30 variants · type × mode × status × size", '<span style="position:relative">' + I("iconoir:bell-notification", 30) + '<span class="w-badge" style="position:absolute;top:-4px;right:-8px">3</span></span>', W.pill("Active") + W.pill("Review", "orange") + W.pill("Paused", "purple") + W.pill("Approved", "green") + W.pill("Expired", "red")],
+    ["Feedback", "Dialog", "6 variants · size × confirmation", '<div style="transform:scale(.7)">' + W.modal() + "</div>", W.toast() + W.banner("Maintenance tonight", "warn")],
+    ["Chat", "Message item", "36 variants · status × mine / theirs", '<span style="background:var(--w-blue);color:#fff;font:400 12px Inter;padding:9px 12px;border-radius:14px">Gas test done, starting the cut</span>', W.pill("Sent", "blue") + W.pill("Delivered", "purple") + W.pill("Read", "green") + W.pill("Failed", "red")]
+  ];
+  var sl = document.getElementById("sl"), i = 0, auto = true;
+  async function go(k) { i = (k + S.length) % S.length; sl.classList.add("out"); await sleep(260); var s = S[i];
+    sl.innerHTML = '<div class="meta"><span>' + s[0] + "</span><h3>" + s[1] + "</h3><p>" + s[2] + '</p></div><div class="hero">' + s[3] + '</div><div class="row">' + s[4] + "</div>";
+    document.getElementById("ct").textContent = (i + 1) + " / " + S.length; sl.classList.remove("out"); }
+  document.getElementById("pv").onclick = function () { auto = false; go(i - 1); }; document.getElementById("nx").onclick = function () { auto = false; go(i + 1); };
+  go(0); whenSeen(f, async function () { while (auto) { await sleep(3200); if (!auto) break; go(i + 1); } });
+</script>
+</body>
+</html>

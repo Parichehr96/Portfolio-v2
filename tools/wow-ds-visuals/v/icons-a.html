@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Icon wall with a loupe: 370 cells of glyphs; a magnifier drifts across (or follows your pointer) and shows the glyph under it at 8× on its 32 px grid, with its stroke called out.">
+<title>WOW design system — the icon wall and a loupe</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .wall { position: absolute; left: 12px; top: 12px; right: 12px; display: grid; grid-template-columns: repeat(25, 1fr); gap: 3px; color: #1D2433; }
+  .wall span { aspect-ratio: 1; display: grid; place-items: center; border-radius: 4px; background: #F5F5F7; transition: background .15s; }
+  .wall span .ic { width: 13px; height: 13px; }
+  .wall span.hot { background: #E6EEFC; color: #2563EB; }
+  .loupe { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 6px rgba(255,255,255,.9), 0 0 0 7px #D1D5DB, 0 24px 40px -14px rgba(13,18,51,.35); pointer-events: none; display: grid; place-items: center; overflow: hidden; transition: left .6s var(--e-out), top .6s var(--e-out);
+    background-image: linear-gradient(#E2E8F0 1px, transparent 1px), linear-gradient(90deg, #E2E8F0 1px, transparent 1px); background-size: 12px 12px; background-position: 15px 15px; }
+  .loupe .ic { width: 96px; height: 96px; color: #1D2433; }
+  .loupe .ic svg [stroke-width] { stroke-width: 1.5; }
+  .note { position: absolute; left: 16px; bottom: 14px; font: 500 11.5px/1.4 "Figtree"; color: var(--pg-muted); }
+  .note b { color: var(--pg-ink); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="wall" id="wall"></div>
+    <div class="loupe" id="lp"></div>
+    <div class="note" id="nt"><b>370 glyphs</b> · 14 sets · 32 px grid · 1.5 px stroke</div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var K = W.icons(), wall = document.getElementById("wall"), lp = document.getElementById("lp"), h = "";
+  for (var i = 0; i < 300; i++) h += '<span data-k="' + K[(i * 7) % K.length] + '">' + I(K[(i * 7) % K.length], 13) + "</span>";
+  wall.innerHTML = h;
+  var auto = true;
+  function at(cell) { if (!cell) return; wall.querySelectorAll(".hot").forEach(function (x) { x.classList.remove("hot"); }); cell.classList.add("hot");
+    var x = cell.offsetLeft + 12 + cell.offsetWidth / 2, y = cell.offsetTop + 12 + cell.offsetHeight / 2;
+    lp.style.left = Math.min(440, Math.max(4, x - 75)) + "px"; lp.style.top = Math.min(220, Math.max(4, y - 75)) + "px"; lp.innerHTML = I(cell.dataset.k, 96);
+    document.getElementById("nt").innerHTML = "<b>" + cell.dataset.k.split(":")[1].replace(/-/g, " ") + "</b> · on the 32 px grid · 1.5 px stroke"; }
+  wall.addEventListener("mouseover", function (e) { var s = e.target.closest("span[data-k]"); if (s) { auto = false; at(s); } });
+  at(wall.children[52]);
+  whenSeen(f, async function () { var path = [52, 64, 118, 140, 186, 212, 170, 96]; var i = 0; while (auto) { await sleep(1700); if (!auto) break; i = (i + 1) % path.length; at(wall.children[path[i]]); } });
+</script>
+</body>
+</html>

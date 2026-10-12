@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Treemap: the 14 icon sets as tiles sized by how many glyphs each holds, from Interface (94) to Location (3). Hover a set to see its count.">
+<title>WOW design system — fourteen sets, by size</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .tm { position: absolute; left: 12px; top: 12px; width: 576px; height: 320px; }
+  .cell { position: absolute; border-radius: 10px; padding: 8px 9px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; color: #1D2433; transition: filter .2s, transform .2s var(--e-out); border: 2px solid #fff; }
+  .cell:hover { filter: brightness(.96); }
+  .cell b { font: 700 12px/1.1 "Figtree"; } .cell span { font: 500 10px/1 "Figtree"; opacity: .7; }
+  .cell .gl { display: flex; gap: 4px; opacity: .8; }
+  .note { position: absolute; left: 14px; bottom: 16px; font: 500 11.5px/1 "Figtree"; color: var(--pg-muted); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="tm" id="tm"></div>
+    <div class="note">370 glyphs · area = glyphs in the set</div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var S = [["Interface", 94], ["Editor", 58], ["Arrows", 49], ["Objects", 44], ["Hardware", 28], ["Files", 21], ["Communication", 21], ["Shapes", 15], ["People", 14], ["Reactions", 12], ["Brands", 5], ["Achievements", 3], ["Buildings", 3], ["Location", 3]];
+  var K = W.icons(), tm = document.getElementById("tm");
+  /* squarified-ish: fill rows left to right, row height by share */
+  var total = 370, Wd = 576, Ht = 320, rows = [[0, 1], [2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12, 13]], y = 0, h = "", shades = ["#E6EEFC", "#EEF2FF", "#F4EFFF", "#F5F5F7"];
+  rows.forEach(function (r, ri) { var sum = r.reduce(function (a, i) { return a + S[i][1]; }, 0), rh = Ht * sum / total, x = 0;
+    r.forEach(function (i, k) { var w = Wd * S[i][1] / sum;
+      h += '<div class="cell" style="left:' + x + "px;top:" + y + "px;width:" + w + "px;height:" + rh + "px;background:" + shades[ri] + '"><div><b>' + S[i][0] + "</b><br><span>" + S[i][1] + ' glyphs</span></div><div class="gl">' + (w > 70 && rh > 60 ? [0, 1, 2].map(function (j) { return I(K[(i * 3 + j) % K.length], 14); }).join("") : "") + "</div></div>"; x += w; });
+    y += rh; });
+  tm.innerHTML = h; whenSeen(f);
+</script>
+</body>
+</html>

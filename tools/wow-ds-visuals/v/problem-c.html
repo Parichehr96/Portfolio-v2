@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Before / after slider: the same six pieces of UI drawn without a system (left) and with WOW (right). Drag the divider.">
+<title>WOW design system — with and without</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 340px; }
+  .side { position: absolute; inset: 0; padding: 22px 26px; }
+  .before { background: #fff; } .after { background: #F5F5F7; clip-path: inset(0 0 0 var(--x, 50%)); }
+  .lbl { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .after .lbl { text-align: right; }
+  .g { position: absolute; left: 26px; right: 26px; top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .g > div { height: 112px; border-radius: 14px; display: grid; place-items: center; align-content: center; gap: 8px; }
+  .before .g > div { background: #F9FAFB; } .after .g > div { background: #fff; }
+  .div { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; margin-left: -1px; background: #0D1233; cursor: ew-resize; }
+  .div i { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 600 11px/1 "Figtree"; font-style: normal; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="side before"><div class="lbl">Without a system</div><div class="g" id="b"></div></div>
+    <div class="side after w"><div class="lbl">With WOW</div><div class="g" id="a"></div></div>
+    <div class="div" id="dv"><i>⇆</i></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var B = ['<span style="background:#12B76A;color:#fff;padding:8px 12px;border-radius:3px;font:700 10px Arial;text-transform:uppercase">Approve</span><span style="background:#4F46E5;color:#fff;padding:8px 14px;border-radius:999px;font:500 11px Georgia">Approve</span>',
+    '<span style="border:1px solid #999;padding:6px 8px;font:12px Arial;width:120px">Mark R.</span><span style="border-bottom:2px solid #4F46E5;padding:6px 2px;font:12px Georgia;width:120px">Mark R.</span>',
+    '<span style="background:#FEE;color:#C00;padding:3px 6px;font:700 10px Arial">EXPIRED</span><span style="color:#E11D48;font:italic 11px Georgia">expired!</span>',
+    '<span style="background:#111;color:#fff;padding:8px 10px;font:11px Courier New">saved.</span><span style="background:#DCFCE7;color:#166534;padding:8px 12px;border-radius:12px;font:11px Georgia">Saved ✓</span>',
+    '<span style="width:28px;height:28px;background:#7A5AF8;border-radius:4px"></span><span style="width:28px;height:28px;background:#E2558E;border-radius:50%"></span>',
+    '<span style="width:34px;height:18px;border-radius:2px;background:#12B76A"></span><span style="font:11px Arial">[x] on</span>'];
+  var A = [W.btn("Approve") + W.btn("Approve", "secondary"), '<div style="width:140px">' + W.field("", "Mark Rushmore", "", "") + "</div>", W.pill("Expired", "red") + W.pill("Valid"), W.toast(), W.av("RM", "#7A5AF8", 28) + W.av("SL", "#E2558E", 28), '<span class="w-switch on"></span><span class="w-check on">' + I("hugeicons:check", 11) + "</span>"];
+  document.getElementById("b").innerHTML = B.map(function (x) { return "<div>" + x + "</div>"; }).join("");
+  document.getElementById("a").innerHTML = A.map(function (x) { return "<div>" + x + "</div>"; }).join("");
+  var drag = false;
+  function set(p) { c.style.setProperty("--x", Math.max(4, Math.min(96, p)) + "%"); }
+  function pos(e) { var r = f.getBoundingClientRect(); return (e.clientX - r.left) / r.width * 100; }
+  document.getElementById("dv").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(pos(e)); }); addEventListener("pointerup", function () { drag = false; });
+  c.addEventListener("click", function (e) { if (!e.target.closest(".div")) set(pos(e)); });
+  set(92); whenSeen(f, async function () { for (var x = 92; x >= 50; x--) { if (drag) return; set(x); await sleep(14); } });
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Do / don’t bento: four tiles, one per principle, each showing the same thing done without the rule (left, crossed) and with it (right).">
+<title>WOW design system — do and don't</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 470px; }
+  .t { position: absolute; background: #F5F5F7; border-radius: 18px; padding: 14px; width: 288px; height: 222px; }
+  .t h4 { margin: 0 0 12px; font: 700 14px/1.2 "Figtree"; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 160px; }
+  .pair > div { background: #fff; border-radius: 12px; display: grid; place-items: center; align-content: center; gap: 6px; padding: 10px; position: relative; text-align: center; }
+  .mk { position: absolute; top: 8px; left: 8px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .mk.no { background: #C81E1E; } .mk.yes { background: #15803D; }
+  .v { font: 400 10.5px/1.5 "Figtree"; color: var(--pg-ink); }
+  .pair .w-field { width: 100%; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div id="t"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var PR = [
+    ["Structure decides, not taste", W.btn("OK", "primary").replace("p-primary", "p-primary\" style=\"border-radius:999px;background:#12B76A") + " " + W.btn("Confirm", "outline").replace("w-btn", "w-btn\" style=\"border-radius:0;font-family:Georgia"), W.btn("Approve") + " " + W.btn("Approve")],
+    ["Colour carries meaning or nothing", W.pill("Active", "purple") + W.pill("Valid", "orange") + W.pill("Expired", "green"), W.pill("Valid") + W.pill("Valid") + W.pill("Expired", "red")],
+    ["Every state ships", '<div style="width:150px">' + W.field("Site", "North Pad", "", "") + "</div>", '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:200px">' + W.field("", "Default", "", "") + W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "") + "</div>"],
+    ["One name, one thing", '<span class="v">“OK” in Figma<br>“Submit” in code<br>“Confirm” in the meeting</span>', '<span class="v">“Approve”<br>in Figma, in code<br>and in the meeting</span>']
+  ];
+  var pos = [[8, 8], [304, 8], [8, 240], [304, 240]];
+  document.getElementById("t").innerHTML = PR.map(function (p, i) { return '<div class="t w" style="left:' + pos[i][0] + "px;top:" + pos[i][1] + 'px"><h4>' + p[0] + '</h4><div class="pair"><div><span class="mk no">' + I("hugeicons:cancel-01", 11) + "</span>" + p[1] + '</div><div><span class="mk yes">' + I("hugeicons:check", 11) + "</span>" + p[2] + "</div></div></div>"; }).join("");
+  whenSeen(f);
+</script>
+</body>
+</html>

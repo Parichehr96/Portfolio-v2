@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Rule switches: each principle is a switch. Turn it on and the example beside it falls into line; they switch on one by one, or flip them yourself.">
+<title>WOW design system — rules as switches</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .rows { position: absolute; left: 16px; right: 16px; top: 16px; display: grid; gap: 10px; }
+  .r { display: grid; grid-template-columns: 210px 1fr; gap: 12px; align-items: center; background: #F5F5F7; border-radius: 16px; padding: 12px 14px; min-height: 82px; }
+  .r .lab { display: flex; gap: 10px; align-items: center; cursor: pointer; font: 700 13px/1.25 "Figtree"; }
+  .r .ex { background: #fff; border-radius: 12px; height: 60px; display: flex; align-items: center; justify-content: center; gap: 6px; overflow: hidden; position: relative; }
+  .r .ex > div { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity .4s ease, transform .5s var(--e-out); }
+  .r .on-v { opacity: 0; transform: translateY(6px); } .r.on .on-v { opacity: 1; transform: none; } .r.on .off-v { opacity: 0; transform: translateY(-6px); }
+  .v { font: 400 10px/1.35 "Figtree"; color: var(--pg-ink); text-align: center; }
+  .r .ex .w-field { width: 120px; } .r .ex .w-field label, .r .ex .w-field .help { display: none; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="rows" id="rows"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var PR = [
+    ["Structure decides, not taste", W.btn("OK", "primary").replace("p-primary", "p-primary\" style=\"border-radius:999px;background:#12B76A") + " " + W.btn("Confirm", "outline").replace("w-btn", "w-btn\" style=\"border-radius:0;font-family:Georgia"), W.btn("Approve") + " " + W.btn("Approve")],
+    ["Colour carries meaning or nothing", W.pill("Active", "purple") + W.pill("Valid", "orange") + W.pill("Expired", "green"), W.pill("Valid") + W.pill("Valid") + W.pill("Expired", "red")],
+    ["Every state ships", '<div style="width:150px">' + W.field("Site", "North Pad", "", "") + "</div>", '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:200px">' + W.field("", "Default", "", "") + W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "") + "</div>"],
+    ["One name, one thing", '<span class="v">“OK” in Figma<br>“Submit” in code<br>“Confirm” in the meeting</span>', '<span class="v">“Approve”<br>in Figma, in code<br>and in the meeting</span>']
+  ];
+  PR[2][2] = W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "");
+  var rows = document.getElementById("rows"), auto = true;
+  rows.innerHTML = PR.map(function (p, i) { return '<div class="r w" data-i="' + i + '"><span class="lab"><span class="w-switch"></span>' + p[0] + '</span><div class="ex"><div class="off-v">' + p[1] + '</div><div class="on-v">' + p[2] + "</div></div></div>"; }).join("");
+  function set(i, on) { var r = rows.children[i]; r.classList.toggle("on", on); r.querySelector(".w-switch").classList.toggle("on", on); }
+  rows.addEventListener("click", function (e) { var r = e.target.closest(".r"); if (!r) return; auto = false; set(+r.dataset.i, !r.classList.contains("on")); });
+  whenSeen(f, async function () { while (auto) { for (var i = 0; i < 4 && auto; i++) { await sleep(900); if (auto) set(i, true); } await sleep(2400); if (!auto) break; for (i = 0; i < 4; i++) set(i, false); await sleep(600); } });
+</script>
+</body>
+</html>

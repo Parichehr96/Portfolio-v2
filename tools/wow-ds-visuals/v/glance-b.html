@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bento counters: four Apple-style tiles, each number drawn as what it counts — 65 tiles, a field of 370 dots, a light/dark split, six alert types stacked.">
+<title>WOW design system — by the numbers, in tiles</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 392px; }
+  .t { position: absolute; background: #F5F5F7; border-radius: 18px; padding: 16px; overflow: hidden; }
+  .n { position: absolute; left: 16px; bottom: 14px; }
+  .n b { display: block; font: 700 34px/1 "Figtree"; letter-spacing: -.03em; }
+  .n span { font: 500 11.5px/1.3 "Figtree"; color: var(--pg-muted); }
+  .grid65 { display: grid; grid-template-columns: repeat(13, 12px); gap: 4px; }
+  .grid65 i { width: 12px; height: 12px; border-radius: 3px; background: #2563EB; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .4s var(--e-out); }
+  .grid65 i.ic { background: #C7D9FB; }
+  .on { opacity: 1 !important; transform: none !important; }
+  .dots { display: flex; flex-wrap: wrap; gap: 2px; width: 252px; }
+  .dots i { width: 4px; height: 4px; border-radius: 1px; background: #0D1233; opacity: 0; transition: opacity .3s; }
+  .split { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  .split > div { display: grid; place-items: center; }
+  .al { display: grid; gap: 3px; width: 200px; }
+  .al span { height: 14px; border-radius: 5px; padding: 0 8px; display: flex; align-items: center; font: 500 9.5px/1 "Figtree"; color: #fff; opacity: 0; transform: translateX(-8px); transition: opacity .3s, transform .4s var(--e-out); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="t" style="left:8px;top:8px;width:288px;height:184px"><div class="grid65" id="g"></div><div class="n"><b>65</b><span>component sets · 50 + 15 icon sets</span></div></div>
+    <div class="t" style="left:304px;top:8px;width:288px;height:184px"><div class="dots" id="d"></div><div class="n"><b>370</b><span>icons in 14 sets</span></div></div>
+    <div class="t w" style="left:8px;top:200px;width:288px;height:184px;padding:0"><div class="split"><div style="background:#F5F5F7">%L%</div><div class="dark" style="background:#0F1115">%D%</div></div><div class="n" style="color:#0D1233;max-width:120px"><b>2</b><span>themes, one set of tokens</span></div></div>
+    <div class="t" style="left:304px;top:200px;width:288px;height:184px"><div class="al" id="a"></div><div class="n"><b>6</b><span>notification types</span></div></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  c.innerHTML = c.innerHTML.replace("%L%", W.btn("Approve")).replace("%D%", W.btn("Approve"));
+  var g = ""; for (var i = 0; i < 65; i++) g += '<i class="' + (i >= 50 ? "ic" : "") + '"></i>'; document.getElementById("g").innerHTML = g;
+  var d = ""; for (i = 0; i < 370; i++) d += "<i></i>"; document.getElementById("d").innerHTML = d;
+  document.getElementById("a").innerHTML = [["Modal", "#C81E1E"], ["Inline", "#C81E1E"], ["Banner", "#DD6B20"], ["Toast", "#15803D"], ["Badge", "#2563EB"], ["Panel", "#4B5563"]].map(function (a) { return '<span style="background:' + a[1] + '">' + a[0] + "</span>"; }).join("");
+  whenSeen(f, function () { ["g", "d", "a"].forEach(function (id) { var k = document.getElementById(id).children, st = 900 / k.length; Array.prototype.forEach.call(k, function (x, j) { setTimeout(function () { x.classList.add("on"); }, END ? 0 : j * st); }); }); });
+</script>
+</body>
+</html>

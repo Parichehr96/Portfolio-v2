@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Turntable: drag the slider and the button turns through all 24 of its variants — four priorities, six states — like spinning a product to see every side.">
+<title>WOW design system — turntable</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 340px; }
+  .stage { position: absolute; left: 0; right: 0; top: 40px; height: 150px; display: grid; place-items: center; perspective: 700px; }
+  .big { transform: scale(2); transition: transform .35s var(--e-out); }
+  .lab { position: absolute; left: 0; right: 0; top: 196px; text-align: center; font: 600 15px/1 "Figtree"; }
+  .lab small { display: block; margin-top: 6px; font: 500 11.5px/1 "Figtree"; color: var(--pg-muted); }
+  .track { position: absolute; left: 40px; right: 40px; top: 262px; }
+  .track input { width: 100%; accent-color: #0D1233; }
+  .ticks { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 4px; font: 500 10px/1 "Figtree"; color: var(--pg-faint); text-align: center; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="stage w"><div class="big" id="big"></div></div>
+    <div class="lab" id="lab"></div>
+    <div class="track"><input type="range" min="0" max="23" value="0" id="rg" aria-label="Variant"><div class="ticks"><span>Primary</span><span>Secondary</span><span>Outline</span><span>Danger</span></div></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var P = ["primary", "secondary", "outline", "danger"], S = [["", "Default"], ["hover", "Hover"], ["press", "Pressed"], ["focus", "Focus"], ["off", "Disabled"], ["load", "Loading"]];
+  var big = document.getElementById("big"), rg = document.getElementById("rg"), auto = true;
+  function show(v) { var p = P[Math.floor(v / 6)], s = S[v % 6]; rg.value = v;
+    big.innerHTML = s[0] === "load" ? '<span class="w-btn p-' + p + '"><span style="width:12px;height:12px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block"></span>Approving</span>' : W.btn("Approve", p, s[0], "hugeicons:check");
+    big.style.transform = "scale(2) rotateY(" + ((v % 6) - 2.5) * 6 + "deg)";
+    document.getElementById("lab").innerHTML = p[0].toUpperCase() + p.slice(1) + " · " + s[1] + "<small>variant " + (v + 1) + " of 24</small>"; }
+  rg.addEventListener("input", function () { auto = false; show(+rg.value); });
+  show(0); whenSeen(f, async function () { var v = 0; while (auto) { await sleep(700); if (!auto) break; v = (v + 1) % 24; show(v); } });
+</script>
+</body>
+</html>

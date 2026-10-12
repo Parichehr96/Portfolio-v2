@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Flip cards: four systems as product cards; each flips over to show what WOW took from it. They flip in turn, or click any card.">
+<title>WOW design system — flip cards</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .grid { position: absolute; left: 16px; right: 16px; top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fc { height: 176px; perspective: 900px; cursor: pointer; }
+  .in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .8s var(--e-out); }
+  .fc.flip .in { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 18px; padding: 16px; backface-visibility: hidden; display: grid; align-content: space-between; }
+  .front { background: #F5F5F7; }
+  .back { background: #0D1233; color: #fff; transform: rotateY(180deg); }
+  .front h4 { margin: 0; font: 700 22px/1 "Figtree"; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .front h4 i { width: 14px; height: 14px; border-radius: 4px; }
+  .front p, .back p { margin: 0; font: 400 11.5px/1.45 "Figtree"; }
+  .front p { color: var(--pg-muted); }
+  .back .k { font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: #93B4F5; }
+  .back p { font-size: 13px; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="grid" id="g"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var g = document.getElementById("g"), auto = true;
+  g.innerHTML = W.RESEARCH.map(function (r) { return '<div class="fc"><div class="in"><div class="face front"><h4><i style="background:' + r.c + '"></i>' + r.name + "</h4><p>" + r.comp + "<br>" + r.sev + '</p></div><div class="face back"><span class="k">What WOW took</span><p>' + r.took + "</p></div></div></div>"; }).join("");
+  g.addEventListener("click", function (e) { var t = e.target.closest(".fc"); if (t) { auto = false; t.classList.toggle("flip"); } });
+  whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1800); if (!auto) break; var k = g.children; k[i].classList.toggle("flip"); i = (i + 1) % 4; } });
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Playground: a real field and button from the system. Type, clear, or switch the state chips — every state you can reach is one the system already drew.">
+<title>WOW design system — try to break it</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .card { position: absolute; left: 110px; right: 110px; top: 30px; background: #F5F5F7; border-radius: 20px; padding: 22px; display: grid; gap: 14px; }
+  .card input { border: 0; outline: 0; background: transparent; font: 400 12px/1 "Inter"; color: var(--w-ink); flex: 1; }
+  .chips { position: absolute; left: 0; right: 0; bottom: 30px; display: flex; justify-content: center; gap: 6px; }
+  .chips button { border: 0; border-radius: 999px; padding: 7px 11px; font: 600 11px/1 "Figtree"; background: #F5F5F7; color: var(--pg-ink); cursor: pointer; transition: background .2s, color .2s; }
+  .chips button.on { background: #0D1233; color: #fff; }
+  .hint { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font: 500 11.5px/1 "Figtree"; color: var(--pg-muted); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="card w"><div class="w-field" id="fd"><label>Work permit no.</label><div class="box"><input id="in" value="PTW-031" aria-label="Work permit number"><span id="ic"></span></div><span class="help" id="hp">Starts with PTW-</span></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><span class="w-btn p-outline">Cancel</span><span class="w-btn p-primary" id="bt">Submit permit</span></div></div>
+    <div class="hint">Type in the field, clear it, or pick a state</div>
+    <div class="chips" id="ch"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var fd = document.getElementById("fd"), inp = document.getElementById("in"), hp = document.getElementById("hp"), bt = document.getElementById("bt"), ch = document.getElementById("ch");
+  var S = [["", "Default", "Starts with PTW-"], ["focus", "Focus", "Starts with PTW-"], ["warn", "Warning", "This permit expires today"], ["error", "Error", "Enter a permit number"], ["off", "Disabled", "Locked after approval"]];
+  ch.innerHTML = S.map(function (s, i) { return '<button data-i="' + i + '">' + s[1] + "</button>"; }).join("");
+  function set(i) { var s = S[i]; fd.className = "w-field" + (s[0] ? " s-" + s[0] : ""); hp.textContent = s[2]; inp.disabled = s[0] === "off";
+    bt.className = "w-btn p-primary" + (s[0] === "off" || s[0] === "error" ? " s-off" : "");
+    document.getElementById("ic").innerHTML = s[0] === "error" ? I("hugeicons:alert-02", 14) : "";
+    ch.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.dataset.i === i); }); }
+  ch.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { auto = false; set(+b.dataset.i); } });
+  inp.addEventListener("focus", function () { auto = false; if (!/^PTW-/.test(inp.value)) set(3); else set(1); });
+  inp.addEventListener("input", function () { set(inp.value === "" ? 3 : /^PTW-/.test(inp.value) ? 1 : 2); });
+  inp.addEventListener("blur", function () { if (/^PTW-\d+$/.test(inp.value)) set(0); });
+  var auto = true; set(0);
+  whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1600); if (!auto) break; i = (i + 1) % S.length; set(i); } });
+</script>
+</body>
+</html>

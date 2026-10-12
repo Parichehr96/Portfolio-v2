@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Keynote numerals: one huge number at a time, with a single line under it, crossfading through the system’s counts. Click the dots to jump.">
+<title>WOW design system — keynote numbers</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 330px; }
+  .big { position: absolute; left: 0; right: 0; top: 50px; text-align: center; }
+  .big b { display: block; font: 700 132px/1 "Figtree"; letter-spacing: -.05em; background: linear-gradient(180deg, #0D1233, #3F3DB6); -webkit-background-clip: text; background-clip: text; color: transparent; transition: opacity .35s ease, transform .5s var(--e-out); }
+  .big span { display: block; margin-top: 12px; font: 500 15px/1.3 "Figtree"; color: var(--pg-muted); transition: opacity .35s ease; }
+  .big.out b { opacity: 0; transform: translateY(14px) scale(.98); } .big.out span { opacity: 0; }
+  .dots { position: absolute; left: 0; right: 0; bottom: 26px; display: flex; justify-content: center; gap: 8px; }
+  .dots button { width: 8px; height: 8px; border-radius: 50%; border: 0; background: #CBD5E1; cursor: pointer; padding: 0; transition: background .3s, width .3s; }
+  .dots button.on { background: #0D1233; width: 22px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="big" id="big"><b id="n">65</b><span id="t"></span></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var N = [["65", "component sets in one library"], ["370", "icons, one grid, one stroke"], ["24", "variants of a single button"], ["2", "themes from one set of tokens"], ["6", "kinds of alert, decided by four questions"], ["3", "designers who drew like one"]];
+  var dots = document.getElementById("dots"), big = document.getElementById("big"), cur = 0, auto = true;
+  dots.innerHTML = N.map(function (x, i) { return '<button aria-label="' + x[0] + '" data-i="' + i + '"></button>'; }).join("");
+  async function go(i) { cur = i; big.classList.add("out"); await sleep(320); document.getElementById("n").textContent = N[i][0]; document.getElementById("t").textContent = N[i][1]; big.classList.remove("out");
+    dots.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.dataset.i === i); }); }
+  dots.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { auto = false; go(+b.dataset.i); } });
+  go(0);
+  whenSeen(f, async function () { while (auto) { await sleep(2600); if (!auto) break; go((cur + 1) % N.length); } });
+</script>
+</body>
+</html>

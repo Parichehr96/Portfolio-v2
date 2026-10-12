@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redline spec: the card with its measurements drawn on — padding, gaps, radius, heights. Hover a part of the card to show only its measurements.">
+<title>WOW design system — redlines</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .card { position: absolute; left: 150px; top: 60px; width: 300px; }
+  .card .w-card { padding: 12px; }
+  .rl { position: absolute; background: rgba(224,95,43,.14); border: 1px dashed #E05F2B; transition: opacity .3s; pointer-events: none; }
+  .tx { position: absolute; font: 700 9.5px/1 "Figtree"; color: #fff; background: #E05F2B; padding: 3px 5px; border-radius: 4px; transition: opacity .3s; white-space: nowrap; pointer-events: none; }
+  .dim .rl:not(.on), .dim .tx:not(.on) { opacity: .12; }
+  .legend { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; gap: 8px; }
+  .legend button { border: 0; border-radius: 999px; padding: 6px 10px; font: 600 10.5px/1 "Figtree"; background: #F5F5F7; color: var(--pg-ink); cursor: pointer; }
+  .legend button.on { background: #E05F2B; color: #fff; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="card w" id="cd"></div>
+    <div id="rl"></div>
+    <div class="legend" id="lg"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("cd").innerHTML = W.req();
+  /* [group, kind(box/label), x, y, w, h, text] — in canvas px around the card at 150,60 */
+  var R = [["pad", 150, 60, 300, 12, "12 padding"], ["pad", 150, 60, 12, 132, ""], ["gap", 162, 101, 276, 10, "10 gap"], ["gap", 162, 131, 276, 10, ""],
+    ["rad", 150, 60, 14, 14, "12 radius"], ["btn", 162, 141, 134, 26, "26 high"], ["btn", 302, 141, 136, 26, ""], ["av", 162, 72, 28, 28, "28 avatar"]];
+  var rl = document.getElementById("rl");
+  rl.innerHTML = R.map(function (r) { return '<div class="rl" data-g="' + r[0] + '" style="left:' + r[1] + "px;top:" + r[2] + "px;width:" + r[3] + "px;height:" + r[4] + 'px"></div>' + (r[5] ? '<span class="tx" data-g="' + r[0] + '" style="left:' + (r[1] + r[3] + 6) + "px;top:" + (r[2] - 2) + 'px">' + r[5] + "</span>" : ""); }).join("");
+  var G = [["pad", "Padding"], ["gap", "Gaps"], ["rad", "Radius"], ["btn", "Buttons"], ["av", "Avatar"]], lg = document.getElementById("lg"), auto = true;
+  lg.innerHTML = G.map(function (g) { return '<button data-g="' + g[0] + '">' + g[1] + "</button>"; }).join("");
+  function hl(g) { c.classList.toggle("dim", !!g); c.querySelectorAll("[data-g]").forEach(function (e) { e.classList.toggle("on", e.dataset.g === g); }); }
+  lg.addEventListener("mouseover", function (e) { var b = e.target.closest("button"); if (b) { auto = false; hl(b.dataset.g); } });
+  lg.addEventListener("mouseleave", function () { hl(null); });
+  whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1600); if (!auto) break; hl(G[i][0]); i = (i + 1) % G.length; } });
+</script>
+</body>
+</html>

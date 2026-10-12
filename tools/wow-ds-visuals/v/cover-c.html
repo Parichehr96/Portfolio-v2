@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Library wall: a dense bento of real WOW components slowly drifts past, like a product page’s feature mosaic. Hover any tile to see its name and variant count.">
+<title>WOW design system — the library, wall to wall</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .wall { position: absolute; left: -40px; top: -30px; width: 760px; display: grid; grid-template-columns: repeat(5, 140px); grid-auto-rows: 86px; gap: 10px; animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(-90px, -60px); } }
+  .t { position: relative; background: #F5F5F7; border-radius: 16px; display: grid; place-items: center; padding: 10px; overflow: hidden; transition: background .25s; }
+  .t.w2 { grid-column: span 2; } .t.h2 { grid-row: span 2; }
+  .t .nm { position: absolute; left: 10px; bottom: 8px; font: 600 9.5px/1 "Figtree"; color: var(--pg-ink); opacity: 0; transition: opacity .2s; }
+  .t:hover { background: #EDEEF2; } .t:hover .nm { opacity: 1; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(0deg, #fff 6%, rgba(255,255,255,0) 40%); pointer-events: none; }
+  .title { position: absolute; left: 24px; bottom: 20px; pointer-events: none; }
+  .title b { display: block; font: 700 30px/1 "Figtree"; letter-spacing: -.02em; }
+  .title span { font: 500 12px/1.4 "Figtree"; color: var(--pg-muted); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="wall" id="wall"></div>
+    <div class="shade"></div>
+    <div class="title"><b>65 component sets</b><span>50 components, 15 icon sets, one look</span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var T = [
+    ["Button · 24", W.btn("Approve", "primary", "", "hugeicons:check"), ""], ["Text input · 12", '<div style="width:100%">' + W.field("Site", "North Pad", "focus", "") + "</div>", "w2"],
+    ["Chip · 16", W.chip("Contractors", true) + " " + W.chip("Employees"), ""], ["Badge · 30", '<span style="position:relative">' + I("iconoir:bell-notification", 26) + '<span class="w-badge" style="position:absolute;top:-4px;right:-6px">3</span></span>', ""],
+    ["Request card", '<div style="width:100%">' + W.req() + "</div>", "w2 h2"], ["Switch · 4", '<span class="w-switch on"></span> <span class="w-switch"></span>', ""],
+    ["Pill", W.pill("Active") + " " + W.pill("Expired", "red"), ""], ["Toast", W.toast(), "w2"], ["Avatar · 12", W.av("SL", "#E2558E", 30) + W.av("MR", "#2563EB", 30) + W.av("DO", "#D97706", 30), ""],
+    ["Checkbox · 12", '<span class="w-check on">' + I("hugeicons:check", 11) + '</span> <span class="w-check"></span> <span class="w-radio on"></span>', ""], ["Tabs · 15", '<div style="width:100%">' + W.tabs() + "</div>", "w2"],
+    ["Banner", '<div style="width:100%">' + W.banner() + "</div>", "w2"], ["Danger", W.btn("Delete", "danger"), ""], ["Outline", W.btn("Cancel", "outline"), ""],
+    ["Table · 12", '<div style="width:100%">' + W.table() + "</div>", "w2 h2"], ["Progress", '<div style="width:100%;height:6px;border-radius:3px;background:#E5E7EB"><div style="width:62%;height:100%;border-radius:3px;background:#2563EB"></div></div>', ""],
+    ["Secondary", W.btn("Book renewal", "secondary"), ""], ["Pill · status", W.pill("In progress", "purple") + " " + W.pill("Approved", "green"), "w2"], ["Icons · 370", I("ant-design:safety-outlined", 22) + I("solar:square-academic-cap-2-linear", 22) + I("hugeicons:drawing-compass", 22), ""]
+  ];
+  document.getElementById("wall").innerHTML = T.map(function (t) { return '<div class="t w ' + t[2] + '">' + t[1] + '<span class="nm">' + t[0] + "</span></div>"; }).join("");
+  whenSeen(f);
+</script>
+</body>
+</html>

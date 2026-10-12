@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Idea flow: each system on the left, the WOW decision it led to on the right, joined by a line. The highlight walks through the four pairs; hover either side to trace one.">
+<title>WOW design system — from their idea to ours</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .side { position: absolute; top: 34px; width: 210px; display: grid; gap: 12px; }
+  .l { left: 20px; } .r { right: 20px; }
+  .it { padding: 11px 12px; border-radius: 12px; background: #F5F5F7; font: 400 11px/1.4 "Figtree"; color: var(--pg-ink-60); transition: background .3s, color .3s, box-shadow .3s; min-height: 62px; }
+  .it b { display: flex; align-items: center; gap: 6px; font: 700 12.5px/1 "Figtree"; color: var(--pg-ink); margin-bottom: 5px; }
+  .it b i { width: 9px; height: 9px; border-radius: 3px; }
+  .r .it { background: #fff; box-shadow: 0 0 0 1px var(--pg-border); }
+  .it.on { color: var(--pg-ink); } .l .it.on { background: #EEF2FF; } .r .it.on { box-shadow: 0 0 0 1.5px #2563EB; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .canvas > svg path { fill: none; stroke: #D7DEE8; stroke-width: 1.5; transition: stroke .3s, stroke-width .3s; }
+  .canvas > svg path.on { stroke: #2563EB; stroke-width: 2.2; }
+  .hd { position: absolute; top: 12px; font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <span class="hd" style="left:20px">They did</span><span class="hd" style="right:20px">So WOW does</span>
+    <svg viewBox="0 0 600 380" id="svg"></svg>
+    <div class="side l" id="L"></div><div class="side r" id="R"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var OUT = ["A 5-second toast, and an error that never dismisses itself", "Error and success can never look alike: severity is never optional", "A high-attention treatment for critical events", "Source and scope became one of four axes"];
+  var L = document.getElementById("L"), R = document.getElementById("R"), svg = document.getElementById("svg");
+  L.innerHTML = W.RESEARCH.map(function (r, i) { return '<div class="it" data-i="' + i + '"><b><i style="background:' + r.c + '"></i>' + r.name + "</b>" + r.comp + "</div>"; }).join("");
+  R.innerHTML = OUT.map(function (o, i) { return '<div class="it" data-i="' + i + '"><b>' + (i + 1) + ".</b>" + o + "</div>"; }).join("");
+  var ORDER = [0, 1, 2, 3]; /* Carbon→toast, Material→severity, Polaris→critical, Atlassian→source */
+  function draw() { var s = ""; for (var i = 0; i < 4; i++) { var a = L.children[i], b = R.children[ORDER[i]], y1 = 34 + a.offsetTop + a.offsetHeight / 2, y2 = 34 + b.offsetTop + b.offsetHeight / 2;
+    s += '<path data-i="' + i + '" d="M230 ' + y1 + " C300 " + y1 + " 300 " + y2 + " 370 " + y2 + '"/>'; } svg.innerHTML = s; }
+  draw(); addEventListener("load", draw);
+  var auto = true;
+  function hl(i) { c.querySelectorAll(".it, path").forEach(function (e) { e.classList.toggle("on", +e.dataset.i === i); }); }
+  c.addEventListener("mouseover", function (e) { var t = e.target.closest(".it"); if (t) { auto = false; hl(+t.dataset.i); } });
+  whenSeen(f, async function () { var i = 0; while (auto) { hl(i); i = (i + 1) % 4; await sleep(2200); } });
+</script>
+</body>
+</html>

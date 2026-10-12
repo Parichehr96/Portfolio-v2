@@ -873,3 +873,54 @@
     flex-direction: column;
   }
 }
+
+/* ---- Related case (related.njk) ----------------------------------------- */
+/* The companion case study, as one quiet card: eyebrow, title, a line of
+   context and a call to read it. Lifts slightly on hover, like the work rows. */
+.v4-related {
+  display: grid;
+  gap: var(--v4-space-1);
+  padding: var(--v4-space-5) var(--v4-space-6);
+  border: 1px solid var(--v4-border);
+  border-radius: 20px;
+  background: var(--v4-surface);
+  color: var(--v4-text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.v4-related:hover {
+  border-color: var(--v4-text-faint);
+  box-shadow: 0 10px 24px -16px rgba(13, 18, 51, 0.35);
+  transform: translateY(-1px);
+}
+
+.v4-related__eyebrow {
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--v4-text-faint);
+}
+
+.v4-related__title {
+  font-size: var(--v4-text-name);
+  font-weight: var(--v4-weight-semibold);
+  line-height: var(--v4-leading-title);
+}
+
+.v4-related__text {
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+}
+
+.v4-related__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v4-space-1);
+  margin-top: var(--v4-space-2);
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-semibold);
+  font-style: italic;
+}

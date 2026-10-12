@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Close-up bento, like a product’s detail shots: colour as fanned paint chips, a macro ‘Aa’, spacing as a ruler, radius as cut corners, elevation as stacked sheets, motion as a curve.">
+<title>WOW design system — foundations up close</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .t { position: absolute; background: #F5F5F7; border-radius: 18px; overflow: hidden; }
+  .tcap { z-index: 2; }
+  .chips { position: absolute; left: 50%; top: 52%; }
+  .chips i { position: absolute; left: -28px; top: -70px; width: 56px; height: 140px; border-radius: 10px; transform-origin: 50% 100%; box-shadow: 0 6px 14px -6px rgba(13,18,51,.3); transition: transform 1s var(--e-out); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font: 600 8px/1 "Figtree"; font-style: normal; }
+  .aa { position: absolute; left: 18px; bottom: 6px; font: 600 120px/1 "Inter"; letter-spacing: -.04em; color: #1D2433; }
+  .aa small { position: absolute; right: -86px; top: 34px; font: 500 10px/1.5 "Figtree"; letter-spacing: 0; color: var(--pg-muted); width: 90px; }
+  .ruler { position: absolute; left: 18px; right: 18px; top: 56px; display: flex; align-items: flex-end; gap: 10px; }
+  .ruler div { display: grid; justify-items: center; gap: 6px; font: 500 9px/1 "Figtree"; color: var(--pg-muted); }
+  .ruler i { display: block; background: #2563EB; border-radius: 2px; width: 12px; }
+  .corners { position: absolute; left: 0; right: 0; top: 48px; display: flex; justify-content: center; gap: 14px; }
+  .corners div { width: 60px; height: 60px; background: #fff; border-top: 2px solid #2563EB; border-left: 2px solid #2563EB; display: grid; place-items: center; font: 600 10px/1 "Figtree"; color: #2563EB; }
+  .sheets { position: absolute; left: 50%; top: 58%; }
+  .sheets i { position: absolute; width: 120px; height: 70px; margin: -35px -60px; border-radius: 12px; background: #fff; transition: transform 1s var(--e-out); }
+  .curve { position: absolute; left: 16px; right: 16px; top: 44px; }
+  .curve path { fill: none; stroke: #2563EB; stroke-width: 2; }
+  .ball { position: absolute; left: 22px; top: 120px; width: 10px; height: 10px; border-radius: 50%; background: #2563EB; animation: go 2.6s cubic-bezier(.22,1,.36,1) infinite; }
+  @keyframes go { 0%, 15% { left: 22px; } 70%, 100% { left: calc(100% - 32px); } }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="t" style="left:8px;top:8px;width:190px;height:384px"><span class="tcap">Colour</span><div class="chips" id="chips"></div></div>
+    <div class="t" style="left:206px;top:8px;width:386px;height:188px"><span class="tcap">Type · Inter</span><div class="aa">Aa<small>Page title 20 · Section 15 · Body 13 · Caption 12 · Eyebrow 12</small></div></div>
+    <div class="t" style="left:206px;top:204px;width:124px;height:188px"><span class="tcap">Spacing</span><div class="ruler" id="ru"></div></div>
+    <div class="t" style="left:338px;top:204px;width:124px;height:188px"><span class="tcap">Elevation</span><div class="sheets" id="sh"></div></div>
+    <div class="t" style="left:470px;top:204px;width:122px;height:90px"><span class="tcap">Radius</span><div class="corners" style="top:34px;gap:6px"><div style="width:30px;height:30px;border-top-left-radius:8px;font-size:8px">8</div><div style="width:30px;height:30px;border-top-left-radius:12px;font-size:8px">12</div><div style="width:30px;height:30px;border-top-left-radius:15px;font-size:7px">pill</div></div></div>
+    <div class="t" style="left:470px;top:302px;width:122px;height:90px"><span class="tcap">Motion</span><svg class="curve" viewBox="0 0 90 30" height="30"><path d="M0 28 C 20 2, 30 2, 90 2"/></svg><span class="ball" style="top:72px"></span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var C = [["#1D4ED8", "blue 700", "#fff"], ["#2563EB", "blue 600", "#fff"], ["#93B4F5", "blue 300", "#1D2433"], ["#E6EEFC", "blue 100", "#2563EB"], ["#1D2433", "grey 900", "#fff"], ["#E5E7EB", "grey 200", "#6B7280"]];
+  var ch = document.getElementById("chips"); ch.innerHTML = C.map(function (x) { return '<i style="background:' + x[0] + ";color:" + x[2] + '">' + x[1] + "</i>"; }).join("");
+  document.getElementById("ru").innerHTML = [4, 8, 12, 16, 24].map(function (v) { return '<div><i style="height:' + v * 2.4 + 'px"></i>' + v + "</div>"; }).join("");
+  var sh = document.getElementById("sh"); sh.innerHTML = [0, 1, 2].map(function (k) { return '<i style="box-shadow:0 ' + (2 + k * 6) + "px " + (6 + k * 12) + "px -" + (2 + k * 3) + 'px rgba(13,18,51,.25)"></i>'; }).join("");
+  whenSeen(f, function () {
+    ch.querySelectorAll("i").forEach(function (x, k) { x.style.transform = "rotate(" + ((k - 2.5) * 11) + "deg)"; });
+    sh.querySelectorAll("i").forEach(function (x, k) { x.style.transform = "translate(" + (k - 1) * 8 + "px," + (k - 1) * -14 + "px)"; });
+  });
+</script>
+</body>
+</html>

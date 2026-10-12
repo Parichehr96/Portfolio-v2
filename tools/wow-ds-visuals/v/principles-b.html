@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Statement carousel: one principle at a time in large type, with its live example underneath; advances on its own, or use the arrows.">
+<title>WOW design system — one rule at a time</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .st { position: absolute; left: 40px; right: 40px; top: 40px; transition: opacity .3s ease, transform .5s var(--e-out); }
+  .st.out { opacity: 0; transform: translateX(-12px); }
+  .st .n { font: 600 11px/1 "Figtree"; color: var(--pg-faint); letter-spacing: .08em; }
+  .st h3 { margin: 10px 0 0; font: 700 30px/1.12 "Figtree"; letter-spacing: -.02em; max-width: 470px; }
+  .ex { position: absolute; left: 40px; right: 40px; top: 170px; height: 140px; border-radius: 18px; background: #F5F5F7; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; transition: opacity .3s ease; }
+  .ex > div { background: #fff; border-radius: 12px; display: grid; place-items: center; align-content: center; gap: 6px; position: relative; padding: 10px; text-align: center; }
+  .ex .lab { position: absolute; top: 8px; left: 10px; font: 600 9px/1 "Figtree"; letter-spacing: .07em; text-transform: uppercase; }
+  .v { font: 400 10.5px/1.5 "Figtree"; color: var(--pg-ink); }
+  .nav { position: absolute; right: 40px; bottom: 18px; display: flex; gap: 6px; }
+  .nav button { width: 30px; height: 30px; border-radius: 50%; border: 0; background: #F5F5F7; cursor: pointer; font: 600 14px/1 "Figtree"; color: var(--pg-ink); }
+  .dots { position: absolute; left: 40px; bottom: 30px; display: flex; gap: 6px; }
+  .dots i { width: 6px; height: 6px; border-radius: 3px; background: #CBD5E1; transition: width .3s, background .3s; }
+  .dots i.on { width: 18px; background: #0D1233; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="st" id="st"><span class="n" id="n"></span><h3 id="h"></h3></div>
+    <div class="ex w" id="ex"></div>
+    <div class="dots" id="dots"></div>
+    <div class="nav"><button id="pv" aria-label="Previous">‹</button><button id="nx" aria-label="Next">›</button></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var PR = [
+    ["Structure decides, not taste", W.btn("OK", "primary").replace("p-primary", "p-primary\" style=\"border-radius:999px;background:#12B76A") + " " + W.btn("Confirm", "outline").replace("w-btn", "w-btn\" style=\"border-radius:0;font-family:Georgia"), W.btn("Approve") + " " + W.btn("Approve")],
+    ["Colour carries meaning or nothing", W.pill("Active", "purple") + W.pill("Valid", "orange") + W.pill("Expired", "green"), W.pill("Valid") + W.pill("Valid") + W.pill("Expired", "red")],
+    ["Every state ships", '<div style="width:150px">' + W.field("Site", "North Pad", "", "") + "</div>", '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:200px">' + W.field("", "Default", "", "") + W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "") + "</div>"],
+    ["One name, one thing", '<span class="v">“OK” in Figma<br>“Submit” in code<br>“Confirm” in the meeting</span>', '<span class="v">“Approve”<br>in Figma, in code<br>and in the meeting</span>']
+  ];
+  var i = 0, auto = true, st = document.getElementById("st"), ex = document.getElementById("ex");
+  document.getElementById("dots").innerHTML = PR.map(function () { return "<i></i>"; }).join("");
+  async function go(k) { i = (k + 4) % 4; st.classList.add("out"); ex.style.opacity = 0; await sleep(260);
+    document.getElementById("n").textContent = "PRINCIPLE " + (i + 1) + " OF 4"; document.getElementById("h").textContent = PR[i][0];
+    ex.innerHTML = '<div><span class="lab" style="color:#C81E1E">Without</span>' + PR[i][1] + '</div><div><span class="lab" style="color:#15803D">With</span>' + PR[i][2] + "</div>";
+    st.classList.remove("out"); ex.style.opacity = 1;
+    document.querySelectorAll("#dots i").forEach(function (d, j) { d.classList.toggle("on", j === i); }); }
+  document.getElementById("pv").onclick = function () { auto = false; go(i - 1); };
+  document.getElementById("nx").onclick = function () { auto = false; go(i + 1); };
+  go(0); whenSeen(f, async function () { while (auto) { await sleep(3400); if (!auto) break; go(i + 1); } });
+</script>
+</body>
+</html>

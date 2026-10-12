@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Product spin: one WOW request card turns slowly in 3D while callouts name the parts and tokens it’s built from, like an Apple product shot with labels.">
+<title>WOW design system — one card, every angle</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .stage { position: absolute; left: 150px; top: 70px; width: 300px; perspective: 900px; }
+  .spin { transform-style: preserve-3d; animation: spin 9s ease-in-out infinite alternate; }
+  @keyframes spin { from { transform: rotateY(-24deg) rotateX(8deg); } to { transform: rotateY(24deg) rotateX(4deg); } }
+  .spin .w-card { box-shadow: 0 30px 60px -24px rgba(13,18,51,.35), 0 0 0 1px var(--w-line); padding: 16px; }
+  .glow { position: absolute; left: 50%; top: 52%; width: 420px; height: 200px; margin: -100px 0 0 -210px; background: radial-gradient(ellipse, rgba(37,99,235,.12), transparent 65%); }
+  .co { position: absolute; display: flex; align-items: center; gap: 6px; font: 500 10.5px/1.25 "Figtree"; color: var(--pg-ink); opacity: 0; transition: opacity .5s var(--e-out), transform .6s var(--e-out); transform: translateY(6px); }
+  .is-in .co { opacity: 1; transform: none; }
+  .co small { display: block; font: 400 9.5px/1.2 "Figtree"; color: var(--pg-faint); }
+  .co i { display: block; width: 26px; height: 1px; background: rgba(13,18,51,.25); }
+  .co.r { flex-direction: row-reverse; text-align: right; }
+  .floor { position: absolute; left: 190px; top: 300px; width: 220px; height: 16px; border-radius: 50%; background: radial-gradient(rgba(13,18,51,.16), transparent 70%); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="glow"></div>
+    <div class="floor"></div>
+    <div class="stage"><div class="spin" id="card"></div></div>
+    <div class="co r" style="left:20px;top:84px;transition-delay:.2s"><i></i><span>Avatar + name<small>16 variants</small></span></div>
+    <div class="co r" style="left:20px;top:150px;transition-delay:.35s"><i></i><span>Status pill<small>pill/warning · radius pill</small></span></div>
+    <div class="co r" style="left:20px;top:222px;transition-delay:.5s"><i></i><span>Button, outline<small>border/strong · 8 px</small></span></div>
+    <div class="co" style="right:20px;top:96px;transition-delay:.3s"><i></i><span>Card<small>surface · 12 px radius</small></span></div>
+    <div class="co" style="right:20px;top:222px;transition-delay:.45s"><i></i><span>Button, primary<small>action/primary · Inter 500</small></span></div>
+    <div class="co" style="left:0;right:0;bottom:18px;justify-content:center;transition-delay:.7s"><span style="text-align:center">One request card · 5 components · 9 tokens</span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("card").innerHTML = W.req();
+  whenSeen(f);
+</script>
+</body>
+</html>

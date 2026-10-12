@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="State matrix: five controls down the side, six states across the top, every cell drawn — the rule that no screen invents its own error, made visible. A highlight scans the rows.">
+<title>WOW design system — state matrix</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  table { position: absolute; left: 14px; right: 14px; top: 14px; width: 572px; border-collapse: separate; border-spacing: 4px; }
+  th { font: 600 10px/1 "Figtree"; color: var(--pg-faint); text-align: center; padding-bottom: 4px; }
+  th:first-child { text-align: left; }
+  td { background: #F5F5F7; border-radius: 10px; height: 56px; text-align: center; vertical-align: middle; transition: background .3s; }
+  td:first-child { background: none; text-align: left; font: 600 11.5px/1.2 "Figtree"; color: var(--pg-ink); width: 84px; }
+  tr.on td:not(:first-child) { background: #EEF2FF; }
+  td .w-field { width: 72px; margin: 0 auto; } td .w-field label, td .w-field .help { display: none; } td .w-field .box { height: 24px; font-size: 9.5px; padding: 0 6px; }
+  td .w-btn { height: 24px; padding: 0 8px; font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <table class="w" id="t"></table>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var ST = [["", "Default"], ["hover", "Hover"], ["focus", "Focus"], ["press", "Pressed"], ["error", "Error"], ["off", "Disabled"]];
+  var CT = [["Button", function (s) { return W.btn("Save", s === "error" ? "danger" : "primary", s === "error" ? "" : s); }],
+    ["Field", function (s) { return W.field("", "Text", s === "press" ? "focus" : s, ""); }],
+    ["Checkbox", function (s) { return '<span class="w-check ' + (s === "press" || s === "focus" ? "on" : "") + '" style="' + (s === "error" ? "border-color:var(--w-red)" : s === "off" ? "opacity:.4" : s === "hover" ? "border-color:var(--w-blue)" : "") + (s === "focus" ? ";box-shadow:0 0 0 2px #fff,0 0 0 4px var(--w-blue)" : "") + '">' + (s === "press" || s === "focus" ? I("hugeicons:check", 11) : "") + "</span>"; }],
+    ["Switch", function (s) { return '<span class="w-switch ' + (s === "press" || s === "focus" ? "on" : "") + '" style="' + (s === "error" ? "background:var(--w-red)" : s === "off" ? "opacity:.4" : "") + '"></span>'; }],
+    ["Pill", function (s) { return W.pill(s === "error" ? "Expired" : "Active", s === "error" ? "red" : s === "off" ? "purple" : "blue"); }]];
+  var t = document.getElementById("t");
+  t.innerHTML = "<tr><th></th>" + ST.map(function (s) { return "<th>" + s[1] + "</th>"; }).join("") + "</tr>" + CT.map(function (r) { return "<tr><td>" + r[0] + "</td>" + ST.map(function (s) { return "<td>" + r[1](s[0]) + "</td>"; }).join("") + "</tr>"; }).join("");
+  whenSeen(f, async function () { var rows = t.querySelectorAll("tr"), i = 1; while (true) { rows.forEach(function (r, k) { r.classList.toggle("on", k === i); }); i = i % (rows.length - 1) + 1; await sleep(1300); } });
+</script>
+</body>
+</html>
