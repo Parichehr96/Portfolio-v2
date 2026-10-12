@@ -4,8 +4,9 @@
  * the footer nears the screen, this swaps it for the same SVG inline, whose
  * tree crowns are tagged (class="tree", a pivot at the base of each crown),
  * and sets how they sway from the wind in Amsterdam right now: Open-Meteo's
- * current 10 m wind speed (free, no key), kept for 15 minutes per tab. Calm
- * air barely stirs them; a stormy day bends them further and faster. If the
+ * current 10 m wind speed (free, no key), kept for 15 minutes per tab. The
+ * crowns bend from their base with a slower gust on top: a light breeze is a
+ * visible, easy sway; a stormy day bends them further and faster. If the
  * weather can't be fetched they sway as on a light breeze. Reduced motion:
  * no sway (CSS).
  */
@@ -23,9 +24,11 @@
     var v = Math.max(0, Math.min(90, +kmh || 0));
     // Lean with the wind: a westerly (from 180..360) pushes the crowns east (right).
     var dir = typeof fromDeg === "number" && fromDeg > 0 && fromDeg < 180 ? -1 : 1;
-    var amp = Math.min(4.5, 0.6 + v * 0.09);               // degrees of lean
-    var period = Math.max(1.4, 4.2 - v * 0.05);            // seconds per sway
-    holder.style.setProperty("--wind-amp", (amp * dir).toFixed(2) + "deg");
+    var bend = Math.min(13, 2.5 + v * 0.25);               // degrees of skew: 5 at 10 km/h
+    var gust = bend * 0.3;                                 // a slower lean on top
+    var period = Math.max(1.2, 3.2 - v * 0.05);            // seconds per sway
+    holder.style.setProperty("--wind-bend", (bend * dir).toFixed(2) + "deg");
+    holder.style.setProperty("--wind-gust", (gust * dir).toFixed(2) + "deg");
     holder.style.setProperty("--wind-period", period.toFixed(2) + "s");
     holder.setAttribute("data-wind-kmh", String(Math.round(v)));
   }

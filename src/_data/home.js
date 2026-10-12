@@ -66,7 +66,7 @@ module.exports = {
         id: "connect2wow",
         label: "Selected project",
         name: "Connect2WOW",
-        soon: true,
+        href: "/work/connect2wow/",
         verified: true,
         years: "2024-2025",
         desc: [
