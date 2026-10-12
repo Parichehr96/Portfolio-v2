@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The four results drawn as what they measure: completion from 1 in 5 organizers to 1 in 3, creation time from about 7 minutes to about 1, 42% of events made by duplicating, and 4 of 5 organizers coming back instead of 2.">
+<title>ONTON — metrics</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* Metrics: every number drawn as the thing it counts, before → after. */
+  .canvas { height: 392px; padding: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 14px; height: 174px; display: grid; grid-template-rows: 1fr auto; gap: 8px; overflow: hidden; }
+  .head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .head b { font: 600 24px/1 "Figtree"; letter-spacing: -.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .head span { font: 500 12px/1.3 "Figtree"; color: var(--pg-muted); }
+  .from { font: 400 11px/1 "Figtree"; color: var(--pg-faint); margin-top: 4px; }
+  .art { position: relative; }
+
+  /* 1 · completion: 15 organizers who start, the ones who finish filled */
+  .ppl { display: grid; grid-template-columns: repeat(5, 22px); gap: 8px 10px; padding-top: 4px; }
+  .ppl i { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--pg-border); background: #fff; transition: background .4s, box-shadow .4s; position: relative; }
+  .ppl i.done { background: var(--on-blue); box-shadow: none; }
+  .ppl i.new { animation: ping .6s var(--e-out); }
+  @keyframes ping { from { transform: scale(.6); } to { transform: none; } }
+  .ratio { position: absolute; left: 172px; top: 10px; font: 500 11px/1.5 "Figtree"; color: var(--pg-muted); }
+  .ratio b { display: block; font: 600 15px/1.2 "Figtree"; color: var(--pg-ink); }
+
+  /* 2 · time: a stopwatch whose arc drains from 7 minutes to 1 */
+  .watch { position: absolute; left: 0; top: 0; width: 92px; height: 92px; }
+  .watch .bg { fill: none; stroke: var(--pg-mist-2); stroke-width: 8; }
+  .watch .arc { fill: none; stroke: var(--on-blue); stroke-width: 8; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 46px 46px; transition: stroke-dashoffset 2.2s var(--e-out); }
+  .watch text { font: 600 20px/1 "Figtree"; fill: var(--pg-ink); }
+  .ticks { position: absolute; left: 110px; top: 12px; display: grid; gap: 5px; }
+  .ticks div { display: flex; align-items: center; gap: 6px; font: 500 10.5px/1 "Figtree"; color: var(--pg-muted); }
+  .ticks i { display: block; height: 8px; border-radius: 4px; background: var(--pg-mist-2); transition: width 1.6s var(--e-out), background .4s; }
+
+  /* 3 · duplicate: one weekly event, copied onward instead of rebuilt */
+  .evs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding-top: 2px; }
+  .ev { height: 40px; border-radius: 7px; background: var(--pg-mist); box-shadow: inset 0 0 0 1px var(--pg-border); position: relative; overflow: hidden; }
+  .ev::before { content: ""; position: absolute; left: 5px; top: 6px; width: 12px; height: 12px; border-radius: 3px; background: #CBD5E1; }
+  .ev::after { content: ""; position: absolute; left: 5px; right: 6px; top: 24px; height: 4px; border-radius: 2px; background: #CBD5E1; box-shadow: 0 7px 0 -0px #E2E8F0; }
+  .ev.dup { background: var(--on-blue-bg); box-shadow: inset 0 0 0 1px rgba(0, 122, 255, .35); }
+  .ev.dup::before { background: var(--on-blue); } .ev.dup::after { background: rgba(0, 122, 255, .5); box-shadow: 0 7px 0 0 rgba(0, 122, 255, .25); }
+  .ev.pop { transform: translateX(-16px) scale(.9); }
+  .ev.pop.on { transform: none; }
+
+  /* 4 · return: five interviewed organizers, the ones who came back lit */
+  .orgs { display: flex; gap: 10px; padding-top: 6px; }
+  .org { width: 40px; text-align: center; }
+  .org i { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--pg-mist); box-shadow: inset 0 0 0 1.5px var(--pg-border); color: var(--pg-faint); font: 600 12px/1 "Figtree"; font-style: normal; transition: background .45s, color .45s, box-shadow .45s; }
+  .org.back i { background: var(--on-blue); color: #fff; box-shadow: none; }
+  .org.was i { background: #93C2FF; color: #fff; box-shadow: none; }
+  .org small { display: block; margin-top: 6px; font: 500 9.5px/1 "Figtree"; color: var(--pg-faint); }
+  .org.back small, .org.was small { color: var(--on-blue); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="grid">
+      <div class="card"><div class="art"><div class="ppl" id="ppl"></div><div class="ratio" id="ratio"><b>1 in 5</b>finished</div></div>
+        <div><div class="head"><b id="v1">20%</b><span>event-creation completion</span></div><div class="from">From 20% · +64%</div></div></div>
+      <div class="card"><div class="art">
+          <svg class="watch" viewBox="0 0 92 92" aria-hidden="true"><circle class="bg" cx="46" cy="46" r="38"/><circle class="arc" id="arc" cx="46" cy="46" r="38"/><text x="46" y="53" text-anchor="middle" id="wt">7′</text></svg>
+          <div class="ticks"><div><i id="t1" style="width:84px;background:#CBD5E1"></i>before</div><div><i id="t2" style="width:84px"></i>after</div></div>
+        </div>
+        <div><div class="head"><b id="v2">~7 min</b><span>to create an event</span></div><div class="from">From ~7 min · −86%</div></div></div>
+      <div class="card"><div class="art"><div class="evs" id="evs"></div></div>
+        <div><div class="head"><b id="v3">0%</b><span>of events made by duplicating</span></div><div class="from">Duplicate or repeat · not possible before</div></div></div>
+      <div class="card"><div class="art"><div class="orgs" id="orgs"></div></div>
+        <div><div class="head"><b id="v4">2/5</b><span>organizers who came back</span></div><div class="from">From 2 / 5 · +100%</div></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  var C = 2 * Math.PI * 38, arc = document.getElementById("arc");
+  arc.style.strokeDasharray = C; arc.style.strokeDashoffset = 0;
+
+  /* 15 organizers start: 3 finish before (20%), 5 after (~33%) */
+  var ppl = document.getElementById("ppl"), h = "";
+  for (var i = 0; i < 15; i++) h += "<i" + (i < 3 ? ' class="done"' : "") + "></i>"; ppl.innerHTML = h;
+  /* 12 events in a run: 5 of them copies (42%) */
+  var evs = document.getElementById("evs"); h = "";
+  var DUP = [1, 3, 5, 8, 10];
+  for (i = 0; i < 12; i++) h += '<span class="ev' + (DUP.indexOf(i) > -1 ? " pop d" : "") + '"></span>'; evs.innerHTML = h;
+  /* five interviews: two came back before, four after */
+  var orgs = document.getElementById("orgs"); h = "";
+  for (i = 0; i < 5; i++) h += '<div class="org' + (i < 2 ? " was" : "") + '"><i>' + (i + 1) + "</i><small>" + (i < 2 ? "back" : "") + "</small></div>"; orgs.innerHTML = h;
+
+  whenSeen(document.getElementById("f"), async function () {
+    await sleep(300);
+    /* 1 */
+    var p = ppl.children; [3, 4].forEach(function (k, j) { setTimeout(function () { p[k].classList.add("done", "new"); }, reduced ? 0 : 500 + j * 350); });
+    setTimeout(function () { document.getElementById("ratio").innerHTML = "<b>1 in 3</b>finished"; }, reduced ? 0 : 900);
+    count(document.getElementById("v1"), 20, 33, 1300, function (v) { return "~" + Math.round(v) + "%"; });
+    /* 2 */
+    arc.style.strokeDashoffset = C * (1 - 1 / 7);
+    document.getElementById("t2").style.width = "12px"; document.getElementById("t2").style.background = "var(--on-blue)";
+    count(document.getElementById("wt"), 7, 1, 2000, function (v) { return Math.round(v) + "′"; });
+    count(document.getElementById("v2"), 7, 1, 2000, function (v) { return "~" + Math.round(v) + " min"; });
+    /* 3 */
+    stagger(evs.querySelectorAll(".d"), 1100);
+    setTimeout(function () { evs.querySelectorAll(".d").forEach(function (e) { e.classList.add("dup"); }); }, reduced ? 0 : 200);
+    count(document.getElementById("v3"), 0, 42, 1400, function (v) { return Math.round(v) + "%"; });
+    /* 4 */
+    var o = orgs.children; [2, 3].forEach(function (k, j) { setTimeout(function () { o[k].classList.add("back"); o[k].querySelector("small").textContent = "back"; }, reduced ? 0 : 700 + j * 400); });
+    setTimeout(function () { o[0].classList.replace("was", "back"); o[1].classList.replace("was", "back"); document.getElementById("v4").textContent = "4/5"; }, reduced ? 0 : 1300);
+  });
+</script>
+</body>
+</html>

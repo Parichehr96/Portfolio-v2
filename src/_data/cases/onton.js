@@ -44,6 +44,14 @@ module.exports = {
       nav: "About",
       muted: true,
       text: "ONTON is a Telegram Mini App where crypto communities run events and reward attendance with an on-chain badge, a Soulbound Token that proves you showed up. This story is about the first step of that promise: creating the event. For a while, it was a hard part. Organizers weren't only stuck getting the details right, they were stuck making all of them, every single time too.",
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/promise.html",
+        ratio: "600 / 250",
+        title: "The promise in three beats: create the event, show up, get the on-chain badge; this story is about the first",
+      },
+      ],
     },
     {
       title: "Metrics",
@@ -60,22 +68,52 @@ module.exports = {
             { value: "4/5", change: "+100%", label: "Organizers who came back", from: "From 2 / 5" },
           ],
         },
+        {
+          type: "animation",
+          src: "/Assets/embeds/onton/v4/metrics.html",
+          ratio: "600 / 392",
+          title: "The four results drawn as what they measure: completion, time, duplicated events, returning organizers",
+        },
       ],
     },
     {
       title: "Problem",
       nav: "Problem",
       text: "Creating a simple event meant four dense steps, 20+ fields, and a \"cannot be changed after creation\" warning on almost every screen. It took about 7 minutes, and organizers dropped off at step 2 or 3. Nothing carried over between events, so regular organizers started from zero every time.",
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/warnings.html",
+        ratio: "600 / 380",
+        title: "The old form filling up: 22 fields across four steps, warnings that choices are permanent, about 7 minutes",
+      },
+      ],
     },
     {
       title: "How ONTON compared",
       nav: "How it compared",
       text: "Creating a simple event meant moving through four dense steps and deciding on details most organizers didn't need, a process that pushed people to abandon at step 2 or 3.",
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/race.html",
+        ratio: "600 / 300",
+        title: "A race to publish one event: Luma and Partiful under a minute, ONTON about 7 minutes across four steps and a review",
+      },
+      ],
     },
     {
       title: "How did I approach it?",
       nav: "Approach",
       text: "I built the shared components it relied on and iterated on the live analytics after launch, while working directly with the founder and four developers to ship it.",
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/loop.html",
+        ratio: "600 / 250",
+        title: "The working loop: build components, ship, read live analytics, iterate, with the founder and four developers",
+      },
+      ],
     },
     {
       title: "Competitor analysis, before redesign",
@@ -102,7 +140,7 @@ module.exports = {
             columns: ["Steps", "Hide advanced", "Duplicate", "Time"],
             rows: [
               ["Luma", "1 screen", "Yes", "Yes", "<1 min"],
-              ["Partful", "1 screen", "Yes", "Yes", "<1 min"],
+              ["Partiful", "1 screen", "Yes", "Yes", "<1 min"],
               ["Eventbrite", "Many", "Partial", "Yes", "High"],
               ["POAP", "Few", "No", "No", "Low"],
             ],
@@ -115,7 +153,14 @@ module.exports = {
       title: "How organizers used to create event",
       nav: "The old flow",
       text: "Four steps, 20+ fields, and a warning on almost every screen that your choices were permanent.",
-      blocks: [{ type: "image" }],
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/oldflow.html",
+        ratio: "600 / 440",
+        title: "The old flow, step by step: fields pile up to 22 and the clock runs to about 7 minutes",
+      },
+      ],
     },
     {
       title: "What did organizers claim?",
@@ -140,6 +185,12 @@ module.exports = {
               note: "Nothing carried over, so frequent organizers started from zero every time.",
             },
           ],
+        },
+        {
+          type: "animation",
+          src: "/Assets/embeds/onton/v4/interviews.html",
+          ratio: "600 / 326",
+          title: "Isabel stuck on a mandatory subtitle; Malena rebuilding the same event every week, then one tap with Duplicate",
         },
       ],
     },
@@ -202,6 +253,12 @@ module.exports = {
             ],
           },
         },
+        {
+          type: "animation",
+          src: "/Assets/embeds/onton/v4/sorted.html",
+          ratio: "600 / 478",
+          title: "The 22 old fields sorted: 9 kept and surfaced, 11 moved to Advanced, 2 removed or automated",
+        },
       ],
     },
     {
@@ -223,6 +280,14 @@ module.exports = {
       paragraphs: [
         "The bet, that almost no one needed the old flow's depth, held. The clearest proof is the 15%. Majority of users didn’t need what the old flow forced on everyone, and the ones that did, could find it.",
         "I hold the rest loosely: seasonal demand and ONTON being the only SBT option likely helped too, and removing steps meant a few organizers lost access to settings they might've wanted. That's the trade I chose, and the first thing I'd revisit as the organizer base matures.",
+      ],
+      blocks: [
+      {
+        type: "animation",
+        src: "/Assets/embeds/onton/v4/fifteen.html",
+        ratio: "600 / 290",
+        title: "A hundred organizers, one dot each: about 15 opened Advanced, 85 published on the essentials alone",
+      },
       ],
     },
   ],

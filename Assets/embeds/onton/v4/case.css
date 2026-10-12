@@ -1,0 +1,83 @@
+/* ONTON case study (V4) — shared styles for the visuals.
+ *
+ * Two vocabularies, never mixed inside one element:
+ *   --pg-*   the portfolio page (src/styles/v4/tokens.css): Figtree, navy ink,
+ *            mist ground. Everything that frames, labels or explains.
+ *   --on-*   the ONTON product (Figma B8Kfu0nGgUIG0REVlQTD5C, 991:36672): the
+ *            Telegram Mini App's iOS blue and grey. Only where the product appears.
+ * Each visual is drawn at 600 px wide (the case column) and scales to fit.
+ * The case block draws the border and radius, so the frame here is square.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap");
+
+:root {
+  /* page — mirrors src/styles/v4/tokens.css */
+  --pg-ink: #0D1233;
+  --pg-muted: #475569;
+  --pg-faint: rgba(71, 85, 105, .6);
+  --pg-mist: #F3F6F8;
+  --pg-mist-2: #E8ECF0;
+  --pg-surface: #FFFFFF;
+  --pg-border: #E2E8F0;
+  --pg-tag: #0088FF;
+  --pg-tag-bg: rgba(0, 136, 255, .1);
+  --pg-neg: #D53434;
+  --pg-pos: #008000;
+
+  /* product — the ONTON Mini App */
+  --on-blue: #007AFF;
+  --on-blue-bg: #E5F1FF;
+  --on-ground: #EFEFF4;
+  --on-ink: #13212F;
+  --on-sub: #475569;
+  --on-dim: #94A3B8;
+  --on-line: #E2E8F0;
+  --on-green: #34C759;
+  --on-red: #FF3B30;
+  --on-red-bg: #FFECEB;
+
+  --e-out: cubic-bezier(.22, 1, .36, 1);
+  --e-in: cubic-bezier(.4, 0, 1, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; }
+body { font-family: "Figtree", system-ui, sans-serif; color: var(--pg-ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+.frame { position: relative; width: 100%; overflow: hidden; background: #fff; }
+.frame--mist { background: var(--pg-mist); }
+.canvas { position: relative; width: 600px; transform-origin: 0 0; }
+
+/* page type */
+.eyebrow { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+.cap { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
+.num { font: 600 34px/1 "Figtree"; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.card { background: var(--pg-surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--pg-border); }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font: 500 11px/14px "Figtree"; background: var(--pg-tag-bg); color: var(--pg-tag); white-space: nowrap; }
+.tag--grey { background: var(--pg-mist-2); color: var(--pg-muted); }
+.tag--neg { background: rgba(213, 52, 52, .1); color: var(--pg-neg); }
+.tag--pos { background: rgba(0, 128, 0, .1); color: var(--pg-pos); }
+.replay { position: absolute; right: 12px; bottom: 12px; z-index: 9; font: 500 11px/1 "Figtree"; color: var(--pg-muted); background: #fff; border: 0;
+  border-radius: 999px; padding: 6px 10px; box-shadow: 0 0 0 1px var(--pg-border); cursor: pointer; }
+.replay:focus-visible { outline: 2px solid var(--pg-tag); outline-offset: 1px; }
+
+/* product primitives, drawn at the app's own proportions */
+.on-field { background: #fff; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--on-line); padding: 7px 10px; }
+.on-field b { display: block; font: 500 9px/1.3 "Figtree"; color: var(--on-sub); }
+.on-field span { display: block; font: 500 11px/1.4 "Figtree"; color: var(--on-ink); }
+.on-btn { display: flex; align-items: center; justify-content: center; height: 30px; border-radius: 10px; background: var(--on-blue); color: #fff; font: 600 11px/1 "Figtree"; }
+.on-warn { display: flex; gap: 6px; align-items: flex-start; padding: 6px 8px; border-radius: 8px; background: var(--on-red-bg); color: #B42318; font: 500 9.5px/1.35 "Figtree"; }
+
+/* phones: an old-app still (img/old-n.png, exported from Figma 874:36963) */
+.phone { position: relative; flex: none; border-radius: 18px; overflow: hidden; background: var(--on-ground);
+  box-shadow: 0 0 0 1px rgba(13, 18, 51, .08), 0 18px 36px -18px rgba(13, 18, 51, .4); }
+.phone img { display: block; width: 100%; height: auto; }
+
+.rise { opacity: 0; transform: translateY(8px); transition: opacity .5s var(--e-out), transform .6s var(--e-out); }
+.is-in .rise, .rise.is-in { opacity: 1; transform: none; }
+.pop { opacity: 0; transform: scale(.5); transition: opacity .3s, transform .45s var(--e-out); }
+.pop.on { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}

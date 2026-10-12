@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The old ONTON event creation, step by step: four dense steps and a review, with the fields piling up to 22 and the clock running to about 7 minutes. Click a step to stop on it; Play resumes.">
+<title>ONTON — the old flow</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* The old flow (Figma 874:36963): one phone walks the five screens while the
+     fields and the clock pile up beside it. Steps and captions are the comp's. */
+  .canvas { height: 440px; }
+  #ph { position: absolute; left: 44px; top: 10px; width: 178px; height: 419px; }
+  #ph img { position: absolute; left: 0; top: 0; width: 100%; transition: opacity .45s var(--e-out), transform .6s var(--e-out); }
+  #ph img.out { opacity: 0; transform: translateX(-14px); }
+  #ph img.in { opacity: 0; transform: translateX(14px); }
+  /* a friction spot on the screen: boxes are in the phone's 674 × 1585 export, ÷ 4 × scale */
+  .hit { position: absolute; border-radius: 6px; box-shadow: 0 0 0 2px var(--pg-neg); background: rgba(213, 52, 52, .08); opacity: 0; transform: scale(1.06); transition: opacity .35s, transform .5s var(--e-out); pointer-events: none; }
+  .hit.on { opacity: 1; transform: none; }
+
+  .copy { position: absolute; left: 268px; right: 36px; top: 40px; }
+  .stp { font: 600 11px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .big { font: 600 28px/1.15 "Figtree"; letter-spacing: -.01em; margin: 10px 0 8px; }
+  .sm { font: 400 14px/21px "Figtree"; color: var(--pg-muted); min-height: 42px; }
+
+  .dots { display: flex; gap: 4px; margin-top: 16px; align-items: center; }
+  .dots button { border: 0; background: none; padding: 9px 2px; cursor: pointer; border-radius: 6px; }
+  .dots button i { display: block; width: 34px; height: 5px; border-radius: 3px; background: var(--pg-mist-2); transition: background .3s, transform .2s; }
+  .dots button:hover i { transform: scaleY(1.6); }
+  .dots button.on i { background: var(--pg-ink); }
+  .dots button.cur i { transform: scaleY(1.6); }
+  .dots button:focus-visible { outline: 2px solid var(--pg-tag); outline-offset: 1px; }
+  .pp { margin-left: 8px; border: 0; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); border-radius: 999px; padding: 5px 10px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); cursor: pointer; }
+  /* where organizers dropped: under steps 2 and 3 */
+  .drop { margin: 2px 0 0 42px; width: 80px; border-top: 1.5px solid var(--pg-neg); padding-top: 5px; font: 500 10.5px/1.2 "Figtree"; color: var(--pg-neg); text-align: center; opacity: 0; transition: opacity .4s; }
+  .drop.on { opacity: 1; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .st { padding: 12px 14px; }
+  .st .num { font-size: 28px; }
+  .st .num small { font-size: 15px; font-weight: 500; color: var(--pg-muted); margin-left: 2px; }
+  .st .cap { margin-top: 6px; line-height: 16px; }
+  .flag { margin-top: 14px; min-height: 24px; }
+  .flag .tag { opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .4s var(--e-out); }
+  .flag .tag.on { opacity: 1; transform: none; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas">
+  <div id="ph" class="phone"><img id="img" src="img/old-1.png" alt=""><div id="hits"></div></div>
+  <div class="copy">
+    <div class="stp" id="stp"></div><div class="big" id="big"></div><div class="sm" id="sm"></div>
+    <div class="dots" id="dots" role="group" aria-label="Steps of the old flow"></div>
+    <div class="drop" id="drop">most drop-offs</div>
+    <div class="stats">
+      <div class="card st"><div class="num"><span id="nf">0</span></div><div class="cap">fields asked so far</div></div>
+      <div class="card st"><div class="num"><span id="nc">0:00</span></div><div class="cap">on the clock, ~7 min in all</div></div>
+    </div>
+    <div class="flag"><span class="tag tag--neg" id="flag"></span></div>
+  </div>
+</div></div>
+<script>
+  /* Steps and captions from the comp; fields per step from "What changed"
+     (6 + 5 + 6 + 5 = 22). The clock runs in proportion to fields asked, to the
+     case's ~7 minutes; it illustrates the total, not a measured split. */
+  var S = [
+    { t: "General info", d: "Basic event details with tags to help you find it easily.", f: 6,
+      hit: [48, 722, 626, 797], flag: "Subtitle is mandatory" },
+    { t: "Time/Location", d: "Set time and place, pick a timezone, location, or add an online link.", f: 11 },
+    { t: "Registration", d: "How will attendees join? What's the max capacity and ticket info and types?", f: 17,
+      hit: [48, 1307, 626, 1398], flag: "Cannot be changed after creation" },
+    { t: "Reward", d: "Set a reward for attendees and keep it safe with a password or other methods.", f: 22,
+      hit: [48, 1233, 626, 1322], flag: "Cannot be changed after creation" },
+    { t: "Overview", d: "Review all details carefully before submitting.", f: 22 },
+  ];
+  var TOTAL = 420, K = 178 / 674;
+  var img = document.getElementById("img"), hits = document.getElementById("hits"), dots = document.getElementById("dots");
+  var nf = document.getElementById("nf"), nc = document.getElementById("nc"), flag = document.getElementById("flag");
+  dots.innerHTML = S.map(function (s, i) { return '<button data-i="' + i + '" aria-label="Step ' + (i + 1) + ": " + s.t + '"><i></i></button>'; }).join("") +
+    '<button class="pp" id="pp" aria-label="Pause the walk-through">Pause</button>';
+  S.forEach(function (s) { var p = new Image(); p.src = "img/old-" + (S.indexOf(s) + 1) + ".png"; });
+
+  var cur = -1, paused = false, token = 0, fields = 0, secs = 0;
+  function secsAt(f) { return f / 22 * TOTAL; }
+  function swap(i) {
+    var n = img.cloneNode(); n.src = "img/old-" + (i + 1) + ".png"; n.removeAttribute("id"); n.className = reduced ? "" : "in";
+    img.parentNode.insertBefore(n, hits);
+    var o = img; img = n; img.id = "img";
+    requestAnimationFrame(function () { requestAnimationFrame(function () { n.className = ""; o.className = "out"; }); });
+    setTimeout(function () { o.remove(); }, reduced ? 0 : 650);
+  }
+  function show(i, instant) {
+    var s = S[i], prev = cur; cur = i;
+    if (prev !== i) swap(i);
+    document.getElementById("stp").textContent = i < 4 ? "Step " + (i + 1) + " of 4" : "Then a review";
+    document.getElementById("big").textContent = s.t; document.getElementById("sm").textContent = s.d;
+    dots.querySelectorAll("button[data-i]").forEach(function (d, k) { d.classList.toggle("on", k <= i); d.classList.toggle("cur", k === i); d.setAttribute("aria-current", k === i ? "step" : "false"); });
+    document.getElementById("drop").classList.toggle("on", i >= 1);
+    hits.innerHTML = ""; flag.classList.remove("on");
+    var from = fields, to = s.f; fields = to;
+    var sFrom = secs, sTo = secsAt(to); secs = sTo;
+    if (instant) { nf.textContent = to; nc.textContent = clock(sTo); }
+    else { count(nf, from > to ? 0 : from, to, 1200); count(nc, sFrom > sTo ? 0 : sFrom, sTo, 1800, clock); }
+    if (s.hit) {
+      var h = document.createElement("div"); h.className = "hit";
+      h.style.cssText = "left:" + s.hit[0] * K + "px;top:" + s.hit[1] * K + "px;width:" + (s.hit[2] - s.hit[0]) * K + "px;height:" + (s.hit[3] - s.hit[1]) * K + "px";
+      hits.appendChild(h); flag.textContent = "⚠ " + s.flag;
+      setTimeout(function () { h.classList.add("on"); flag.classList.add("on"); }, instant || reduced ? 0 : 700);
+    }
+  }
+  function setPaused(p) { paused = p; var b = document.getElementById("pp"); b.textContent = p ? "▶ Play" : "Pause"; b.setAttribute("aria-label", p ? "Play the walk-through" : "Pause the walk-through"); }
+  async function play() {
+    var my = ++token;
+    while (my === token && !paused) {
+      await sleep(cur === 4 ? 3600 : 2800); if (my !== token || paused) return;
+      if (cur === 4) { fields = 0; secs = 0; }
+      show((cur + 1) % 5);
+    }
+  }
+  dots.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.id === "pp") { setPaused(!paused); if (!paused) play(); return; }
+    setPaused(true); token++; show(+b.dataset.i, true);
+  });
+  addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") { setPaused(true); token++; show((cur + (e.key === "ArrowRight" ? 1 : 4)) % 5, true); }
+  });
+  show(0, true); nf.textContent = "0"; nc.textContent = "0:00"; fields = 0; secs = 0;
+  whenSeen(document.getElementById("f"), function () {
+    if (END) { show(4, true); return; }
+    fields = 0; secs = 0; S[0].f && show(0); play();
+  });
+</script>
+</body></html>
