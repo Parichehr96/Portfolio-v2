@@ -48,7 +48,7 @@ module.exports = {
       nav: "At a glance",
       muted: true,
       text: "It never launched, so there is no adoption data to show. What there is, is the system.",
-      blocks: [{ type: "animation", src: E + "glance.html", ratio: "600 / 330",
+      blocks: [{ type: "animation", src: E + "glance.html", ratio: "600 / 380",
         title: "Four counts drawn as what they count: 4 module icons, 45 component blocks, a grid of 370 icons, and 6 notification types" }],
     },
     {
@@ -137,7 +137,7 @@ module.exports = {
     {
       title: "Components",
       nav: "Components",
-      text: "40–50 components, built from the bottom up. A status pill goes into a crew row, the row into a crew card, the card into a work order. Because every module is assembled from the same parts, an expired certificate looks the same in HSE, Courses and Engineering, and nobody can tell which of us designed which screen.",
+      text: "40–50 components, built from the bottom up: 65 sets in the Figma library once the 15 icon sets are counted, from buttons, inputs and mega-selects to org charts, steppers and a chat system. A status pill goes into a crew row, the row into a crew card, the card into a work order. Because every module is assembled from the same parts, an expired certificate looks the same in HSE, Courses and Engineering, and nobody can tell which of us designed which screen.",
       blocks: [{ type: "animation", src: E + "components.html", ratio: "600 / 392",
         title: "A camera over the live prototype pulls back from one status pill to a crew row, the crew card, and the whole work order" }],
     },
@@ -145,8 +145,8 @@ module.exports = {
       title: "The stress test: notifications",
       nav: "Notifications",
       text: "An ERP never stops talking: approvals, errors, safety events. We replaced design-by-screen with four questions every alert answers (is it actionable, what's its priority, where is it from, what's its status) and let the answers choose its home: a modal, banner, toast, inline message, badge or panel. Six types, no one-offs.",
-      blocks: [{ type: "animation", src: E + "alerts.html", ratio: "600 / 384",
-        title: "An alert's four axes are read off one by one and the component it becomes appears in the product: toast, inline, modal, banner, badge or panel" }],
+      blocks: [{ type: "animation", src: E + "alerts.html", ratio: "600 / 432",
+        title: "Pick an alert, or watch them run: its four axes are read off one by one and the component it becomes appears in the product — toast, inline, modal, banner, badge or panel" }],
     },
     {
       title: "The product",

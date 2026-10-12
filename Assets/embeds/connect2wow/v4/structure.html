@@ -27,7 +27,7 @@
   .ly.md .tile { background: #fff; color: var(--ui-primary); }
   .ly.ad { background: rgba(244, 239, 255, .96); box-shadow: 0 0 0 1px #DCCFFB; grid-template-columns: repeat(4, 1fr); }
   .ly.ad .tile { background: #fff; color: var(--ui-purple); }
-  .ly.ds { background: rgba(13, 18, 51, .95); grid-template-columns: repeat(3, 1fr); }
+  .ly.ds { background: rgba(13, 18, 51, .95); grid-template-columns: repeat(6, 1fr); }
   .ly.ds .tile { background: rgba(255, 255, 255, .1); color: #fff; }
   .ly:hover { box-shadow: 0 0 0 2px var(--pg-accent); }
   .is-in .ly.ws { transform: translateZ(156px); } .is-in .ly.md { transform: translateZ(104px); } .is-in .ly.ad { transform: translateZ(52px); }
@@ -40,7 +40,7 @@
   .hint { position: absolute; left: 28px; bottom: 18px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
 
   /* ---- report ---- */
-  .report { position: absolute; inset: 0; padding: 22px 24px; opacity: 0; transform: translateY(8px); pointer-events: none; cursor: pointer;
+  .report { position: absolute; inset: 0; padding: 22px 24px; background: #fff; opacity: 0; transform: translateY(8px); pointer-events: none; cursor: pointer;
     transition: opacity .35s var(--e-out), transform .45s var(--e-out); }
   .report-on .report { opacity: 1; transform: none; pointer-events: auto; }
   .rh { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -54,6 +54,7 @@
   .it.on { background: var(--k); color: #fff; box-shadow: none; transform: translateY(-1px); }
   .it.on .ic { color: #fff; }
   .tree { position: relative; height: 230px; margin-top: 6px; }
+  .items { font-size: 10.5px; }
   .tree svg { position: absolute; inset: 0; }
   .tree path { fill: none; stroke: #C3CDDB; stroke-width: 1.2; }
   .nd { position: absolute; transform: translate(-50%, 0); padding: 7px 10px; border-radius: 8px; font: 500 11px/1.1 "Figtree"; white-space: nowrap;
@@ -61,6 +62,9 @@
   .nd.on { opacity: 1; translate: 0 0; }
   .nd.root { background: var(--pg-ink); color: #fff; }
   .nd.kid { background: #fff; box-shadow: 0 0 0 1px var(--pg-border); color: var(--pg-ink); }
+  .flow { position: absolute; left: 0; right: 0; top: 74px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 0 4px; }
+  .flow .nd { position: static; transform: none; display: inline-flex; gap: 5px; align-items: center; }
+  .nd b { font: 600 9.5px/1 "Figtree"; color: var(--pg-faint); }
   .rf { position: absolute; left: 24px; bottom: 16px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
 </style>
 </head>
@@ -80,21 +84,28 @@
     { k: "ws", name: "Workspace", desc: "Mine: what needs me, my profile, my alerts, my week, my conversations. Always one click away, in the top bar.", items: C2W.workspace, color: "#0D1233", bar: "#CBD5E1" },
     { k: "md", name: "4 modules", desc: "Where the work gets done. Every sidebar item is a type of record the module owns.", items: C2W.modules, color: "#2563EB", bar: "#93B4F5" },
     { k: "ad", name: "Admin console", desc: "Setup, not work. Who can see and do what, across every module.", items: C2W.admin, color: "#7C3AED", bar: "#C4B5FD" },
-    { k: "ds", name: "Design system", desc: "Under all of it: foundations, 40–50 components and the patterns they make.", items: C2W.system, color: "#3F3DB6", bar: "#0D1233" }
+    { k: "ds", name: "Design system", desc: "Under all of it: the WOW library. 65 component sets in Figma (50 components and 15 icon sets), the foundations they're built on and the patterns they make. Small numbers are variants.", items: C2W.system, color: "#3F3DB6", bar: "#0D1233", sum: "65 component sets · foundations · patterns" }
   ];
   var stack = document.getElementById("stack"), labels = document.getElementById("labels"), report = document.getElementById("report"), c = document.getElementById("c");
   /* bottom layer first so the top one paints last */
   stack.innerHTML = L.slice().reverse().map(function (l) { return '<div class="ly ' + l.k + '" data-k="' + l.k + '">' + l.items.map(function (it) { return '<div class="tile">' + I(it.icon, 18) + "</div>"; }).join("") + "</div>"; }).join("");
   var TOPS = { ws: 74, md: 168, ad: 262, ds: 356 };
-  labels.innerHTML = L.map(function (l) { return '<div class="lab" data-k="' + l.k + '" style="top:' + TOPS[l.k] + 'px"><i class="bar" style="background:' + l.bar + '"></i><b>' + l.name + "</b><span>" + l.items.map(function (i) { return i.name; }).join(" · ") + "</span></div>"; }).join("");
+  labels.innerHTML = L.map(function (l) { return '<div class="lab" data-k="' + l.k + '" style="top:' + TOPS[l.k] + 'px"><i class="bar" style="background:' + l.bar + '"></i><b>' + l.name + "</b><span>" + (l.sum || l.items.map(function (i) { return i.name; }).join(" · ")) + "</span></div>"; }).join("");
 
+  function label(k) { var p = k.split("|"); return p[0] + (p[1] ? " <b>" + p[1] + "</b>" : ""); }
   function tree(layer, idx) {
     var it = layer.items[idx], kids = it.items, W = 552, root = W / 2, n = kids.length, step = W / n, s = "", h = "";
     h += '<div class="nd root" style="left:' + root + 'px;top:0">' + (it.long || it.name) + "</div>";
+    /* Up to eight children branch out; more than that flow as a set under a bracket. */
+    var long = kids.some(function (k) { return k.split("|")[0].length > 22; });
+    if (n > 6 || long) {
+      s += '<path d="M' + root + ' 30 V52 M24 62 Q24 52 34 52 H' + (W - 34) + " Q" + (W - 24) + " 52 " + (W - 24) + ' 62"/>';
+      return '<svg viewBox="0 0 ' + W + ' 230" width="' + W + '" height="230">' + s + "</svg>" + h + '<div class="flow">' + kids.map(function (k) { return '<div class="nd kid">' + label(k) + "</div>"; }).join("") + "</div>";
+    }
     kids.forEach(function (k, j) {
       var x = step * (j + .5), y = 92 + (n > 4 && j % 2 ? 44 : 0);
       s += '<path d="M' + root + " 30 C" + root + " 60 " + x + " 52 " + x + " " + y + '"/>';
-      h += '<div class="nd kid" style="left:' + x + "px;top:" + y + 'px">' + k + "</div>";
+      h += '<div class="nd kid" style="left:' + x + "px;top:" + y + 'px">' + label(k) + "</div>";
     });
     return '<svg viewBox="0 0 ' + W + ' 230" width="' + W + '" height="230">' + s + "</svg>" + h;
   }

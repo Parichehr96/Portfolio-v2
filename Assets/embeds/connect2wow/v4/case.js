@@ -54,10 +54,16 @@
       { id: "sites", name: "Sites", icon: "hugeicons:layers-01", items: ["North Pad", "Camp 3", "Yard", "Calgary HQ"] },
       { id: "audit", name: "Audit log", icon: "hugeicons:file-01", items: ["Who changed what, when"] }
     ],
+    /* The WOW library in Figma (ZFBjv4liRxsP4BFldAjmOX): 65 component sets,
+       50 components and 15 icon sets, plus documented compositions and
+       patterns. "Name|n" = n variants in Figma. */
     system: [
-      { id: "found", name: "Foundations", icon: "hugeicons:layers-01", items: ["Colour", "Type", "Icons", "Spacing & radius", "Motion"] },
-      { id: "comp", name: "Components", icon: "hugeicons:task-done-01", items: ["Buttons", "Pills", "Fields", "Tables & pager", "Cards", "Drawer & modal"] },
-      { id: "pat", name: "Patterns", icon: "hugeicons:checkmark-circle-02", items: ["Request card", "Approvals inbox", "Certificate check", "Stepper", "Six alert types"] }
+      { id: "found", name: "Foundations", icon: "hugeicons:layers-01", items: ["Colour tokens", "Typography", "Spacing", "Radius", "Elevation", "Iconography", "Dark & light themes"] },
+      { id: "forms", name: "Actions & forms", icon: "hugeicons:task-done-01", items: ["Button|24", "Text input|12", "Text field|8", "Select|9", "Mega-select|2", "Select menu item|4", "Checkbox|12", "Radio button|4", "Switch|4", "Suffix / prefix|5"] },
+      { id: "data", name: "Data display", icon: "hugeicons:table-01", items: ["Table|12", "Table actions|2", "List|4", "List item|4", "Avatar|12", "Avatar + name|16", "Chip|16", "Badge|30", "Notification badge|12", "User status|6", "Progress bar|3", "Stepper|3", "Vertical stepper|3", "Org chart|5", "Home card|3", "Public view card|4", "Contact|5", "Comment|3", "Divider|4", "Logo|12"] },
+      { id: "feed", name: "Feedback & navigation", icon: "iconoir:bell-notification", items: ["Alert|4", "Tooltip|4", "Dialog|6", "Tab|15", "Breadcrumb|4", "Menu|2", "Navigation|2", "Navigation item|2", "Drawer|5", "Drawer item|9", "Header|2"] },
+      { id: "chat", name: "Chat & icons", icon: "hugeicons:message-01", items: ["Chat list|8", "Message item|36", "Message status|13", "370 icons in 14 sets", "Icon sizes|12"] },
+      { id: "pat", name: "Patterns", icon: "hugeicons:checkmark-circle-02", items: ["Record header", "Form block", "Table block", "Approval request", "Notification escalation · dot → count → statement → alert", "Multi-step flow", "Org chart editing"] }
     ],
     people: [
       { id: "sarah", i: "SL", name: "Sarah Lim", role: "HR Manager", c: "#E2558E", site: 0.08, where: "Office", mods: ["HR", "Courses"], quote: "I want HR software that's easy to use, so I don't have to type out everything I need." },

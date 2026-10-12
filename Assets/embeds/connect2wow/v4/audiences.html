@@ -13,14 +13,24 @@
   .canvas { height: 340px; }
   .axis { position: absolute; left: 50px; right: 50px; top: 150px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #94A3B8, #DD6B20); }
   .end { position: absolute; top: 164px; display: flex; gap: 6px; align-items: center; font: 600 11px/1 "Figtree"; color: var(--pg-muted); }
-  .p { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 5px; cursor: pointer; }
-  .p .av { width: 36px; height: 36px; font-size: 12px; box-shadow: 0 0 0 4px #fff; transition: box-shadow .3s, transform .45s var(--e-out); }
-  .p small { font: 500 10px/1.2 "Figtree"; color: var(--pg-muted); white-space: nowrap; transition: color .3s; }
-  .p.on .av { transform: scale(1.16); box-shadow: 0 0 0 4px #fff, 0 0 0 6px currentColor; }
-  .p.on small { color: var(--pg-ink); }
-  .stem { position: absolute; width: 1px; background: #CBD5E1; }
-  .spot { position: absolute; left: 50px; right: 50px; top: 206px; min-height: 108px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-content: start; transition: opacity .22s ease; }
+  /* Selection: the chosen persona keeps full colour, a solid ring in their
+     colour and a bold label; its stem and the card's edge take the same
+     colour, with a caret pointing back at them. Everyone else steps back. */
+  .p { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; cursor: pointer; transition: opacity .3s ease; }
+  .p .av { width: 36px; height: 36px; font-size: 12px; box-shadow: 0 0 0 3px #fff; transition: box-shadow .3s ease, filter .3s ease; }
+  .p small { font: 500 10px/1.2 "Figtree"; color: var(--pg-muted); white-space: nowrap; transition: color .3s, font-weight .3s; }
+  .has-on .p:not(.on) { opacity: .42; }
+  .has-on .p:not(.on) .av { filter: saturate(.5); }
+  .p:hover { opacity: 1 !important; }
+  .p.on .av { box-shadow: 0 0 0 3px #fff, 0 0 0 6px currentColor, 0 8px 18px -6px currentColor; }
+  .p.on small { color: var(--pg-ink); font-weight: 700; }
+  .stem { position: absolute; width: 1px; background: #CBD5E1; transition: background .3s, width .3s; }
+  .stem.on { width: 2px; margin-left: -.5px; }
+  .tick { position: absolute; top: 146px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--k, #94A3B8); transition: left .45s var(--e-out), box-shadow .3s; }
+  .caret { position: absolute; top: 199px; width: 14px; height: 14px; margin-left: -7px; background: #fff; transform: rotate(45deg); border-left: 3px solid var(--k, var(--pg-border)); border-top: 3px solid var(--k, var(--pg-border)); transition: left .45s var(--e-out), border-color .3s; z-index: 2; }
+  .spot { position: absolute; left: 50px; right: 50px; top: 206px; min-height: 108px; padding: 16px 18px; border-top: 3px solid var(--k, var(--pg-border)); transition: opacity .22s ease, border-color .3s ease; display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-content: start; transition: opacity .22s ease; }
   .spot.out { opacity: 0; }
+  .spot b { color: var(--pg-ink); }
   .spot b { font: 600 14px/18px "Figtree"; }
   .spot .r { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
   .spot p { margin: 0; grid-column: 1 / -1; font: 400 13px/19px "Figtree"; color: var(--pg-ink-60); }
@@ -34,6 +44,8 @@
     <div class="axis"></div>
     <div class="end" style="left:50px">%A% Head office · Calgary</div>
     <div class="end" style="right:50px">Remote &amp; offshore sites %B%</div>
+    <span class="tick" id="tick"></span>
+    <span class="caret" id="caret"></span>
     <div class="card spot" id="spot"></div>
   </div>
 </div>
@@ -45,7 +57,7 @@
   var SHORT = { sarah: "HR manager", nadia: "Admin", graham: "Ops manager", ryan: "Project manager", daniel: "HSE lead", mark: "Welder" };
   C2W.people.forEach(function (p, i) {
     var x = 50 + 500 * p.site, y = Y[i];
-    c.insertAdjacentHTML("beforeend", '<span class="stem" style="left:' + x + "px;top:" + (y + 34) + "px;height:" + (150 - y - 34) + 'px"></span>');
+    c.insertAdjacentHTML("beforeend", '<span class="stem" data-i="' + i + '" style="left:' + x + "px;top:" + (y + 34) + "px;height:" + (150 - y - 34) + 'px"></span>');
     var d = document.createElement("div"); d.className = "p"; d.style.left = x + "px"; d.style.top = y + "px"; d.style.color = p.c;
     d.innerHTML = '<span class="av" style="background:' + p.c + '">' + p.i + "</span><small>" + SHORT[p.id] + "</small>";
     c.appendChild(d); els.push(d);
@@ -55,6 +67,11 @@
   async function show(i) {
     if (i === cur) return; cur = i; var p = C2W.people[i];
     els.forEach(function (e, k) { e.classList.toggle("on", k === i); });
+    var x = 50 + 500 * p.site;
+    c.classList.add("has-on"); c.style.setProperty("--k", p.c);
+    c.querySelectorAll(".stem").forEach(function (s) { var on = +s.dataset.i === i; s.classList.toggle("on", on); s.style.background = on ? p.c : ""; });
+    document.getElementById("tick").style.left = x + "px";
+    document.getElementById("caret").style.left = Math.max(74, Math.min(526, x)) + "px";
     spot.classList.add("out"); await sleep(200);
     spot.innerHTML = "<div><b>" + p.name + '</b> <span class="r">· ' + p.role + " · " + p.where + '</span></div><div class="mods">' + p.mods.map(function (m) { return "<span>" + m + "</span>"; }).join("") + "</div><p>“" + p.quote + "”</p>";
     spot.classList.remove("out");
