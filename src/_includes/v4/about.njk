@@ -22,6 +22,13 @@
       {%- endfor %}
     </ul>
   </div>
+  {#- One dot per photo, the middle one's filled; a dot turns the wheel to its
+      photo (scripts/v4-photos.js, which shows them). #}
+  <div class="v4-photos__dots" data-photo-dots hidden>
+    {%- for photo in home.about.photos %}
+    <button class="v4-photos__dot" type="button" aria-label="Photo {{ loop.index }} of {{ home.about.photos | length }}: {{ photo.caption }}"></button>
+    {%- endfor %}
+  </div>
   <div class="v4-about__text">
     {%- for p in home.about.paragraphs %}
     <p>{{ p }}</p>

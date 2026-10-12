@@ -193,6 +193,7 @@
   --v4-photo-w: 224px;
   --v4-photo-h: 270px;
   --v4-photo-radius: 32px;
+  --v4-photo-dot: 8px;           /* the wheel's dots */
   --v4-text-photo: 13px;
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
