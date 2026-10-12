@@ -3,6 +3,8 @@
     whatever width it is given, so the iframe only has to hold that ratio.
     `loading="lazy"` keeps its ~1.7 MB off the first paint; the page starts
     playing once half of it is on screen, so nobody scrolls in mid-way. -#}
-<figure class="v4-case__animation">
-  <iframe src="{{ part.src }}" title="{{ part.title }}" loading="lazy" scrolling="no"></iframe>
+{#- A visual with its own box (`ratio`, e.g. "600 / 330") keeps that shape and
+    a fixed 20px corner; without one it is the cover slot, as above. -#}
+<figure class="v4-case__animation{% if part.ratio %} v4-case__animation--free{% endif %}">
+  <iframe src="{{ part.src }}" title="{{ part.title }}" loading="lazy" scrolling="no"{% if part.ratio %} style="aspect-ratio: {{ part.ratio }}"{% endif %}></iframe>
 </figure>

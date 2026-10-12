@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — colour only where it means something</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* Foundations (10.B): a wipe sweeps across a greyscale screen of the
+     prototype; colour shows up only where it carries meaning. Drag to scrub. */
+  .canvas { height: 404px; user-select: none; }
+  .win { position: absolute; left: 32px; top: 28px; width: 536px; aspect-ratio: 1440 / 900; }
+  .win img { position: absolute; inset: 0; width: 100%; border-radius: 10px; }
+  .grey { filter: grayscale(1) contrast(.96); box-shadow: 0 0 0 1px rgba(16, 24, 40, .06), 0 18px 40px -18px rgba(16, 24, 40, .35); }
+  .col { clip-path: inset(0 calc(100% - var(--x, 0%)) 0 0 round 10px); }
+  .line { position: absolute; top: 18px; height: 355px; left: calc(32px + 536px * var(--p, 0)); width: 2px; margin-left: -1px; background: var(--pg-ink); cursor: ew-resize; }
+  .line i { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); font: 600 9.5px/1 "Figtree"; font-style: normal; color: #fff; background: var(--pg-ink); padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
+  .foot { position: absolute; left: 32px; right: 32px; bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .foot b { font: 600 12px/1 "Figtree"; }
+  .legend { display: flex; gap: 12px; }
+  .legend span { display: inline-flex; gap: 5px; align-items: center; font: 400 11px/1 "Figtree"; color: var(--pg-muted); }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="win"><img class="grey" src="/Assets/v4/case/connect2wow/screens/hse-incidents.webp" alt=""><img class="col" id="col" src="/Assets/v4/case/connect2wow/screens/hse-incidents.webp" alt="The HSE incidents list in colour"></div>
+    <div class="line" id="line"><i>colour</i></div>
+    <div class="foot"><b>Colour only where it means something</b><div class="legend"><span><i style="background:#2563EB"></i>selection, action</span><span><i style="background:#C81E1E"></i>risk</span><span><i style="background:#15803D"></i>safe</span></div></div>
+  </div>
+</div>
+<script>
+  var c = document.getElementById("c"), f = document.getElementById("f"), drag = false;
+  function set(p) { p = Math.max(0, Math.min(1, p)); c.style.setProperty("--p", p); document.getElementById("col").style.setProperty("--x", p * 100 + "%"); }
+  function at(e) { var r = f.getBoundingClientRect(), s = r.width / 600; return ((e.clientX - r.left) / s - 32) / 536; }
+  document.getElementById("line").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(at(e)); });
+  addEventListener("pointerup", function () { drag = false; });
+  c.addEventListener("click", function (e) { if (!e.target.closest(".line")) set(at(e)); });
+  set(0);
+  whenSeen(f, async function () { await sleep(400); for (var i = 0; i <= 100; i++) { if (drag) return; set(i / 100 * .58); await sleep(14); } });
+</script>
+</body>
+</html>

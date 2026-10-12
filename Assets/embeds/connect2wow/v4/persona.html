@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — what Sarah thinks, sees, hears and does</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  .canvas { height: 430px; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .qt { position: absolute; font: 600 10px/1 "Figtree"; letter-spacing: .06em; text-transform: uppercase; color: var(--pg-faint); }
+  .qt b { display: block; font: 600 16px/1.1 "Figtree"; letter-spacing: -.01em; text-transform: none; color: var(--pg-accent); margin-top: 3px; }
+  .st { position: absolute; width: 124px; padding: 7px 9px; border-radius: 4px; font: 400 10.5px/14px "Figtree"; color: var(--pg-ink);
+    background: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 6px 14px -8px rgba(13,18,51,.3); opacity: 0; transform: scale(.85) rotate(var(--r)); transition: opacity .4s, transform .5s var(--ease), background .4s; }
+  .is-in .st { opacity: 1; transform: rotate(var(--r)); }
+  .st.k { background: #FFF3BF; }
+  .st.k::after { content: "decision"; position: absolute; top: -7px; right: 6px; font: 600 8px/1 "Figtree"; letter-spacing: .05em; text-transform: uppercase; background: var(--pg-accent); color: #fff; padding: 3px 5px; border-radius: 4px; }
+  .me { position: absolute; left: 300px; top: 215px; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; }
+  .me .av { width: 70px; height: 70px; font-size: 22px; box-shadow: 0 0 0 6px #fff, 0 10px 30px -8px rgba(226,85,142,.5); }
+  .me b { font: 600 12px/1 "Figtree"; } .me small { font: 400 10px/1 "Figtree"; color: var(--pg-muted); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <svg viewBox="0 0 600 430"><g stroke="#DCE2EA" stroke-width="14" stroke-linecap="round"><path d="M70 30 L530 400"/><path d="M530 30 L70 400"/></g></svg>
+    <div class="qt" style="left:250px;top:20px;text-align:center;width:100px">What does she<b>Think &amp; feel</b></div>
+    <div class="qt" style="left:24px;top:200px">What does she<b>Hear</b></div>
+    <div class="qt" style="right:24px;top:200px;text-align:right">What does she<b>See</b></div>
+    <div class="qt" style="left:250px;bottom:18px;text-align:center;width:100px">What does she<b>Say &amp; do</b></div>
+    <div class="me"><span class="av" style="background:#E2558E">SL</span><b>Sarah Lim</b><small>HR Manager</small></div>
+    <div id="notes"></div>
+  </div>
+</div>
+<script>
+  var N = [
+    [168, 64, -3, 1, "Hopes for a platform that fits oil and gas"], [312, 70, 2, 0, "Wants HR processes streamlined"], [238, 128, -1, 1, "Worried about disruption during rollout"],
+    [30, 108, 2, 0, "Hears connected platforms stay consistent"], [40, 280, -2, 0, "Hears colleagues struggled with new software"],
+    [450, 102, 3, 1, "No consistent progress across HR flows"], [446, 278, -3, 1, "Data isn't connected between flows"],
+    [170, 304, 2, 1, "Retrieves the same data again and again"], [312, 316, -2, 0, "Optimistic, but wary of the switch"]
+  ];
+  document.getElementById("notes").innerHTML = N.map(function (n, i) {
+    return '<div class="st' + (n[3] ? " k" : "") + '" style="left:' + n[0] + "px;top:" + n[1] + "px;--r:" + n[2] + "deg;transition-delay:" + i * 70 + 'ms">' + n[4] + "</div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

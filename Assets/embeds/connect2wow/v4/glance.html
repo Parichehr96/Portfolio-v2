@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect2WOW — at a glance</title>
+<link rel="stylesheet" href="case.css">
+<script src="icons.js"></script>
+<script src="case.js"></script>
+<style>
+  /* At a glance (2.C): every number drawn as the quantity it counts. */
+  .canvas { height: 380px; padding: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 14px; height: 168px; display: grid; grid-template-rows: 1fr auto; gap: 10px; overflow: hidden; }
+  .head { display: flex; align-items: baseline; gap: 8px; }
+  .head b { font: 600 24px/1 "Figtree"; letter-spacing: -.02em; white-space: nowrap; }
+  .head span { font: 500 12px/1.3 "Figtree"; color: var(--pg-muted); }
+  .art { display: flex; flex-wrap: wrap; align-content: flex-start; }
+  .pop { opacity: 0; transform: scale(.5); transition: opacity .3s, transform .45s var(--e-out); }
+  .pop.on { opacity: 1; transform: none; }
+  .m { width: 44px; height: 44px; border-radius: 12px; background: var(--ui-primary-bg); color: var(--ui-primary); display: grid; place-items: center; margin: 0 8px 8px 0; }
+  .m.ws { background: #fff; color: var(--pg-muted); box-shadow: 0 0 0 1px var(--pg-border); width: 30px; height: 30px; border-radius: 9px; margin-top: 7px; }
+  .c { width: 14px; height: 14px; border-radius: 3px; margin: 0 4px 4px 0; background: var(--ui-primary); }
+  .c.s { background: #93B4F5; } .c.t { background: #C9D3E3; }
+  .d { width: 4px; height: 4px; border-radius: 1px; margin: 0 2px 2px 0; background: var(--pg-ink); }
+  .n { height: 14px; border-radius: 4px; margin: 0 0 3px; width: 100%; display: flex; align-items: center; gap: 6px; padding: 0 6px; font: 500 9px/1 "Figtree"; color: #fff; }
+  .n i { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="grid">
+      <div class="card"><div class="art" id="a1"></div><div class="head"><b>4</b><span>modules, plus a personal workspace</span></div></div>
+      <div class="card"><div class="art" id="a2"></div><div class="head"><b>40–50</b><span>components · atoms to templates</span></div></div>
+      <div class="card"><div class="art" id="a3" style="width:260px"></div><div class="head"><b>370</b><span>icons and logos</span></div></div>
+      <div class="card"><div class="art" id="a4" style="display:block"></div><div class="head"><b>6</b><span>notification types</span></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  var a1 = document.getElementById("a1"), a2 = document.getElementById("a2"), a3 = document.getElementById("a3"), a4 = document.getElementById("a4");
+  a1.innerHTML = C2W.modules.map(function (m) { return '<span class="m pop">' + I(m.icon, 22) + "</span>"; }).join("") +
+    C2W.workspace.map(function (w) { return '<span class="m ws pop">' + I(w.icon, 15) + "</span>"; }).join("");
+  var h = ""; for (var i = 0; i < 45; i++) h += '<span class="c pop ' + (i < 18 ? "" : i < 36 ? "s" : "t") + '"></span>'; a2.innerHTML = h;
+  h = ""; for (i = 0; i < 370; i++) h += '<span class="d pop"></span>'; a3.innerHTML = h;
+  var N = [["Modal · stops you", "#C81E1E"], ["Inline · on the field", "#C81E1E"], ["Banner · system-wide", "#DD6B20"], ["Toast · 5 s", "#15803D"], ["Badge · a count", "#2563EB"], ["Panel · read later", "#4B5563"]];
+  a4.innerHTML = N.map(function (n) { return '<span class="n pop" style="background:' + n[1] + '"><i></i>' + n[0] + "</span>"; }).join("");
+  whenSeen(document.getElementById("f"), function () {
+    [a1, a2, a3, a4].forEach(function (a) { var k = a.children, step = 900 / k.length; Array.prototype.forEach.call(k, function (x, i) { setTimeout(function () { x.classList.add("on"); }, (END || reduced) ? 0 : i * step); }); });
+  });
+</script>
+</body>
+</html>

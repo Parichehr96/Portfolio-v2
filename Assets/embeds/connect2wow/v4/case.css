@@ -1,0 +1,89 @@
+/* Connect2WOW case study (V4) — shared styles for the visuals.
+ *
+ * Two vocabularies, never mixed inside one element:
+ *   --pg-*   the portfolio page (src/styles/v4/tokens.css): Figtree, navy ink,
+ *            mist ground. Everything that frames, labels or explains.
+ *   --ui-*   the Connect2WOW product (tools/connect2wow-app/app.css): Inter,
+ *            its blue and status palette. Only where the product appears.
+ * Each visual is drawn at 600 px wide (the case column) and scales to fit.
+ * The case block draws the border and radius, so the frame here is square.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  /* page — mirrors src/styles/v4/tokens.css */
+  --pg-ink: #0D1233;
+  --pg-ink-60: rgba(13, 18, 51, .6);
+  --pg-muted: #475569;
+  --pg-faint: rgba(71, 85, 105, .6);
+  --pg-mist: #F3F6F8;
+  --pg-mist-2: #E8ECF0;
+  --pg-surface: #FFFFFF;
+  --pg-border: #E2E8F0;
+  --pg-accent: #3F3DB6;
+  --pg-tag: #0088FF;
+  --pg-tag-bg: rgba(0, 136, 255, .1);
+  --pg-neg: #D53434;
+  --pg-pos: #008000;
+
+  /* product — mirrors tools/connect2wow-app/app.css */
+  --ui-ink: #1D2433;
+  --ui-muted: #6B7280;
+  --ui-line: #E5E7EB;
+  --ui-head: #F3F4F6;
+  --ui-primary: #2563EB;
+  --ui-primary-2: #1D4ED8;
+  --ui-primary-bg: #E6EEFC;
+  --ui-primary-tint: #F2F6FE;
+  --ui-blue: #2563EB; --ui-blue-bg: #EBF2FF; --ui-blue-bd: #C7D9FB;
+  --ui-orange: #DD6B20; --ui-orange-bg: #FFF3EA; --ui-orange-bd: #FBD3B6;
+  --ui-purple: #7C3AED; --ui-purple-bg: #F4EFFF; --ui-purple-bd: #DCCFFB;
+  --ui-green: #15803D; --ui-green-bg: #EAF8EF; --ui-green-bd: #BFE9CD;
+  --ui-red: #C81E1E; --ui-red-bg: #FDEEEE; --ui-red-bd: #F7C9C9;
+
+  --e-out: cubic-bezier(.22, 1, .36, 1);
+  --e-in: cubic-bezier(.4, 0, 1, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; }
+body { font-family: "Figtree", system-ui, sans-serif; color: var(--pg-ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+.frame { position: relative; width: 100%; overflow: hidden; background: #fff; }
+.frame--white { background: var(--pg-surface); }
+.canvas { position: relative; width: 600px; transform-origin: 0 0; }
+
+/* page type */
+.eyebrow { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+.cap { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
+.card { background: var(--pg-surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--pg-border); }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font: 500 11px/14px "Figtree"; background: var(--pg-tag-bg); color: var(--pg-tag); white-space: nowrap; }
+.tag--grey { background: var(--pg-mist-2); color: var(--pg-muted); }
+.av { display: inline-grid; place-items: center; border-radius: 50%; color: #fff; font: 600 12px/1 "Figtree"; flex: none; }
+
+/* product primitives (Inter) */
+.ui { font-family: "Inter", sans-serif; color: var(--ui-ink); }
+.ui-pill { display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 999px; font: 500 9.5px/1 "Inter"; border: 1px solid; white-space: nowrap; }
+.ui-pill.blue { background: var(--ui-blue-bg); border-color: var(--ui-blue-bd); color: var(--ui-blue); }
+.ui-pill.orange { background: var(--ui-orange-bg); border-color: var(--ui-orange-bd); color: var(--ui-orange); }
+.ui-pill.purple { background: var(--ui-purple-bg); border-color: var(--ui-purple-bd); color: var(--ui-purple); }
+.ui-pill.green { background: var(--ui-green-bg); border-color: var(--ui-green-bd); color: var(--ui-green); }
+.ui-pill.red { background: var(--ui-red-bg); border-color: var(--ui-red-bd); color: var(--ui-red); }
+.ui-btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 9px; border-radius: 6px; font: 500 9.5px/1 "Inter"; background: var(--ui-primary); color: #fff; }
+.ui-btn.ghost { background: #fff; color: var(--ui-ink); box-shadow: inset 0 0 0 1px var(--ui-line); }
+.ui-logo { display: block; }
+
+/* icons: inline SVG, one stroke weight */
+.ic { display: inline-flex; flex: none; vertical-align: middle; }
+.ic svg { width: 100%; height: 100%; display: block; }
+.ic svg [stroke-width] { stroke-width: 1.5; }
+
+/* screenshots of the prototype */
+.shot { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 0 0 1px rgba(16, 24, 40, .06), 0 18px 40px -18px rgba(16, 24, 40, .35); }
+
+.rise { opacity: 0; transform: translateY(8px); transition: opacity .5s var(--e-out), transform .6s var(--e-out); }
+.is-in .rise, .rise.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
