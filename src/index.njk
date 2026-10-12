@@ -27,7 +27,9 @@ permalink: /
   {% include "v4/about.njk" %}
   {% include "v4/process.njk" %}
   {% include "v4/experience.njk" %}
+  {#- Inside the shell, so the sticky menu and clock stay beside it: at the
+      end of the page the footer fills the screen and its heading comes to
+      rest level with them (_footer.css). -#}
+  {% include "v4/footer.njk" %}
 </div>
 
-{#- Outside the shell, so the sticky rail and clock stop before the skyline. -#}
-{% include "v4/footer.njk" %}

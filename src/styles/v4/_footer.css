@@ -25,7 +25,8 @@
   pointer-events: none;
 }
 
-.v4-footer__sky img {
+.v4-footer__sky img,
+.v4-footer__art {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -130,4 +131,36 @@
   font-size: var(--v4-text-ui);
   font-weight: var(--v4-weight-semibold);
   color: var(--v4-text);
+}
+
+/* ---- On the homepage: the last screen --------------------------------------
+   Inside the shell (index.njk), so the menu and the clock stay pinned beside
+   it. It fills the screen, and its heading starts at the same line as the
+   menu and the clock, so at the end of the page they all line up. */
+.v4-shell > .v4-footer {
+  min-height: max(var(--v4-footer-height), 100dvh);
+  padding-top: var(--v4-edge);
+}
+
+@media (max-width: 899px) {
+  .v4-shell > .v4-footer { padding-top: calc(var(--v4-bar-h) + var(--v4-space-6)); }
+}
+
+/* ---- Trees in the wind (scripts/v4-wind.js) --------------------------------
+   Each crown leans from its base, gently and out of step with its
+   neighbours; how far and how fast comes from Amsterdam's wind right now
+   (--wind-amp, --wind-period on the holder). */
+.v4-footer__art .tree {
+  transform-box: view-box;
+  animation: v4-sway var(--wind-period, 3.7s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -.83s);
+}
+
+@keyframes v4-sway {
+  from { rotate: calc(var(--wind-amp, 1.5deg) * -.35); }
+  to   { rotate: var(--wind-amp, 1.5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-footer__art .tree { animation: none; }
 }

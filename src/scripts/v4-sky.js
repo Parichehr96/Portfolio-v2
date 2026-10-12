@@ -89,11 +89,6 @@
   function hex(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
   function mix(a, b, t) { return a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }); }
   function rgb(c) { return "rgb(" + c.join(" ") + ")"; }
-  function lum(c) {
-    var s = c.map(function (v) { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
-    return .2126 * s[0] + .7152 * s[1] + .0722 * s[2];
-  }
-  function whiteReads(c) { var L = lum(c); return 1.05 / (L + .05) >= (L + .05) / .05; }
   function palette(alt, setting) {
     var i = 0;
     while (i < KEYS.length - 2 && alt > KEYS[i + 1][0]) i++;
@@ -149,12 +144,6 @@
     sky.style.setProperty("--sun-y", (96 - Math.max(-12, Math.min(70, s.alt)) * 1.2).toFixed(1) + "%");
     sky.style.setProperty("--glow", Math.max(0, Math.min(.9, (s.alt + 5) / 11)).toFixed(2));
     sky.style.setProperty("--stars", Math.max(0, Math.min(1, (-s.alt - 6) / 8)).toFixed(2));
-    // Ink: white on a dark sky, black on a pale one; the controls read the bottom.
-    sky.style.setProperty("--on-sky", whiteReads(cols[0]) ? "#FFFFFF" : "#000000");
-    var low = whiteReads(mix(cols[2], cols[3], .6));
-    control.style.setProperty("--on-sky", low ? "#FFFFFF" : "#000000");
-    control.style.setProperty("--on-sky-soft", low ? "rgb(255 255 255 / .75)" : "#727272");
-
     timeEl.textContent = hhmm(date);
     if (live) hourIn.value = String(minuteOf(date));
     hourIn.setAttribute("aria-valuetext", hhmm(date));
