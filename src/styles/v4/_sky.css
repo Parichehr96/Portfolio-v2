@@ -125,10 +125,14 @@
 .v4-sky__track:has(.v4-sky__hour:focus-visible) { outline: 2px solid var(--v4-sky-on-glass); outline-offset: 6px; border-radius: 4px; }
 
 /* The two lines under the sky (1497:23078). */
-.v4-sky__note { display: flex; flex-direction: column; max-width: var(--v4-sky-note); font-size: var(--v4-text-ui); }
+.v4-sky__note { display: flex; flex-direction: column; font-size: var(--v4-text-ui); }
 .v4-sky__note span:first-child { line-height: 24px; color: var(--v4-text-muted); }
 .v4-sky__note span + span { line-height: 1.45; letter-spacing: .14px; color: var(--v4-sky-ink); font-feature-settings: "lnum" 1, "tnum" 1; }
+/* While the window is open (hover, tap or focus), the hint fades in after
+   the line; it keeps its room while hidden, so nothing moves. */
+.v4-sky__hint { font-style: normal; color: var(--v4-text-muted); opacity: 0; transition: opacity .3s ease; }
+.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint { opacity: 1; transition-delay: .05s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control { transition: none !important; }
+  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint { transition: none !important; }
 }
