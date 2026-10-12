@@ -237,17 +237,20 @@ module.exports = {
         sheet: { x: 39.2, y: 12, w: 304, h: 147 },
         // Cards: top-left corner, closed (`from`) and open (`to`). The second
         // waits hidden behind the first until the folder opens, and stays
-        // under it once open (the first card overlaps its top, as in the comp).
+        // under it once open (the first card overlaps its top by 6, as in the
+        // comp). Only the cards' places relative to each other count: open,
+        // scripts/v4-folder-physics.js lifts the pair to float just above the
+        // folder, however tall their text makes them.
         cards: [
           {
             title: "Interaction and UX Design",
             text: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
-            from: [27.4, 17], to: [18.7, -18],
+            from: [27.4, 17], to: [18.7, -73],
           },
           {
             title: "Strategic product redesign",
             text: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales. That means auditing the existing system, cutting what doesn't earn its place, and restructuring information so the next feature makes things simpler, not heavier.",
-            from: [39.2, 12], to: [40.7, 87], hidden: true,
+            from: [39.2, 12], to: [40.7, 50], hidden: true,
           },
         ],
       },

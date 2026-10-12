@@ -322,12 +322,14 @@ tool-folder:not(:defined) {
   color: var(--v4-text-max);
 }
 
+/* One size under the title; the two differ by weight and colour instead. */
 .v4-folder__paper-text {
   display: block;
-  font-size: 9.197px;
+  margin-top: var(--v4-space-1);
+  font-size: calc(var(--v4-text-caption) - 1px);
+  font-weight: var(--v4-weight-regular);
   line-height: 1.5;
-  letter-spacing: 0.1931px;
-  color: var(--v4-text-card);
+  color: var(--v4-text-muted);
 }
 
 /* The second card waits hidden behind the first until the folder opens. */
