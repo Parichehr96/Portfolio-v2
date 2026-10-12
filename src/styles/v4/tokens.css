@@ -181,6 +181,7 @@
   --v4-strip-dim: .4;                           /* the neighbours either side */
   --v4-strip-arrow: 34px;
   --v4-strip-arrow-inset: 4px;                  /* from the strip's edges, over the neighbours */
+  --v4-strip-arrow-bg: rgb(255 255 255 / .72);  /* frosted, over the dimmed neighbour */
   --v4-layer-time: .6s;                         /* each layer rising in */
   --v4-layer-lead: .15s;
   --v4-layer-step: .16s;
