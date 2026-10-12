@@ -159,24 +159,25 @@
   /* How long the toast stays up; its timer band fills over exactly this. */
   --v4-toast-duration: 10s;
 
-  /* Work — 1155:10689, 911:730. The section starts 98 below the intro
-     (346 − 248), rows are 100 apart, and each strip panel is the comp's
-     812 × 520 with 16 between them. */
+  /* Work — 1490:17237. Rows are 100 apart; each strip panel is 0.6 of the
+     old 812 × 520, with 9.6 between them. */
+  /* ONE SPACING SYSTEM for the page:
+     a section heading to its content       24  (--v4-heading-gap)
+     blocks inside a section                40  (--v4-inner-gap)
+     project rows, one to the next         100  (--v4-row-gap)
+     section to section, intro to footer   120  (--v4-section-gap) */
+  --v4-heading-gap: var(--v4-space-6);
+  --v4-inner-gap: 40px;
+  --v4-section-gap: 120px;
   --v4-row-gap: 100px;
   --v4-panel-width: 487.2px;   /* 0.6 of the comp's 812 x 520 (1490:17256) */
   --v4-panel-ratio: 812 / 520;
   --v4-panel-gap: 9.6px;
   --v4-radius-panel: 12px;
-  --v4-label-gap: 45px;        /* "Selected project" to the first row */
 
-  /* About, process, experience, footer — 911:727 … 911:654. Gaps are the
-     comp's own: 201 from the last project row to About, 100 from the folders'
-     names to Process, 120 between the later sections, 107 above the footer. The About photo wheel starts 57
-     under its label and the text 400 under that. */
-  --v4-about-gap: 201px;
-  --v4-block-gap: 120px;
-  --v4-footer-gap: 107px;
-  --v4-about-photos-gap: 57px;   /* label to the middle card's top */
+  /* About, process, experience, footer: spaced by the system above. The
+     About photo wheel starts 24 under its label and the text 400 under the
+     middle card's top (the wheel's tilted cards need that room). */
   --v4-about-photos-band: 400px; /* the middle card's top to the text */
   --v4-photo-w: 224px;
   --v4-photo-h: 270px;
@@ -184,8 +185,6 @@
   --v4-text-photo: 13px;
   --v4-photo-veil-top: -60px;    /* the veils reach above and below the comp's */
   --v4-photo-veil-h: 720px;      /* 434, so no tilted card or caption pokes out */
-  --v4-about-cards-gap: 54px;
-  --v4-process-gap: 100px;
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
   --v4-footer-height: 534px;
@@ -204,9 +203,8 @@
   --v4-intro-stagger: 0.098s;  /* 11 steps + one block = 2s */
   --v4-reveal-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-  /* The sky under the intro (1497:23079, _sky.css): 81 below the intro,
-     595 x 242, two lines 339 wide under it; the work starts 81 below it. */
-  --v4-top-gap: 81px;
+  /* The sky under the intro (1497:23079, _sky.css): a section like the
+     others, 120 below the intro; 595 x 242, two lines 339 wide under it. */
   --v4-sky-width: 595px;
   --v4-sky-ratio: 595 / 242;
   --v4-sky-note: 339px;

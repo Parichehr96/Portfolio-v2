@@ -3,13 +3,13 @@
    ============================================================================
 
    Every child sits in the reading column, placed by --v4-column-inset like the
-   intro. Vertical rhythm is the comp's: label, 57, the photo wheel's middle
-   card, the text 400 below that card's top,
-   the five paragraphs 24 apart, 54, then the two cards side by side, 20 apart.
+   intro. Vertical rhythm (the page's spacing system, tokens.css): label, 24,
+   the photo wheel's middle card, the text 400 below that card's top, the
+   five paragraphs 24 apart, 40, then the two folders side by side, 20 apart.
    ========================================================================== */
 
 .v4-about {
-  margin-top: var(--v4-about-gap);
+  margin-top: var(--v4-section-gap);
   display: flex;
   flex-direction: column;
   gap: var(--v4-space-6);
@@ -37,7 +37,7 @@
   user-select: none;
   -webkit-user-select: none;
   height: calc(var(--v4-about-photos-band) - var(--v4-space-6));
-  margin-top: calc(var(--v4-about-photos-gap) - var(--v4-space-6));
+  margin-top: calc(var(--v4-heading-gap) - var(--v4-space-6));
 }
 
 .v4-photos {
@@ -136,7 +136,7 @@
   flex-wrap: nowrap;
   align-items: flex-start;
   gap: var(--v4-space-6) var(--v4-space-5);
-  margin-top: calc(var(--v4-about-cards-gap) - var(--v4-space-6));
+  margin-top: calc(var(--v4-inner-gap) - var(--v4-space-6));
 }
 
 .v4-about__card {

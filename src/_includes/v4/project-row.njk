@@ -12,11 +12,15 @@
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
 {%- endif %}
-<article class="v4-project" aria-labelledby="project-{{ project.id }}">
+{%- set linked = project.href and not project.soon %}
+{#- A linked project is clickable as a whole card (name, text and strip),
+    scripts/v4-strip.js; the name stays the real link for keyboards and
+    screen readers. -#}
+<article class="v4-project{% if linked %} v4-project--linked{% endif %}" aria-labelledby="project-{{ project.id }}"{% if linked %} data-card-href="{{ project.href }}"{% endif %}>
   <header class="v4-project__head">
     <div class="v4-project__title-row">
       <h3 class="v4-project__name" id="project-{{ project.id }}">
-        {%- if project.href and not project.soon %}
+        {%- if linked %}
         <a class="v4-project__link" href="{{ project.href }}">{{ project.name }}</a>
         {%- else %}
         <span class="v4-project__link">{{ project.name }}</span>
