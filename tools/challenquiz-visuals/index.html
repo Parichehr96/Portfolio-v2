@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenquiz visuals</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0D1233; --muted:#475569; --faint:rgba(71,85,105,.6); --line:#E2E8F0; --bg:#FFFFFF; --soft:#F9FBFB; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Figtree", system-ui, sans-serif; }
+  header { padding: 40px 32px 8px; max-width: 1900px; margin: 0 auto; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 15px; max-width: 760px; line-height: 22px; }
+  nav { position: sticky; top: 0; z-index: 2; background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); padding: 10px 32px; display: flex; gap: 6px; flex-wrap: wrap; }
+  nav a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 999px; background: #F3F6F8; }
+  nav a:hover { color: var(--ink); }
+  section { padding: 36px 32px 20px; max-width: 1900px; margin: 0 auto; border-bottom: 1px solid var(--line); }
+  section h2 { font-size: 18px; margin: 0 0 4px; display: flex; gap: 10px; align-items: baseline; }
+  section h2 small { font-size: 12px; color: var(--faint); font-weight: 500; }
+  section > p { margin: 0 0 18px; color: var(--muted); font-size: 14px; max-width: 820px; line-height: 21px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; align-items: start; }
+  figure { margin: 0; }
+  figcaption { margin-top: 10px; font-size: 13px; line-height: 19px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  figcaption a { color: var(--muted); font-size: 12px; }
+  iframe { display: block; width: 100%; border: 0; height: 300px; }
+  @media (max-width: 600px) { header, nav, section { padding-left: 16px; padding-right: 16px; } .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Challenquiz — case-study visuals</h1>
+  <p>Three variants for each section that needs a visual, in page order. Each is a standalone page drawn for the
+  case column (600 px) and scaled to fit; the phones inside are the real prototype, deep-linked to one moment.
+  Motion starts when a visual is half on screen. Not here because the template already covers them: §02 Metrics
+  (stat cards), §07 Interviews (quote rows) and §14 The product (the live prototype itself).
+  Pick one letter per row, or mix ideas.</p>
+</header>
+<nav id="toc"></nav>
+<main id="sets"></main>
+<script>
+  var SETS = [
+    ["hero", "Top", "Cover", "The first thing on the page: what the redesign is, at a glance."],
+    ["player", "§04", "Who it's for", "Lena and the four verbs that became the brief."],
+    ["oldflow", "§06", "How players used to play", "The six steps of the old game, from the real app."],
+    ["insight", "§08", "The insight", "The other players were hidden at every step."],
+    ["rooms", "§09", "Live rooms, or rooms that feel live", "Why the rooms are asynchronous but don't feel it."],
+    ["fairness", "§10", "The decision I'm proudest of", "Showing the answer without making it worth leaking."],
+    ["states", "§11", "One component carries the game", "The answer row's six states."],
+    ["moves", "§12", "What changed", "Four moves, one per verb."],
+    ["reward", "§13", "Making the result land", "What's yours at once, and the maths when the room settles."],
+    ["results", "§15", "Results", "The rollout number, and the study read as direction."]
+  ];
+  var NOTES = window.NOTES = {};
+  var toc = document.getElementById("toc"), sets = document.getElementById("sets");
+  SETS.forEach(function (s) {
+    toc.insertAdjacentHTML("beforeend", '<a href="#' + s[0] + '">' + s[1] + " " + s[2] + "</a>");
+    var figs = ["a", "b", "c"].map(function (v) {
+      var src = "v/" + s[0] + "-" + v + ".html";
+      return '<figure><iframe loading="lazy" src="' + src + '" title="' + s[2] + " variant " + v.toUpperCase() + '"></iframe>' +
+        '<figcaption id="cap-' + s[0] + "-" + v + '"><b>' + v.toUpperCase() + '</b> · <a href="' + src + '" target="_blank">open alone ↗</a></figcaption></figure>';
+    }).join("");
+    sets.insertAdjacentHTML("beforeend", '<section id="' + s[0] + '"><h2>' + s[2] + " <small>" + s[1] + "</small></h2><p>" + s[3] + '</p><div class="row">' + figs + "</div></section>");
+  });
+  /* Size each iframe to its page, and borrow the variant's own one-line
+     description (its <meta name="description">) for the caption. */
+  function size(f) {
+    try {
+      var d = f.contentDocument; if (!d || !d.body) return;
+      f.style.height = Math.ceil(d.documentElement.scrollHeight) + "px";
+      var m = d.querySelector('meta[name="description"]'), id = f.getAttribute("src").replace(/^v\/|\.html$/g, "");
+      var cap = document.getElementById("cap-" + id);
+      if (m && cap && !cap.dataset.done) { cap.dataset.done = 1; cap.querySelector("b").insertAdjacentText("afterend", " " + m.content); }
+    } catch (e) {}
+  }
+  document.querySelectorAll("iframe").forEach(function (f) {
+    f.addEventListener("load", function () { size(f); setTimeout(function () { size(f); }, 400); setTimeout(function () { size(f); }, 1500); });
+  });
+  window.addEventListener("resize", function () { document.querySelectorAll("iframe").forEach(size); });
+</script>
+</body>
+</html>

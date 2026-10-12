@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The three moments as a plain before/after table that sits in the text column: what you could see of the other players in the list, the match and the result, then and now.">
+<title>Challenquiz — insight, as text</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 222px; }
+  .r { display: grid; grid-template-columns: 112px 1fr 1fr; gap: 16px; padding: 13px 0; border-top: 1px solid var(--pg-border); align-items: baseline; }
+  .r .k { font: 600 14px/20px "Figtree"; color: var(--pg-ink); }
+  .r .b { font: 400 14px/20px "Figtree"; color: var(--pg-faint); text-decoration: line-through; text-decoration-color: rgba(213,52,52,.55); }
+  .r .a { font: 500 14px/20px "Figtree"; color: var(--cq-700); opacity: 0; transform: translateX(-6px); transition: opacity .5s, transform .5s var(--ease); }
+  .is-in .r .a { opacity: 1; transform: none; }
+  .hd { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); border-top: 0; padding: 0 0 10px; }
+</style></head><body>
+<div class="frame frame--plain" id="f"><div class="canvas">
+  <div class="r hd"><span></span><span>Before</span><span>After</span></div>
+  <div class="r"><span class="k">The list</span><span class="b">Identical “2 Player quiz” cards</span><span class="a" style="transition-delay:.2s">Seats left, friends who played, people playing now</span></div>
+  <div class="r"><span class="k">The match</span><span class="b">Ten questions, no one else in sight</span><span class="a" style="transition-delay:.45s">How the room answered, after every question</span></div>
+  <div class="r"><span class="k">The result</span><span class="b">“Please wait for other players”</span><span class="a" style="transition-delay:.7s">Your rank in the whole room, the moment you finish</span></div>
+</div></div>
+<script>whenSeen(document.getElementById("f"));</script></body></html>

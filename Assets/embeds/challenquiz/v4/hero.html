@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Lena's four verbs on the left light up one by one while the real prototype on the right shows the moment that answers each: Open, Play, Learn, Enjoy.">
+<title>Challenquiz — cover (B)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .verbs { position: absolute; left: 48px; top: 70px; display: flex; flex-direction: column; gap: 14px; }
+  .verb { display: flex; align-items: baseline; gap: 12px; opacity: .28; transition: opacity .45s, transform .45s var(--ease); }
+  .verb b { font: 600 34px/1 "Figtree"; letter-spacing: -.02em; color: var(--cq-700); width: 112px; }
+  .verb span { font: 400 14px/1.3 "Figtree"; color: var(--pg-muted); }
+  .verb.on { opacity: 1; transform: translateX(6px); }
+  .who { position: absolute; left: 48px; top: 34px; }
+  #ph { position: absolute; right: 64px; top: 22px; }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas" id="c">
+  <div class="who eyebrow">What Lena wants from a game</div>
+  <div class="verbs" id="verbs"></div>
+  <div id="slot"></div>
+</div></div>
+<script>
+  var M = ["ready", "correct", "wrong", "final"];
+  document.getElementById("verbs").innerHTML = VERBS.map(function (v, i) { return '<div class="verb" id="v' + i + '"><b>' + v.t + "</b><span>" + v.d + "</span></div>"; }).join("");
+  document.getElementById("slot").innerHTML = phone(M[0], 160, { id: "ph" });
+  var ph = document.getElementById("ph"), i = 0;
+  function show(n) { VERBS.forEach(function (_, k) { document.getElementById("v" + k).classList.toggle("on", k === n); }); if (n !== i || n === 0) setPhone(ph, M[n]); i = n; }
+  whenSeen(document.getElementById("f"), async function () {
+    document.getElementById("v0").classList.add("on");
+    if (END) { show(3); return; }
+    for (;;) { for (var n = 1; n <= 4; n++) { await sleep(2600); show(n % 4); } }
+  });
+</script></body></html>

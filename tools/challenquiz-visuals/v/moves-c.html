@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A two-by-two grid: each verb gets a card with its one-line change and the top of the real screen that delivers it.">
+<title>Challenquiz — what changed (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 470px; padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .c { position: relative; overflow: hidden; height: 211px; padding: 16px 16px 0; display: grid; grid-template-columns: 1fr 112px; gap: 12px; }
+  .c b { display: block; font: 600 20px/1 "Figtree"; color: var(--cq-700); margin-bottom: 8px; } .c p { margin: 0; font: 400 12.5px/18px "Figtree"; color: var(--pg-muted); }
+  .c .crop { position: relative; height: 200px; }
+  .c .phone { position: absolute; top: 0; left: 0; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas" id="g"></div></div>
+<script>
+  var T = [["ready", "One sheet: what you pay, what you can win, and that you start without waiting."], ["correct", "After every answer, how the rest of the room answered."],
+           ["wrong", "The right answer and one fact, every time, plus a review of the whole game."], ["final", "Rank and payout the moment the room settles, with the maths shown."]];
+  document.getElementById("g").innerHTML = VERBS.map(function (v, i) {
+    return '<div class="card c rise" style="transition-delay:' + (i * .12) + 's"><div><b>' + v.t + "</b><p>" + T[i][1] + '</p></div><div class="crop">' + phone(T[i][0], 112) + "</div></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body></html>

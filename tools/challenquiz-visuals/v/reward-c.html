@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Win and lose side by side on the real result screen: +94 with confetti, or −98 stated plainly with the facts worth reviewing. Honest both ways.">
+<title>Challenquiz — result (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 420px; }
+  .two { position: absolute; left: 0; right: 0; top: 22px; display: flex; justify-content: center; gap: 60px; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .col b { font: 600 14px/1 "Figtree"; } .col span { font: 400 12px/16px "Figtree"; color: var(--pg-muted); width: 200px; text-align: center; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas"><div class="two">
+  <div class="col rise"><b>A good game</b><div id="w"></div><span>+94 on the entry, counted up with confetti over the coins.</span></div>
+  <div class="col rise" style="transition-delay:.2s"><b>A bad one</b><div id="l"></div><span>The loss, stated plainly, then the facts worth reviewing.</span></div></div></div></div>
+<script>
+  document.getElementById("w").innerHTML = phone("final", 150); document.getElementById("l").innerHTML = phone("lost", 150);
+  whenSeen(document.getElementById("f"));
+</script></body></html>

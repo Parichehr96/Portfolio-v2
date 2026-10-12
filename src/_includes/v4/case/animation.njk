@@ -5,6 +5,10 @@
     playing once half of it is on screen, so nobody scrolls in mid-way. -#}
 {#- A visual with its own box (`ratio`, e.g. "600 / 330") keeps that shape and
     a fixed 20px corner; without one it is the cover slot, as above. -#}
-<figure class="v4-case__animation{% if part.ratio %} v4-case__animation--free{% endif %}">
-  <iframe src="{{ part.src }}" title="{{ part.title }}" loading="lazy" scrolling="no"{% if part.ratio %} style="aspect-ratio: {{ part.ratio }}"{% endif %}></iframe>
+{#- `plain: true` drops the stroke and corner, so the visual reads as text content. -#}
+<figure class="v4-case__animation{% if part.ratio %} v4-case__animation--free{% endif %}{% if part.plain %} v4-case__animation--plain{% endif %}">
+{#- `viewport: true` sizes it to the screen instead of a ratio, leaving room for
+    the section's title and text above it, so the whole thing fits in one view
+    (the Challenquiz prototype, which scales its phone to whatever height it gets). -#}
+  <iframe src="{{ part.src }}" title="{{ part.title }}" loading="lazy" scrolling="no"{% if part.viewport %} class="v4-case__animation-fit"{% elif part.ratio %} style="aspect-ratio: {{ part.ratio }}"{% endif %}></iframe>
 </figure>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The brief as a table: what Lena wants, what stopped her in the old game, and what she gets now.">
+<title>Challenquiz — player (B)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 392px; padding: 22px 24px 0; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 14px; box-shadow: 0 0 0 1px var(--pg-border); overflow: hidden; }
+  th { text-align: left; font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); padding: 14px 14px 10px; }
+  td { font: 400 12.5px/17px "Figtree"; color: var(--pg-muted); padding: 11px 14px; border-top: 1px solid var(--pg-border); vertical-align: top; }
+  td:first-child { font: 600 16px/1.1 "Figtree"; color: var(--cq-700); width: 112px; }
+  td:first-child small { display: block; font: 400 11px/1.3 "Figtree"; color: var(--pg-faint); margin-top: 3px; }
+  td.now { color: var(--pg-ink); }
+  tr { opacity: 0; transition: opacity .5s; } .is-in tr { opacity: 1; }
+  .who { font: 400 12px/1 "Figtree"; color: var(--pg-muted); margin-bottom: 10px; } .who b { color: var(--pg-ink); font-weight: 600; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas"><div class="who"><b>Lena</b> · casual learner, not Web3-savvy, plays on her phone</div>
+<table><thead><tr style="opacity:1"><th>She wants to</th><th>What stopped her</th><th>What she gets now</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+<script>
+  var R = [["a rulebook before the first question", "stakes on one sheet, and a seat that starts at once"],
+           ["an opponent she never saw", "the room's answers after every question"],
+           ["answers hidden to keep it fair", "the right answer and a fact, every time"],
+           ["“please wait” instead of a result", "her rank and payout the moment she finishes"]];
+  document.getElementById("tb").innerHTML = VERBS.map(function (v, i) {
+    return '<tr style="transition-delay:' + (.1 + i * .15) + 's"><td>' + v.t + "<small>" + v.d + "</small></td><td>" + R[i][0] + '</td><td class="now">' + R[i][1] + "</td></tr>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body></html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Three real screens fanned on lilac: the stakes sheet, a correct answer with the room's choices, and the settled result. They float gently.">
+<title>Challenquiz — cover (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .fan { position: absolute; inset: 0; }
+  .fan .phone { position: absolute; top: 40px; transition: transform 1s var(--ease), opacity .8s; opacity: 0; }
+  .is-in .fan .phone { opacity: 1; }
+  #p1 { left: 92px; top: 62px; transform: rotate(-8deg) translateY(30px); }
+  #p2 { left: 222px; top: 26px; z-index: 2; transform: translateY(30px); }
+  #p3 { left: 368px; top: 62px; transform: rotate(8deg) translateY(30px); }
+  .is-in #p1 { transform: rotate(-8deg); transition-delay: .1s; animation: f1 6s 1.2s ease-in-out infinite alternate; }
+  .is-in #p2 { transform: none; transition-delay: .25s; animation: f2 6s 1.4s ease-in-out infinite alternate; }
+  .is-in #p3 { transform: rotate(8deg); transition-delay: .4s; animation: f3 6s 1.6s ease-in-out infinite alternate; }
+  @keyframes f1 { to { transform: rotate(-7deg) translateY(-6px); } }
+  @keyframes f2 { to { transform: translateY(-8px); } }
+  @keyframes f3 { to { transform: rotate(7deg) translateY(-6px); } }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas"><div class="fan" id="fan"></div></div></div>
+<script>
+  document.getElementById("fan").innerHTML = phone("ready", 140, { id: "p1" }) + phone("correct", 156, { id: "p2" }) + phone("final", 140, { id: "p3" });
+  whenSeen(document.getElementById("f"));
+</script></body></html>

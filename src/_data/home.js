@@ -122,14 +122,19 @@ module.exports = {
       {
         id: "challenquiz",
         name: "Challenquiz",
-        soon: true,
+        href: "/work/challenquiz/",
         verified: true,
         years: "2024-2025",
         desc: [
           { style: "lead", text: "Made a multiplayer game feel multiplayer" },
           { text: ". Redesigned the in-game flow. In usability testing, time-to-start halved and completion went from 60% to 100%" },
         ],
-        panels: [{}, {}, {}],
+        // Real prototype moments (tools/challenquiz-thumbs: stage.html + render.sh).
+        panels: [
+          { src: "/Assets/v4/work/challenquiz/panel-1.png", alt: "Challenquiz home: the featured Nature room with 2 spots left and 3 friends played" },
+          { src: "/Assets/v4/work/challenquiz/panel-2.png", alt: "A Challenquiz question answered correctly, with how the rest of the room answered and a fact about the Pacific" },
+          { src: "/Assets/v4/work/challenquiz/panel-3.png", alt: "Lena's result: 8 of 10, 294 CQ earned, +94 on her entry" },
+        ],
       },
       {
         // The comp repeats Connect2WOW's copy here; placeholder until the real

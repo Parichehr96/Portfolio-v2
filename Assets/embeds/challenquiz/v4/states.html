@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="One answer row morphs through all six states in place, with a ruler showing its height never changes.">
+<title>Challenquiz — states (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 300px; }
+  .wrap { position: absolute; left: 110px; top: 92px; width: 330px; }
+  .ruler { position: absolute; left: 460px; top: 92px; height: 56px; border-left: 1.5px solid var(--pg-ink); }
+  .ruler::before, .ruler::after { content: ""; position: absolute; left: -6px; width: 11px; border-top: 1.5px solid var(--pg-ink); } .ruler::before { top: 0; } .ruler::after { bottom: 0; }
+  .ruler span { position: absolute; left: 10px; top: 20px; font: 600 12px/1 "Figtree"; white-space: nowrap; }
+  .name { position: absolute; left: 110px; top: 50px; font: 600 18px/1 "Figtree"; } .why { position: absolute; left: 110px; top: 168px; width: 380px; font: 400 13px/19px "Figtree"; color: var(--pg-muted); }
+  .dots { position: absolute; left: 110px; top: 230px; display: flex; gap: 6px; } .dots i { width: 22px; height: 4px; border-radius: 2px; background: var(--pg-frame-2); } .dots i.on { background: var(--cq-700); }
+</style></head><body>
+<div class="frame frame--white" id="f"><div class="canvas"><div class="name" id="nm"></div><div class="wrap" id="w"></div>
+  <div class="ruler"><span>56 px, every state</span></div><div class="why" id="why"></div><div class="dots" id="dots"></div></div></div>
+<script>
+  var S = [["", null, "Default", "Before you answer: numbered, nothing judged."], ["ok", 71, "Your pick · correct", "Green, “Your answer”, and the share of the room that agreed."],
+           ["no", 25, "Your pick · wrong", "Red means one thing only: your own mistake."], ["right", 50, "Correct answer", "When you missed it: outlined, never filled, so it can't be mistaken for your pick."],
+           ["other", 13, "Other", "A wrong option you didn't choose stays neutral."], ["removed", null, "Removed by hint", "Dashed and struck through, so a hint never looks like an error."]];
+  document.getElementById("dots").innerHTML = S.map(function () { return "<i></i>"; }).join("");
+  function show(i) { var s = S[i]; document.getElementById("w").innerHTML = row("Elbrus", s[0], { pct: s[1], n: 1 });
+    document.getElementById("nm").textContent = s[2]; document.getElementById("why").textContent = s[3];
+    document.querySelectorAll(".dots i").forEach(function (d, k) { d.classList.toggle("on", k === i); }); }
+  show(0);
+  whenSeen(document.getElementById("f"), async function () { for (var k = 1; ; k++) { await sleep(1900); show(k % 6); if (END) { show(5); break; } } });
+</script></body></html>

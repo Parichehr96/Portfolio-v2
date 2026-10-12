@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How the old game felt, step by step: the line dips at every point of friction and ends at its lowest exactly where the result should have been the high point.">
+<title>Challenquiz — old flow (B)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 400px; }
+  svg { position: absolute; left: 0; top: 0; }
+  .lab { font: 400 11px "Figtree"; fill: var(--pg-muted); }
+  .labb { font: 600 12px "Figtree"; fill: var(--pg-ink); }
+  .grid { stroke: var(--pg-border); stroke-width: 1; }
+  .line { fill: none; stroke: var(--cq-700); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 900; stroke-dashoffset: 900; transition: stroke-dashoffset 2.4s var(--ease); }
+  .is-in .line { stroke-dashoffset: 0; }
+  .ghost { fill: none; stroke: var(--cq-300); stroke-width: 2; stroke-dasharray: 4 5; opacity: 0; transition: opacity .6s 2.4s; }
+  .is-in .ghost, .is-in .gtxt { opacity: 1; } .gtxt { opacity: 0; transition: opacity .6s 2.6s; }
+  .dot { stroke: #fff; stroke-width: 2; }
+  .thumbs { position: absolute; left: 0; right: 0; bottom: 14px; }
+  .thumbs .phone { position: absolute; padding: 2px; border-radius: 9px; } .thumbs .phone .scr { border-radius: 7px; }
+</style></head><body>
+<div class="frame frame--white" id="f"><div class="canvas" id="c"><svg width="600" height="270" id="g"></svg><div class="thumbs" id="th"></div></div></div>
+<script>
+  var X = function (i) { return 70 + i * 92; }, Y = function (v) { return 118 - v * 36; };
+  var V = [-1, 0, -2, -1.5, .5, -2.6];
+  var g = document.getElementById("g"), h = "";
+  h += '<text class="lab" x="20" y="' + (Y(2) + 4) + '">Better</text><text class="lab" x="20" y="' + (Y(-2.6) + 4) + '">Worse</text>';
+  h += '<line class="grid" x1="66" x2="574" y1="' + Y(0) + '" y2="' + Y(0) + '"/>';
+  h += '<path class="line" d="M' + V.map(function (v, i) { return X(i) + " " + Y(v); }).join(" L") + '"/>';
+  h += '<path class="ghost" d="M' + X(4) + " " + Y(.5) + " L" + X(5) + " " + Y(2.2) + '"/>';
+  h += '<g class="gtxt"><circle cx="' + X(5) + '" cy="' + Y(2.2) + '" r="5" fill="#fff" stroke="#B8ABDA" stroke-width="2"/><text class="lab" text-anchor="end" x="' + (X(5) - 10) + '" y="' + (Y(2.2) - 8) + '">Where the result should land</text></g>';
+  V.forEach(function (v, i) { h += '<circle class="dot" cx="' + X(i) + '" cy="' + Y(v) + '" r="5" fill="' + (OLD[i].f ? "#D53434" : "#5425A0") + '"><title>' + OLD[i].t + ": " + OLD[i].d + "</title></circle>";
+    h += '<text class="labb" text-anchor="middle" x="' + X(i) + '" y="266">' + (i + 1) + ". " + OLD[i].t + "</text>"; });
+  g.innerHTML = h;
+  document.getElementById("th").innerHTML = OLD.map(function (_, i) { return old(i + 1, 48, { style: "left:" + (X(i) - 26) + "px;bottom:0" }); }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body></html>
