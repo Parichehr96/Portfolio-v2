@@ -177,9 +177,9 @@
   /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
   --v4-strip-slide: .55s;                       /* one thumbnail along */
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
-  --v4-pan-time: 12s;                           /* the slow camera move, once */
-  --v4-pan-zoom: 1.08;
-  --v4-pan-shift: 3%;
+  --v4-frame-fade: .16s;                        /* one still to the next */
+  --v4-zoom-time: .7s;                          /* zooming into a menu and out */
+  --v4-zoom-ease: cubic-bezier(.65, 0, .35, 1);
   --v4-layer-time: .6s;                         /* each layer rising in */
   --v4-layer-lead: .15s;
   --v4-layer-step: .16s;

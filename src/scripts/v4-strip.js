@@ -7,11 +7,14 @@
  * each side (.is-clone, hidden from screen readers): after sliding onto a
  * copy it jumps, unseen, to the real one.
  *
- * THE THUMBNAIL IT LANDS ON PLAYS, once the strip is on screen (.is-play):
- * a "pan" panel its slow camera move, when it is the one at the front; a
- * "layers" panel its layers one by one, the first time any of it shows
- * (.is-held keeps them up after). Off screen, both reset, so they play again
- * next time. Reduced motion: no slide, no motion (CSS).
+ * ONLY THE THUMBNAIL AT THE FRONT PLAYS, once the strip is on screen. A
+ * "frames" panel plays its steps (data-steps: which still shows, for how
+ * long, and a zoom into part of it), on a loop; anywhere else it waits on
+ * its first still. A "layers" panel brings its layers in one by one
+ * (.is-play) the first time it comes to the front, and keeps them up while
+ * it stays in sight (.is-held); until then they are hidden. Out of sight,
+ * both reset, so they play again next time. Reduced motion: no slide, no
+ * motion.
  *
  * THE WHOLE CARD IS A LINK. A click anywhere on a linked project (name,
  * text or strip; article[data-card-href]) opens its case study, Cmd/Ctrl or
@@ -25,6 +28,41 @@
   var SLIDE = 550;                                            // ms, as --v4-strip-slide
   var SWIPE = 40;                                             // px of drag or swipe for one step
   var WHEEL = 24;                                             // px of sideways scroll for one step
+
+  // A "frames" panel's steps: show still f for ms, zoomed into [x, y, scale]
+  // (x, y the centre to zoom on, 0-1 of the panel) or not at all.
+  function zoomTo(z) {
+    if (!z) return "none";
+    var s = z[2];
+    var tx = Math.max(1 - s, Math.min(0, 0.5 - s * z[0]));
+    var ty = Math.max(1 - s, Math.min(0, 0.5 - s * z[1]));
+    return "translate(" + (tx * 100).toFixed(2) + "%," + (ty * 100).toFixed(2) + "%) scale(" + s + ")";
+  }
+  function play(panel) {
+    if (panel._seq || reduce) return;
+    var steps = JSON.parse(panel.getAttribute("data-steps") || "[]");
+    var stack = panel.querySelector(".v4-project__frames");
+    var frames = stack ? stack.children : [];
+    if (!steps.length || !frames.length) return;
+    var i = 0;
+    panel.classList.remove("is-reset");
+    (function next() {
+      var st = steps[i];
+      Array.prototype.forEach.call(frames, function (f, k) { f.classList.toggle("is-on", k === st.f); });
+      stack.style.transform = zoomTo(st.zoom);
+      i = (i + 1) % steps.length;
+      panel._seq = setTimeout(next, st.ms);
+    })();
+  }
+  function stop(panel) {
+    if (!panel._seq) return;
+    clearTimeout(panel._seq);
+    panel._seq = 0;
+    panel.classList.add("is-reset");
+    var stack = panel.querySelector(".v4-project__frames");
+    stack.style.transform = "none";
+    Array.prototype.forEach.call(stack.children, function (f, k) { f.classList.toggle("is-on", k === 0); });
+  }
 
   Array.prototype.slice.call(document.querySelectorAll("[data-strip]")).forEach(function (strip) {
     var track = strip.querySelector(".v4-project__track");
@@ -56,23 +94,29 @@
       track.style.transform = "translate3d(" + x + "px,0,0)";
     }
 
-    // What is in view now, and what plays.
+    // What is in view now, and what plays: only the one at the front.
     function update() {
       var w = strip.clientWidth, seen = [];
       all.forEach(function (el, k) {
         var L = k % N, left = el.offsetLeft - all[0].offsetLeft + x;
         var vis = onScreen && left < w - 1 && left + el.offsetWidth > 1;
+        var front = onScreen && k === idx;
         if (vis) seen[L] = true;
-        if (!vis) { el.classList.remove("is-play", "is-held"); return; }
-        if (el.classList.contains("v4-project__panel--pan")) {
-          if (k !== idx) el.classList.remove("is-play");
-          else el.classList.add("is-play");
+        if (el.classList.contains("v4-project__panel--frames")) {
+          if (front) play(el); else stop(el);
         } else if (el.classList.contains("v4-project__panel--layers")) {
-          if (el.classList.contains("is-play") || el.classList.contains("is-held")) return;
-          el.classList.add(shown[L] ? "is-held" : "is-play");
+          if (front) {
+            if (!el.classList.contains("is-play") && !el.classList.contains("is-held")) el.classList.add(shown[L] ? "is-held" : "is-play");
+          } else if (vis && shown[L]) {
+            el.classList.remove("is-play");
+            el.classList.add("is-held");
+          } else {
+            el.classList.remove("is-play", "is-held");
+          }
+          if (front) seen[L] = "played";
         }
       });
-      for (var L = 0; L < N; L++) shown[L] = !!seen[L];
+      for (var L = 0; L < N; L++) shown[L] = seen[L] === "played" || (!!seen[L] && !!shown[L]);
     }
 
     // After a slide: off a copy onto the real one, unseen, then play.
