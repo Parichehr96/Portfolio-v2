@@ -17,6 +17,42 @@
   overflow: clip;
 }
 
+/* The windmill (1531:25886): behind the illustration, its foot on the
+   footer's floor, where the comp puts it against the 1512 page (x 0), so it
+   keeps its place in the city as the illustration stays centred. The
+   script turns the blades round the hub (207.7, 219.1) and blows the wind
+   line; without it the mill stands still and the line is not drawn. */
+.v4-footer__mill {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - var(--v4-footer-page) / 2);
+  width: var(--v4-footer-mill-w);
+  height: auto;
+  pointer-events: none;
+}
+
+.v4-mill__blades {
+  transform-box: view-box;
+  transform-origin: 207.7px 219.1px;
+}
+
+/* A gust: a stretch of the line sweeps along it and is gone. */
+.v4-mill__wind {
+  stroke-dasharray: 0.34 1.34;
+  stroke-dashoffset: 0.34;
+}
+
+.v4-mill__wind.is-blowing {
+  animation: v4-mill-gust var(--v4-mill-gust-time) cubic-bezier(.45, 0, .25, 1) both;
+}
+
+@keyframes v4-mill-gust {
+  from { stroke-dashoffset: 0.34; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  to { stroke-dashoffset: -1; opacity: 0; }
+}
+
 .v4-footer__sky {
   position: absolute;
   inset: auto 0 0;

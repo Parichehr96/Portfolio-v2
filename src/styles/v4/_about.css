@@ -25,11 +25,12 @@
 /* ---- Photo wheel — 1174:95301 -------------------------------------------
    The cards sit on an arc around the column's centre. Each card's place on
    it is one number, --p: 0 is the middle, ±1 and ±2 the comp's neighbours.
-   The curve below goes through the comp's five spots exactly (x 0, ±311,
-   ±604; y 0, 38, 131; tilt 11.25° a step) and, past ±2, carries on in a
+   The curve below goes through the comp's spots (1490:19004: x 0, ±284,
+   ±551; y 0, 38, 131; tilt 11.25° a step) and, past ±2, carries on in a
    straight line, so cards off the screen keep moving away. The script only
    moves --p; the geometry is all here. The band is the text's offset less
-   the flex gap; cards and captions overflow it and the page edge clips them. */
+   the flex gap; captions overflow it below. The wheel is the reading
+   column's: its sides clip at the column's edges, as in the comp. */
 .v4-about__photos {
   position: relative;
   touch-action: pan-y;
@@ -38,6 +39,7 @@
   -webkit-user-select: none;
   height: calc(var(--v4-about-photos-band) - var(--v4-space-6));
   margin-top: calc(var(--v4-heading-gap) - var(--v4-space-6));
+  overflow-x: clip;
 }
 
 .v4-photos {
@@ -52,7 +54,7 @@
 .v4-photo {
   --q: clamp(-2, var(--p), 2);
   --e: calc(var(--p) - var(--q));
-  --x: calc(var(--q) * 314.1px - var(--q) * var(--q) * var(--q) * 3.08px + var(--e) * 277px);
+  --x: calc(var(--q) * 286.8px - var(--q) * var(--q) * var(--q) * 2.81px + var(--e) * 253px);
   --y: calc(var(--q) * var(--q) * 40.11px - var(--q) * var(--q) * var(--q) * var(--q) * 1.844px
         + max(var(--e), -1 * var(--e)) * 101.4px);
   position: absolute;
@@ -62,37 +64,6 @@
   transform-origin: calc(var(--v4-photo-w) / 2) calc(var(--v4-photo-h) / 2);
   transform: translate(var(--x), var(--y)) rotate(calc(var(--p) * 11.25deg));
   will-change: transform;
-}
-
-/* The veils — 1213:17950 (right), 1213:17951 (left). Everything beside the
-   middle photo fades into white, so it holds the eye and the side panels
-   stay clear. Each veil starts at the middle card's edge (the wheel's centre
-   ± half a card) and runs to the page edge: a white wash, no blur, at the
-   comp's stops over its 647px veil, so fully white 426px out.
-   Taller than the comp's 434, since cards further out ride lower on the arc
-   than the comp shows. No z-index: they cover the cards but stay under the
-   rail and the clock, which sit at z 1. */
-.v4-photos__veil {
-  position: absolute;
-  top: var(--v4-photo-veil-top);
-  width: 100vw;
-  height: var(--v4-photo-veil-h);
-  pointer-events: none;
-  --wash: transparent 0,
-    color-mix(in srgb, var(--v4-surface) 65.3%, transparent) 186.6px,
-    color-mix(in srgb, var(--v4-surface) 88.4%, transparent) 264.4px,
-    color-mix(in srgb, var(--v4-surface) 94.2%, transparent) 332.8px,
-    var(--v4-surface) 426.1px;
-}
-
-.v4-photos__veil--left {
-  right: calc(50% + var(--v4-photo-w) / 2);
-  background: linear-gradient(to left, var(--wash));
-}
-
-.v4-photos__veil--right {
-  left: calc(50% + var(--v4-photo-w) / 2);
-  background: linear-gradient(to right, var(--wash));
 }
 
 .v4-photo img {
@@ -114,8 +85,7 @@
   color: var(--v4-text);
 }
 
-/* Above the photo wheel's veils, which reach down past the text's top so
-   the tilted outer cards stay covered. */
+/* Above the photo wheel, so a tilted card riding low never covers it. */
 .v4-about__text {
   position: relative;
   z-index: 1;

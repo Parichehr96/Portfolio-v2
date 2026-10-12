@@ -10,9 +10,11 @@
   anchored to the footer's bottom edge; it loads lazily, being last. Its
   tree crowns are tagged (class="tree", a pivot at each crown's base), and
   scripts/v4-wind.js swaps the image for the inline SVG so they can sway
-  with Amsterdam's wind right now.
+  with Amsterdam's wind right now. Behind it stands the windmill
+  (v4/windmill.njk), turning in the same wind.
 #}
 <footer class="v4-footer" id="contact">
+  {% include "v4/windmill.njk" %}
   <div class="v4-footer__sky" aria-hidden="true" data-wind-art>
     <img src="/Assets/v4/footer/amsterdam.svg" width="1600" height="397" alt="" loading="lazy" decoding="async" />
   </div>

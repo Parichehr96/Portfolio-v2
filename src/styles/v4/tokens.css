@@ -188,16 +188,17 @@
   /* About, process, experience, footer: spaced by the system above. The
      About photo wheel starts 24 under its label and the text 400 under the
      middle card's top (the wheel's tilted cards need that room). */
-  --v4-about-photos-band: 400px; /* the middle card's top to the text */
+  --v4-about-photos-band: 390px; /* the middle card's top to the text (1490:19004) */
   --v4-photo-w: 224px;
   --v4-photo-h: 270px;
   --v4-photo-radius: 32px;
   --v4-text-photo: 13px;
-  --v4-photo-veil-top: -60px;    /* the veils reach above and below the comp's */
-  --v4-photo-veil-h: 720px;      /* 434, so no tilted card or caption pokes out */
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
   --v4-footer-height: 534px;
+  --v4-footer-page: 1512px;      /* the comp's page, which places the windmill */
+  --v4-footer-mill-w: 519px;     /* 1531:25886, 519 x 580 */
+  --v4-mill-gust-time: 2.2s;     /* one gust down the wind line */
   --v4-footer-art: 1600px;
   --v4-footer-art-h: 397px;
   --v4-footer-cta-gap: 64px;

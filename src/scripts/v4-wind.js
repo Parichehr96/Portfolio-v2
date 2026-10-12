@@ -9,6 +9,12 @@
  * visible, easy sway; a stormy day bends them further and faster. If the
  * weather can't be fetched they sway as on a light breeze. Reduced motion:
  * no sway (CSS).
+ *
+ * THE WINDMILL (v4/windmill.njk) turns in the same wind: about a turn in 4.6s
+ * on a 10 km/h breeze, faster as it blows harder, slow on a calm day, easing
+ * to each new pace rather than jumping. Every so often (more often the windier
+ * it is) a gust runs down the blue wind line and the blades surge with it. Only
+ * while the footer is on screen; reduced motion leaves the mill still.
  */
 (function () {
   "use strict";
@@ -19,11 +25,13 @@
   var URL_WIND = "https://api.open-meteo.com/v1/forecast?latitude=52.37&longitude=4.89&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh";
   var CACHE = "v4-wind";
   var BREEZE = 10;                                         // km/h, when the weather is unknown
+  var millV = BREEZE;
 
   function setWind(kmh, fromDeg) {
     var v = Math.max(0, Math.min(90, +kmh || 0));
     // Lean with the wind: a westerly (from 180..360) pushes the crowns east (right).
     var dir = typeof fromDeg === "number" && fromDeg > 0 && fromDeg < 180 ? -1 : 1;
+    millV = v;
     var bend = Math.min(13, 2.5 + v * 0.25);               // degrees of skew: 5 at 10 km/h
     var gust = bend * 0.3;                                 // a slower lean on top
     var period = Math.max(1.2, 3.2 - v * 0.05);            // seconds per sway
@@ -62,6 +70,50 @@
       img.replaceWith(el);
       wind().then(function (c) { setWind(c.v, c.d); }).catch(function () {});
     }).catch(function () {});
+  }
+
+  // ---- The windmill ----------------------------------------------------------
+  var mill = document.querySelector("[data-mill]");
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (mill && !still && "IntersectionObserver" in window) {
+    var blades = mill.querySelector(".v4-mill__blades");
+    var line = mill.querySelector(".v4-mill__wind");
+    var angle = 0, omega = 0, boost = 0, last = 0, raf = 0, nextGust = 0, seen = false;
+
+    function pace() {                                      // degrees a second for this wind
+      return Math.max(18, Math.min(220, 18 + millV * 6));
+    }
+    function gap() {                                       // seconds to the next gust
+      var base = Math.max(4, 13 - millV * 0.2);
+      return base * (0.6 + Math.random() * 0.8);
+    }
+    function gust(now) {
+      line.classList.remove("is-blowing");
+      void line.getBoundingClientRect();                   // restart the sweep
+      line.classList.add("is-blowing");
+      boost = 1;
+      nextGust = now + gap() * 1000;
+    }
+    function frame(now) {
+      raf = 0;
+      if (!seen || document.hidden) { last = 0; return; }
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      if (!nextGust) nextGust = now + 1500;
+      if (now >= nextGust) gust(now);
+      boost *= Math.exp(-dt / 1.6);
+      var target = pace() * (1 + 0.7 * boost);
+      omega += (target - omega) * Math.min(1, dt * 1.5);
+      angle = (angle + omega * dt) % 360;
+      blades.style.transform = "rotate(" + angle.toFixed(2) + "deg)";
+      raf = requestAnimationFrame(frame);
+    }
+    function wake() { if (!raf && seen && !document.hidden) raf = requestAnimationFrame(frame); }
+    new IntersectionObserver(function (entries) {
+      seen = entries[0].isIntersecting;
+      wake();
+    }).observe(mill);
+    document.addEventListener("visibilitychange", wake);
   }
 
   if ("IntersectionObserver" in window) {
