@@ -178,6 +178,9 @@
   /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
   --v4-strip-slide: .55s;                       /* one thumbnail along */
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
+  --v4-strip-dim: .4;                           /* the neighbours either side */
+  --v4-strip-arrow: 34px;
+  --v4-strip-arrow-inset: 4px;                  /* from the strip's edges, over the neighbours */
   --v4-layer-time: .6s;                         /* each layer rising in */
   --v4-layer-lead: .15s;
   --v4-layer-step: .16s;

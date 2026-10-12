@@ -1,8 +1,10 @@
 /* V4 project strips — v4/project-row.njk, _work.css.
  *
  * AN ENDLESS CAROUSEL. One small move goes one thumbnail along, either way,
- * for ever: a sideways scroll on a trackpad or Shift+wheel, a swipe on a
- * phone, a drag with a mouse, or the arrow keys once the strip has focus.
+ * for ever: the round arrows either side, a sideways scroll on a trackpad or
+ * Shift+wheel, a swipe on a phone, a drag with a mouse, or the arrow keys
+ * once the strip has focus. The one at the front is centred (.is-front), its
+ * neighbours peeking in either side, dimmed.
  * Up-and-down scrolling stays the page's. Endless by a copy of the panels on
  * each side (.is-clone, hidden from screen readers): after sliding onto a
  * copy it jumps, unseen, to the real one.
@@ -70,10 +72,12 @@
     strip.setAttribute("aria-roledescription", "carousel");
 
     function offset(k) { return all[k].offsetLeft - all[0].offsetLeft; }
+    // The one at the front is centred in the strip; the rest are dimmed.
     function place(slide, extra) {
       track.classList.toggle("is-sliding", !!slide && !reduce);
-      x = -offset(idx) + (extra || 0);
+      x = (strip.clientWidth - all[idx].offsetWidth) / 2 - offset(idx) + (extra || 0);
       track.style.transform = "translate3d(" + x + "px,0,0)";
+      all.forEach(function (el, k) { el.classList.toggle("is-front", k === idx); });
     }
 
     // What is in view now, and what plays: only the one at the front.
@@ -106,8 +110,10 @@
       clearTimeout(timer);
       if (idx < N || idx >= 2 * N) {
         idx = N + (((idx - N) % N) + N) % N;
+        track.classList.add("is-jumping");               // no fade: the copy and the real one swap in place
         place(false);
         void track.offsetWidth;
+        track.classList.remove("is-jumping");
       }
       update();
     }
@@ -173,6 +179,16 @@
       if (moved > 5) { e.stopPropagation(); e.preventDefault(); moved = 0; }
     }, true);
 
+    // The arrows; a press is theirs, not the card's link.
+    Array.prototype.forEach.call(strip.querySelectorAll("[data-strip-step]"), function (b) {
+      b.hidden = false;
+      b.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        go(+b.getAttribute("data-strip-step"));
+      });
+    });
+
     strip.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
       if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
@@ -199,7 +215,7 @@
   Array.prototype.slice.call(document.querySelectorAll("[data-card-href]")).forEach(function (card) {
     var href = card.getAttribute("data-card-href");
     function open(e) {
-      if (e.target.closest("a")) return;                          // its own link handles it
+      if (e.target.closest("a, button")) return;                  // its own link or control handles it
       var sel = window.getSelection && String(window.getSelection());
       if (sel) return;                                             // they were selecting text
       if (e.metaKey || e.ctrlKey || e.button === 1) window.open(href, "_blank", "noopener");

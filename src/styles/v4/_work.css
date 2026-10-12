@@ -164,6 +164,64 @@ a.v4-project__link:hover {
   transition: transform var(--v4-strip-slide) var(--v4-strip-ease);
 }
 
+/* The neighbours either side of the one at the front, dimmed (1490:17256). */
+.is-carousel .v4-project__panel {
+  transition: opacity var(--v4-strip-slide) var(--v4-strip-ease);
+}
+
+.is-carousel .v4-project__panel:not(.is-front) {
+  opacity: var(--v4-strip-dim);
+}
+
+.v4-project__track.is-jumping .v4-project__panel {
+  transition: none;
+}
+
+/* The arrows: white rounds with a dashed edge, over each side, centred on
+   the thumbnails' height (1534:28726). */
+.v4-project__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--v4-strip-arrow);
+  height: var(--v4-strip-arrow);
+  margin-top: calc(var(--v4-strip-arrow) / -2);
+  border: 1px dashed var(--v4-text-muted);
+  border-radius: var(--v4-radius-round);
+  background: var(--v4-surface);
+  color: var(--v4-text);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.v4-project__arrow[hidden] {
+  display: none;
+}
+
+.v4-project__arrow--prev {
+  left: var(--v4-strip-arrow-inset);
+}
+
+.v4-project__arrow--prev svg {
+  transform: rotate(180deg);
+}
+
+.v4-project__arrow--next {
+  right: var(--v4-strip-arrow-inset);
+}
+
+.v4-project__arrow:hover {
+  border-color: var(--v4-text);
+  transform: scale(1.06);
+}
+
+.v4-project__arrow:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 2px;
+}
+
 .v4-project__panel img {
   -webkit-user-drag: none;
 }
@@ -231,7 +289,8 @@ a.v4-project__link:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-project__track.is-sliding { transition: none; }
+  .v4-project__track.is-sliding,
+  .is-carousel .v4-project__panel { transition: none; }
   .v4-project__panel--layers.is-play .v4-project__layer { animation: none; }
   .is-carousel .v4-project__panel--layers .v4-project__layer { opacity: 1 !important; }
 }
