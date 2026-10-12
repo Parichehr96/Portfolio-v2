@@ -16,8 +16,23 @@
   .verb.on { opacity: 1; transform: translateX(6px); }
   .who { position: absolute; left: 48px; top: 34px; }
   #ph { position: absolute; right: 64px; top: 22px; }
+  /* Mostly white; the purple lives only where the product is: a soft glow rising
+     behind the phone, and the question cards' triangle pattern fading out of it. */
+  .frame--cover { background: #fff; }
+  .glow { position: absolute; left: 300px; top: -60px; width: 420px; height: 520px; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(134, 91, 238, .20), rgba(134, 91, 238, .07) 58%, rgba(134, 91, 238, 0));
+    animation: breathe 7s ease-in-out infinite alternate; }
+  @keyframes breathe { to { transform: translateY(14px) scale(1.04); opacity: .85; } }
+  .tri { position: absolute; left: 330px; top: 0; width: 270px; height: 393px; pointer-events: none; opacity: .55;
+    -webkit-mask-image: radial-gradient(circle at 60% 45%, #000 0, rgba(0,0,0,.6) 38%, transparent 70%);
+            mask-image: radial-gradient(circle at 60% 45%, #000 0, rgba(0,0,0,.6) 38%, transparent 70%); }
+  .verb.on b { text-shadow: 0 8px 24px rgba(134, 91, 238, .25); }
 </style></head><body>
-<div class="frame frame--lilac" id="f"><div class="canvas" id="c">
+<div class="frame frame--cover" id="f"><div class="canvas" id="c">
+  <span class="glow" aria-hidden="true"></span>
+  <svg class="tri" aria-hidden="true" viewBox="0 0 270 393"><defs><pattern id="t" width="54" height="47" patternUnits="userSpaceOnUse">
+    <path d="M27 4 L50 43 L4 43 Z" fill="none" stroke="#865BEE" stroke-opacity=".18" stroke-width="1"/></pattern></defs>
+    <rect width="270" height="393" fill="url(#t)"/></svg>
   <div class="who eyebrow">What Lena wants from a game</div>
   <div class="verbs" id="verbs"></div>
   <div id="slot"></div>
