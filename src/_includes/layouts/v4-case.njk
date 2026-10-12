@@ -7,8 +7,10 @@ layout: layouts/v4.njk
   The page sets `caseKey` in front matter; everything it shows comes from
   _data/cases/<caseKey>.js. This file decides only structure:
 
-    rail (left, sticky)        the case's sections, the one being read lit;
-                               the page's own table of contents
+    menu (left, sticky)        the site menu, always open, Work listing
+                               every case study (this one lit)
+    contents (right, sticky)   reading progress and this case's sections,
+                               the one being read lit
     bar (sticky, see-through)  Back and Next, pinned either side of the
                                column; the name below them scrolls away
                                with the page, and the reading progress
@@ -23,15 +25,10 @@ layout: layouts/v4.njk
   what lets Back and Next float there with no ground behind them.
 #}
 {%- set c = cases[caseKey] -%}
-{#- The left menu lists this case's sections (see v4/rail.njk). -#}
-{%- set railItems = [] -%}
-{%- set railProgress = true -%}
-{%- for section in c.sections -%}
-  {%- set railItems = (railItems.push({ label: section.nav or section.title, target: section.title | slugify }), railItems) -%}
-{%- endfor -%}
-
 <div class="v4-shell v4-shell--case">
-  {% include "v4/rail.njk" %}
+  {#- The site menu on the left, this case's sections and progress on the
+      right (v4/case-nav.njk). -#}
+  {% include "v4/case-nav.njk" %}
 
   <article class="v4-case" data-read-article>
     {#- THE BAR: Back and Next, either side of the name's row. A see-through

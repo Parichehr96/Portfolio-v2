@@ -18,7 +18,7 @@ module.exports = {
   // `target` is the id of the section the item scrolls to and highlights for.
   rail: [
     { label: "Home", target: "top" },
-    { label: "Works", target: "work" },
+    { label: "Works", target: "work", caseLabel: "Work" },
     { label: "Parichehr", target: "about" },
   ],
 
@@ -82,6 +82,7 @@ module.exports = {
       {
         id: "onton",
         name: "Onton",
+        navLabel: "ONTON",
         href: "/work/onton/",
         verified: true,
         years: "2024-2025",
@@ -113,6 +114,7 @@ module.exports = {
         // WOW design system text is written.
         id: "wow-design-system",
         name: "WOW design system",
+        navLabel: "Connect2WOW (Design system)",
         soon: true,
         verified: true,
         years: "2024-2025",

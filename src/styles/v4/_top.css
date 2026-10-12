@@ -123,10 +123,12 @@
 /* ---- Status clock -------------------------------------------------------- */
 /* Top-aligned, so "At 19:07" starts on the same line as the name and the
    menu's first item. */
+/* Stacked: the face on top, the words under it, left-aligned. */
 .v4-status {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--v4-space-2);
+  gap: var(--v4-space-3);
 }
 
 .v4-status__face {
@@ -172,11 +174,15 @@
   stroke-width: 0.952;
 }
 
+/* The time, then the status and its detail read as one short paragraph. */
 .v4-status__text {
   display: flex;
   flex-direction: column;
-  gap: var(--v4-space-2);
   width: var(--v4-status-text);
+}
+
+.v4-status__time {
+  margin-bottom: var(--v4-space-2);
 }
 
 .v4-status__time {
