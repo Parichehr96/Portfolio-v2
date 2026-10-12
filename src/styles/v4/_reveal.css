@@ -35,9 +35,8 @@
 .js-reveal .v4-sky__note { --n: 6; }
 .js-reveal .v4-work > .v4-label:first-child { --n: 7; }
 .js-reveal .v4-work > .v4-project:first-of-type .v4-project__head { --n: 8; }
-.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(1) { --n: 9; }
-.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(2) { --n: 10; }
-.js-reveal .v4-work > .v4-project:first-of-type .v4-project__panel:nth-child(3) { --n: 11; }
+/* The thumbnails' --n (9, 10, 11 …) is set in v4/project-row.njk, as the
+   strip's carousel adds copies before them. */
 
 /* A case study's first screen: the rail, then the name with Back and Next,
    the cover, the facts. Everything after rises in as it is scrolled to. */

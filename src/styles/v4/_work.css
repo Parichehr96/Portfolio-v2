@@ -121,10 +121,10 @@ a.v4-project__link:hover {
    are cut off at the column's right edge, so the page stays centred and
    both side panels stay clear.
 
-   A REAL SCROLL CONTAINER that visitors scroll themselves: swipe on a
-   trackpad or phone, drag with a mouse (scripts/v4-strip.js). It does not
-   move on its own. The scrollbar is hidden; the panel cut off at the right
-   edge says "there is more" better than a bar would. */
+   AN ENDLESS CAROUSEL (scripts/v4-strip.js, .is-carousel): one small
+   swipe, sideways scroll, drag or arrow key moves it one thumbnail, either
+   way, for ever. Without the script it is a plain horizontal scroller. The
+   panel cut off at the right edge says "there is more". */
 .v4-project__strip {
   position: relative;
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
@@ -144,9 +144,24 @@ a.v4-project__link:hover {
   user-select: none;
 }
 
+.v4-project__strip.is-carousel {
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.v4-project__strip:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 4px;
+  border-radius: var(--v4-radius-panel);
+}
+
 .v4-project__track {
   display: flex;
   width: max-content;
+}
+
+.v4-project__track.is-sliding {
+  transition: transform var(--v4-strip-slide) var(--v4-strip-ease);
 }
 
 .v4-project__panel img {
@@ -167,6 +182,60 @@ a.v4-project__link:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* THE THUMBNAIL IT LANDS ON PLAYS (.is-play, scripts/v4-strip.js).
+   A slow camera move: in a little, drifting along the screen (--pan-dir 1
+   to the right, -1 to the left), once, and it stays there. */
+.v4-project__panel--pan.is-play img {
+  animation: v4-pan var(--v4-pan-time) cubic-bezier(.37, 0, .4, 1) both;
+}
+
+@keyframes v4-pan {
+  to {
+    transform: translate(calc(var(--pan-dir, 1) * -1 * var(--v4-pan-shift)), -1%) scale(var(--v4-pan-zoom));
+  }
+}
+
+/* Layers on the panel's own background, each a full-size transparent
+   image, rising in one after another the first time the panel is seen.
+   Hidden only once the carousel runs, so they always show without it;
+   .is-held keeps them up without playing again. */
+.v4-project__layers {
+  position: absolute;
+  inset: 0;
+}
+
+.v4-project__panel--layers {
+  position: relative;
+}
+
+.v4-project__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.is-carousel .v4-project__panel--layers:not(.is-play, .is-held) .v4-project__layer {
+  opacity: 0;
+}
+
+.v4-project__panel--layers.is-play .v4-project__layer {
+  animation: v4-layer-in var(--v4-layer-time) var(--v4-reveal-ease) both;
+  animation-delay: calc(var(--v4-layer-lead) + var(--i, 0) * var(--v4-layer-step));
+}
+
+@keyframes v4-layer-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--v4-reveal-rise));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-project__track.is-sliding { transition: none; }
+  .v4-project__panel--pan.is-play img,
+  .v4-project__panel--layers.is-play .v4-project__layer { animation: none; }
+  .is-carousel .v4-project__panel--layers .v4-project__layer { opacity: 1 !important; }
 }
 
 /* The comp's unfinished panels: a white card inset at 64 / 88 in 812 × 520. */

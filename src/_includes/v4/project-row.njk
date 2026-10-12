@@ -4,10 +4,12 @@
 
   THE HEADER sits in the 600px reading column, like the intro above it.
 
-  THE STRIP runs as the comp draws it: from the reading column's left edge off
-  the right side of the page, clear of the left panel (rail and docked clock).
-  It does not move on its own; visitors scroll it themselves (swipe, or drag
-  with a mouse: scripts/v4-strip.js).
+  THE STRIP runs as the comp draws it: from the reading column's left edge,
+  cut off at its right. It is an endless carousel (scripts/v4-strip.js): one
+  small swipe, scroll or drag moves it one thumbnail either way, and the
+  thumbnail it lands on plays its motion (panel.motion: a slow camera "pan",
+  or "layers" appearing one by one). Without the script it is a plain
+  horizontal scroller.
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
@@ -44,8 +46,14 @@
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}">
-        {%- if panel.src %}
+      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.pan %}; --pan-dir: {{ panel.pan }}{% endif %}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
+        {%- if panel.layers %}
+        <div class="v4-project__layers" role="img" aria-label="{{ panel.alt }}">
+          {%- for layer in panel.layers %}
+          <img class="v4-project__layer" style="--i: {{ loop.index0 }}" src="{{ layer }}" width="812" height="520" alt=""{% if not eager %} loading="lazy"{% endif %} decoding="async" />
+          {%- endfor %}
+        </div>
+        {%- elif panel.src %}
         <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}"{% if not eager %} loading="lazy"{% endif %} decoding="async" />
         {%- endif %}
       </figure>

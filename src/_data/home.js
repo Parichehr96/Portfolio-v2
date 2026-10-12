@@ -74,9 +74,20 @@ module.exports = {
           { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
         ],
         panels: [
-          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", alt: "Connect2WOW HR module: Mark Rushmore's worker record, with the People list open" },
-          { src: "/Assets/v4/work/connect2wow/panel-2.png", alt: "Connect2WOW Home: offboarding and hiring requests with Decline and Approve, and a partner's connection request" },
-          { src: "/Assets/v4/work/connect2wow/panel-3.jpg", alt: "Connect2WOW HR module: the same worker record, with site, phone, record tabs and an expired certificate" },
+          // motion: "pan" is a slow camera move (pan: 1 drifts right, -1 left);
+          // "layers" stack on bg and appear one by one (_work.css, v4-strip.js).
+          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", motion: "pan", pan: 1, alt: "Connect2WOW HR module: Mark Rushmore's worker record, with the People list open" },
+          {
+            motion: "layers",
+            bg: "#F3F6F8",
+            layers: [
+              "/Assets/v4/work/connect2wow/panel-2-requests.png",
+              "/Assets/v4/work/connect2wow/panel-2-hiring.png",
+              "/Assets/v4/work/connect2wow/panel-2-partner.png",
+            ],
+            alt: "Connect2WOW Home: offboarding and hiring requests with Decline and Approve, and a partner's connection request",
+          },
+          { src: "/Assets/v4/work/connect2wow/panel-3.jpg", motion: "pan", pan: -1, alt: "Connect2WOW HR module: the same worker record, with site, phone, record tabs and an expired certificate" },
         ],
       },
       {

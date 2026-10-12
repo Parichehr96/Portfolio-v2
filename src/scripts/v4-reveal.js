@@ -45,7 +45,7 @@
 
   function panelsOf(head) {
     var row = head.closest(".v4-project");
-    return row ? Array.prototype.slice.call(row.querySelectorAll(".v4-project__panel")) : [];
+    return row ? Array.prototype.slice.call(row.querySelectorAll(".v4-project__panel:not(.is-clone)")) : [];
   }
 
   // Hide only what is still below the screen.
