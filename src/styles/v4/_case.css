@@ -23,24 +23,11 @@
 }
 
 /* ---- The menus (v4/case-nav.njk) -------------------------------------------
-   Left: the site menu, open, with the case studies under Work, indented 20.
+   Left: the site menu, open, with the case studies under Work (_rail.css).
    Right: the reading progress and this case's sections, in the column the
    homepage gives the clock: the rail's 120, 40 in from the right edge. */
-.v4-rail__sub {
-  display: flex;
-  flex-direction: column;
-  gap: var(--v4-space-3);
-  margin-top: var(--v4-space-3);
-  padding-left: var(--v4-space-5);
-}
-
 .v4-shell--case .v4-rail__item {
   white-space: nowrap;
-}
-
-.v4-rail__item--soon {
-  opacity: .5;
-  cursor: default;
 }
 
 .v4-rail-track--right {
@@ -76,9 +63,8 @@
 
 /* Below 1280 the menu, Back, the column, Next and the contents no longer fit
    side by side: the menu keeps its top level only, and the contents and
-   progress step aside. */
+   progress step aside (_rail.css folds the case studies away). */
 @media (max-width: 1279px) {
-  .v4-rail__sub,
   .v4-rail-track--right {
     display: none;
   }
@@ -250,6 +236,19 @@
    the corner is a plain 20px so it stays round at any shape. */
 .v4-case__animation--free {
   border-radius: 20px;
+}
+
+/* Viewport-fit: the screen's height less the sticky bar and the section's
+   title and text, so the visual and its heading are seen together. */
+.v4-case__animation iframe.v4-case__animation-fit {
+  aspect-ratio: auto;
+  height: clamp(480px, calc(100svh - 270px), 900px);
+}
+
+/* Plain: a visual set as page content, flush with the text, no stroke or corner. */
+.v4-case__animation--plain {
+  border: 0;
+  border-radius: 0;
 }
 
 /* The facts table: 120px labels, values on a dashed rule. */

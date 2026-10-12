@@ -133,6 +133,7 @@
   /* Case studies: the open site menu is wider; the contents on the right
      keep the rail's 120 (_case.css). */
   --v4-rail-width-case: 270px;
+  --v4-fold-time: .45s;        /* Work's case studies folding open and shut */
   --v4-rail-width-case-right: 120px;
   --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6));
   /* Below 900 the rail is a sticky bar across the top (_rail.css). */

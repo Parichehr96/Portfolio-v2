@@ -24,24 +24,7 @@
           {{ item.caseLabel or item.label }}
         </a>
         {%- if isWork %}
-        <ul class="v4-rail__sub">
-          {%- for p in home.work.projects %}
-          {%- set here = p.id == caseKey %}
-          <li>
-            {%- if p.href and not p.soon %}
-            <a class="v4-rail__item{% if here %} is-active{% endif %}" href="{{ p.href }}"{% if here %} aria-current="page"{% endif %}>
-              <span class="v4-rail__mark" aria-hidden="true"></span>
-              {{ p.navLabel or p.name }}
-            </a>
-            {%- else %}
-            <span class="v4-rail__item v4-rail__item--soon">
-              <span class="v4-rail__mark" aria-hidden="true"></span>
-              {{ p.navLabel or p.name }}
-            </span>
-            {%- endif %}
-          </li>
-          {%- endfor %}
-        </ul>
+        {%- include "v4/rail-work.njk" %}
         {%- endif %}
       </li>
       {%- endfor %}
