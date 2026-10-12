@@ -275,6 +275,20 @@ module.exports = {
       ],
     },
     {
+      title: "Try the product",
+      nav: "Product",
+      text: "The redesigned flow, working. Create an event with your own name, poster, time and place, find it in your events, then open its ticket and check in. Everything stays in your browser.",
+      blocks: [
+        {
+          type: "animation",
+          // Figma 991:36672 (ONTON_redesign), built as a working prototype.
+          src: "/Assets/embeds/onton/v4/app/index.html",
+          viewport: true,
+          title: "A working prototype of the redesigned ONTON app: create an event, see it in your events, open its ticket and check in",
+        },
+      ],
+    },
+    {
       title: "Reflection",
       nav: "Reflection",
       paragraphs: [
