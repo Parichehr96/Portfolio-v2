@@ -208,6 +208,19 @@
   color: var(--v4-text-max);
 }
 
+/* STICKY TO THE END. A sticky column stops at the end of its track, and the
+   tracks end with the shell, above the footer: the clock, taller than the
+   menu, would be pushed up off the top first. Both tracks reach on through
+   the gap and the footer (never past the page's end, since the footer is at
+   least --v4-footer-height), so the clock and the menu stay level at the top
+   to the very bottom. */
+@media (min-width: 1200px) {
+  .v4-aside-track,
+  .v4-rail-track {
+    bottom: calc(-1 * (var(--v4-section-gap) + var(--v4-footer-height)));
+  }
+}
+
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
   .v4-aside-track {
