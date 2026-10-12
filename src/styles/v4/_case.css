@@ -251,7 +251,8 @@
   border-radius: 0;
 }
 
-/* The facts table: 120px labels, values on a dashed rule. */
+/* The facts table: 120px labels, then the values as plain text (no rule:
+   it read as a link, and none of them are). */
 .v4-case__facts {
   display: flex;
   flex-direction: column;
@@ -279,8 +280,7 @@
   color: var(--v4-text);
 }
 
-/* 41 tall, as each row in the comp: 8 + 22 + 8, the 2px under the text and
-   the dashed rule. */
+/* 41 tall, as each row in the comp. */
 .v4-case__fact-value {
   display: inline-flex;
   flex-wrap: wrap;
@@ -288,7 +288,6 @@
   min-height: 41px;
   column-gap: var(--v4-space-1);
   padding-block: var(--v4-space-2);
-  border-bottom: 0.5px dashed var(--v4-text);
 }
 
 .v4-case__chip {
