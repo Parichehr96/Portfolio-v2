@@ -158,12 +158,12 @@
   /* Work — 1155:10689, 911:730. The section starts 98 below the intro
      (346 − 248), rows are 100 apart, and each strip panel is the comp's
      812 × 520 with 16 between them. */
-  --v4-section-gap: 98px;
   --v4-row-gap: 100px;
-  --v4-panel-width: 812px;
+  --v4-panel-width: 487.2px;   /* 0.6 of the comp's 812 x 520 (1490:17256) */
   --v4-panel-ratio: 812 / 520;
-  --v4-panel-gap: var(--v4-space-4);
-  --v4-radius-panel: 20px;
+  --v4-panel-gap: 9.6px;
+  --v4-radius-panel: 12px;
+  --v4-label-gap: 45px;        /* "Selected project" to the first row */
 
   /* About, process, experience, footer — 911:727 … 911:654. Gaps are the
      comp's own: 201 from the last project row to About, 100 from the folders'
@@ -184,11 +184,9 @@
   --v4-process-gap: 100px;
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
-  --v4-footer-height: 423px;
-  --v4-footer-sky: 407px;
-  --v4-footer-bottom: 102px;
-  --v4-footer-sky-top: 32px;
+  --v4-footer-height: 534px;
   --v4-footer-art: 1600px;
+  --v4-footer-art-h: 397px;
   --v4-footer-cta-gap: 64px;
   --v4-radius-button: 40px;
   --v4-radius-logo: 4px;
@@ -199,19 +197,17 @@
   --v4-reveal-stagger: 0.085s;
   /* The first screen, a little slower: 9 steps apart + one block = 2s. */
   --v4-intro-time: 0.92s;
-  --v4-intro-stagger: 0.12s;
+  --v4-intro-stagger: 0.098s;  /* 11 steps + one block = 2s */
   --v4-reveal-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-  /* The splash (1404:67411 / 1407:67433, _splash.css): black on white, and
-     the cover lifts away in --v4-splash-lift. */
-  --v4-splash-bg: #FFFFFF;
-  --v4-splash-ink: #000000;
-  --v4-splash-button: #101012;
-  --v4-splash-button-ink: #FCFBFB;
-  --v4-splash-live: #2ECC71;
-  --v4-splash-line: rgb(255 255 255 / .7);
-  --v4-splash-lift: .8s;
-  --v4-splash-lift-ease: cubic-bezier(.7, 0, .2, 1);
+  /* The sky under the intro (1497:23079, _sky.css): 81 below the intro,
+     595 x 242, two lines 339 wide under it; the work starts 81 below it. */
+  --v4-top-gap: 81px;
+  --v4-sky-width: 595px;
+  --v4-sky-ratio: 595 / 242;
+  --v4-sky-note: 339px;
+  --v4-sky-ink: #000000;
+  --v4-sky-line: rgb(255 255 255 / .7);
 
   /* Case study layout — 918:34271. Sections are 80 apart; the header, hook
      and first section 40 apart. Wide blocks keep the comp's widths and give

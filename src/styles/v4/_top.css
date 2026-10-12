@@ -41,32 +41,6 @@
   pointer-events: auto;
 }
 
-/* ---- Clock: bottom of the left panel ------------------------------------ */
-/* A full-height track down the left of the shell, like the rail's; the slot
-   sticks 40 above the viewport's bottom edge and stops where the shell ends,
-   before the footer. The clock is rendered here; below 1200 it moves under
-   the intro (scripts/v4-clock-dock.js). */
-.v4-clock-dock {
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  pointer-events: none;
-}
-
-.v4-clock-dock__slot {
-  position: sticky;
-  bottom: var(--v4-edge);
-  padding-left: var(--v4-edge);
-  pointer-events: auto;
-}
-
-@media (max-width: 1199px) {
-  .v4-clock-dock { display: none; }
-}
-
 /* ---- Intro --------------------------------------------------------------- */
 .v4-intro {
   display: flex;

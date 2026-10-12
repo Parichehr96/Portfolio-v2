@@ -1,11 +1,10 @@
 /* ============================================================================
-   FOOTER — Figma 911:654 (1512 × 423)
+   FOOTER — Figma 1490:17162 (1512 × 534)
    ============================================================================
 
-   The skyline band is 407 tall and pinned to the footer's bottom edge. Inside
-   it the 1600px artwork starts 32 down, centred, and is cut off by the band's
-   bottom; a white-to-clear gradient over the top fades it into the page. The
-   content column sits 102 above the footer's bottom edge.
+   The content column sits at the footer's top. The illustration, 1600 x 397,
+   is centred and anchored to the footer's bottom edge, behind the content,
+   in full colour.
    ========================================================================== */
 
 .v4-footer {
@@ -14,34 +13,26 @@
   min-height: var(--v4-footer-height);
   display: flex;
   justify-content: center;
-  padding: 0 var(--v4-space-4) var(--v4-footer-bottom);
+  padding: 0 var(--v4-space-4);
   overflow: clip;
 }
 
 .v4-footer__sky {
   position: absolute;
   inset: auto 0 0;
-  height: var(--v4-footer-sky);
+  height: var(--v4-footer-art-h);
   overflow: hidden;
   pointer-events: none;
 }
 
 .v4-footer__sky img {
   position: absolute;
-  top: var(--v4-footer-sky-top);
+  bottom: 0;
   left: 50%;
   width: var(--v4-footer-art);
   max-width: none;
   height: auto;
   transform: translateX(-50%);
-}
-
-.v4-footer__sky::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: calc(100% - 6px);
-  background: linear-gradient(to bottom, var(--v4-surface), transparent);
 }
 
 .v4-footer__content {

@@ -29,33 +29,7 @@
     })(document.documentElement);
   </script>
   {%- endif %}
-  {%- if (pageId or 'home') == 'home' %}
-  {#- The splash (v4/splash.njk), like the toast (v4/toast.njk): the first
-      homepage load in a browser tab, and again after a hard refresh
-      (Cmd+Shift+R / Ctrl+Shift+R / Ctrl+F5, noted by scripts/v4-toast.js as
-      the keys are pressed). Not on a normal reload, not going back/forward,
-      not a section link from another page (/#about from a case study).
-      Runs before first paint, and before the toast's own check (which
-      clears the hard-refresh note), so the page never flashes first. When
-      it shows, any #anchor is dropped, so the page beneath starts at the
-      top. If its script has not started in 3s, the cover gets out of the way. -#}
-  <script>
-    (function (d) {
-      try {
-        var nav = (performance.getEntriesByType("navigation")[0] || {}).type;
-        var hard = sessionStorage.getItem("v4-hard-reload");
-        var seen = sessionStorage.getItem("v4-splash-seen");
-        if (nav === "back_forward") return;
-        if (seen && !hard) return;
-        if (location.hash && !hard && nav !== "reload") return;
-        sessionStorage.setItem("v4-splash-seen", "1");
-      } catch (e) {}
-      d.classList.add("has-splash");
-      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
-      setTimeout(function () { if (!d.classList.contains("splash-ready")) d.classList.remove("has-splash"); }, 3000);
-    })(document.documentElement);
-  </script>
-  {%- endif %}
+
 
   {% include "partials/head-analytics.njk" %}
 </head>
@@ -69,12 +43,11 @@
   <script defer src="/scripts/v4-rail.js"></script>
   <script defer src="/scripts/v4-strip.js"></script>
   <script defer src="/scripts/v4-progress.js"></script>
-  <script defer src="/scripts/v4-clock-dock.js"></script>
   <script defer src="/scripts/v4-folders.js"></script>
   <script defer src="/scripts/v4-folder-physics.js"></script>
   <script defer src="/scripts/v4-photos.js"></script>
   <script defer src="/scripts/v4-reveal.js"></script>
-  <script defer src="/scripts/v4-splash.js"></script>
+  <script defer src="/scripts/v4-sky.js"></script>
 
   {%- if site.analytics.vercel %}
   <script>

@@ -1,33 +1,28 @@
-/* V4 splash — v4/splash.njk, _splash.css, the head script in layouts/v4.njk.
+/* V4 sky panel — v4/sky.njk, _sky.css (Figma 1497:23079).
  *
- * Three jobs:
- *   1. THE SKY. The card shows the visitor's sky now: where, from their time
- *      zone (mapped to that zone's main city); when, from their clock; then
- *      the sun's elevation and azimuth (standard solar position) pick a point
- *      on hand-tuned palettes, with a glow where the sun is and stars at night.
- *   2. THE CARD. At rest it wobbles (CSS). Hover (mouse), tap (touch) or
- *      keyboard focus opens it: upright, larger, with the hour track (the
- *      sun's real path through the day) to drag. Closing returns to now.
- *   3. THE COVER. Any scroll, swipe or page key, or "See My Work", slides
- *      the splash up; once it is fully out of view the homepage plays its
- *      entrance from the top, as on a plain visit.
+ * The visitor's sky, right now, under the intro:
+ *   1. THE SKY. Where, from their time zone (mapped to that zone's main
+ *      city); when, from their clock; then the sun's elevation and azimuth
+ *      (standard solar position) pick a point on hand-tuned palettes, with a
+ *      glow where the sun is and stars at night.
+ *   2. THE HOUR TRACK. Hover the sky (tap on touch, focus from the keyboard)
+ *      and the time and the hour track appear: the sun's real path through
+ *      the visitor's day, crossing the horizon at sunrise and sunset, with a
+ *      dot to drag. Leaving returns to now.
+ * Without this script the panel shows a clear midday sky (_sky.css).
  */
 (function () {
   "use strict";
 
-  var root = document.documentElement;
-  var splash = document.querySelector("[data-splash]");
-  if (!splash || !root.classList.contains("has-splash")) return;
-  root.classList.add("splash-ready");     // the head script's fallback stands down
-
-  var card = splash.querySelector("[data-splash-card]");
-  var sky = splash.querySelector(".v4-splash__sky");
-  var control = splash.querySelector(".v4-splash__control");
-  var track = splash.querySelector(".v4-splash__track");
-  var hourIn = splash.querySelector("#splash-hour");
-  var nowBtn = splash.querySelector("[data-splash-now]");
-  var timeEl = splash.querySelector("[data-splash-time]");
-  var pathEl = splash.querySelector("[data-splash-path]");
+  var panel = document.querySelector("[data-sky]");
+  if (!panel) return;
+  var sky = panel;
+  var control = panel.querySelector(".v4-sky__control");
+  var track = panel.querySelector(".v4-sky__track");
+  var hourIn = panel.querySelector("#sky-hour");
+  var nowBtn = panel.querySelector("[data-sky-now]");
+  var timeEl = panel.querySelector("[data-sky-time]");
+  var pathEl = panel.querySelector("[data-sky-path]");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   // ---------- 1. The sky ----------
@@ -148,7 +143,8 @@
     var setting = sun(new Date(date.getTime() + 600000), place.lat, place.lon).alt < s.alt;
     var cols = palette(s.alt, setting);
     ["--c0", "--c1", "--c2", "--c3"].forEach(function (k, i) { sky.style.setProperty(k, rgb(cols[i])); });
-    // Glow: east on the left of the card, west on the right; height from elevation.
+    sky.style.setProperty("--c4", rgb(mix(cols[1], cols[0], .25)));   // the thin dark band at the foot
+    // Glow: east on the left of the panel, west on the right; height from elevation.
     sky.style.setProperty("--sun-x", (8 + Math.min(1, Math.max(0, (s.az - 60) / 240)) * 84).toFixed(1) + "%");
     sky.style.setProperty("--sun-y", (96 - Math.max(-12, Math.min(70, s.alt)) * 1.2).toFixed(1) + "%");
     sky.style.setProperty("--glow", Math.max(0, Math.min(.9, (s.alt + 5) / 11)).toFixed(2));
@@ -169,94 +165,22 @@
   hourIn.addEventListener("input", function () { live = false; at = atMinute(+hourIn.value); render(); });
   nowBtn.addEventListener("click", function (e) { e.stopPropagation(); live = true; render(); });
   render();
-  var tick = setInterval(function () { if (live) render(); }, 30000);
+  setInterval(function () { if (live) render(); }, 30000);
 
-  // ---------- 2. The card ----------
+  // ---------- 2. The hour track ----------
   var hoverable = window.matchMedia("(hover: hover) and (pointer: fine)");
-  var open = false, settleTimer = 0;
+  var open = false;
   function setOpen(next) {
     if (next === open) return;
     open = next;
-    clearTimeout(settleTimer);
-    if (open) {
-      card.style.rotate = getComputedStyle(card).rotate;   // freeze the wobble where it is
-      card.classList.remove("is-settling");
-      card.classList.add("is-open");
-      requestAnimationFrame(function () { card.style.rotate = "0deg"; });
-    } else {
-      card.classList.remove("is-open");
-      card.classList.add("is-settling");
-      card.style.rotate = "-3deg";
-      settleTimer = setTimeout(function () {                // hand back to the wobble
-        card.classList.remove("is-settling");
-        card.style.rotate = "";
-      }, reduce.matches ? 0 : 620);
-      live = true; render();
-    }
+    panel.classList.toggle("is-open", open);
+    if (!open) { live = true; render(); }               // back to the sky right now
   }
-  card.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(true); });
-  card.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(false); });
-  card.addEventListener("click", function () { if (!hoverable.matches) setOpen(true); });
-  splash.addEventListener("click", function (e) { if (!hoverable.matches && open && !card.contains(e.target)) setOpen(false); });
-  card.addEventListener("focusin", function () { if (card.matches(":focus-visible") || card.querySelector(":focus-visible")) setOpen(true); });
-  card.addEventListener("focusout", function (e) { if (!card.contains(e.relatedTarget) && !card.matches(":hover")) setOpen(false); });
-  card.addEventListener("keydown", function (e) { if (e.key === "Escape") { setOpen(false); card.blur(); } });
-
-  // ---------- 3. The cover ----------
-  // While the splash is up the page beneath is inert; lifting it hands
-  // everything back.
-  var others = Array.prototype.slice.call(document.body.children).filter(function (el) {
-    return el !== splash && el.tagName !== "SCRIPT";
-  });
-  others.forEach(function (el) { el.inert = true; });
-
-  var LIFT = reduce.matches ? 0 : (parseFloat(getComputedStyle(root).getPropertyValue("--v4-splash-lift")) || .8) * 1000;
-  var lifted = false;
-  function lift() {
-    if (lifted) return;
-    lifted = true;
-    clearInterval(tick);
-    others.forEach(function (el) { el.inert = false; });
-    window.scrollTo(0, 0);
-    splash.classList.add("is-leaving");
-    root.classList.add("splash-lifting");                 // keeps scroll locked until it is gone
-    // Once the cover is fully out of view, hand over: the homepage's entrance
-    // (paused under .has-splash) starts from its first step, in order.
-    setTimeout(function () {
-      splash.classList.remove("is-leaving");
-      splash.hidden = true;
-      root.classList.remove("has-splash");
-      root.classList.remove("splash-lifting");
-    }, LIFT + 60);
-  }
-
-  // "See My Work" lifts the cover too, onto the top of the homepage.
-  splash.querySelector("[data-splash-cta]").addEventListener("click", function (e) {
-    e.preventDefault();
-    lift();
-  });
-
-  // Any scroll, either way, lifts it.
-  splash.addEventListener("wheel", function (e) {
-    if (Math.abs(e.deltaY) > 2) { e.preventDefault(); lift(); }
-  }, { passive: false });
-
-  // A vertical swipe lifts it, unless it is a drag on the open card's track.
-  var touchY = null;
-  splash.addEventListener("touchstart", function (e) {
-    touchY = track.contains(e.target) ? null : e.touches[0].clientY;
-  }, { passive: true });
-  splash.addEventListener("touchmove", function (e) {
-    if (touchY !== null && Math.abs(e.touches[0].clientY - touchY) > 24) { touchY = null; lift(); }
-  }, { passive: true });
-
-  // Page keys, unless the hour slider has focus (it uses the arrows itself).
-  document.addEventListener("keydown", function (e) {
-    if (lifted || e.target === hourIn) return;
-    if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Spacebar", "Home", "End"].indexOf(e.key) !== -1) {
-      if (e.key === " " && e.target.closest && e.target.closest("button, a")) return;
-      e.preventDefault();
-      lift();
-    }
-  });
+  panel.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(true); });
+  panel.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(false); });
+  panel.addEventListener("click", function () { if (!hoverable.matches) setOpen(true); });
+  document.addEventListener("click", function (e) { if (!hoverable.matches && open && !panel.contains(e.target)) setOpen(false); });
+  panel.addEventListener("focusin", function () { if (panel.matches(":focus-visible") || panel.querySelector(":focus-visible")) setOpen(true); });
+  panel.addEventListener("focusout", function (e) { if (!panel.contains(e.relatedTarget) && !panel.matches(":hover")) setOpen(false); });
+  panel.addEventListener("keydown", function (e) { if (e.key === "Escape") { setOpen(false); panel.blur(); } });
 })();

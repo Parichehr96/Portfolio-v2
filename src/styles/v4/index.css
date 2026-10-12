@@ -10,6 +10,7 @@
 @import "_toast.css";
 @import "_rail.css";
 @import "_top.css";
+@import "_sky.css";
 @import "_work.css";
 @import "_about.css";
 @import "_process.css";
@@ -17,6 +18,3 @@
 @import "_footer.css";
 @import "_case.css";
 @import "_reveal.css";
-/* After _reveal.css: its paused entrance (under html.has-splash) must win
-   over the reveal rules, which restart the animations. */
-@import "_splash.css";

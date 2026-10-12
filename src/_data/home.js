@@ -126,6 +126,12 @@ module.exports = {
   },
 
   // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
+  // ---- Sky — 1497:23078: the two lines under the visitor's sky ------------
+  sky: {
+    lead: "In case you’ve been so busy to look up,",
+    line: "This is your sky, as it looks right now.",
+  },
+
   about: {
     label: "Parichehr (about me)",
     // 1174:95301 and 1215:17958: the photo wheel under the label, in wheel

@@ -11,7 +11,7 @@
    ========================================================================== */
 
 .v4-work {
-  margin-top: var(--v4-section-gap);
+  margin-top: var(--v4-top-gap);
   display: flex;
   flex-direction: column;
   gap: var(--v4-row-gap);
@@ -34,7 +34,7 @@
 }
 
 .v4-work > .v4-label {
-  margin-bottom: calc(var(--v4-space-6) - var(--v4-row-gap));
+  margin-bottom: calc(var(--v4-label-gap) - var(--v4-row-gap));
 }
 
 /* ---- Row ----------------------------------------------------------------- */
@@ -117,9 +117,9 @@ a.v4-project__link:hover {
 }
 
 /* ---- Strip --------------------------------------------------------------- */
-/* From the reading column's left edge (x=456 at 1512, the comp's 1126:29050)
-   off the right side of the page. The left panel stays clear for the rail and
-   the docked clock; nothing slides under anything.
+/* Inside the reading column (1490:17256): the panels, 0.6 of their old size,
+   are cut off at the column's right edge, so the page stays centred and
+   both side panels stay clear.
 
    A REAL SCROLL CONTAINER that visitors scroll themselves: swipe on a
    trackpad or phone, drag with a mouse (scripts/v4-strip.js). It does not
@@ -127,7 +127,8 @@ a.v4-project__link:hover {
    edge says "there is more" better than a bar would. */
 .v4-project__strip {
   position: relative;
-  margin-left: var(--v4-column-inset);
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin-inline: var(--v4-column-inset) auto;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -182,11 +183,7 @@ a.v4-project__link:hover {
 
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
-  .v4-project__strip {
-    margin-left: var(--v4-space-4);
-  }
-
   .v4-project__panel {
-    width: min(var(--v4-panel-width), 86vw);
+    width: min(var(--v4-panel-width), 80vw);
   }
 }
