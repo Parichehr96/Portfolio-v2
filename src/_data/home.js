@@ -74,9 +74,9 @@ module.exports = {
           { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
         ],
         panels: [
-          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", alt: "Connect2WOW HR module: a worker profile with the Report to me view open" },
-          { src: "/Assets/v4/work/connect2wow/panel-2.png", alt: "Connect2WOW request cards: an offboarding request with Decline and Approve, and an HR collaboration notification" },
-          { src: "/Assets/v4/work/connect2wow/panel-3.jpg", alt: "Connect2WOW HR module: the worker profile screen, second view" },
+          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", alt: "Connect2WOW HR module: Mark Rushmore's worker record, with the People list open" },
+          { src: "/Assets/v4/work/connect2wow/panel-2.png", alt: "Connect2WOW Home: offboarding and hiring requests with Decline and Approve, and a partner's connection request" },
+          { src: "/Assets/v4/work/connect2wow/panel-3.jpg", alt: "Connect2WOW HR module: the same worker record, with site, phone, record tabs and an expired certificate" },
         ],
       },
       {
