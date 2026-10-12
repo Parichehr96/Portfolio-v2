@@ -86,6 +86,68 @@
   background: var(--v4-text-muted);
 }
 
+/* ---- Work's case studies (v4/rail-work.njk) ------------------------------
+   Under Work, indented 20, folded open while Work is the active item: on a
+   case study always, on the homepage while the work is being read. The fold
+   eases its height open (a 0fr → 1fr grid row) as the list fades in, and
+   back. Closed, its links leave the tab order. From 1280 up only; narrower,
+   there is no room beside the content. */
+.v4-rail__fold {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--v4-fold-time) var(--v4-reveal-ease),
+    opacity var(--v4-fold-time) var(--v4-reveal-ease),
+    visibility 0s;
+}
+
+.v4-rail__item:not(.is-active) + .v4-rail__fold {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--v4-fold-time) var(--v4-reveal-ease),
+    opacity calc(var(--v4-fold-time) * .6) ease,
+    visibility 0s linear var(--v4-fold-time);
+}
+
+.v4-rail__sub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--v4-space-3);
+  width: max-content;          /* wider than the homepage rail; it clips only its height */
+  min-height: 0;
+  overflow: hidden;
+  padding-left: var(--v4-space-5);
+}
+
+/* The space above the list sits inside it, so a shut fold is 0 high. */
+.v4-rail__sub > li:first-child {
+  padding-top: var(--v4-space-3);
+}
+
+.v4-rail__sub .v4-rail__item {
+  white-space: nowrap;
+}
+
+.v4-rail__item--soon {
+  opacity: .5;
+  cursor: default;
+}
+
+@media (max-width: 1279px) {
+  .v4-rail__fold {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-rail__fold,
+  .v4-rail__item:not(.is-active) + .v4-rail__fold {
+    transition: none;
+  }
+}
+
 /* ---- Below 900: a sticky bar across the top ------------------------------
    There is no gutter to give the rail, so it turns on its side: the same
    items in a row, in a white bar that sticks to the top of the screen for

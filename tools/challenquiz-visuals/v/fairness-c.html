@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The real feedback screen beside the four guards that make it safe to show, each checking off in turn, with the research it rests on.">
+<title>Challenquiz — fairness (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 400px; }
+  #slot { position: absolute; left: 40px; top: 24px; }
+  .copy { position: absolute; left: 236px; right: 32px; top: 34px; }
+  .t { font: 600 20px/1.25 "Figtree"; letter-spacing: -.01em; margin-bottom: 18px; } .t em { font-style: normal; color: var(--cq-700); }
+  .g { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid var(--pg-border); opacity: .35; transition: opacity .4s; }
+  .g.on { opacity: 1; } .g i { width: 20px; height: 20px; border-radius: 50%; background: var(--pg-frame-2); display: grid; place-items: center; transition: background .3s; }
+  .g.on i { background: var(--pg-pos); } .g i svg { width: 12px; height: 12px; }
+  .g b { display: block; font: 600 13px/1.2 "Figtree"; } .g span { font: 400 12px/16px "Figtree"; color: var(--pg-muted); }
+  .src { margin-top: 12px; font: 400 11px/15px "Figtree"; color: var(--pg-faint); }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas"><div id="slot"></div>
+  <div class="copy"><div class="t">Show the answer, <em>make leaking it pointless</em></div><div id="gs"></div>
+    <div class="src">Feedback after a multiple-choice question improves what people remember — Butler &amp; Roediger, 2008.</div></div></div></div>
+<script>
+  document.getElementById("slot").innerHTML = phone("wrong", 168);
+  var G = [["Your own question order", "A friend still playing is on a different question."], ["Shuffled options", "“It's C” points to a different answer for them."],
+           ["20 seconds, and speed counts", "Looking an answer up costs the time that decides your rank."], ["A large question bank", "A leaked answer is useless in the next room."]];
+  var ok = '<svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L5 8.6L9.6 3.6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.getElementById("gs").innerHTML = G.map(function (g, i) { return '<div class="g" id="g' + i + '"><i>' + ok + "</i><div><b>" + g[0] + "</b><span>" + g[1] + "</span></div></div>"; }).join("");
+  whenSeen(document.getElementById("f"), async function () { await sleep(500); for (var i = 0; i < 4; i++) { document.getElementById("g" + i).classList.add("on"); await sleep(650); } });
+</script></body></html>

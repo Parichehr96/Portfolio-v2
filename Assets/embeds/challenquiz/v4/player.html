@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Lena, and her four verbs: what she wants from a game, what stopped her in the old one, and what she gets now.">
+<title>Challenquiz — player (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 440px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .lena { padding: 14px 16px; display: flex; gap: 14px; align-items: center; }
+  .av { width: 44px; height: 44px; border-radius: 50%; background: var(--cq-200); display: grid; place-items: center; font: 600 19px "Figtree"; color: var(--cq-700); flex: none; }
+  .lena .h { margin-bottom: 2px; }
+  .lena ul { margin: 0 0 0 auto; padding: 0; list-style: none; display: grid; gap: 2px; font: 400 11.5px/15px "Figtree"; color: var(--pg-muted); }
+  .lena li::before { content: "·"; margin-right: 6px; color: var(--cq-500); }
+  .heads { display: grid; grid-template-columns: 26px 92px 1fr 1fr; gap: 12px; padding: 0 16px; font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .v { padding: 13px 16px; display: grid; grid-template-columns: 26px 92px 1fr 1fr; gap: 12px; align-items: start; }
+  .v i { font: 600 11px/18px "Figtree"; font-style: normal; color: var(--pg-faint); }
+  .v b { display: block; font: 600 17px/18px "Figtree"; color: var(--cq-700); } .v b small { display: block; font: 400 11px/15px "Figtree"; color: var(--pg-faint); margin-top: 3px; }
+  .v .was { font: 400 12px/17px "Figtree"; color: var(--pg-neg); }
+  .v .now { font: 500 12px/17px "Figtree"; color: var(--pg-ink); }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas">
+  <div class="card lena rise"><div class="av">L</div><div><div class="h">Lena</div><div class="cap">Casual learner · a real participant, not her real name</div></div>
+    <ul><li>Loves quiz games</li><li>Not Web3-savvy</li><li>Plays on her phone, in the gaps of her day</li></ul></div>
+  <div class="heads rise"><span></span><span>She wants to</span><span>What stopped her</span><span>What she gets now</span></div>
+  <div id="vs" style="display:grid;gap:8px"></div>
+</div></div>
+<script>
+  var R = [["a six-bullet rulebook before the first question", "stakes on one sheet, and a seat that starts at once"],
+           ["no opponent in sight, ever", "the room's answers after every question"],
+           ["answers hidden to keep it fair", "the right answer and a fact, every time"],
+           ["“please wait” instead of a result", "her rank and payout the moment she finishes"]];
+  document.getElementById("vs").innerHTML = VERBS.map(function (v, i) {
+    return '<div class="card v rise" style="transition-delay:' + (.15 + i * .12) + 's"><i>0' + (i + 1) + "</i><b>" + v.t + "<small>" + v.d + '</small></b><span class="was">' + R[i][0] + '</span><span class="now">' + R[i][1] + "</span></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body>
+</html>

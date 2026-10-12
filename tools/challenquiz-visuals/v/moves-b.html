@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Four pairs in a row. Each old screen shows first, in front and readable; then, one verb at a time, it steps back and the new screen slides over it. Replay starts again from the old screens.">
+<title>Challenquiz — what changed (B)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 430px; }
+  .row { position: absolute; left: 22px; right: 22px; top: 22px; display: flex; justify-content: space-between; }
+  .col { width: 132px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .col b { font: 600 17px/1 "Figtree"; color: var(--cq-700); } .col > span { font: 400 11px/14px "Figtree"; color: var(--pg-muted); text-align: center; min-height: 30px; }
+  .state { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); height: 12px; transition: color .4s; }
+  .after .state { color: var(--cq-700); }
+  .pair { position: relative; width: 124px; height: 262px; }
+  .pair .phone { position: absolute; top: 0; left: 6px; transition: transform .9s var(--ease), opacity .7s, filter .7s; }
+  /* before: the old screen in front, full and readable; the new one waiting off to the side */
+  .pair .was { z-index: 2; }
+  .pair .now { z-index: 1; opacity: 0; transform: translateX(46px) scale(.96); }
+  /* after: the old screen steps back and greys, the new one slides over it */
+  .after .was { z-index: 1; opacity: .55; filter: grayscale(1); transform: translate(-12px, 8px) scale(.9); }
+  .after .now { z-index: 2; opacity: 1; transform: translateX(10px); }
+  .instant .phone, .instant .state { transition: none !important; }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas"><button class="replay" id="r">↻ Replay</button><div class="row" id="row"></div></div></div>
+<script>
+  var T = [[4, "ready", "stakes, not a rulebook"], [5, "correct", "the room, every question"], [5, "wrong", "the answer and a fact"], [6, "final", "your result, at once"]];
+  var row = document.getElementById("row"), f = document.getElementById("f"), token = 0;
+  row.innerHTML = VERBS.map(function (v, i) {
+    return '<div class="col" id="c' + i + '"><b>' + v.t + "</b><span>" + T[i][2] + '</span><span class="state" id="s' + i + '">Before</span><div class="pair">' +
+      old(T[i][0], 104).replace('class="phone', 'class="phone was') + phone(T[i][1], 104).replace('class="phone', 'class="phone now') + "</div></div>";
+  }).join("");
+  function reset() {
+    row.classList.add("instant");
+    VERBS.forEach(function (_, i) { document.getElementById("c" + i).classList.remove("after"); document.getElementById("s" + i).textContent = "Before"; });
+    void row.offsetWidth; row.classList.remove("instant");
+  }
+  /* hold on the old screens long enough to read them, then swap one verb at a time */
+  async function run() {
+    var my = ++token; reset();
+    await sleep(2200);
+    for (var i = 0; i < 4; i++) {
+      if (my !== token) return;
+      document.getElementById("c" + i).classList.add("after"); document.getElementById("s" + i).textContent = "After";
+      await sleep(1500);
+    }
+  }
+  document.getElementById("r").onclick = run;
+  whenSeen(f, run);
+</script></body>
+</html>

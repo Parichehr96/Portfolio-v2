@@ -22,6 +22,54 @@
   z-index: 4;
 }
 
+/* ---- The menus (v4/case-nav.njk) -------------------------------------------
+   Left: the site menu, open, with the case studies under Work (_rail.css).
+   Right: the reading progress and this case's sections, in the column the
+   homepage gives the clock: the rail's 120, 40 in from the right edge. */
+.v4-shell--case .v4-rail__item {
+  white-space: nowrap;
+}
+
+.v4-rail-track--right {
+  inset: 0 0 0 auto;
+  width: calc(var(--v4-edge) + var(--v4-rail-width-case-right));
+}
+
+.v4-rail-track--right .v4-rail {
+  padding-left: 0;
+  padding-right: var(--v4-edge);
+}
+
+/* The open menu is wider than the homepage's rail ("Connect2WOW (Design
+   system)" with its indent), and the right holds only the contents, so the
+   reading column, with Back and Next in its margins, is placed against those
+   instead: centred at 1512 (x=456, the comp), sliding over on narrower
+   screens without touching either. */
+@media (min-width: 1280px) {
+  .v4-shell--case {
+    --v4-rail-width: var(--v4-rail-width-case);
+    --v4-status-width: var(--v4-rail-width-case-right);
+    /* Back and Next sit in the margins beside the column, so each side
+       also keeps room for them. */
+    --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6) + var(--v4-case-pager) + var(--v4-space-4));
+    --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-edge) + var(--v4-space-6) + var(--v4-case-pager));
+    --v4-column-inset: clamp(
+      var(--v4-rail-clear),
+      (100% - var(--v4-column)) / 2,
+      100% - var(--v4-aside-clear) - var(--v4-space-4) - var(--v4-column)
+    );
+  }
+}
+
+/* Below 1280 the menu, Back, the column, Next and the contents no longer fit
+   side by side: the menu keeps its top level only, and the contents and
+   progress step aside (_rail.css folds the case studies away). */
+@media (max-width: 1279px) {
+  .v4-rail-track--right {
+    display: none;
+  }
+}
+
 .v4-case {
   position: relative;
   display: flex;
@@ -130,8 +178,8 @@
   gap: var(--v4-space-5);
 }
 
-/* The reading progress, at the top of the rail with a little more air
-   under it than between the menu's items. */
+/* The reading progress, at the top of the contents (right) with a little
+   more air under it than between the items. */
 .v4-rail__progress {
   align-self: flex-start;
   margin-bottom: var(--v4-space-3);
@@ -190,7 +238,21 @@
   border-radius: 20px;
 }
 
-/* The facts table: 120px labels, values on a dashed rule. */
+/* Viewport-fit: the screen's height less the sticky bar and the section's
+   title and text, so the visual and its heading are seen together. */
+.v4-case__animation iframe.v4-case__animation-fit {
+  aspect-ratio: auto;
+  height: clamp(480px, calc(100svh - 270px), 900px);
+}
+
+/* Plain: a visual set as page content, flush with the text, no stroke or corner. */
+.v4-case__animation--plain {
+  border: 0;
+  border-radius: 0;
+}
+
+/* The facts table: 120px labels, then the values as plain text (no rule:
+   it read as a link, and none of them are). */
 .v4-case__facts {
   display: flex;
   flex-direction: column;
@@ -218,8 +280,7 @@
   color: var(--v4-text);
 }
 
-/* 41 tall, as each row in the comp: 8 + 22 + 8, the 2px under the text and
-   the dashed rule. */
+/* 41 tall, as each row in the comp. */
 .v4-case__fact-value {
   display: inline-flex;
   flex-wrap: wrap;
@@ -227,7 +288,6 @@
   min-height: 41px;
   column-gap: var(--v4-space-1);
   padding-block: var(--v4-space-2);
-  border-bottom: 0.5px dashed var(--v4-text);
 }
 
 .v4-case__chip {
@@ -831,35 +891,6 @@
 
   .v4-case__title-row {
     padding-inline: calc(var(--v4-case-pager) + var(--v4-space-4));
-  }
-}
-
-@media (max-width: 899px) {
-  /* The rail is a bar across the top here: the pill leads its row. */
-  .v4-rail:has(.v4-rail__progress) {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--v4-space-4);
-  }
-
-  .v4-rail__progress {
-    align-self: center;
-    flex: none;
-    margin-bottom: 0;
-  }
-
-  /* A case has a dozen sections: they run on in one line and scroll
-     sideways after the pill, rather than wrapping in a 48px bar. */
-  .v4-rail:has(.v4-rail__progress) .v4-rail__list {
-    flex: 1;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .v4-rail:has(.v4-rail__progress) .v4-rail__item {
-    white-space: nowrap;
   }
 }
 

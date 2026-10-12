@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The real game steps through its moments, a fresh question, a hint, a miss, a hit, and the first player in a room, while a legend lights up the answer-row states each screen uses.">
+<title>Challenquiz — states (B)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 420px; }
+  #slot { position: absolute; left: 44px; top: 22px; }
+  .leg { position: absolute; left: 250px; right: 30px; top: 40px; }
+  .moment { font: 600 20px/1.2 "Figtree"; margin-bottom: 4px; min-height: 24px; } .mdesc { font: 400 13px/18px "Figtree"; color: var(--pg-muted); min-height: 40px; margin-bottom: 14px; }
+  .li { display: flex; gap: 10px; align-items: center; padding: 7px 0; opacity: .3; transition: opacity .35s; font: 500 13px/1 "Figtree"; }
+  .li.on { opacity: 1; } .sw { width: 34px; height: 20px; border-radius: 7px; flex: none; }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas"><div id="slot"></div>
+  <div class="leg"><div class="moment" id="m"></div><div class="mdesc" id="md"></div><div id="li"></div></div></div></div>
+<script>
+  var L = [["d", "Default", "background:#fff;box-shadow:inset 0 0 0 1px #E7D9FF"], ["ok", "Your pick · correct", "background:#D0EDDB"], ["no", "Your pick · wrong", "background:#F9D5DA"],
+           ["right", "Correct answer", "background:#fff;box-shadow:inset 0 0 0 2px #027B24"], ["other", "Other", "background:#fff;box-shadow:inset 0 0 0 1px #E7D9FF;opacity:.7"], ["rm", "Removed by hint", "background:#F8F5FD;outline:1.5px dashed #E7D9FF;outline-offset:-1.5px"]];
+  document.getElementById("li").innerHTML = L.map(function (l) { return '<div class="li" id="l-' + l[0] + '"><span class="sw" style="' + l[2] + '"></span>' + l[1] + "</div>"; }).join("");
+  var M = [["question", "A fresh question", "Four options, numbered. The hint shows its price before you tap.", ["d"]],
+           ["hint", "After a hint", "One wrong option is struck out, never shown as a mistake.", ["d", "rm"]],
+           ["wrong", "A miss", "Your pick, the right answer and the room, kept apart.", ["no", "right", "other", "rm"]],
+           ["correct", "A hit", "Green for yours, and 71% of the room agreed.", ["ok", "other"]],
+           ["first", "First in the room", "Nobody has answered yet, so there's no crowd to show, and the screen says so.", ["ok", "other"]]];
+  document.getElementById("slot").innerHTML = phone("question", 176, { id: "ph" });
+  function show(i) { var m = M[i]; document.getElementById("m").textContent = m[1]; document.getElementById("md").textContent = m[2];
+    L.forEach(function (l) { document.getElementById("l-" + l[0]).classList.toggle("on", m[3].indexOf(l[0]) > -1); }); }
+  show(0);
+  whenSeen(document.getElementById("f"), async function () {
+    var ph = document.getElementById("ph");
+    for (var k = 1; ; k++) { await sleep(2800); var i = k % M.length; setPhone(ph, M[i][0]); show(i); if (END) break; }
+  });
+</script></body></html>

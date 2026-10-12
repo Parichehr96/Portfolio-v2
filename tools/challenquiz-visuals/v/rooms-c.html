@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="One room over time: ten seats, each player playing whenever they arrive. Lena starts the moment she sits down; when the last player finishes, the room settles and the bot sends her result.">
+<title>Challenquiz — rooms (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .row { position: absolute; left: 92px; height: 18px; display: flex; align-items: center; }
+  .nm { position: absolute; left: 24px; font: 500 11px/18px "Figtree"; color: var(--pg-muted); width: 62px; }
+  .nm.me { color: var(--cq-700); font-weight: 600; }
+  .bar { height: 12px; border-radius: 6px; background: var(--cq-300); transform-origin: left; transform: scaleX(0); transition: transform .7s var(--ease); }
+  .bar.me { background: var(--cq-700); }
+  .bar.on { transform: none; }
+  .now { position: absolute; top: 22px; bottom: 74px; width: 2px; background: var(--pg-ink); border-radius: 1px; opacity: 0; transition: opacity .4s; }
+  .now.on { opacity: 1; } .now span { position: absolute; top: -2px; right: 6px; font: 600 11px/1 "Figtree"; white-space: nowrap; }
+  .bubble { position: absolute; left: 92px; bottom: 16px; width: 290px; padding: 10px 12px; border-radius: 14px 14px 14px 4px; background: #fff; box-shadow: 0 8px 20px -10px rgba(21,7,43,.35);
+    font: 400 12px/16px "Figtree"; opacity: 0; transform: translateY(8px); transition: opacity .5s, transform .5s var(--ease); }
+  .bubble b { display: block; font-weight: 600; margin-bottom: 2px; } .bubble.on { opacity: 1; transform: none; }
+  .rankpill { position: absolute; font: 600 10px/1 "Figtree"; color: var(--cq-700); background: var(--cq-200); border-radius: 8px; padding: 3px 6px; opacity: 0; transition: opacity .4s; }
+  .rankpill.on { opacity: 1; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas" id="c"><button class="replay" id="r">↻ Replay</button></div></div>
+<script>
+  /* start minute and length of each player's game (scaled), Lena first among those who sit down early */
+  var P = [["Mike", 0, 120], ["Kia", 40, 125], ["You", 70, 134, 1], ["Sara", 110, 160], ["Noah", 150, 171], ["Jon", 180, 140], ["Ari", 230, 150], ["Omid", 250, 153], ["Lina", 280, 166], ["Tara", 300, 181]];
+  var c = document.getElementById("c"), K = .82;
+  P.forEach(function (p, i) {
+    var y = 26 + i * 25;
+    c.insertAdjacentHTML("beforeend", '<span class="nm' + (p[3] ? " me" : "") + '" style="top:' + y + 'px">' + (p[3] ? "Lena (you)" : p[0]) + '</span><div class="row" style="top:' + y + "px;margin-left:" + p[1] * K + 'px"><div class="bar' + (p[3] ? " me" : "") + '" style="width:' + p[2] * K + 'px"></div></div>');
+  });
+  var me = P[2], endX = 92 + (300 + 181) * K + 4;
+  c.insertAdjacentHTML("beforeend", '<span class="rankpill" id="rp" style="left:' + (92 + (me[1] + me[2]) * K + 6) + "px;top:" + (26 + 2 * 25 + 2) + 'px">#3 so far</span>');
+  c.insertAdjacentHTML("beforeend", '<div class="now" id="now" style="left:' + endX + 'px"><span>Room settles</span></div>');
+  c.insertAdjacentHTML("beforeend", '<div class="bubble" id="bub"><b>Challenquiz bot</b>Your Nature room has settled — you finished #3 of 10 and earned 294 CQ.</div>');
+  async function run() {
+    document.querySelectorAll(".bar,.now,.bubble,.rankpill").forEach(function (e) { e.classList.remove("on"); });
+    await sleep(500);
+    var bars = document.querySelectorAll(".bar");
+    for (var i = 0; i < bars.length; i++) { bars[i].classList.add("on"); if (i === 2) setTimeout(function () { document.getElementById("rp").classList.add("on"); }, 700); await sleep(260); }
+    await sleep(700); document.getElementById("now").classList.add("on");
+    await sleep(500); document.getElementById("bub").classList.add("on");
+  }
+  document.getElementById("r").onclick = run; whenSeen(document.getElementById("f"), run);
+</script></body></html>

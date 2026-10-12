@@ -18,7 +18,7 @@ module.exports = {
   // `target` is the id of the section the item scrolls to and highlights for.
   rail: [
     { label: "Home", target: "top" },
-    { label: "Works", target: "work" },
+    { label: "Works", target: "work", caseLabel: "Work" },
     { label: "Parichehr", target: "about" },
   ],
 
@@ -74,14 +74,37 @@ module.exports = {
           { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
         ],
         panels: [
-          { src: "/Assets/v4/work/connect2wow/panel-1.jpg", alt: "Connect2WOW HR module: a worker profile with the Report to me view open" },
-          { src: "/Assets/v4/work/connect2wow/panel-2.png", alt: "Connect2WOW request cards: an offboarding request with Decline and Approve, and an HR collaboration notification" },
-          { src: "/Assets/v4/work/connect2wow/panel-3.jpg", alt: "Connect2WOW HR module: the worker profile screen, second view" },
+          // Thumbnail motion, played only on the thumbnail at the front
+          // (_work.css, scripts/v4-strip.js). "video": a loop recorded from the
+          // prototype by tools/connect2wow-thumbs (<video>.webm / .mp4, its
+          // first frame <video>.jpg). "layers": transparent layers on bg that
+          // rise in one by one.
+          {
+            motion: "video",
+            video: "/Assets/v4/work/connect2wow/record",
+            alt: "Connect2WOW: the main navigation moving through Human resource, HSE, Courses and Engineering, each module's menu and page changing with it",
+          },
+          {
+            motion: "layers",
+            bg: "#F3F6F8",
+            layers: [
+              "/Assets/v4/work/connect2wow/panel-2-requests.png",
+              "/Assets/v4/work/connect2wow/panel-2-hiring.png",
+              "/Assets/v4/work/connect2wow/panel-2-partner.png",
+            ],
+            alt: "Connect2WOW Home: offboarding and hiring requests with Decline and Approve, and a partner's connection request",
+          },
+          {
+            motion: "video",
+            video: "/Assets/v4/work/connect2wow/top",
+            alt: "Connect2WOW top bar on the worker record: the profile menu opens and scrolls to its end, then the notifications",
+          },
         ],
       },
       {
         id: "onton",
         name: "Onton",
+        navLabel: "ONTON",
         href: "/work/onton/",
         verified: true,
         years: "2024-2025",
@@ -99,19 +122,28 @@ module.exports = {
       {
         id: "challenquiz",
         name: "Challenquiz",
-        soon: true,
+        href: "/work/challenquiz/",
         verified: true,
         years: "2024-2025",
         desc: [
           { style: "lead", text: "Made a multiplayer game feel multiplayer" },
           { text: ". Redesigned the in-game flow. In usability testing, time-to-start halved and completion went from 60% to 100%" },
         ],
-        panels: [{}, {}, {}],
+        // Real prototype moments (tools/challenquiz-thumbs: stage.html + render.sh).
+        panels: [
+          { src: "/Assets/v4/work/challenquiz/panel-1.png", alt: "Challenquiz home: the featured Nature room with 2 spots left and 3 friends played" },
+          { src: "/Assets/v4/work/challenquiz/panel-2.png", alt: "A Challenquiz question answered correctly, with how the rest of the room answered and a fact about the Pacific" },
+          { src: "/Assets/v4/work/challenquiz/panel-3.png", alt: "Lena's result: 8 of 10, 294 CQ earned, +94 on her entry" },
+        ],
       },
       {
         id: "wow-design-system",
         name: "WOW design system",
         href: "/work/wow-design-system/",
+        navLabel: "Connect2WOW (Design system)",
+        // Draft: the page exists at its URL, but stays out of the homepage
+        // and the menu until Pari says it's ready.
+        soon: true,
         verified: true,
         years: "2021-2022",
         desc: [
@@ -124,6 +156,12 @@ module.exports = {
   },
 
   // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
+  // ---- Sky — 1497:23078: the two lines under the visitor's sky ------------
+  sky: {
+    lead: "In case you’ve been so busy to look up,",
+    line: "This is your sky, as it looks right now.",
+  },
+
   about: {
     label: "Parichehr (about me)",
     // 1174:95301 and 1215:17958: the photo wheel under the label, in wheel
@@ -205,17 +243,20 @@ module.exports = {
         sheet: { x: 39.2, y: 12, w: 304, h: 147 },
         // Cards: top-left corner, closed (`from`) and open (`to`). The second
         // waits hidden behind the first until the folder opens, and stays
-        // under it once open (the first card overlaps its top, as in the comp).
+        // under it once open (the first card overlaps its top by 6, as in the
+        // comp). Only the cards' places relative to each other count: open,
+        // scripts/v4-folder-physics.js lifts the pair to float just above the
+        // folder, however tall their text makes them.
         cards: [
           {
             title: "Interaction and UX Design",
             text: "I design the flows, states, and micro-decisions that make complex products feel obvious. Starting from user research and real behavioral data, I turn ambiguous problems into structured, testable interfaces, and stay close to engineering so what ships matches what was designed.",
-            from: [27.4, 17], to: [18.7, -18],
+            from: [27.4, 17], to: [18.7, -73],
           },
           {
             title: "Strategic product redesign",
             text: "I connect design decisions to product and business goals. I help teams decide what to build and in what order; mapping systems, aligning stakeholders early, and building design systems that keep quality and speed high as the product scales. That means auditing the existing system, cutting what doesn't earn its place, and restructuring information so the next feature makes things simpler, not heavier.",
-            from: [39.2, 12], to: [40.7, 87], hidden: true,
+            from: [39.2, 12], to: [40.7, 50], hidden: true,
           },
         ],
       },

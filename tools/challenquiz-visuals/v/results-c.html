@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Four counters that tick from the old value to the new: 535 → 1,451 players finishing a game, ~127s → ~62s to start, 60% → 100% completion, 1.6 → 4.0 satisfaction.">
+<title>Challenquiz — results (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 330px; padding: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .m { padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .m .v { font: 600 34px/1 "Figtree"; letter-spacing: -.02em; color: var(--cq-700); font-variant-numeric: tabular-nums; }
+  .m .f { font: 500 12px/1 "Figtree"; color: var(--pg-faint); } .m .l { font: 400 13px/18px "Figtree"; color: var(--pg-muted); }
+  .m .src { margin-top: auto; } 
+</style></head><body>
+<div class="frame" id="f"><div class="canvas" id="g"></div></div>
+<script>
+  var M = [[535, 1451, "", "players finished at least one game", "Rollout", 0], [127, 62, "s", "to start a game", "Study · 5 + 5 players", 0],
+           [60, 100, "%", "finished the game cleanly", "Study · 5 + 5 players", 0], [1.6, 4.0, "/5", "post-game satisfaction", "Study · 5 + 5 players", 1]];
+  var fmt = function (v, d) { return d ? v.toFixed(1) : Math.round(v).toLocaleString("en-US"); };
+  document.getElementById("g").innerHTML = M.map(function (m, i) {
+    return '<div class="card m"><span class="f">From ' + (m[2] === "s" ? "~" : "") + fmt(m[0], m[5]) + m[2] + '</span><span class="v" id="v' + i + '">' + (m[2] === "s" ? "~" : "") + fmt(m[0], m[5]) + m[2] + '</span><span class="l">' + m[3] + '</span><span class="src tag tag--grey" style="align-self:flex-start">' + m[4] + "</span></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"), function () {
+    var t0 = performance.now(), dur = END ? 1 : 1400;
+    (function step(now) { var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      M.forEach(function (m, i) { document.getElementById("v" + i).textContent = (m[2] === "s" ? "~" : "") + fmt(m[0] + (m[1] - m[0]) * e, m[5]) + m[2]; });
+      if (k < 1) requestAnimationFrame(step); })(t0);
+  });
+</script></body></html>

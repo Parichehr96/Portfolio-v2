@@ -1,0 +1,49 @@
+{#
+  CASE STUDY MENUS — layouts/v4-case.njk.
+
+  LEFT, the site menu, always open: Home, Work with every case study under
+  it (the one being read lit), Parichehr. Items are links back to the
+  homepage's sections and to the other case studies; a case study that is
+  not ready yet (home.js `soon`, or no page) is listed but not a link.
+  Below 1280 there is no room for the list, so only the top level shows.
+
+  RIGHT, where the homepage has the clock: the reading progress (the "23%"
+  pill, scripts/v4-progress.js) and this case's sections, the one being read
+  lit by the scroll-spy (scripts/v4-rail.js). From 1280 up only.
+
+  Expects `c` (the case) and `caseKey`.
+#}
+<div class="v4-rail-track">
+  <nav class="v4-rail" aria-label="Site">
+    <ul class="v4-rail__list">
+      {%- for item in home.rail %}
+      {%- set isWork = item.target == "work" %}
+      <li>
+        <a class="v4-rail__item{% if isWork %} is-active{% endif %}" href="/#{{ item.target }}">
+          <span class="v4-rail__mark" aria-hidden="true"></span>
+          {{ item.caseLabel or item.label }}
+        </a>
+        {%- if isWork %}
+        {%- include "v4/rail-work.njk" %}
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </nav>
+</div>
+
+<div class="v4-rail-track v4-rail-track--right">
+  <nav class="v4-rail" aria-label="On this page">
+    <span class="v4-case__progress v4-rail__progress" data-read-progress aria-hidden="true">0%</span>
+    <ul class="v4-rail__list">
+      {%- for section in c.sections %}
+      <li>
+        <a class="v4-rail__item{% if loop.first %} is-active{% endif %}" href="#{{ section.title | slugify }}" data-rail-target="{{ section.title | slugify }}"{% if loop.first %} aria-current="true"{% endif %}>
+          <span class="v4-rail__mark" aria-hidden="true"></span>
+          {{ section.nav or section.title }}
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </nav>
+</div>

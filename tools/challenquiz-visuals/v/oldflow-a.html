@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The six steps of the old game in a row, from the real app. The four that cost players are marked; a highlight walks through them in order.">
+<title>Challenquiz — old flow (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 360px; padding: 26px 24px 0; }
+  .row { display: flex; gap: 12px; }
+  .st { width: 82px; opacity: .45; transition: opacity .4s; }
+  .st.on { opacity: 1; }
+  .n { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font: 600 12px/1 "Figtree"; color: var(--pg-ink); }
+  .n i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); font-style: normal; font-size: 11px; }
+  .st.on .n i { background: var(--pg-ink); color: #fff; box-shadow: none; }
+  .fr { margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: var(--pg-neg); }
+  .st .phone { border-radius: 14px; padding: 3px; } .st .phone .scr { border-radius: 11px; }
+  .t { margin-top: 10px; font: 600 12px/16px "Figtree"; } .d { font: 400 11px/15px "Figtree"; color: var(--pg-muted); }
+  .key { position: absolute; left: 24px; bottom: 16px; display: flex; gap: 6px; align-items: center; font: 400 11px/1 "Figtree"; color: var(--pg-muted); }
+  .key b { width: 7px; height: 7px; border-radius: 50%; background: var(--pg-neg); }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas"><div class="row" id="row"></div>
+  <div class="key"><b></b>Where players dropped out or lost track</div></div></div>
+<script>
+  document.getElementById("row").innerHTML = OLD.map(function (s, i) {
+    return '<div class="st" id="s' + i + '"><div class="n"><i>' + (i + 1) + "</i>" + (s.f ? '<span class="fr" title="Friction"></span>' : "") + "</div>" + old(i + 1, 76) +
+      '<div class="t">' + s.t + '</div><div class="d">' + s.d + "</div></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"), async function () {
+    if (END) { document.querySelectorAll(".st").forEach(function (e) { e.classList.add("on"); }); return; }
+    for (;;) { for (var i = 0; i < 6; i++) { document.querySelectorAll(".st").forEach(function (e, k) { e.classList.toggle("on", k === i); }); await sleep(1700); }
+      document.querySelectorAll(".st").forEach(function (e) { e.classList.add("on"); }); await sleep(2600); }
+  });
+</script></body></html>

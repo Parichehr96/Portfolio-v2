@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Nine empty seats ring Lena's phone. They fill in one by one with the real players of her room: the other nine were always there, now she can see them.">
+<title>Challenquiz — insight (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 410px; }
+  #slot { position: absolute; left: 244px; top: 30px; }
+  .seat { position: absolute; width: 46px; height: 46px; border-radius: 50%; border: 1.5px dashed var(--cq-300); display: grid; place-items: center;
+    transition: border-color .4s, background .4s, transform .5s var(--ease); background: transparent; }
+  .seat img { width: 40px; height: 40px; border-radius: 50%; opacity: 0; transform: scale(.6); transition: opacity .4s, transform .5s var(--ease); }
+  .seat span { position: absolute; top: 50px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); opacity: 0; transition: opacity .4s; white-space: nowrap; }
+  .seat.on { border: 1.5px solid #fff; background: #fff; box-shadow: 0 6px 14px -8px rgba(21,7,43,.4); }
+  .seat.on img, .seat.on span { opacity: 1; transform: none; }
+  .msg { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font: 500 13px/1 "Figtree"; color: var(--pg-muted); }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas" id="c"><button class="replay" id="r">↻ Replay</button><div id="slot"></div>
+  <div class="msg" id="msg">Nine other seats, invisible in the old game</div></div></div>
+<script>
+  document.getElementById("slot").innerHTML = phone("correct", 112);
+  var P = [["Mike", "av1"], ["Kia", "av2"], ["Sara", "av3"], ["Noah", "av4"], ["Jon", "av2"], ["Ari", "av1"], ["Omid", "av3"], ["Lina", "av4"], ["Tara", "av1"]];
+  var c = document.getElementById("c");
+  var XY = [[150, 36], [96, 112], [96, 190], [150, 266], [404, 36], [458, 112], [458, 190], [404, 266], [277, 304]];
+  P.forEach(function (p, i) {
+    var d = document.createElement("div"); d.className = "seat"; d.style.left = XY[i][0] + "px"; d.style.top = XY[i][1] + "px";
+    d.innerHTML = '<img src="img/' + p[1] + '.png" alt=""><span>' + p[0] + "</span>"; c.appendChild(d);
+  });
+  async function run() {
+    var s = document.querySelectorAll(".seat"); s.forEach(function (e) { e.classList.remove("on"); });
+    document.getElementById("msg").textContent = "Nine other seats, invisible in the old game";
+    await sleep(900);
+    for (var i = 0; i < s.length; i++) { s[i].classList.add("on"); await sleep(220); }
+    document.getElementById("msg").textContent = "Always there. Now Lena can see them.";
+  }
+  document.getElementById("r").onclick = run; whenSeen(document.getElementById("f"), run);
+</script></body></html>

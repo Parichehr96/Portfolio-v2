@@ -1,0 +1,30 @@
+{#
+  WORK'S CASE STUDIES, under "Work" in the left menu: v4/rail.njk on the
+  homepage, v4/case-nav.njk on a case study. Each is a link, or listed but
+  not a link while it is not ready (home.js `soon`, or no page); `caseKey`
+  lights the one being read, so on the homepage none is.
+
+  It folds (.v4-rail__fold, _rail.css): open while Work is the active item,
+  closed otherwise, so on the homepage it opens as the reader reaches the
+  work and closes again past it. A case study's Work is always active.
+#}
+<div class="v4-rail__fold">
+  <ul class="v4-rail__sub">
+    {%- for p in home.work.projects %}
+    {%- set here = p.id == caseKey %}
+    <li>
+      {%- if p.href and not p.soon %}
+      <a class="v4-rail__item{% if here %} is-active{% endif %}" href="{{ p.href }}"{% if here %} aria-current="page"{% endif %}>
+        <span class="v4-rail__mark" aria-hidden="true"></span>
+        {{ p.navLabel or p.name }}
+      </a>
+      {%- else %}
+      <span class="v4-rail__item v4-rail__item--soon">
+        <span class="v4-rail__mark" aria-hidden="true"></span>
+        {{ p.navLabel or p.name }}
+      </span>
+      {%- endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</div>

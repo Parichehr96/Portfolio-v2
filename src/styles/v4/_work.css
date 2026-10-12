@@ -34,7 +34,7 @@
 }
 
 .v4-work > .v4-label {
-  margin-bottom: calc(var(--v4-space-6) - var(--v4-row-gap));
+  margin-bottom: calc(var(--v4-heading-gap) - var(--v4-row-gap));
 }
 
 /* ---- Row ----------------------------------------------------------------- */
@@ -117,17 +117,18 @@ a.v4-project__link:hover {
 }
 
 /* ---- Strip --------------------------------------------------------------- */
-/* From the reading column's left edge (x=456 at 1512, the comp's 1126:29050)
-   off the right side of the page. The left panel stays clear for the rail and
-   the docked clock; nothing slides under anything.
+/* Inside the reading column (1490:17256): the panels, 0.6 of their old size,
+   are cut off at the column's right edge, so the page stays centred and
+   both side panels stay clear.
 
-   A REAL SCROLL CONTAINER that visitors scroll themselves: swipe on a
-   trackpad or phone, drag with a mouse (scripts/v4-strip.js). It does not
-   move on its own. The scrollbar is hidden; the panel cut off at the right
-   edge says "there is more" better than a bar would. */
+   AN ENDLESS CAROUSEL (scripts/v4-strip.js, .is-carousel): one small
+   swipe, sideways scroll, drag or arrow key moves it one thumbnail, either
+   way, for ever. Without the script it is a plain horizontal scroller. The
+   panel cut off at the right edge says "there is more". */
 .v4-project__strip {
   position: relative;
-  margin-left: var(--v4-column-inset);
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  margin-inline: var(--v4-column-inset) auto;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -143,9 +144,86 @@ a.v4-project__link:hover {
   user-select: none;
 }
 
+.v4-project__strip.is-carousel {
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.v4-project__strip:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 4px;
+  border-radius: var(--v4-radius-panel);
+}
+
 .v4-project__track {
   display: flex;
   width: max-content;
+}
+
+.v4-project__track.is-sliding {
+  transition: transform var(--v4-strip-slide) var(--v4-strip-ease);
+}
+
+/* The neighbours either side of the one at the front, dimmed (1490:17256). */
+.is-carousel .v4-project__panel {
+  transition: opacity var(--v4-strip-slide) var(--v4-strip-ease);
+}
+
+.is-carousel .v4-project__panel:not(.is-front) {
+  opacity: var(--v4-strip-dim);
+}
+
+.v4-project__track.is-jumping .v4-project__panel {
+  transition: none;
+}
+
+/* The arrows (1534:28726): frosted white rounds with a chevron, over each
+   side, centred on the thumbnails' height. */
+.v4-project__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--v4-strip-arrow);
+  height: var(--v4-strip-arrow);
+  margin-top: calc(var(--v4-strip-arrow) / -2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--v4-radius-round);
+  background: var(--v4-strip-arrow-bg);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--v4-text-muted);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.v4-project__arrow[hidden] {
+  display: none;
+}
+
+.v4-project__arrow--prev {
+  left: var(--v4-strip-arrow-inset);
+}
+
+.v4-project__arrow--prev svg {
+  transform: rotate(180deg);
+}
+
+.v4-project__arrow--next {
+  right: var(--v4-strip-arrow-inset);
+}
+
+.v4-project__arrow:hover {
+  background: var(--v4-surface);
+  color: var(--v4-text);
+  transform: scale(1.06);
+}
+
+.v4-project__arrow:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 2px;
 }
 
 .v4-project__panel img {
@@ -168,6 +246,59 @@ a.v4-project__link:hover {
   object-fit: cover;
 }
 
+/* ONLY THE THUMBNAIL AT THE FRONT PLAYS (scripts/v4-strip.js); the others
+   wait on their first still.
+
+   Video: a loop recorded from the prototype, on its first frame (the
+   poster) until it plays. */
+.v4-project__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Layers: on the panel's own background, each a full-size transparent
+   image, rising in one after another when the panel first comes to the
+   front. Hidden only once the carousel runs, so they always show without
+   it; .is-held keeps them up after, without playing again. */
+.v4-project__layers {
+  position: absolute;
+  inset: 0;
+}
+
+.v4-project__panel--layers {
+  position: relative;
+}
+
+.v4-project__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.is-carousel .v4-project__panel--layers:not(.is-play, .is-held) .v4-project__layer {
+  opacity: 0;
+}
+
+.v4-project__panel--layers.is-play .v4-project__layer {
+  animation: v4-layer-in var(--v4-layer-time) var(--v4-reveal-ease) both;
+  animation-delay: calc(var(--v4-layer-lead) + var(--i, 0) * var(--v4-layer-step));
+}
+
+@keyframes v4-layer-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--v4-reveal-rise));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-project__track.is-sliding,
+  .is-carousel .v4-project__panel { transition: none; }
+  .v4-project__panel--layers.is-play .v4-project__layer { animation: none; }
+  .is-carousel .v4-project__panel--layers .v4-project__layer { opacity: 1 !important; }
+}
+
 /* The comp's unfinished panels: a white card inset at 64 / 88 in 812 × 520. */
 .v4-project__panel--empty {
   position: relative;
@@ -182,11 +313,18 @@ a.v4-project__link:hover {
 
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
-  .v4-project__strip {
-    margin-left: var(--v4-space-4);
-  }
-
   .v4-project__panel {
-    width: min(var(--v4-panel-width), 86vw);
+    width: min(var(--v4-panel-width), 80vw);
   }
+}
+
+/* A linked project is clickable as a whole (scripts/v4-strip.js): the
+   pointer says so, and its name's rule turns solid while hovered. The strip
+   keeps its grab cursor, since it also drags. */
+.v4-project--linked .v4-project__head {
+  cursor: pointer;
+}
+
+.v4-project--linked:hover .v4-project__link {
+  border-bottom-style: solid;
 }

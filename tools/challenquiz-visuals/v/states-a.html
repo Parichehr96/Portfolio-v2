@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The answer row's six states as a spec sheet, in the product's own styling, each labelled with what it tells the player.">
+<title>Challenquiz — states (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 470px; padding: 24px 28px 0; }
+  .grid { display: grid; grid-template-columns: 290px 1fr; gap: 9px 22px; align-items: center; }
+  .lbl b { display: block; font: 600 13px/1.2 "Figtree"; } .lbl span { font: 400 11.5px/15px "Figtree"; color: var(--pg-muted); }
+  .grid > * { opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .5s var(--ease); }
+  .is-in .grid > * { opacity: 1; transform: none; }
+  .foot { margin-top: 14px; font: 400 11.5px/1 "Figtree"; color: var(--pg-faint); }
+</style></head><body>
+<div class="frame frame--white" id="f"><div class="canvas"><div class="grid" id="g"></div>
+  <div class="foot">Every state is 56px tall. The crowd bar sits on the row's edge, so nothing moves when results arrive.</div></div></div>
+<script>
+  var S = [["Elbrus", "", null, "Default", "Before you answer. Numbered, nothing judged yet."],
+           ["Pacific", "ok", 71, "Your pick · correct", "Green, with “Your answer”, and how many of the room agreed."],
+           ["Mont Blanc", "no", 25, "Your pick · wrong", "Red is only ever used for your own mistake."],
+           ["Elbrus", "right", 50, "Correct answer", "Shown when you missed it, outlined, never filled."],
+           ["Ushba", "other", 13, "Other", "A wrong option you didn't pick stays neutral."],
+           ["Shkhara", "removed", null, "Removed by hint", "Struck through and dashed, so it never reads as wrong."]];
+  document.getElementById("g").innerHTML = S.map(function (s, i) {
+    var d = ' style="transition-delay:' + (i * .09) + 's"';
+    return row(s[0], s[1], { pct: s[2], n: 1 }).replace('<div class="ar', '<div' + d + ' class="ar') + '<div class="lbl"' + d + "><b>" + s[3] + "</b><span>" + s[4] + "</span></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body></html>

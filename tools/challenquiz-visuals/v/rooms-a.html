@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Two timelines for the same player. In a live room Lena waits for ten seats before she can play; in a room that feels live she plays at once, sees her rank on finishing, and the bot tells her when the room settles.">
+<title>Challenquiz — rooms (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 236px; padding: 26px 28px 0; }
+  .lane { margin-bottom: 30px; }
+  .lane .k { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .lane .k b { font: 600 14px/1 "Figtree"; } .lane .k span { font: 400 12px/1 "Figtree"; color: var(--pg-muted); }
+  .track { position: relative; height: 40px; }
+  .seg { position: absolute; top: 0; height: 40px; border-radius: 10px; display: flex; align-items: center; padding: 0 12px; font: 500 12px/1.2 "Figtree"; white-space: nowrap; overflow: hidden;
+    transform-origin: left; transform: scaleX(0); transition: transform .9s var(--ease); }
+  .is-in .seg { transform: none; }
+  .wait { background: repeating-linear-gradient(135deg, #E8ECF0 0 6px, #F3F6F8 6px 12px); color: var(--pg-muted); box-shadow: inset 0 0 0 1px var(--pg-border); }
+  .play { background: var(--cq-700); color: #fff; } .rank { background: var(--cq-200); color: var(--cq-700); }
+  .settle { background: #fff; color: var(--pg-ink); box-shadow: inset 0 0 0 1px var(--pg-border); }
+  .others { background: transparent; color: var(--pg-faint); box-shadow: inset 0 0 0 1px dashed; border: 1px dashed var(--pg-border); }
+  .axis { position: relative; height: 18px; border-top: 1px solid var(--pg-border); margin-top: -4px; font: 400 11px/18px "Figtree"; color: var(--pg-faint); }
+  .tag { position: absolute; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas">
+  <div class="lane"><div class="k"><b>A live room</b><span>everyone answers at once</span></div><div class="track">
+    <div class="seg wait" style="left:0;width:290px;transition-delay:.1s">Waiting for 10 seats to fill… (rarely all at once)</div>
+    <div class="seg play" style="left:296px;width:140px;transition-delay:.9s">Play 10 questions</div>
+    <div class="seg rank" style="left:442px;width:102px;transition-delay:1.5s">Result</div></div></div>
+  <div class="lane"><div class="k"><b>A room that feels live</b><span>the one we chose</span></div><div class="track">
+    <div class="seg play" style="left:0;width:140px;transition-delay:.4s">Play 10 questions</div>
+    <div class="seg rank" style="left:146px;width:132px;transition-delay:1s">Your rank, right away</div>
+    <div class="seg others" style="left:284px;width:152px;transition-delay:1.4s">…the rest of the room plays</div>
+    <div class="seg settle" style="left:442px;width:102px;transition-delay:1.9s">Bot: settled</div></div></div>
+  <div class="axis">Time from tapping “Play the Game” →</div>
+</div></div>
+<script>whenSeen(document.getElementById("f"));</script></body></html>

@@ -7,8 +7,10 @@ layout: layouts/v4.njk
   The page sets `caseKey` in front matter; everything it shows comes from
   _data/cases/<caseKey>.js. This file decides only structure:
 
-    rail (left, sticky)        the case's sections, the one being read lit;
-                               the page's own table of contents
+    menu (left, sticky)        the site menu, always open, Work listing
+                               every case study (this one lit)
+    contents (right, sticky)   reading progress and this case's sections,
+                               the one being read lit
     bar (sticky, see-through)  Back and Next, pinned either side of the
                                column; the name below them scrolls away
                                with the page, and the reading progress
@@ -23,15 +25,20 @@ layout: layouts/v4.njk
   what lets Back and Next float there with no ground behind them.
 #}
 {%- set c = cases[caseKey] -%}
-{#- The left menu lists this case's sections (see v4/rail.njk). -#}
-{%- set railItems = [] -%}
-{%- set railProgress = true -%}
-{%- for section in c.sections -%}
-  {%- set railItems = (railItems.push({ label: section.nav or section.title, target: section.title | slugify }), railItems) -%}
+{#- BACK goes to the case study before this one in the homepage's order
+    (home.work.projects; only ones that are live, with a page and not
+    `soon`), and from the first, to the homepage. -#}
+{%- set backHref = "/" -%}
+{%- set prevHref = "/" -%}
+{%- for p in home.work.projects -%}
+  {%- if p.id == caseKey -%}{%- set backHref = prevHref -%}{%- endif -%}
+  {%- if p.href and not p.soon -%}{%- set prevHref = p.href -%}{%- endif -%}
 {%- endfor -%}
 
 <div class="v4-shell v4-shell--case">
-  {% include "v4/rail.njk" %}
+  {#- The site menu on the left, this case's sections and progress on the
+      right (v4/case-nav.njk). -#}
+  {% include "v4/case-nav.njk" %}
 
   <article class="v4-case" data-read-article>
     {#- THE BAR: Back and Next, either side of the name's row. A see-through
@@ -41,7 +48,7 @@ layout: layouts/v4.njk
         stays put and scrolls away with the name. -#}
     <div class="v4-case__bar">
       <div class="v4-case__bar-inner">
-        <a class="v4-case__back" href="{{ c.back.href }}">
+        <a class="v4-case__back" href="{{ backHref }}">
           <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
           {{ c.back.label }}
         </a>

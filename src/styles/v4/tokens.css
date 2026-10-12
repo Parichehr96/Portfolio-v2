@@ -130,6 +130,11 @@
   /* The rail's column (911:530 is 120 wide) plus a gap; nothing else may
      enter it, so the sticky rail never covers content. 184 at 1512. */
   --v4-rail-width: 120px;
+  /* Case studies: the open site menu is wider; the contents on the right
+     keep the rail's 120 (_case.css). */
+  --v4-rail-width-case: 270px;
+  --v4-fold-time: .45s;        /* Work's case studies folding open and shut */
+  --v4-rail-width-case-right: 120px;
   --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6));
   /* Below 900 the rail is a sticky bar across the top (_rail.css). */
   --v4-bar-h: 48px;
@@ -155,40 +160,48 @@
   /* How long the toast stays up; its timer band fills over exactly this. */
   --v4-toast-duration: 10s;
 
-  /* Work — 1155:10689, 911:730. The section starts 98 below the intro
-     (346 − 248), rows are 100 apart, and each strip panel is the comp's
-     812 × 520 with 16 between them. */
-  --v4-section-gap: 98px;
+  /* Work — 1490:17237. Rows are 100 apart; each strip panel is 0.6 of the
+     old 812 × 520, with 9.6 between them. */
+  /* ONE SPACING SYSTEM for the page:
+     a section heading to its content       24  (--v4-heading-gap)
+     blocks inside a section                40  (--v4-inner-gap)
+     project rows, one to the next         100  (--v4-row-gap)
+     section to section, intro to footer   120  (--v4-section-gap) */
+  --v4-heading-gap: var(--v4-space-6);
+  --v4-inner-gap: 40px;
+  --v4-section-gap: 120px;
   --v4-row-gap: 100px;
-  --v4-panel-width: 812px;
+  --v4-panel-width: 487.2px;   /* 0.6 of the comp's 812 x 520 (1490:17256) */
   --v4-panel-ratio: 812 / 520;
-  --v4-panel-gap: var(--v4-space-4);
-  --v4-radius-panel: 20px;
+  --v4-panel-gap: 9.6px;
+  --v4-radius-panel: 12px;
+  /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
+  --v4-strip-slide: .55s;                       /* one thumbnail along */
+  --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
+  --v4-strip-dim: .4;                           /* the neighbours either side */
+  --v4-strip-arrow: 34px;
+  --v4-strip-arrow-inset: 4px;                  /* from the strip's edges, over the neighbours */
+  --v4-strip-arrow-bg: rgb(255 255 255 / .72);  /* frosted, over the dimmed neighbour */
+  --v4-layer-time: .6s;                         /* each layer rising in */
+  --v4-layer-lead: .15s;
+  --v4-layer-step: .16s;
 
-  /* About, process, experience, footer — 911:727 … 911:654. Gaps are the
-     comp's own: 201 from the last project row to About, 100 from the folders'
-     names to Process, 120 between the later sections, 107 above the footer. The About photo wheel starts 57
-     under its label and the text 400 under that. */
-  --v4-about-gap: 201px;
-  --v4-block-gap: 120px;
-  --v4-footer-gap: 107px;
-  --v4-about-photos-gap: 57px;   /* label to the middle card's top */
-  --v4-about-photos-band: 400px; /* the middle card's top to the text */
+  /* About, process, experience, footer: spaced by the system above. The
+     About photo wheel starts 24 under its label and the text 400 under the
+     middle card's top (the wheel's tilted cards need that room). */
+  --v4-about-photos-band: 390px; /* the middle card's top to the text (1490:19004) */
   --v4-photo-w: 224px;
   --v4-photo-h: 270px;
   --v4-photo-radius: 32px;
   --v4-text-photo: 13px;
-  --v4-photo-veil-top: -60px;    /* the veils reach above and below the comp's */
-  --v4-photo-veil-h: 720px;      /* 434, so no tilted card or caption pokes out */
-  --v4-about-cards-gap: 54px;
-  --v4-process-gap: 100px;
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
-  --v4-footer-height: 423px;
-  --v4-footer-sky: 407px;
-  --v4-footer-bottom: 102px;
-  --v4-footer-sky-top: 32px;
+  --v4-footer-height: 534px;
+  --v4-footer-page: 1512px;      /* the comp's page, which places the windmill */
+  --v4-footer-mill-w: 519px;     /* 1531:25886, 519 x 580 */
+  --v4-mill-gust-time: 2.2s;     /* one gust down the wind line */
   --v4-footer-art: 1600px;
+  --v4-footer-art-h: 397px;
   --v4-footer-cta-gap: 64px;
   --v4-radius-button: 40px;
   --v4-radius-logo: 4px;
@@ -199,8 +212,21 @@
   --v4-reveal-stagger: 0.085s;
   /* The first screen, a little slower: 9 steps apart + one block = 2s. */
   --v4-intro-time: 0.92s;
-  --v4-intro-stagger: 0.12s;
+  --v4-intro-stagger: 0.098s;  /* 11 steps + one block = 2s */
   --v4-reveal-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* The sky under the intro (1497:23079, _sky.css): a section like the
+     others, 120 below the intro; 595 x 242, two lines 339 wide under it. */
+  --v4-sky-width: 595px;
+  --v4-sky-ratio: 595 / 242;
+  --v4-sky-note: 339px;
+  --v4-sky-ink: #000000;
+  --v4-sky-line: rgb(255 255 255 / .85);
+  --v4-sky-glass: rgb(12 14 26 / .32);           /* frosted pills on the sky */
+  --v4-sky-glass-line: rgb(255 255 255 / .16);
+  --v4-sky-on-glass: #FFFFFF;
+  --v4-sky-on-glass-soft: rgb(255 255 255 / .72);
+  --v4-sky-on-glass-faint: rgb(255 255 255 / .38);
 
   /* Case study layout — 918:34271. Sections are 80 apart; the header, hook
      and first section 40 apart. Wide blocks keep the comp's widths and give

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The real result screen in two beats: while the room plays it shows what is already Lena's; when the room settles the amount counts up to 294 and confetti bursts over the coins.">
+<title>Challenquiz — result (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 430px; }
+  #slot { position: absolute; left: 60px; top: 22px; }
+  .copy { position: absolute; left: 276px; right: 36px; top: 60px; }
+  .b { padding: 14px 0; border-top: 1px solid var(--pg-border); opacity: .3; transition: opacity .4s; } .b.on { opacity: 1; }
+  .b .k { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); margin-bottom: 6px; }
+  .b .t { font: 600 17px/1.25 "Figtree"; } .b .d { font: 400 13px/18px "Figtree"; color: var(--pg-muted); margin-top: 4px; }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas"><button class="replay" id="r">↻ Replay</button><div id="slot"></div>
+  <div class="copy"><div class="b" id="b1"><div class="k">The moment she finishes</div><div class="t">282 CQ, already hers</div><div class="d">Answers and hints are counted. Only the placement bonus waits for the room.</div></div>
+    <div class="b" id="b2"><div class="k">When the room settles</div><div class="t">294 CQ, +94 on her entry</div><div class="d">The amount counts up, the confetti lands on the coins, and the breakdown shows why it isn't 396.</div></div></div></div></div>
+<script>
+  document.getElementById("slot").innerHTML = phone("provisional", 180, { id: "ph" });
+  var ph = document.getElementById("ph");
+  async function run() { document.getElementById("b1").classList.add("on"); document.getElementById("b2").classList.remove("on");
+    setPhone(ph, "provisional"); await sleep(3400); setPhone(ph, "final", true); document.getElementById("b2").classList.add("on"); }
+  document.getElementById("r").onclick = run; whenSeen(document.getElementById("f"), run);
+</script></body></html>

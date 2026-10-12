@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Lena's four verbs as four real moments from the redesigned game, connected left to right: the stakes sheet, the room's answers, the fact after a miss, and the result.">
+<title>Challenquiz — player (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 410px; }
+  .row { position: absolute; left: 30px; right: 30px; top: 28px; display: flex; justify-content: space-between; }
+  .col { width: 118px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .col b { font: 600 18px/1 "Figtree"; color: var(--cq-700); } .col span { font: 400 11.5px/1.3 "Figtree"; color: var(--pg-muted); text-align: center; }
+  .line { position: absolute; left: 90px; right: 90px; top: 38px; height: 2px; background: var(--cq-200); transform-origin: left; transform: scaleX(0); transition: transform 1.4s var(--ease); }
+  .is-in .line { transform: none; }
+  .who { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; }
+</style></head><body>
+<div class="frame frame--lilac" id="f"><div class="canvas"><div class="line"></div><div class="row" id="row"></div>
+  <div class="who cap">What Lena wants from a game, in her order</div></div></div>
+<script>
+  var M = ["ready", "correct", "wrong", "final"];
+  document.getElementById("row").innerHTML = VERBS.map(function (v, i) {
+    return '<div class="col rise" style="transition-delay:' + (.2 + i * .25) + 's"><b>' + v.t + "</b><span>" + v.d + "</span>" + phone(M[i], 112) + "</div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script></body></html>

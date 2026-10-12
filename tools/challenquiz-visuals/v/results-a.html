@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The rollout number up front: players who finished at least one game grew from 535 to 1,451. Below it, the three usability-study changes, five players per version.">
+<title>Challenquiz — results (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 310px; padding: 26px 28px 0; }
+  .k { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .big { display: grid; grid-template-columns: 92px 1fr 64px; gap: 10px; align-items: center; margin-top: 10px; }
+  .big span { font: 500 12px/1 "Figtree"; color: var(--pg-muted); } .big b { font: 600 15px/1 "Figtree"; text-align: right; }
+  .track { height: 22px; } .bar { height: 22px; border-radius: 0 4px 4px 0; background: var(--cq-300); width: 0; transition: width 1.2s var(--ease); }
+  .bar.now { background: var(--cq-700); }
+  .head { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; } .head .num { color: var(--cq-700); } .head .tag { position: relative; top: -6px; }
+  .lab { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .m { padding: 14px; } .m b { display: block; font: 600 20px/1 "Figtree"; } .m span { display: block; font: 400 12px/16px "Figtree"; color: var(--pg-muted); margin-top: 6px; }
+  .m i { font-style: normal; color: var(--pg-faint); font-size: 12px; font-weight: 500; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas">
+  <div class="k">Over the rollout</div>
+  <div class="head"><span class="num">1,451</span><span class="tag tag--pos">+171%</span><span class="cap">players finished at least one game</span></div>
+  <div class="big"><span>Before</span><div class="track"><div class="bar" id="b1" title="535 players"></div></div><b>535</b></div>
+  <div class="big"><span>After</span><div class="track"><div class="bar now" id="b2" title="1,451 players"></div></div><b>1,451</b></div>
+  <div class="k" style="margin-top:24px">Usability study · 5 players on each version</div>
+  <div class="lab">
+    <div class="card m"><b>~62s <i>from ~127s</i></b><span>to start a game</span></div>
+    <div class="card m"><b>100% <i>from 60%</i></b><span>finished the game cleanly</span></div>
+    <div class="card m"><b>4.0 <i>from 1.6</i></b><span>post-game satisfaction, out of 5</span></div>
+  </div></div></div>
+<script>
+  whenSeen(document.getElementById("f"), function () { document.getElementById("b1").style.width = (535 / 1451 * 100) + "%"; setTimeout(function () { document.getElementById("b2").style.width = "100%"; }, 300); });
+</script></body></html>

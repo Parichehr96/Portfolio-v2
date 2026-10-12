@@ -41,32 +41,6 @@
   pointer-events: auto;
 }
 
-/* ---- Clock: bottom of the left panel ------------------------------------ */
-/* A full-height track down the left of the shell, like the rail's; the slot
-   sticks 40 above the viewport's bottom edge and stops where the shell ends,
-   before the footer. The clock is rendered here; below 1200 it moves under
-   the intro (scripts/v4-clock-dock.js). */
-.v4-clock-dock {
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  pointer-events: none;
-}
-
-.v4-clock-dock__slot {
-  position: sticky;
-  bottom: var(--v4-edge);
-  padding-left: var(--v4-edge);
-  pointer-events: auto;
-}
-
-@media (max-width: 1199px) {
-  .v4-clock-dock { display: none; }
-}
-
 /* ---- Intro --------------------------------------------------------------- */
 .v4-intro {
   display: flex;
@@ -149,10 +123,12 @@
 /* ---- Status clock -------------------------------------------------------- */
 /* Top-aligned, so "At 19:07" starts on the same line as the name and the
    menu's first item. */
+/* Stacked: the face on top, the words under it, left-aligned. */
 .v4-status {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--v4-space-2);
+  gap: var(--v4-space-3);
 }
 
 .v4-status__face {
@@ -198,11 +174,15 @@
   stroke-width: 0.952;
 }
 
+/* The time, then the status and its detail read as one short paragraph. */
 .v4-status__text {
   display: flex;
   flex-direction: column;
-  gap: var(--v4-space-2);
   width: var(--v4-status-text);
+}
+
+.v4-status__time {
+  margin-bottom: var(--v4-space-2);
 }
 
 .v4-status__time {
@@ -226,6 +206,19 @@
 .v4-status__line strong {
   font-weight: var(--v4-weight-bold);
   color: var(--v4-text-max);
+}
+
+/* STICKY TO THE END. A sticky column stops at the end of its track, and the
+   tracks end with the shell, above the footer: the clock, taller than the
+   menu, would be pushed up off the top first. Both tracks reach on through
+   the gap and the footer (never past the page's end, since the footer is at
+   least --v4-footer-height), so the clock and the menu stay level at the top
+   to the very bottom. */
+@media (min-width: 1200px) {
+  .v4-aside-track,
+  .v4-rail-track {
+    bottom: calc(-1 * (var(--v4-section-gap) + var(--v4-footer-height)));
+  }
 }
 
 /* ---- Narrower screens ---------------------------------------------------- */

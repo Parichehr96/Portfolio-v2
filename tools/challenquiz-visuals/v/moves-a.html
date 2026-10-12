@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Four tabs, one per verb, advancing on their own: each shows the old screen beside the new one, with the one-line change between them.">
+<title>Challenquiz — what changed (A)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 430px; }
+  .tabs { position: absolute; left: 24px; right: 24px; top: 20px; display: flex; gap: 6px; }
+  .tabs button { flex: 1; border: 0; background: #fff; border-radius: 999px; padding: 9px 0; font: 600 13px/1 "Figtree"; color: var(--pg-muted); cursor: pointer; box-shadow: 0 0 0 1px var(--pg-border); position: relative; overflow: hidden; }
+  .tabs button.on { color: #fff; background: var(--cq-700); box-shadow: none; }
+  .stage { position: absolute; left: 0; right: 0; top: 70px; display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .stage .was .phone { filter: grayscale(1); opacity: .85; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; } .col .k { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .mid { width: 150px; font: 500 13px/19px "Figtree"; text-align: center; color: var(--pg-ink); } .mid .arr { font-size: 22px; color: var(--cq-500); display: block; margin-bottom: 6px; }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas"><div class="tabs" id="tabs"></div>
+  <div class="stage"><div class="col was"><span class="k">Before</span><div id="o"></div></div><div class="mid" id="mid"></div><div class="col"><span class="k">After</span><div id="n"></div></div></div></div></div>
+<script>
+  var T = [[4, "ready", "A six-bullet rulebook became one sheet: what you pay, what you can win, and that you start at once."],
+           [5, "correct", "An empty match got the room back: how everyone answered, after every question."],
+           [5, "wrong", "Hidden answers became the right one plus a fact, with a hint that shows its price."],
+           [6, "final", "“Please wait” became your rank, your payout and why, the moment the room settles."]];
+  document.getElementById("tabs").innerHTML = VERBS.map(function (v, i) { return '<button data-i="' + i + '">' + v.t + "</button>"; }).join("");
+  document.getElementById("o").innerHTML = old(4, 134, { id: "op" }); document.getElementById("n").innerHTML = phone("ready", 134, { id: "np" });
+  var cur = 0, timer;
+  function show(i) { cur = i; document.querySelectorAll(".tabs button").forEach(function (b, k) { b.classList.toggle("on", k === i); });
+    document.querySelector("#op img").src = "img/old-" + T[i][0] + ".png"; setPhone(document.getElementById("np"), T[i][1]);
+    document.getElementById("mid").innerHTML = '<span class="arr">→</span>' + T[i][2]; }
+  document.getElementById("tabs").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; clearInterval(timer); show(+b.dataset.i); };
+  document.querySelectorAll(".tabs button")[0].classList.add("on"); document.getElementById("mid").innerHTML = '<span class="arr">→</span>' + T[0][2];
+  whenSeen(document.getElementById("f"), function () { if (END) return; timer = setInterval(function () { show((cur + 1) % 4); }, 3600); });
+</script></body></html>

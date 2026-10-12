@@ -4,19 +4,26 @@
 
   THE HEADER sits in the 600px reading column, like the intro above it.
 
-  THE STRIP runs as the comp draws it: from the reading column's left edge off
-  the right side of the page, clear of the left panel (rail and docked clock).
-  It does not move on its own; visitors scroll it themselves (swipe, or drag
-  with a mouse: scripts/v4-strip.js).
+  THE STRIP (1490:17256) is the reading column: the thumbnail at the front
+  centred in it, its neighbours peeking in either side, dimmed, and a round
+  dashed arrow over each side. It is an endless carousel (scripts/v4-strip.js): one
+  small swipe, scroll or drag moves it one thumbnail either way, and the
+  thumbnail at the front plays its motion (panel.motion: a "video" loop, or
+  "layers" appearing one by one). Without the script it is a plain
+  horizontal scroller, each thumbnail on its first frame.
 #}
 {%- if project.label %}
 <h2 class="v4-label">{{ project.label }}</h2>
 {%- endif %}
-<article class="v4-project" aria-labelledby="project-{{ project.id }}">
+{%- set linked = project.href and not project.soon %}
+{#- A linked project is clickable as a whole card (name, text and strip),
+    scripts/v4-strip.js; the name stays the real link for keyboards and
+    screen readers. -#}
+<article class="v4-project{% if linked %} v4-project--linked{% endif %}" aria-labelledby="project-{{ project.id }}"{% if linked %} data-card-href="{{ project.href }}"{% endif %}>
   <header class="v4-project__head">
     <div class="v4-project__title-row">
       <h3 class="v4-project__name" id="project-{{ project.id }}">
-        {%- if project.href and not project.soon %}
+        {%- if linked %}
         <a class="v4-project__link" href="{{ project.href }}">{{ project.name }}</a>
         {%- else %}
         <span class="v4-project__link">{{ project.name }}</span>
@@ -40,12 +47,26 @@
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if not panel.src %} v4-project__panel--empty{% endif %}">
-        {%- if panel.src %}
+      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
+        {%- if panel.video %}
+        <video class="v4-project__video" muted playsinline loop preload="none" disablepictureinpicture width="812" height="520" poster="{{ panel.video }}.jpg" role="img" aria-label="{{ panel.alt }}">
+          <source src="{{ panel.video }}.webm" type="video/webm" />
+          <source src="{{ panel.video }}.mp4" type="video/mp4" />
+        </video>
+        {%- elif panel.layers %}
+        <div class="v4-project__layers" role="img" aria-label="{{ panel.alt }}">
+          {%- for layer in panel.layers %}
+          <img class="v4-project__layer" style="--i: {{ loop.index0 }}" src="{{ layer }}" width="812" height="520" alt=""{% if not eager %} loading="lazy"{% endif %} decoding="async" />
+          {%- endfor %}
+        </div>
+        {%- elif panel.src %}
         <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}"{% if not eager %} loading="lazy"{% endif %} decoding="async" />
         {%- endif %}
       </figure>
       {%- endfor %}
     </div>
+    {#- One thumbnail back or on (scripts/v4-strip.js shows them once the carousel runs). #}
+    <button class="v4-project__arrow v4-project__arrow--prev" type="button" data-strip-step="-1" aria-label="Previous {{ project.name }} screen" hidden><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/></svg></button>
+    <button class="v4-project__arrow v4-project__arrow--next" type="button" data-strip-step="1" aria-label="Next {{ project.name }} screen" hidden><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/></svg></button>
   </div>
 </article>

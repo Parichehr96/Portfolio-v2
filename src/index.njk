@@ -10,9 +10,10 @@ permalink: /
   markup, strings live in _data/home.js, values in styles/v4/tokens.css. V3's
   homepage is archived on the `V3` branch.
 
-  Top to bottom, in the comp's order: toast, the top band (sticky rail, intro,
-  sticky status clock, theme toggle), the four project rows, About, My
-  process, Experience, and the footer with the call to action.
+  Top to bottom, in the comp's order (1490:17003): toast, the top band
+  (sticky rail, intro, the status clock at the top of the right panel), the
+  visitor's sky, the four project rows, About, My process, Experience, and
+  the footer with the call to action.
 #}
 
 {% include "v4/toast.njk" %}
@@ -20,13 +21,8 @@ permalink: /
 {#- The shell carries the sticky rail down the page; see v4/rail.njk. -#}
 <div class="v4-shell">
   {% include "v4/rail.njk" %}
-  {#- The clock: bottom of the left panel, sticky, from first paint to the end
-      of the page. Below 1200 there is no left panel and
-      scripts/v4-clock-dock.js moves it under the intro instead. -#}
-  <div class="v4-clock-dock"><div class="v4-clock-dock__slot" data-clock-dock>
-    {% include "v4/status.njk" %}
-  </div></div>
   {% include "v4/top.njk" %}
+  {% include "v4/sky.njk" %}
   {% include "v4/work.njk" %}
   {% include "v4/about.njk" %}
   {% include "v4/process.njk" %}
@@ -35,3 +31,4 @@ permalink: /
 
 {#- Outside the shell, so the sticky rail and clock stop before the skyline. -#}
 {% include "v4/footer.njk" %}
+

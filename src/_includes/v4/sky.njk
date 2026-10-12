@@ -1,0 +1,32 @@
+{#
+  SKY — Figma 1497:23079, under the intro.
+
+  The visitor's sky as it looks right now (scripts/v4-sky.js works it out
+  from their time zone and clock: sun glow by day, stars at night), with two
+  lines under it. Hover it (tap on touch, focus from the keyboard) and the
+  time and the hour track appear: the sun's real path through the day, which
+  crosses the horizon at sunrise and sunset, with a dot to drag.
+#}
+<section class="v4-sky" aria-label="Your sky">
+  <div class="v4-sky__view" data-sky tabindex="0" aria-label="Your sky right now. Open it to see the sky at other times.">
+    <span class="v4-sky__time" data-sky-time aria-live="polite">12:00</span>
+    <div class="v4-sky__control">
+      <div class="v4-sky__slider">
+        <label for="sky-hour">Hour</label>
+        <div class="v4-sky__track">
+          <svg viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
+            <line class="v4-sky__horizon" x1="0" y1="50" x2="1440" y2="50"></line>
+            <path class="v4-sky__path" data-sky-path d="M0 96 C360 96 480 4 720 4 C960 4 1080 96 1440 96"></path>
+          </svg>
+          <span class="v4-sky__knob" aria-hidden="true"></span>
+          <input class="v4-sky__hour" id="sky-hour" type="range" min="0" max="1439" step="5" value="720">
+        </div>
+      </div>
+      <button class="v4-sky__now" type="button" data-sky-now aria-pressed="true">Now</button>
+    </div>
+  </div>
+  <p class="v4-sky__note">
+    <span>{{ home.sky.lead }}</span>
+    <span>{{ home.sky.line }}</span>
+  </p>
+</section>

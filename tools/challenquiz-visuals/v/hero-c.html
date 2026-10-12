@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Before and after at the moment that matters most: the old game ends on 'please wait', the new one shows Lena's result, rank and payout. The after side slides over the before.">
+<title>Challenquiz — cover (C)</title>
+<link rel="stylesheet" href="cq.css">
+<script src="cq.js"></script>
+<style>
+  .canvas { height: 393px; }
+  .side { position: absolute; top: 0; bottom: 0; width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .before { left: 0; } .after { right: 0; background: #EFEAFB; }
+  .before .phone { filter: grayscale(1); opacity: .9; }
+  .lbl { font: 600 12px/1 "Figtree"; letter-spacing: .06em; text-transform: uppercase; color: var(--pg-faint); }
+  .after .lbl { color: var(--cq-700); }
+  .wipe { position: absolute; right: 0; top: 0; bottom: 0; width: 300px; transform-origin: right; transform: scaleX(0); transition: transform 1.1s var(--ease); background: #EFEAFB; }
+  .is-in .wipe { transform: scaleX(1); }
+  .after { opacity: 0; transition: opacity .6s .7s; } .is-in .after { opacity: 1; }
+  .quote { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font: 500 13px/1 "Figtree"; color: var(--pg-muted); }
+</style></head><body>
+<div class="frame" id="f"><div class="canvas">
+  <div class="side before"><span class="lbl">Before</span><div id="b"></div></div>
+  <div class="wipe"></div>
+  <div class="side after"><span class="lbl">After</span><div id="a"></div></div>
+</div></div>
+<script>
+  document.getElementById("b").innerHTML = old(6, 138);
+  document.getElementById("a").innerHTML = phone("final", 138);
+  whenSeen(document.getElementById("f"));
+</script></body></html>

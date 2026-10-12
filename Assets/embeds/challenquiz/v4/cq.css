@@ -1,0 +1,83 @@
+/* Challenquiz case-study visuals — shared styles.
+ *
+ * Two vocabularies:
+ *   --pg-*  the V4 case page (Figtree, navy ink, mist frame), the paper every
+ *           visual sits on, so it matches /work/onton/ and /work/connect2wow/.
+ *   --cq-*  the Challenquiz product (Baloo 2, the "Challenquiz" variables in
+ *           Figma) — only where the product itself appears.
+ * Every visual is one 600-wide .canvas inside a .frame that scales it down.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Baloo+2:wght@400;500;600;700&display=swap");
+
+:root {
+  --pg-ink: #0D1233; --pg-muted: #475569; --pg-faint: rgba(71, 85, 105, .6);
+  --pg-frame: #F3F6F8; --pg-frame-2: #E8ECF0; --pg-surface: #FFFFFF; --pg-border: #E2E8F0;
+  --pg-tag: #0088FF; --pg-tag-bg: rgba(0, 136, 255, .1); --pg-neg: #D53434; --pg-pos: #008000;
+
+  --cq-900: #15072B; --cq-700: #5425A0; --cq-500: #865BEE; --cq-400: #8766BD; --cq-300: #B8ABDA;
+  --cq-200: #E7D9FF; --cq-100: #F6F2FD; --cq-50: #F8F5FD;
+  --cq-green-100: #D0EDDB; --cq-green-600: #027B24; --cq-green-700: #02571A;
+  --cq-red-100: #F9D5DA; --cq-red-500: #D22E2D; --cq-red-700: #8D001E;
+  --cq-amber-100: #FFF1D6; --cq-amber-700: #8A5300; --cq-gold: #FFA600; --cq-gold-100: #FFFBE5;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: transparent; }
+body { font-family: "Figtree", system-ui, sans-serif; color: var(--pg-ink); -webkit-font-smoothing: antialiased; }
+
+.frame { position: relative; width: 100%; max-width: 600px; margin: 0 auto; background: var(--pg-frame); border-radius: 20px; overflow: hidden; }
+.frame--white { background: var(--pg-surface); box-shadow: inset 0 0 0 1px var(--pg-border); }
+.frame--lilac { background: #EFEAFB; }
+.frame--purple { background: var(--cq-700); color: #fff; }
+.canvas { position: relative; width: 600px; transform-origin: 0 0; }
+
+.eyebrow { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+.cap { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
+.h { font: 600 15px/22px "Figtree"; color: var(--pg-ink); margin: 0; }
+.num { font: 600 34px/1 "Figtree"; letter-spacing: -.02em; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font: 500 11px/14px "Figtree";
+  background: var(--pg-tag-bg); color: var(--pg-tag); white-space: nowrap; }
+.tag--grey { background: var(--pg-frame-2); color: var(--pg-muted); }
+.tag--neg { background: rgba(213, 52, 52, .1); color: var(--pg-neg); }
+.tag--pos { background: rgba(0, 128, 0, .1); color: var(--pg-pos); }
+.card { background: var(--pg-surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--pg-border); }
+.replay { position: absolute; right: 12px; bottom: 12px; z-index: 9; font: 500 11px/1 "Figtree"; color: var(--pg-muted); background: #fff; border: 0;
+  border-radius: 999px; padding: 6px 10px; box-shadow: 0 0 0 1px var(--pg-border); cursor: pointer; }
+
+/* PHONES — the real prototype at an exact state (cq.js → phone()), or an old-app still */
+.phone { position: relative; flex: none; border-radius: 22px; background: #0b0b10; padding: 4px; box-shadow: 0 18px 36px -18px rgba(21, 7, 43, .45); }
+.phone .scr { position: relative; overflow: hidden; border-radius: 18px; background: #fff; }
+.phone iframe { position: absolute; left: 0; top: 0; width: 393px; height: 852px; border: 0; transform-origin: 0 0; pointer-events: none; }
+.phone img.old { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.phone.flat { background: none; padding: 0; box-shadow: 0 0 0 1px var(--pg-border), 0 18px 36px -20px rgba(21, 7, 43, .35); }
+
+/* product type, for bits of UI drawn outside a phone */
+.bq { font-family: "Baloo 2", system-ui, sans-serif; }
+
+.rise { opacity: 0; transform: translateY(10px); transition: opacity .5s var(--ease), transform .6s var(--ease); }
+.is-in .rise, .rise.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
+
+/* ANSWER ROWS drawn outside a phone — same spec as the prototype (56px, Baloo 2) */
+.ar { position: relative; height: 56px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--cq-200); padding: 0 20px;
+  display: flex; align-items: center; gap: 8px; font: 600 16px/1 "Baloo 2"; color: var(--cq-700); transition: background .35s, box-shadow .35s, color .35s; }
+.ar .ix { color: var(--cq-300); } .ar .lb { flex: 1; } .ar svg { width: 16px; height: 16px; flex: none; }
+.ar .chip { font: 600 12px/18px "Baloo 2"; border-radius: 10px; padding: 0 8px; background: rgba(255,255,255,.75); }
+.ar .pc { font: 500 13px/1 "Baloo 2"; color: #494949; }
+.ar .bar { position: absolute; left: 0; bottom: 2px; height: 6px; border-radius: 22px; background: var(--cq-100); transition: width .6s var(--ease); }
+.ar.ok { background: var(--cq-green-100); box-shadow: none; color: var(--cq-green-700); }
+.ar.no { background: var(--cq-red-100); box-shadow: none; color: var(--cq-red-700); }
+.ar.right { box-shadow: inset 0 0 0 2px var(--cq-green-600); color: var(--cq-green-700); } .ar.right .chip { background: var(--cq-green-100); }
+.ar.other { color: #494949; }
+.ar.removed { background: var(--cq-50); box-shadow: none; outline: 1.5px dashed var(--cq-200); outline-offset: -1.5px; color: var(--cq-300); }
+.ar.removed .lb { text-decoration: line-through; } .ar.removed .pc { color: var(--cq-300); font-size: 12px; }
+.panel { background: var(--cq-100); border-radius: 24px; padding: 16px; display: grid; gap: 9px; }
+.qcard { border-radius: 16px; background: var(--cq-700); color: #fff; padding: 14px 18px; font: 400 17px/1.35 "Baloo 2"; }
+.qcard b { font-weight: 600; } .qcard .n { font: 600 17px/1 "Baloo 2"; opacity: .9; margin-bottom: 6px; }
+
+/* PLAIN — a visual that reads as page content: no ground, no stroke, no corner,
+   aligned flush with the case column's text (pair it with a `plain` block). */
+.frame--plain { background: transparent; border-radius: 0; box-shadow: none; }
