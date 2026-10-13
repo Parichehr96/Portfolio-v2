@@ -1,0 +1,155 @@
+<!doctype html>
+<!--
+  ONTON, SECOND THUMBNAIL — recorded by record.mjs into
+  Assets/v4/work/onton/flow.{webm,mp4,jpg}, played on the homepage strip.
+
+  Built from the Figma frames, which are the source: the thumbnail's two
+  phones (1490:18484, as drawn there, zoomed in), the ticket flow in
+  ONTON_redesign (991:36672: 990:36177, 999:38765, 1004:39061, 1004:39218,
+  999:38917, 999:38809) and the event form and events list (980:34977,
+  1254:16250), exported to img/. Only the motion between them is added.
+
+  The story, one loop: the phones start as the thumbnail draws them, then
+  zoom out to the centre of the card. The right one adds a ticket (Add
+  Ticket, a name and picture, currency, price, Save, Confirm) and lands on the
+  event form; the left one scrolls the form to its end, taps Create event and
+  lands on its events, the new one confirmed. Then both zoom back in, where
+  the loop began.
+
+  window.setT(seconds) draws any moment, so record.mjs captures it frame by
+  frame. Everything is in the thumbnail's own units (487.2 x 312), scaled up.
+-->
+<html><head><meta charset="utf-8"><style>
+html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; background: #fff; }
+#panel { position: absolute; left: 0; top: 0; width: 487.2px; height: 312px; transform-origin: 0 0;
+  transform: scale(1.66667); background: #F3F6F8; border-radius: 12px; overflow: hidden; }
+#card { position: absolute; left: 38.4px; top: 52.875px; width: 410.4px; height: 206.25px; background: #fff;
+  border-radius: 8px; overflow: hidden; }
+/* A phone, at the Figma screens' own size (402 x 901) inside an iPhone bezel,
+   scaled into the card. */
+.phone { position: absolute; left: 0; top: 0; width: 440px; height: 939px; transform-origin: 0 0; }
+.bezel { position: absolute; inset: 0; border-radius: 70px; background: #1d1d1f;
+  box-shadow: inset 0 0 0 2px #5b5b60, inset 0 0 0 5px #2c2c2e; }
+.screen { position: absolute; left: 19px; top: 19px; width: 402px; height: 901px; border-radius: 52px;
+  overflow: hidden; background: #fff; }
+.island { position: absolute; left: 50%; top: 32px; width: 126px; height: 36px; margin-left: -63px;
+  border-radius: 18px; background: #000; }
+.layer { position: absolute; left: 0; top: 0; width: 402px; }
+.dim { position: absolute; inset: 0; background: rgb(0 0 0 / .3); }
+/* The status bar and the bot's header stay put while the form scrolls under
+   them, as in the Publish frame (995:38054): the form's own top, pinned. */
+.head { position: absolute; left: 0; top: 0; width: 402px; height: 148px; overflow: hidden; }
+.head img { height: auto; }
+.tap { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
+  background: rgb(4 4 24 / .18); box-shadow: 0 0 0 2px rgb(255 255 255 / .7); opacity: 0; }
+</style></head><body>
+<div id="panel"><div id="card">
+  <div class="phone" id="L"><div class="bezel"></div><div class="screen" id="Ls">
+    <img class="layer" id="l-form" src="img/l0-form.png" style="height:auto">
+    <div class="head" id="l-head"><img class="layer" src="img/l0-form.png"></div>
+    <img class="layer" id="l-events" src="img/l1-events.png">
+    <span class="tap" id="l-tap"></span>
+  </div><div class="island"></div></div>
+  <div class="phone" id="R"><div class="bezel"></div><div class="screen" id="Rs">
+    <img class="layer" id="r-base" src="img/r0-sheet-one.png">
+    <div class="dim" id="r-dim"></div>
+    <img class="layer" id="s1" src="img/s1-add.png">
+    <img class="layer" id="s2" src="img/s2-currency.png">
+    <img class="layer" id="s3" src="img/s3-amount.png">
+    <img class="layer" id="s4" src="img/s4-filled.png">
+    <img class="layer" id="s5" src="img/s5-two.png">
+    <img class="layer" id="r-form" src="img/l0-form.png">
+    <span class="tap" id="r-tap"></span>
+  </div><div class="island"></div></div>
+</div></div>
+<script>
+const $ = id => document.getElementById(id);
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const out = u => u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(1 - u, 3);
+const span = (t, a, b, f = ease) => f((t - a) / (b - a));
+const lerp = (a, b, u) => a + (b - a) * u;
+const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+// The two phones in the card's units: as the thumbnail draws them (zoomed
+// in, the right one higher), and centred at 65% (zoomed out).
+const W = 440, IN = 138 / W, OUTS = 89.8 / W;
+const PL = { in: [53.4, 28.1], out: [77.6, 10.1] };
+const PR = { in: [221.4, -114.1], out: [245.1, 10.1] };
+
+// The screens are 402 wide; the form and the events list are stretched to it.
+const FORM_H = 1024 * 402 / 375, EVENTS_H = 895 * 402 / 388, SCROLL = FORM_H - 901;
+
+// Timeline (seconds). One loop ends where it began.
+const T = {
+  zoomOut: [0.8, 2.0],
+  addTap: 2.4, s1: [2.65, 3.05],
+  s2: [3.6, 3.9], tonTap: 4.35, s3: [4.6, 4.9], s4: [5.5, 5.8],
+  saveTap: 6.3, s5: [6.55, 6.95],
+  okTap: 7.5, land: [7.75, 8.25],
+  scroll: [8.6, 10.0], createTap: 10.35, events: [10.6, 11.0],
+  zoomIn: [12.4, 13.6], LOOP: 14.4,
+};
+const SHEETS = { s1: 685, s2: 913, s3: 913, s4: 913, s5: 422 };
+
+function place(el, s, x, y) { el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+function tap(el, t, at, x, y) {
+  const u = (t - at) / 0.45;
+  if (u < 0 || u > 1) { el.style.opacity = 0; return; }
+  el.style.left = x + "px"; el.style.top = y + "px";
+  el.style.opacity = u < .3 ? u / .3 : 1 - (u - .3) / .7;
+  el.style.transform = `scale(${.6 + .5 * out(u)})`;
+}
+// A sheet rises in from the screen's foot (bottom-aligned, 901 tall screen).
+function sheet(id, t, from, to) {
+  const el = $(id), h = SHEETS[id], k = span(t, from[0], from[1], out), g = to ? span(t, to[0], to[1]) : 0;
+  const v = Math.max(0, k - g);
+  el.style.opacity = v;
+  el.style.top = (901 - h + (1 - k) * 24) + "px";
+}
+
+window.setT = async function (t) {
+  t = ((t % T.LOOP) + T.LOOP) % T.LOOP;
+  // Zoom out, and back in at the end.
+  const z = span(t, ...T.zoomOut) - span(t, ...T.zoomIn);
+  const s = lerp(IN, OUTS, z);
+  place($("L"), s, lerp(PL.in[0], PL.out[0], z), lerp(PL.in[1], PL.out[1], z));
+  place($("R"), s, lerp(PR.in[0], PR.out[0], z), lerp(PR.in[1], PR.out[1], z));
+  const reset = span(t, ...T.zoomIn);            // both screens back to the start as it zooms in
+
+  // RIGHT: the ticket sheet → add a ticket → two tickets → the event form.
+  // Its taps: Add Ticket, the TON currency, Save Ticket, Confirm.
+  const rt = [[T.addTap, 190, 784], [T.tonTap, 40, 901 - 913 + 678], [T.saveTap, 292, 901 - 913 + 793], [T.okTap, 201, 901 - 422 + 368]]
+    .find(([at]) => t >= at && t <= at + .45);
+  if (rt) tap($("r-tap"), t, ...rt); else $("r-tap").style.opacity = 0;
+  $("r-dim").style.opacity = 0;
+  sheet("s1", t, T.s1, T.s2);
+  sheet("s2", t, T.s2, T.s3);
+  sheet("s3", t, T.s3, T.s4);
+  sheet("s4", t, T.s4, T.s5);
+  // The two-ticket sheet drops away as the form comes up.
+  const s5 = $("s5"), k5 = span(t, T.s5[0], T.s5[1], out), d5 = span(t, T.land[0], T.land[1]);
+  s5.style.opacity = Math.min(k5, 1 - reset);
+  s5.style.top = (901 - 422 + (1 - k5) * 24 + d5 * 440) + "px";
+  const land = span(t, ...T.land) * (1 - reset);
+  const rf = $("r-form"); rf.style.height = FORM_H + "px"; rf.style.opacity = land;
+  $("r-base").style.opacity = 1 - land;
+
+  // LEFT: the form scrolls to its end, Create event, the events list.
+  const lf = $("l-form"); lf.style.height = FORM_H + "px";
+  document.querySelector("#l-head img").style.height = FORM_H + "px";
+  lf.style.top = (-SCROLL * span(t, ...T.scroll) * (1 - reset)) + "px";
+  tap($("l-tap"), t, T.createTap, 200, 1050 - SCROLL);
+  const le = $("l-events"); le.style.height = EVENTS_H + "px";
+  const ev = span(t, ...T.events) * (1 - reset);
+  le.style.opacity = ev; le.style.transform = `translateX(${(1 - ev) * 40}px)`;
+  await frame();
+};
+window.LOOP = T.LOOP;
+
+Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => i.onload = r))).then(async () => {
+  const q = new URLSearchParams(location.search);   // ?t=seconds: one still, for checking
+  await window.setT(q.has("t") ? +q.get("t") : 0);
+  document.title = "ready";
+});
+</script>
+</body></html>

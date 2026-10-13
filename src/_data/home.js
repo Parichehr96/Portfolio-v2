@@ -116,7 +116,8 @@ module.exports = {
         panels: [
           // An inline SVG with its own animation (Figma 1490:21842), played at the front.
           { motion: "anim", svg: "v4/work/onton-link.njk", alt: "An event linked to TON: Event and TON join, then come together" },
-          { src: "/Assets/v4/work/onton/panel-2.png", alt: "Onton in Telegram: creating a new event, and adding a ticket" },
+          // A loop recorded from the Figma flow by tools/onton-thumbs.
+          { motion: "video", video: "/Assets/v4/work/onton/flow", alt: "Onton in Telegram: adding a VIP ticket, then creating the event, which lands in your events" },
           {},
         ],
       },
