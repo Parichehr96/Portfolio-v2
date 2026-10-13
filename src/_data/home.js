@@ -131,11 +131,12 @@ module.exports = {
           { style: "lead", text: "Made a multiplayer game feel multiplayer" },
           { text: ". Redesigned the in-game flow. In usability testing, time-to-start halved and completion went from 60% to 100%" },
         ],
-        // Real prototype moments (tools/challenquiz-thumbs: stage.html + render.sh).
+        // The case study's own visuals, recorded by tools/cq-showcase: the insight,
+        // the moment the result lands, and the outcome.
         panels: [
-          { src: "/Assets/v4/work/challenquiz/panel-1.png", alt: "Challenquiz home: the featured Nature room with 2 spots left and 3 friends played" },
-          { src: "/Assets/v4/work/challenquiz/panel-2.png", alt: "A Challenquiz question answered correctly, with how the rest of the room answered and a fact about the Pacific" },
-          { src: "/Assets/v4/work/challenquiz/panel-3.png", alt: "Lena's result: 8 of 10, 294 CQ earned, +94 on her entry" },
+          { motion: "video", video: "/Assets/v4/work/challenquiz/cq-insight", alt: "The old game's list, match and result with no other players on screen, each turning into the redesign where the room is back" },
+          { motion: "video", video: "/Assets/v4/work/challenquiz/cq-reward", alt: "Lena's result settling: the amount counts up to 294 CQ, +94 on her entry" },
+          { motion: "video", video: "/Assets/v4/work/challenquiz/cq-results", alt: "535 to 1,451 new players finishing a game in a month, above the usability study's before and after" },
         ],
       },
       {

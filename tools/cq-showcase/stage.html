@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+  CHALLENQUIZ THUMBNAILS — recorded by record.mjs. One of the case study's
+  own visuals (Assets/embeds/challenquiz/v4/<f>.html), unchanged, centred on
+  the thumbnail's grey panel and scaled to fit.
+
+  It runs on a stepped clock: a small script injected before the embed's own
+  replaces its timers, animation frames and time (setTimeout, setInterval,
+  requestAnimationFrame, performance.now, Date.now) with ones that move only
+  when the stage says, and pins every CSS transition and animation to that
+  clock. window.setT(seconds) moves it forward, so the recorder captures the
+  embed's own animation evenly, frame by frame.
+  ?f=<name>&h=<canvas height>
+-->
+<html><head><meta charset="utf-8"><style>
+html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; background: #F3F6F8; }
+#panel { position: absolute; left: 0; top: 0; width: 487.2px; height: 312px; transform-origin: 0 0; transform: scale(1.66667); }
+iframe { position: absolute; border: 0; transform-origin: 0 0; background: transparent; }
+</style></head><body><div id="panel"></div>
+<script>
+const q = new URLSearchParams(location.search), F = q.get("f"), H = +q.get("h") || 420, PAD = 40;
+const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_APP = "/Assets/embeds/challenquiz/v2/index.html";
+(function () {
+  var realST = window.setTimeout.bind(window), vt = 0, q = [], seq = 0, rafs = [], seen = new WeakMap(), D0 = Date.now();
+  window.setTimeout = function (f, ms) { var a = [].slice.call(arguments, 2), id = ++seq;
+    q.push({ id: id, t: vt + (+ms || 0), f: function () { f.apply(null, a); } }); return id; };
+  window.clearTimeout = window.clearInterval = function (id) { q = q.filter(function (x) { return x.id !== id; }); };
+  window.setInterval = function (f, ms) { var id = ++seq, e = { id: id, t: vt + Math.max(1, +ms || 0) };
+    e.f = function () { f(); e.t += Math.max(1, +ms || 0); q.push(e); }; q.push(e); return id; };
+  window.requestAnimationFrame = function (cb) { var id = ++seq; rafs.push({ id: id, cb: cb }); return id; };
+  window.cancelAnimationFrame = function (id) { rafs = rafs.filter(function (x) { return x.id !== id; }); };
+  performance.now = function () { return vt; };
+  Date.now = function () { return D0 + vt; };
+  function tick() { return new Promise(function (r) { realST(r, 0); }); }
+  window.__advanceTo = async function (end) {
+    await tick();
+    for (;;) { q.sort(function (a, b) { return a.t - b.t; }); var nx = q[0];
+      if (!nx || nx.t > end) break; q.shift(); vt = nx.t; nx.f(); await tick(); }
+    vt = end; var rs = rafs; rafs = []; rs.forEach(function (r) { r.cb(vt); }); await tick();
+    // The phones show the live prototype in frames of their own: let them finish loading.
+    for (var i = 0; i < 200; i++) {
+      var busy = [].some.call(document.querySelectorAll("iframe"), function (f) {
+        try { return !f.contentDocument || f.contentDocument.readyState !== "complete"; } catch (e) { return false; } });
+      if (!busy) break; await new Promise(function (r) { realST(r, 25); });
+    }
+    document.getAnimations().forEach(function (a) {
+      if (!seen.has(a)) seen.set(a, vt - (a.currentTime || 0));
+      a.pause(); a.currentTime = Math.max(0, vt - seen.get(a)); });
+  };
+})();<\/script>`;
+let win;
+window.setT = async function (t) {
+  await win.__advanceTo(t * 1000);
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+};
+fetch("/Assets/embeds/challenquiz/v4/" + F + ".html").then(r => r.text()).then(html => {
+  html = html.replace("<head>", '<head><base href="/Assets/embeds/challenquiz/v4/">' + CLOCK);
+  const s = Math.min((487.2 - PAD) / 600, (312 - PAD) / H), ifr = document.createElement("iframe");
+  Object.assign(ifr.style, { width: "600px", height: H + "px", left: (487.2 - 600 * s) / 2 + "px", top: (312 - H * s) / 2 + "px", transform: `scale(${s})` });
+  ifr.srcdoc = html;
+  ifr.onload = async () => { win = ifr.contentWindow; await win.document.fonts.ready; await window.setT(0); document.title = "ready"; };
+  document.getElementById("panel").appendChild(ifr);
+});
+</script></body></html>
