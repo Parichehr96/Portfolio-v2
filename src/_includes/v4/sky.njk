@@ -8,11 +8,15 @@
   crosses the horizon at sunrise and sunset, with a dot to drag.
 
   The sky is seen through a window (v4/sky-window.njk) whose panes are cut
-  out; the time and the hour track sit over it.
+  out; the time and the hour track sit over it. Opened, the closed window
+  gives way to the open frame (v4/sky-window-open-frame.njk) and the two
+  sashes swing out beside the sky (v4/sky-window-sashes.njk).
 #}
 <section class="v4-sky" aria-label="Your sky">
+  <div class="v4-sky__frame">
   <div class="v4-sky__view" data-sky tabindex="0" aria-label="Your sky right now. Open it to see the sky at other times.">
     {% include "v4/sky-window.njk" %}
+    {% include "v4/sky-window-open-frame.njk" %}
     <span class="v4-sky__time" data-sky-time aria-live="polite">12:00</span>
     <div class="v4-sky__control">
       <div class="v4-sky__slider">
@@ -28,6 +32,8 @@
       </div>
       <button class="v4-sky__now" type="button" data-sky-now aria-pressed="true">Now</button>
     </div>
+  </div>
+  {% include "v4/sky-window-sashes.njk" %}
   </div>
   <p class="v4-sky__note">
     <span>{{ home.sky.lead }}</span>

@@ -17,11 +17,14 @@
   gap: var(--v4-space-5);
 }
 
+/* The sky's box: the window's footprint, which the open sashes reach out of. */
+.v4-sky__frame { position: relative; width: min(var(--v4-sky-width), 100%); }
+
 .v4-sky__view {
   --c0: rgb(31 99 191); --c1: rgb(79 147 224); --c2: rgb(156 202 242); --c3: rgb(216 235 248); --c4: rgb(67 135 214);
   --sun-x: 50%; --sun-y: 18%; --glow: .85; --stars: 0;
   position: relative;
-  width: min(var(--v4-sky-width), 100%);
+  width: 100%;
   aspect-ratio: var(--v4-sky-ratio);
   overflow: hidden;
   border-radius: var(--v4-radius-panel);
@@ -29,7 +32,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 13.44px;
+  padding: 30px 40px 30px 30px;   /* inside the window's glass (its opening: 20..563 x 22..221) */
   cursor: pointer;
   outline: none;
   /* The comp's sky ends in a thin dark band at the foot, under the horizon glow. */
@@ -60,6 +63,21 @@
    shows past the frame. */
 .v4-sky__view { border-radius: 0; -webkit-mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat;
   mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat; }
+
+/* OPEN (.is-open: hover, tap or focus). The open drawing (818 x 325) is set
+   so its frame (159..655 x 45..263) lies on the closed window (595 x 242):
+   x 1.1996, y 1.1101 (its opening then meets the closed panes). The closed
+   window fades as the open frame comes in, and the sashes swing out on
+   their hinges (the frame's outer edges) to where they are drawn. */
+.v4-sky__open { position: absolute; left: -32.06%; top: -20.64%; width: 164.93%; max-width: none; height: 149.09%; pointer-events: none; }
+.v4-sky__window, .v4-sky__open--frame { transition: opacity .35s ease; }
+.v4-sky__open--frame { opacity: 0; }
+.v4-sky__view.is-open .v4-sky__window { opacity: 0; transition-delay: .05s; }
+.v4-sky__view.is-open .v4-sky__open--frame { opacity: 1; }
+.v4-sky__sash { opacity: 0; transition: transform .6s var(--v4-reveal-ease), opacity .25s ease; }
+.v4-sky__sash--left { transform-origin: 19.8% 50%; transform: perspective(900px) rotateY(-82deg); }
+.v4-sky__sash--right { transform-origin: 79.7% 50%; transform: perspective(900px) rotateY(82deg); }
+.v4-sky__view.is-open ~ .v4-sky__sash { opacity: 1; transform: perspective(900px) rotateY(0); }
 
 /* Stars at night, fading out as the sky lightens. */
 .v4-sky__view::before {
@@ -146,5 +164,6 @@
 .v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint-open { opacity: 1; transition-delay: .05s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span { transition: none !important; }
+  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span,
+  .v4-sky__window, .v4-sky__open { transition: none !important; }
 }
