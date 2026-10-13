@@ -6,9 +6,13 @@
   lines under it. Hover it (tap on touch, focus from the keyboard) and the
   time and the hour track appear: the sun's real path through the day, which
   crosses the horizon at sunrise and sunset, with a dot to drag.
+
+  The sky is seen through a window (v4/sky-window.njk) whose panes are cut
+  out; the time and the hour track sit over it.
 #}
 <section class="v4-sky" aria-label="Your sky">
   <div class="v4-sky__view" data-sky tabindex="0" aria-label="Your sky right now. Open it to see the sky at other times.">
+    {% include "v4/sky-window.njk" %}
     <span class="v4-sky__time" data-sky-time aria-live="polite">12:00</span>
     <div class="v4-sky__control">
       <div class="v4-sky__slider">
@@ -27,6 +31,6 @@
   </div>
   <p class="v4-sky__note">
     <span>{{ home.sky.lead }}</span>
-    <span>{{ home.sky.line }} <em class="v4-sky__hint">{{ home.sky.hint }}</em></span>
+    <span>{{ home.sky.line }} <em class="v4-sky__hint"><span class="v4-sky__hint-shut">{{ home.sky.hintShut }}</span><span class="v4-sky__hint-open">{{ home.sky.hint }}</span></em></span>
   </p>
 </section>

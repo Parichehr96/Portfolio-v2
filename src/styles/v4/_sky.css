@@ -53,6 +53,14 @@
 }
 .v4-sky__view.is-open { cursor: default; }
 
+/* The window (v4/sky-window.njk) over the sky, its panes cut out; the time
+   and the hour track sit over it. */
+.v4-sky__window { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+/* The sky takes the window's own outline (its hand-drawn edge), so none of it
+   shows past the frame. */
+.v4-sky__view { border-radius: 0; -webkit-mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat; }
+
 /* Stars at night, fading out as the sky lightens. */
 .v4-sky__view::before {
   content: ""; position: absolute; inset: 0; opacity: var(--stars); pointer-events: none;
@@ -128,11 +136,15 @@
 .v4-sky__note { display: flex; flex-direction: column; font-size: var(--v4-text-ui); }
 .v4-sky__note span:first-child { line-height: 24px; color: var(--v4-text-muted); }
 .v4-sky__note span + span { line-height: 1.45; letter-spacing: .14px; color: var(--v4-sky-ink); font-feature-settings: "lnum" 1, "tnum" 1; }
-/* While the window is open (hover, tap or focus), the hint fades in after
-   the line; it keeps its room while hidden, so nothing moves. */
-.v4-sky__hint { font-style: normal; color: var(--v4-text-muted); opacity: 0; transition: opacity .3s ease; }
-.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint { opacity: 1; transition-delay: .05s; }
+/* After the line, a hint: how to open the window, then, while it is open
+   (hover, tap or focus), what to do with it. The two share one place, so
+   nothing moves as they swap. */
+.v4-sky__hint { display: inline-grid; font-style: normal; }
+.v4-sky__note .v4-sky__hint span { grid-area: 1 / 1; color: var(--v4-text-muted); line-height: inherit; letter-spacing: inherit; transition: opacity .3s ease; }
+.v4-sky__note .v4-sky__hint .v4-sky__hint-open { opacity: 0; }
+.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint-shut { opacity: 0; }
+.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint-open { opacity: 1; transition-delay: .05s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint { transition: none !important; }
+  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span { transition: none !important; }
 }
