@@ -90,6 +90,9 @@
         if (vis) seen[L] = true;
         if (el.classList.contains("v4-project__panel--video")) {
           if (front) play(el); else stop(el);
+        } else if (el.classList.contains("v4-project__panel--anim")) {
+          // Its own keyframes run from the start each time it comes to the front.
+          el.classList.toggle("is-play", front && !reduce);
         } else if (el.classList.contains("v4-project__panel--layers")) {
           if (front) {
             if (!el.classList.contains("is-play") && !el.classList.contains("is-held")) el.classList.add(shown[L] ? "is-held" : "is-play");

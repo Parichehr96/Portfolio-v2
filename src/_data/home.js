@@ -114,7 +114,8 @@ module.exports = {
           { text: " daily active users." },
         ],
         panels: [
-          { src: "/Assets/v4/work/onton/panel-1.png", alt: "Telegram linked to Onton" },
+          // An inline SVG with its own animation (Figma 1490:21842), played at the front.
+          { motion: "anim", svg: "v4/work/onton-link.njk", alt: "An event linked to TON: Event and TON join, then come together" },
           { src: "/Assets/v4/work/onton/panel-2.png", alt: "Onton in Telegram: creating a new event, and adding a ticket" },
           {},
         ],

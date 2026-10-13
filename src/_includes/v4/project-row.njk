@@ -8,8 +8,8 @@
   centred in it, its neighbours peeking in either side, dimmed, and a round
   dashed arrow over each side. It is an endless carousel (scripts/v4-strip.js): one
   small swipe, scroll or drag moves it one thumbnail either way, and the
-  thumbnail at the front plays its motion (panel.motion: a "video" loop, or
-  "layers" appearing one by one). Without the script it is a plain
+  thumbnail at the front plays its motion (panel.motion: a "video" loop,
+  "layers" appearing one by one, or an "anim" SVG with its own keyframes). Without the script it is a plain
   horizontal scroller, each thumbnail on its first frame.
 #}
 {%- if project.label %}
@@ -47,8 +47,10 @@
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
-        {%- if panel.video %}
+      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video and not panel.svg %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
+        {%- if panel.svg %}
+        <div class="v4-project__svg" role="img" aria-label="{{ panel.alt }}">{% include panel.svg %}</div>
+        {%- elif panel.video %}
         <video class="v4-project__video" muted playsinline loop preload="none" disablepictureinpicture width="812" height="520" poster="{{ panel.video }}.jpg" role="img" aria-label="{{ panel.alt }}">
           <source src="{{ panel.video }}.webm" type="video/webm" />
           <source src="{{ panel.video }}.mp4" type="video/mp4" />

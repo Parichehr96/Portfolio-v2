@@ -251,6 +251,11 @@ a.v4-project__link:hover {
 
    Video: a loop recorded from the prototype, on its first frame (the
    poster) until it plays. */
+.v4-project__svg {
+  width: 100%;
+  height: 100%;
+}
+
 .v4-project__video {
   display: block;
   width: 100%;
