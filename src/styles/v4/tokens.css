@@ -221,6 +221,7 @@
   /* The sky under the intro (1497:23079, _sky.css): a section like the
      others, 120 below the intro; 595 x 242, two lines 339 wide under it. */
   --v4-sky-width: 595px;
+  --v4-window-swing: .75s;       /* the sky's window swinging open or shut */
   --v4-sky-ratio: 595 / 242;
   --v4-sky-ink: #000000;
   --v4-sky-line: rgb(255 255 255 / .85);

@@ -15,7 +15,6 @@
 <section class="v4-sky" aria-label="Your sky">
   <div class="v4-sky__frame">
   <div class="v4-sky__view" data-sky tabindex="0" aria-label="Your sky right now. Open it to see the sky at other times.">
-    {% include "v4/sky-window.njk" %}
     {% include "v4/sky-window-open-frame.njk" %}
     <span class="v4-sky__time" data-sky-time aria-live="polite">12:00</span>
     <div class="v4-sky__control">
@@ -33,6 +32,7 @@
       <button class="v4-sky__now" type="button" data-sky-now aria-pressed="true">Now</button>
     </div>
   </div>
+  {% include "v4/sky-window.njk" %}
   {% include "v4/sky-window-sashes.njk" %}
   </div>
   <p class="v4-sky__note">

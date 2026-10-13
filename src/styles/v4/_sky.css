@@ -56,28 +56,36 @@
 }
 .v4-sky__view.is-open { cursor: default; }
 
-/* The window (v4/sky-window.njk) over the sky, its panes cut out; the time
-   and the hour track sit over it. */
-.v4-sky__window { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 /* The sky takes the window's own outline (its hand-drawn edge), so none of it
    shows past the frame. */
 .v4-sky__view { border-radius: 0; -webkit-mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat;
   mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat; }
 
-/* OPEN (.is-open: hover, tap or focus). The open drawing (818 x 325) is set
-   so its frame (159..655 x 45..263) lies on the closed window (595 x 242):
-   x 1.1996, y 1.1101 (its opening then meets the closed panes). The closed
-   window fades as the open frame comes in, and the sashes swing out on
-   their hinges (the frame's outer edges) to where they are drawn. */
+/* THE WINDOW. Closed, the window (v4/sky-window.njk) lies over the sky as
+   two leaves, its halves split between the handles, the sky showing through
+   their glass. Opened (.is-open: hover, tap or focus), each leaf swings out
+   on its outer edge, past edge-on, to where the open sashes are drawn (113°
+   seen from 1250px out at its hinge: its free edge 146 out and 1.28 times
+   as tall, as drawn), where it hands over to them; the open frame is behind.
+   Closing plays it back. The open drawing (818 x 325) is set so its frame
+   (159..655 x 45..263) lies on the closed window (595 x 242): x 1.1996,
+   y 1.1101. */
+.v4-sky__defs { position: absolute; width: 0; height: 0; }
+.v4-sky__leaf { position: absolute; inset: 0; width: 100%; max-width: none; height: 100%; pointer-events: none;
+  backface-visibility: visible;
+  transition: transform var(--v4-window-swing) cubic-bezier(.45, 0, .25, 1) .12s, opacity .14s linear; }
+.v4-sky__leaf--left { clip-path: inset(0 52.6% 0 0); transform-origin: 0 50%; transform: perspective(1250px) rotateY(0); }
+.v4-sky__leaf--right { clip-path: inset(0 0 0 47.4%); transform-origin: 100% 50%; transform: perspective(1250px) rotateY(0); }
+.v4-sky__view.is-open ~ .v4-sky__leaf { opacity: 0;
+  transition: transform var(--v4-window-swing) cubic-bezier(.45, 0, .25, 1), opacity .16s linear calc(var(--v4-window-swing) - .16s); }
+.v4-sky__view.is-open ~ .v4-sky__leaf--left { transform: perspective(1250px) rotateY(-112.6deg); }
+.v4-sky__view.is-open ~ .v4-sky__leaf--right { transform: perspective(1250px) rotateY(112.6deg); }
+
 .v4-sky__open { position: absolute; left: -32.06%; top: -20.64%; width: 164.93%; max-width: none; height: 149.09%; pointer-events: none; }
-.v4-sky__window, .v4-sky__open--frame { transition: opacity .35s ease; }
-.v4-sky__open--frame { opacity: 0; }
-.v4-sky__view.is-open .v4-sky__window { opacity: 0; transition-delay: .05s; }
-.v4-sky__view.is-open .v4-sky__open--frame { opacity: 1; }
-.v4-sky__sash { opacity: 0; transition: transform .6s var(--v4-reveal-ease), opacity .25s ease; }
-.v4-sky__sash--left { transform-origin: 19.8% 50%; transform: perspective(900px) rotateY(-82deg); }
-.v4-sky__sash--right { transform-origin: 79.7% 50%; transform: perspective(900px) rotateY(82deg); }
-.v4-sky__view.is-open ~ .v4-sky__sash { opacity: 1; transform: perspective(900px) rotateY(0); }
+.v4-sky__open--frame { opacity: 0; transition: opacity .2s ease calc(var(--v4-window-swing) + .1s); }
+.v4-sky__view.is-open .v4-sky__open--frame { opacity: 1; transition-delay: 0s; }
+.v4-sky__sash { opacity: 0; transition: opacity .14s linear; }
+.v4-sky__view.is-open ~ .v4-sky__sash { opacity: 1; transition-delay: calc(var(--v4-window-swing) - .16s); }
 
 /* Stars at night, fading out as the sky lightens. */
 .v4-sky__view::before {
@@ -165,5 +173,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span,
-  .v4-sky__window, .v4-sky__open { transition: none !important; }
+  .v4-sky__leaf, .v4-sky__open { transition: none !important; }
 }
