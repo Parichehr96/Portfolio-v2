@@ -9,7 +9,7 @@
 
 .v4-footer {
   position: relative;
-  margin-top: var(--v4-section-gap);
+  margin-top: var(--v4-footer-gap);
   min-height: var(--v4-footer-height);
   display: flex;
   justify-content: center;

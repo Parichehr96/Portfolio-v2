@@ -217,7 +217,7 @@
 @media (min-width: 1200px) {
   .v4-aside-track,
   .v4-rail-track {
-    bottom: calc(-1 * (var(--v4-section-gap) + var(--v4-footer-height)));
+    bottom: calc(-1 * (var(--v4-footer-gap) + var(--v4-footer-height)));
   }
 }
 

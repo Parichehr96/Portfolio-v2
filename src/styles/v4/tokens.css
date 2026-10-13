@@ -166,10 +166,12 @@
      a section heading to its content       24  (--v4-heading-gap)
      blocks inside a section                40  (--v4-inner-gap)
      project rows, one to the next         100  (--v4-row-gap)
-     section to section, intro to footer   120  (--v4-section-gap) */
+     section to section on the homepage     90  (--v4-section-gap)
+     the last section to the footer       120  (--v4-footer-gap) */
   --v4-heading-gap: var(--v4-space-6);
   --v4-inner-gap: 40px;
-  --v4-section-gap: 120px;
+  --v4-section-gap: 90px;
+  --v4-footer-gap: 120px;
   --v4-row-gap: 100px;
   --v4-panel-width: 487.2px;   /* 0.6 of the comp's 812 x 520 (1490:17256) */
   --v4-panel-ratio: 812 / 520;
