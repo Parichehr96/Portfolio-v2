@@ -81,8 +81,10 @@
 .v4-sky__leaf--left { clip-path: inset(0 52.6% 0 0); }
 .v4-sky__leaf--right { clip-path: inset(0 0 0 47.4%); }
 .v4-sky__back { position: absolute; top: 0; height: 100%; max-width: none; backface-visibility: hidden; transform: rotateY(180deg); }
-.v4-sky__back--left { left: 0; width: 47.4%; }
-.v4-sky__back--right { left: 47.4%; width: 52.6%; }
+/* Each back reaches 30px past its wing's free edge (5.04%), where the drawn
+   sash's outer edge lands. */
+.v4-sky__back--left { left: 0; width: 52.44%; }
+.v4-sky__back--right { left: 42.36%; width: 57.64%; }
 
 .v4-sky__open { position: absolute; left: -32.06%; top: -20.64%; width: 164.93%; max-width: none; height: 149.09%; pointer-events: none; }
 .v4-sky__open--frame { opacity: 0; transition: opacity .2s ease calc(var(--v4-window-swing) + .1s); }
