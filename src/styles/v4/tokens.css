@@ -193,6 +193,8 @@
   --v4-photo-w: 224px;
   --v4-photo-h: 270px;
   --v4-photo-radius: 32px;
+  --v4-photo-dot: 8px;           /* the wheel's dots */
+  --v4-photo-dots-lift: 72px;    /* up into the band: 24 under the middle caption */
   --v4-text-photo: 13px;
   --v4-experience-row: 92px;
   --v4-experience-row-bare: 80px;
@@ -219,7 +221,6 @@
      others, 120 below the intro; 595 x 242, two lines 339 wide under it. */
   --v4-sky-width: 595px;
   --v4-sky-ratio: 595 / 242;
-  --v4-sky-note: 339px;
   --v4-sky-ink: #000000;
   --v4-sky-line: rgb(255 255 255 / .85);
   --v4-sky-glass: rgb(12 14 26 / .32);           /* frosted pills on the sky */

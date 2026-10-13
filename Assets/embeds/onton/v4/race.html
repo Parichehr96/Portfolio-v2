@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A race to publish one event. Luma and Partiful finish in under a minute on one screen; ONTON takes about 7 minutes across four steps and a review. Eventbrite and POAP were rated, not timed.">
+<title>ONTON — race to publish</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* How it compared: one clock, three products publishing the same event. */
+  .canvas { height: 300px; padding: 22px 28px 0; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; }
+  .top .num { font-size: 30px; }
+  .axis { position: relative; margin: 14px 0 0 104px; height: 14px; }
+  .axis span { position: absolute; transform: translateX(-50%); font: 500 10px/1 "Figtree"; color: var(--pg-faint); }
+  .lane { display: grid; grid-template-columns: 96px 1fr; gap: 8px; align-items: center; height: 46px; }
+  .lane .nm { font: 600 13px/1.1 "Figtree"; } .lane .nm small { display: block; font: 400 10.5px/1.3 "Figtree"; color: var(--pg-faint); margin-top: 2px; }
+  .track { position: relative; height: 26px; border-radius: 6px; background:
+      repeating-linear-gradient(90deg, transparent 0 calc(100% / 7 - 1px), var(--pg-border) calc(100% / 7 - 1px) calc(100% / 7)), var(--pg-mist); }
+  .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 6px; display: flex; overflow: hidden; }
+  .bar i { flex: none; height: 100%; display: grid; place-items: center; font: 500 9.5px/1 "Figtree"; font-style: normal; color: #fff; box-shadow: inset -1px 0 0 rgba(255, 255, 255, .5); white-space: nowrap; overflow: hidden; }
+  .bar.on { background: #93A3B8; } .bar.on i:nth-child(odd) { background: #64748B; } .bar.on i:nth-child(even) { background: #7C8BA1; }
+  .bar.fast { background: var(--on-blue); }
+  .done { position: absolute; top: 50%; transform: translate(8px, -50%) scale(.6); opacity: 0; transition: opacity .25s, transform .4s var(--e-out); display: flex; align-items: center; gap: 5px; font: 600 11px/1 "Figtree"; color: var(--pg-pos); white-space: nowrap; }
+  .done.on { opacity: 1; transform: translate(8px, -50%); }
+  .done b { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--pg-pos); color: #fff; }
+  .foot { margin-top: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .verdict { margin-top: 12px; opacity: 0; transition: opacity .5s; } .verdict.on { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="top"><div><div class="eyebrow">Publishing one simple event</div></div><div class="num" id="clk">0:00</div></div>
+    <div class="axis" id="axis"></div>
+    <div class="lane"><div class="nm">Luma<small>1 screen</small></div><div class="track"><div class="bar fast" id="b1"></div><span class="done" id="d1"></span></div></div>
+    <div class="lane"><div class="nm">Partiful<small>1 screen</small></div><div class="track"><div class="bar fast" id="b2"></div><span class="done" id="d2"></span></div></div>
+    <div class="lane"><div class="nm">ONTON<small>4 steps + review</small></div><div class="track"><div class="bar on" id="b3"></div></div></div>
+    <div class="foot"><span class="cap">Rated, not timed:</span><span class="tag tag--grey">Eventbrite · many steps · time high</span><span class="tag tag--grey">POAP · few steps · time low</span></div>
+    <div class="verdict" id="vd"><span class="tag tag--neg">ONTON: ~7 min, about 7× the market</span></div>
+  </div>
+</div>
+<script>
+  /* Times are the benchmark's: Luma and Partiful under a minute, ONTON about
+     seven. The fast bars stop just short of the 1-minute line ("<1 min"). */
+  var MAX = 7, RUN = 5200, FAST = 0.85;
+  var axis = document.getElementById("axis");
+  for (var m = 0; m <= 7; m++) axis.innerHTML += '<span style="left:' + (m / 7 * 100) + '%">' + m + (m ? "′" : "") + "</span>";
+  var ON = ["General", "Time / Location", "Registration", "Reward", "Review"], W = [6, 5, 6, 5, 2]; /* segments by fields asked; the review is short */
+  var b3 = document.getElementById("b3"), tot = W.reduce(function (a, b) { return a + b; }, 0);
+  b3.innerHTML = ON.map(function (n, i) { return '<i style="width:' + (W[i] / tot * 100) + '%">' + n + "</i>"; }).join("");
+  var tw = function () { return b3.parentNode.clientWidth; };
+  b3.querySelectorAll("i").forEach(function (x, i) { x.style.width = (W[i] / tot * tw()) + "px"; });
+  var CK = '<b><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b>';
+  function at(id, min) { return min / MAX * 100 + "%"; }
+  function finish(n, min, label) { var d = document.getElementById("d" + n); d.style.left = at(n, min); d.innerHTML = CK + label; d.classList.add("on"); }
+  function set(t) { /* t in minutes */
+    var f = Math.min(t, FAST); ["b1", "b2"].forEach(function (id) { document.getElementById(id).style.width = at(0, f); });
+    b3.style.width = at(0, Math.min(t, MAX));
+    document.getElementById("clk").textContent = clock(t * 60);
+  }
+  function end() { set(MAX); finish(1, FAST, "Published · <1 min"); finish(2, FAST, "Published · <1 min");
+    document.getElementById("clk").textContent = "~7:00"; document.getElementById("vd").classList.add("on"); }
+  set(0);
+  whenSeen(document.getElementById("f"), function () {
+    if (END || reduced) { end(); return; }
+    var t0 = performance.now(), fastDone = false;
+    (function f(now) {
+      var p = Math.min(1, (now - t0) / RUN), t = p * MAX; set(t);
+      if (!fastDone && t >= FAST) { fastDone = true; finish(1, FAST, "Published · <1 min"); setTimeout(function () { finish(2, FAST, "Published · <1 min"); }, 120); }
+      if (p < 1) requestAnimationFrame(f); else setTimeout(end, 200);
+    })(t0);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The old flow's 22 fields, sorted one by one: 9 kept and surfaced, 11 moved into Advanced, 2 removed or automated. Nothing critical was deleted; most of it was demoted.">
+<title>ONTON — 22 fields, sorted</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* What changed: each field leaves its old step and lands where it lives now. */
+  .canvas { height: 478px; padding: 18px 20px 0; }
+  .eyebrow { margin-bottom: 8px; }
+  .before { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .step { min-height: 150px; border-radius: 12px; background: var(--pg-mist); padding: 9px; }
+  .step > b { display: block; font: 600 10.5px/1.2 "Figtree"; color: var(--pg-muted); margin-bottom: 7px; }
+  .step > b span { color: var(--pg-faint); font-weight: 500; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px; border-radius: 6px; background: #fff; box-shadow: inset 0 0 0 1px var(--pg-border);
+    font: 500 9.5px/1 "Figtree"; color: var(--pg-ink); white-space: nowrap; transition: background .3s, color .3s, box-shadow .3s; }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1.2px #94A3B8; transition: background .3s, box-shadow .3s; }
+  .chip.fly { position: relative; z-index: 3; transition: transform .7s var(--e-out), background .3s, color .3s, box-shadow .3s; }
+  .chip.kept { background: var(--on-blue-bg); box-shadow: inset 0 0 0 1px rgba(0, 122, 255, .3); } .chip.kept i { background: var(--on-blue); box-shadow: none; }
+  .chip.moved { background: #fff; } .chip.moved i { box-shadow: inset 0 0 0 1.2px var(--pg-muted); }
+  .chip.gone { background: transparent; color: var(--pg-faint); text-decoration: line-through; box-shadow: inset 0 0 0 1px var(--pg-border); }
+
+  .chip.ghost { background: transparent; box-shadow: inset 0 0 0 1px var(--pg-border); color: transparent; } .chip.ghost i { box-shadow: none; }
+  .arrow { height: 26px; display: grid; place-items: center; color: var(--pg-faint); }
+  .bins { display: grid; grid-template-columns: 1.1fr 1.3fr .8fr; gap: 8px; }
+  .bin { min-height: 196px; border-radius: 12px; padding: 10px; box-shadow: inset 0 0 0 1px var(--pg-border); background: #fff; }
+  .bin.k { box-shadow: inset 0 0 0 1.5px rgba(0, 122, 255, .45); }
+  .bin.m { box-shadow: inset 0 0 0 1px var(--pg-border); background: var(--pg-mist); }
+  .bin.g { border: 1px dashed #CBD5E1; box-shadow: none; }
+  .bin .hd { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .bin .hd b { font: 600 11px/1.2 "Figtree"; } .bin .hd span { font: 600 20px/1 "Figtree"; font-variant-numeric: tabular-nums; }
+  .bin.k .hd span { color: var(--on-blue); } .bin.g .hd span { color: var(--pg-faint); }
+  .bin .sub { font: 400 9.5px/1.3 "Figtree"; color: var(--pg-faint); margin: -4px 0 8px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="cv">
+    <div class="eyebrow">Before · 4 steps · 22 fields</div>
+    <div class="before" id="before"></div>
+    <div class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v11M3.5 8.5L8 13l4.5-4.5"/></svg></div>
+    <div class="bins">
+      <div class="bin k"><div class="hd"><b>Kept &amp; surfaced</b><span id="ck">0</span></div><div class="sub">on the two new steps</div><div class="chips" id="bk"></div></div>
+      <div class="bin m"><div class="hd"><b>Moved to Advanced</b><span id="cm">0</span></div><div class="sub">one tap away, closed by default</div><div class="chips" id="bm"></div></div>
+      <div class="bin g"><div class="hd"><b>Removed</b><span id="cg">0</span></div><div class="sub">or automated</div><div class="chips" id="bg"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  /* Fields and their fate: the "What changed" block of the case (onton.js). */
+  var STEPS = [
+    ["General", [["Name", "kept"], ["TON Hub", "moved"], ["Description", "moved"], ["Cover image", "kept"], ["Category", "moved"], ["Subtitle (mandatory)", "gone"]]],
+    ["Time / Location", [["Date & time", "kept"], ["Country / City / Map", "kept"], ["Timezone (auto)", "gone"], ["In-person / Online", "kept"], ["Duration", "moved"]]],
+    ["Registration", [["Capacity (default)", "kept"], ["Registration form", "moved"], ["Ticket details", "moved"], ["Free / Paid", "kept"], ["Approval", "moved"], ["Recipient wallet", "moved"]]],
+    ["Reward", [["SBT preset", "kept"], ["Custom SBT", "moved"], ["Reward video", "moved"], ["Reward image", "kept"], ["Event password", "moved"]]],
+  ];
+  var BIN = { kept: "bk", moved: "bm", gone: "bg" }, CNT = { kept: "ck", moved: "cm", gone: "cg" };
+  var cv = document.getElementById("cv"), all = [];
+  document.getElementById("before").innerHTML = STEPS.map(function (s, i) {
+    return '<div class="step"><b>' + (i + 1) + " · " + s[0] + ' <span>' + s[1].length + '</span></b><div class="chips">' +
+      s[1].map(function (x) { return '<span class="chip" data-st="' + x[1] + '"><i></i>' + x[0] + "</span>"; }).join("") + "</div></div>";
+  }).join("");
+  all = Array.prototype.slice.call(document.querySelectorAll("#before .chip"));
+  function pos(el) { var x = 0, y = 0; while (el && el !== cv) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return [x, y]; }
+  function land(c, animate) {
+    var st = c.dataset.st, a = pos(c);
+    var g = c.cloneNode(true); g.className = "chip ghost"; c.parentNode.insertBefore(g, c); /* the gap it leaves in the old step */
+    document.getElementById(BIN[st]).appendChild(c);
+    var n = document.getElementById(CNT[st]); n.textContent = +n.textContent + 1;
+    if (!animate) { c.classList.add(st); return; }
+    var b = pos(c); c.classList.add("fly"); c.style.transition = "none"; c.style.transform = "translate(" + (a[0] - b[0]) + "px," + (a[1] - b[1]) + "px)";
+    c.offsetWidth; c.style.transition = ""; c.style.transform = ""; c.classList.add(st);
+  }
+  /* In the old flow's order, step by step. */
+  var order = all;
+  whenSeen(document.getElementById("f"), async function () {
+    if (END || reduced) { order.forEach(function (c) { land(c, false); }); return; }
+    await sleep(600);
+    for (var i = 0; i < order.length; i++) { land(order[i], true); await sleep(order[i].dataset.st === "gone" ? 420 : 210); }
+  });
+</script>
+</body>
+</html>

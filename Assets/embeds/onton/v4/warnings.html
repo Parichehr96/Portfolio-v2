@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The old form fills up field by field: 22 fields across four steps, with warnings that choices cannot be changed after creation, until a red stamp lands across the form.">
+<title>ONTON — the warning wall</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* Problem: the form keeps asking. Fields stack up in a phone-height column,
+     the warnings arrive with them, and the counters keep the score. */
+  .canvas { height: 380px; }
+  .col { position: absolute; left: 36px; top: 20px; width: 236px; height: 340px; border-radius: 18px; background: var(--on-ground); overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(13, 18, 51, .06); }
+  .col::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 36px; background: linear-gradient(var(--on-ground), rgba(239, 239, 244, 0)); z-index: 2; }
+  .stack { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 5px; transition: transform .45s var(--e-out); }
+  .row { opacity: 0; transform: translateY(10px); transition: opacity .3s, transform .4s var(--e-out); }
+  .row.on { opacity: 1; transform: none; }
+  .sec { font: 600 9px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--on-sub); margin: 8px 2px 1px; }
+  .fld { height: 26px; border-radius: 8px; background: #fff; display: flex; align-items: center; padding: 0 9px; font: 500 10.5px/1 "Figtree"; color: var(--on-ink); }
+  .fld em { margin-left: auto; font-style: normal; font-size: 9px; color: var(--on-red); }
+  .on-warn { font-size: 9.5px; }
+  .on-warn svg { flex: none; margin-top: 1px; }
+
+  .stamp { position: absolute; left: 50px; top: 150px; z-index: 5; width: 208px; padding: 9px 8px; border: 2.5px solid var(--pg-neg); border-radius: 8px; color: var(--pg-neg);
+    font: 700 12.5px/1.2 "Figtree"; letter-spacing: .06em; text-transform: uppercase; text-align: center; background: rgba(255, 255, 255, .88);
+    transform: rotate(-9deg) scale(1.7); opacity: 0; transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), opacity .2s; }
+  .stamp.on { transform: rotate(-9deg); opacity: 1; }
+
+  .side { position: absolute; left: 312px; right: 36px; top: 50px; display: grid; gap: 14px; }
+  .st { padding: 20px 16px; display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 10px; }
+  .st .num { font-size: 32px; }
+  .st .cap { line-height: 16px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="col" aria-hidden="true"><div class="stack" id="stack"></div></div>
+    <div class="stamp" id="stamp">Cannot be changed<br>after creation</div>
+    <div class="side">
+      <div class="card st"><div class="num" id="n1">0</div><div class="cap">dense steps before you can publish</div></div>
+      <div class="card st"><div class="num" id="n2">0</div><div class="cap">fields, for even a simple event</div></div>
+      <div class="card st"><div class="num" id="n4">0:00</div><div class="cap">about 7 minutes, start to publish</div></div>
+    </div>
+    <button class="replay" id="re" hidden>Replay</button>
+  </div>
+</div>
+<script>
+  /* The 22 fields of the old flow, by step (as in "What changed"), with the
+     two permanence warnings the old screens show (Figma 874:36963). */
+  var W = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L15 14H1L8 1.8Z" stroke="#B42318" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6.5v3.4M8 11.8v.1" stroke="#B42318" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  var STEPS = [
+    ["General", ["Name", "Cover image", "TON Hub", "Category", "Description", ["Subtitle", "mandatory"]]],
+    ["Time / Location", ["Date & time", "In-person / Online", "Country / City / Map", "Duration", "Timezone"]],
+    ["Registration", ["Capacity", "Free / Paid", "Registration form", "Approval", "Recipient wallet", "Ticket details", "!Ticket details cannot be changed after the event is created."]],
+    ["Reward", ["SBT preset", "Reward image", "Custom SBT", "!Event reward badge cannot be changed after the event is created.", "Reward video", "Event password"]],
+  ];
+  var stack = document.getElementById("stack"), items = [];
+  STEPS.forEach(function (s, i) {
+    items.push({ h: '<div class="sec">Step ' + (i + 1) + " · " + s[0] + "</div>", step: i + 1 });
+    s[1].forEach(function (x) {
+      if (typeof x === "string" && x[0] === "!") items.push({ h: '<div class="on-warn">' + W + "<span>" + x.slice(1) + "</span></div>", warn: 1 });
+      else if (Array.isArray(x)) items.push({ h: '<div class="fld">' + x[0] + "<em>" + x[1] + "</em></div>", field: 1 });
+      else items.push({ h: '<div class="fld">' + x + "</div>", field: 1 });
+    });
+  });
+  stack.innerHTML = items.map(function (it) { return '<div class="row">' + it.h + "</div>"; }).join("");
+  var rows = stack.children, n1 = document.getElementById("n1"), n2 = document.getElementById("n2"), n4 = document.getElementById("n4");
+  /* The stack sits on the column's floor, so unrevealed rows are pushed below it. */
+  function layout() {
+    var hidden = 0; for (var i = 0; i < rows.length; i++) if (!rows[i].classList.contains("on")) hidden += rows[i].offsetHeight + 5;
+    stack.style.transform = "translateY(" + hidden + "px)";
+  }
+  async function run() {
+    document.getElementById("re").hidden = true; document.getElementById("stamp").classList.remove("on");
+    for (var i = 0; i < rows.length; i++) rows[i].classList.remove("on");
+    var steps = 0, fields = 0; n1.textContent = 0; n2.textContent = 0; n4.textContent = "0:00";
+    layout();
+    if (END || reduced) {
+      for (i = 0; i < rows.length; i++) rows[i].classList.add("on"); layout();
+      n1.textContent = 4; n2.textContent = 22; n4.textContent = "~7:00"; document.getElementById("stamp").classList.add("on"); return;
+    }
+    await sleep(400);
+    for (i = 0; i < items.length; i++) {
+      var it = items[i]; rows[i].classList.add("on"); layout();
+      if (it.step) { steps = it.step; n1.textContent = steps; }
+      if (it.field) { fields++; n2.textContent = fields; n4.textContent = clock(fields / 22 * 420); }
+      if (it.warn) { await sleep(650); }
+      await sleep(it.step ? 380 : 210);
+    }
+    n4.textContent = "~7:00";
+    await sleep(500); document.getElementById("stamp").classList.add("on");
+    await sleep(1200); document.getElementById("re").hidden = false;
+  }
+  document.getElementById("re").addEventListener("click", run);
+  whenSeen(document.getElementById("f"), run);
+</script>
+</body>
+</html>

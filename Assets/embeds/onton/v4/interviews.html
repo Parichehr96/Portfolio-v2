@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Two interviews, two halves of one pattern. Isabel, a first-time organizer, stalls on a mandatory subtitle and a run of ticket, fee and approval settings she didn't need. Malena, a weekly organizer, rebuilds the same event from scratch every week; with Duplicate, the copy is one tap.">
+<title>ONTON — over-asked, re-asked</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* Interviews: the same form, felt two ways. */
+  .canvas { height: 326px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 14px; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; overflow: hidden; }
+  .who { display: flex; align-items: center; gap: 8px; }
+  .who .av { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; font: 600 12px/1 "Figtree"; flex: none; }
+  .who b { display: block; font: 600 13px/1.1 "Figtree"; } .who small { font: 400 10.5px/1.2 "Figtree"; color: var(--pg-faint); }
+  .who .tag { margin-left: auto; }
+  .q { font: 500 12px/17px "Figtree"; color: var(--pg-ink); }
+  .stage { position: relative; border-radius: 12px; background: var(--on-ground); padding: 10px; overflow: hidden; }
+
+  /* Isabel — stuck on a mandatory subtitle */
+  .fl { height: 28px; border-radius: 8px; background: #fff; display: flex; flex-direction: column; justify-content: center; padding: 0 9px; margin-bottom: 5px; transition: box-shadow .3s, opacity .4s, transform .4s var(--e-out); }
+  .fl b { font: 500 8px/1 "Figtree"; color: var(--on-sub); letter-spacing: .02em; } .fl span { font: 500 10.5px/1.3 "Figtree"; color: var(--on-ink); min-height: 13px; }
+  .fl.stuck { box-shadow: inset 0 0 0 1.5px var(--pg-neg); } .fl.stuck b { color: var(--pg-neg); }
+  .caret { display: inline-block; width: 1px; height: 11px; background: var(--on-blue); vertical-align: -1px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .fl.more { opacity: 0; transform: translateY(8px); } .fl.more.on { opacity: .6; transform: none; }
+  .bub { position: absolute; right: 14px; top: 84px; padding: 6px 9px; border-radius: 2px 10px 10px 10px; background: var(--pg-ink); color: #fff; font: 500 10.5px/1.3 "Figtree"; opacity: 0; transform: scale(.7); transform-origin: 0 0; transition: opacity .3s, transform .4s var(--e-out); }
+  .bub.on { opacity: 1; transform: none; }
+
+  /* Malena — the same event, week after week */
+  .wk { display: grid; grid-template-columns: 44px 1fr 46px; gap: 8px; align-items: center; height: 26px; margin-bottom: 4px; }
+  .wk > b { font: 600 10px/1 "Figtree"; color: var(--on-sub); }
+  .wk .ev { height: 24px; border-radius: 7px; background: #fff; position: relative; overflow: hidden; }
+  .wk .ev i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #CBD5E1; }
+  .wk .ev span { position: absolute; left: 8px; top: 7px; font: 500 9.5px/1 "Figtree"; color: var(--on-ink); opacity: 0; transition: opacity .3s; }
+  .wk .ev.full span { opacity: 1; }
+  .wk small { font: 500 9.5px/1.1 "Figtree"; color: var(--pg-faint); }
+  .wk.dup .ev { background: var(--on-blue-bg); box-shadow: inset 0 0 0 1px rgba(0, 122, 255, .35); }
+  .wk.dup small { color: var(--on-blue); }
+  .dupb { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px; margin: 2px 0 0 52px; border-radius: 7px; background: var(--on-blue); color: #fff; font: 600 10px/1 "Figtree"; opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .4s var(--e-out); }
+  .dupb.on { opacity: 1; transform: none; } .dupb.tap { transform: scale(.94); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="card">
+      <div class="who"><span class="av" style="background:#E2558E">I</span><div><b>Isabel</b><small>First-time organizer</small></div><span class="tag tag--neg">Over-asked</span></div>
+      <div class="stage">
+        <div class="fl"><b>NAME</b><span id="nm"></span></div>
+        <div class="fl" id="sub"><b>SUBTITLE (MANDATORY)</b><span id="subv"></span></div>
+        <div class="fl more"><b>TICKET DETAILS</b><span>Free / Paid</span></div>
+        <div class="fl more"><b>APPROVAL</b><span>Required</span></div>
+        <div class="fl more"><b>RECIPIENT WALLET</b><span>—</span></div>
+        <div class="bub" id="bub">Subtitle mandatory? Why?</div>
+      </div>
+      <div class="q">“I didn't even know what I was being asked to decide.”</div>
+    </div>
+    <div class="card">
+      <div class="who"><span class="av" style="background:#7A5AF8">M</span><div><b>Malena</b><small>Weekly organizer</small></div><span class="tag">Re-asked</span></div>
+      <div class="stage" id="ms">
+        <div class="wk" data-k="0"><b>Week 1</b><div class="ev"><i></i><span>Weekly meetup</span></div><small></small></div>
+        <div class="wk" data-k="1"><b>Week 2</b><div class="ev"><i></i><span>Weekly meetup</span></div><small></small></div>
+        <div class="wk" data-k="2"><b>Week 3</b><div class="ev"><i></i><span>Weekly meetup</span></div><small></small></div>
+        <div class="dupb" id="dupb"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>Duplicate</div>
+        <div class="wk dup" data-k="3" style="margin-top:4px;opacity:0" id="w4"><b>After</b><div class="ev"><i></i><span>Weekly meetup</span></div><small></small></div>
+      </div>
+      <div class="q">“I rebuild the same event from scratch every week.”</div>
+    </div>
+  </div>
+</div>
+<script>
+  function type(el, text, ms) { return new Promise(function (r) { var i = 0; (function t() { el.textContent = text.slice(0, ++i); i < text.length ? setTimeout(t, reduced ? 0 : ms) : r(); })(); }); }
+  async function isabel() {
+    var subv = document.getElementById("subv");
+    if (END || reduced) { document.getElementById("nm").textContent = "My first event"; subv.innerHTML = '<span class="caret"></span>'; document.getElementById("sub").classList.add("stuck");
+      document.getElementById("bub").classList.add("on"); document.querySelectorAll(".fl.more").forEach(function (x) { x.classList.add("on"); }); return; }
+    await sleep(300); await type(document.getElementById("nm"), "My first event", 70);
+    await sleep(250); subv.innerHTML = '<span class="caret"></span>';
+    await sleep(1300); document.getElementById("sub").classList.add("stuck");
+    await sleep(300); document.getElementById("bub").classList.add("on");
+    await sleep(900); stagger(document.querySelectorAll(".fl.more"), 700);
+  }
+  function fill(row, ms) {
+    var i = row.querySelector(".ev i"), ev = row.querySelector(".ev");
+    return new Promise(function (r) {
+      if (END || reduced || !ms) { i.style.width = "100%"; ev.classList.add("full"); i.style.opacity = 0; r(); return; }
+      i.style.transition = "width " + ms + "ms linear"; i.style.width = "100%";
+      setTimeout(function () { ev.classList.add("full"); i.style.transition = "opacity .3s"; i.style.opacity = 0; r(); }, ms);
+    });
+  }
+  async function malena() {
+    var rows = document.querySelectorAll(".wk"), w4 = document.getElementById("w4"), b = document.getElementById("dupb");
+    if (END || reduced) { for (var k = 0; k < 3; k++) { fill(rows[k], 0); rows[k].querySelector("small").textContent = "from zero"; }
+      b.classList.add("on"); w4.style.opacity = 1; fill(w4, 0); w4.querySelector("small").textContent = "one tap"; return; }
+    await sleep(500);
+    for (var k = 0; k < 3; k++) { rows[k].querySelector("small").textContent = "from zero"; await fill(rows[k], 1100); await sleep(150); }
+    await sleep(300); b.classList.add("on"); await sleep(600); b.classList.add("tap"); await sleep(150); b.classList.remove("tap");
+    w4.style.transition = "opacity .3s"; w4.style.opacity = 1; w4.querySelector("small").textContent = "one tap"; await fill(w4, 120);
+  }
+  whenSeen(document.getElementById("f"), function () { isabel(); malena(); });
+</script>
+</body>
+</html>

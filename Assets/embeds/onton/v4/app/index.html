@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A working prototype of ONTON's redesigned event creation: make an event with your own name, poster, time, place, tickets, reward and capacity, see it land in your events, then open its ticket and check in. Nothing leaves your browser.">
+<title>ONTON — create an event</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="stage">
+  <div class="device" id="device">
+    <div class="app" id="app">
+
+      <!-- status bar and the Mini App's modal stack -->
+      <div class="top" aria-hidden="true">
+        <img class="mask" src="img/modal-mask.svg" alt="">
+        <span class="card"></span><span class="grab"></span>
+        <div class="sb"><b>9:41</b><span><img src="img/sb-cell.svg" alt=""><img src="img/sb-wifi.svg" alt=""><img src="img/sb-batt.svg" alt=""></span></div>
+      </div>
+
+      <header class="hd events" id="hd">
+        <button class="side" id="hd-l" aria-label="Back"><img id="hd-li" src="img/back.svg" alt=""></button>
+        <div class="mid"><b>ONTON</b><span>bot</span></div>
+        <span class="side r" id="hd-r" aria-hidden="true"><img src="img/more.svg" alt=""></span>
+      </header>
+
+      <!-- YOUR EVENTS (Figma 1254:16250) -->
+      <main class="scr" id="s-events" aria-label="Your events">
+        <div class="ev" id="ev"></div>
+      </main>
+      <nav class="navb" id="navb" aria-label="Sections"><div>
+        <button class="on" aria-current="page"><img src="img/nav-ticket.svg" alt="">Event</button>
+        <button tabindex="-1"><img src="img/nav-discover.svg" alt="">Discover</button>
+        <button tabindex="-1"><img src="img/nav-channel.svg" alt="">Channel</button>
+      </div></nav>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <!-- NEW EVENT (Figma 980:34977 → 995:38054) -->
+      <main class="scr" id="s-form" hidden aria-label="New event">
+        <div class="form" id="form">
+          <h1>New event</h1>
+          <div id="media"></div>
+          <label class="fld" id="f-name"><div class="tx"><span class="lb">Name</span><input id="name" placeholder="What’s your event called?" maxlength="60" autocomplete="off"></div><button type="button" class="ic clr" id="name-clr" aria-label="Clear the name"><img src="img/clear.svg" alt=""></button></label>
+          <div class="when">
+            <div class="row"><span class="k"><img src="img/dot-start.svg" alt="">Start</span>
+              <div class="pair"><button type="button" class="fld" data-w="start"><div class="tx"><span class="lb">Date</span><span class="vl" id="sd"></span></div><span class="ic"><img src="img/calendar.svg" alt=""></span></button>
+                <button type="button" class="fld" data-w="start"><div class="tx"><span class="lb">Time</span><span class="vl" id="st"></span></div><span class="ic"><img src="img/clock.svg" alt=""></span></button></div></div>
+            <div class="row"><span class="k"><img src="img/dot-end.svg" alt="">End</span>
+              <div class="pair"><button type="button" class="fld" data-w="end"><div class="tx"><span class="lb">Date</span><span class="vl" id="ed"></span></div><span class="ic"><img src="img/calendar.svg" alt=""></span></button>
+                <button type="button" class="fld" data-w="end"><div class="tx"><span class="lb">Time</span><span class="vl" id="et"></span></div><span class="ic"><img src="img/clock.svg" alt=""></span></button></div></div>
+            <span class="dash"></span>
+          </div>
+          <div class="loc">
+            <label class="fld" id="f-loc"><div class="tx"><span class="lb">Location</span><input id="loc" placeholder="Offline location or virtual link" autocomplete="off"></div><span class="ic"><img src="img/location.svg" alt=""></span></label>
+            <div class="drop" id="drop" hidden></div>
+          </div>
+          <section class="sec"><h2>Event Options</h2>
+            <div class="opts">
+              <button type="button" class="o" data-sheet="ticket"><span class="tx"><span class="lb">Ticket</span><span class="vl" id="o-ticket"></span></span><span class="ic"><img src="img/edit.svg" alt=""></span></button>
+              <hr>
+              <button type="button" class="o" data-sheet="reward"><span class="tx"><span class="lb">Reward</span><span class="vl" id="o-reward"></span></span><span class="ic"><img src="img/edit.svg" alt=""></span></button>
+              <hr>
+              <button type="button" class="o" data-sheet="cap"><span class="tx"><span class="lb">Capacity</span><span class="vl" id="o-cap"></span></span><span class="ic"><img src="img/edit.svg" alt=""></span></button>
+            </div>
+          </section>
+          <div class="note"><img src="img/warning.svg" alt="">Once published, the reward can’t be changed.</div>
+        </div>
+      </main>
+      <div class="cta" id="cta-form" hidden><button class="btn" id="create">Create event</button></div>
+
+      <div class="dim" id="dim"></div>
+
+      <!-- SHEET · photos (Figma 985:35547) -->
+      <section class="sh" id="sh-photo" role="dialog" aria-label="Choose a photo" aria-hidden="true">
+        <span class="grab"></span>
+        <div class="sh-hd"><button class="x ic" data-close aria-label="Close"><img src="img/sheet-close.svg" alt=""></button><b>Recents <img src="img/chevron-down.svg" alt=""></b><button class="ic" data-close aria-label="Close"><img src="img/close-filled.svg" alt="" width="24" height="24"></button></div>
+        <div class="perm"><p>You have limited Telegram from accessing your photos.</p><span>MANAGE</span></div>
+        <div class="body"><div class="grid" id="grid"></div></div>
+        <span class="fade"></span>
+        <input type="file" accept="image/*" id="file" class="sr" tabindex="-1">
+      </section>
+
+      <!-- SHEET · time (Figma 991:36990) -->
+      <section class="sh" id="sh-time" role="dialog" aria-label="Start time" aria-hidden="true">
+        <span class="grab"></span>
+        <div class="sh-hd"><button class="x ic" data-close aria-label="Close"><img src="img/sheet-close.svg" alt=""></button><b id="time-t">Start Time</b><button class="ic" id="time-ok" aria-label="Set"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button></div>
+        <div class="wheel" id="wheel"><span class="hi"></span>
+          <div class="col d" id="w-d" aria-label="Day"></div><div class="col h" id="w-h" aria-label="Hour"></div><div class="col m" id="w-m" aria-label="Minute"></div><div class="col p" id="w-p" aria-label="AM or PM"></div>
+          <span class="f t"></span><span class="f b"></span></div>
+        <button class="now" id="now">Current Time</button>
+        <div class="cta"><button class="btn" id="time-set">Set schedule</button></div>
+      </section>
+
+      <!-- SHEET · ticket (Figma 995:38007, 999:38765, 999:38917, 999:38809) -->
+      <section class="sh" id="sh-ticket" role="dialog" aria-label="Ticket" aria-hidden="true">
+        <span class="grab"></span>
+        <div class="sh-hd"><button class="x ic" data-close aria-label="Close"><img src="img/sheet-close.svg" alt=""></button><b>Ticket</b><button class="ic" data-close aria-label="Close"><img src="img/close-filled.svg" alt="" width="24" height="24"></button></div>
+        <div class="body" id="tk-body"></div>
+        <div class="cta"><button class="btn" id="tk-ok">Confirm</button></div>
+      </section>
+
+      <!-- SHEET · reward (Figma 995:38211, 996:38246) -->
+      <section class="sh" id="sh-reward" role="dialog" aria-label="Reward" aria-hidden="true">
+        <span class="grab"></span>
+        <div class="sh-hd"><button class="x ic" data-close aria-label="Close"><img src="img/sheet-close.svg" alt=""></button><b>Reward</b><span class="ic"></span></div>
+        <div class="body"><div class="rw" id="rw"></div></div>
+        <div class="cta"><button class="btn" data-close>Confirm</button></div>
+      </section>
+
+      <!-- SHEET · capacity (Figma 994:37976, 994:37611) -->
+      <section class="sh" id="sh-cap" role="dialog" aria-label="Max capacity" aria-hidden="true">
+        <span class="grab"></span>
+        <div class="sh-hd"><button class="x ic" data-close aria-label="Close"><img src="img/sheet-close.svg" alt=""></button><b>Max Capacity</b><span class="ic"></span></div>
+        <div class="body"><div class="rw" id="cap"></div></div>
+        <div class="cta"><button class="btn" data-close>Confirm</button></div>
+      </section>
+
+      <!-- THE TICKET (Figma 1329:30026, 1372:62472) -->
+      <div class="tv" id="tv" role="dialog" aria-label="Your ticket" aria-hidden="true">
+        <div class="tcard"><span class="tshadow"></span>
+          <button class="qr" id="qr" aria-label="Scan this code to check in">
+            <img class="code" src="img/qr.svg" alt="">
+            <img class="mark" src="img/onton-mark.svg" alt="">
+            <span class="scan"></span>
+            <span class="ok"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#1F8A3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><b>Checked-In</b></span>
+          </button>
+          <div class="perf" id="perf"></div>
+          <div class="tinfo">
+            <div><h4 id="t-name"></h4><div class="by" id="t-by"></div></div>
+            <div class="gr">
+              <div><span><img src="img/i-profile.svg" alt="">Name</span><b>John Doe</b></div>
+              <div><span><img src="img/i-time.svg" alt="">Date &amp; Time</span><b id="t-when"></b></div>
+              <div><span><img src="img/i-ticket.svg" alt="">Ticket</span><b id="t-tk"></b></div>
+              <div><span><img src="img/i-seat.svg" alt="">Seat</span><b>29-A</b></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn" tabindex="-1"><img src="img/i-download.svg" alt="">Download</button>
+      </div>
+
+    </div>
+  </div>
+  <div class="coach"><span id="coach"></span><button id="restart">Start over</button></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -66,6 +66,7 @@
   }
 
   var offset = 0;     // steps turned so far
+  var goal = null;    // a dot's photo the wheel is turning to
   var speed = 0;
   var target = SPEED;
   var hovering = false;
@@ -74,12 +75,25 @@
   var visible = true;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  // The dots: one per photo, the middle one's lit.
+  var dotBox = document.querySelector("[data-photo-dots]");
+  var dots = dotBox ? Array.prototype.slice.call(dotBox.children) : [];
+  var lit = -1;
+  function middle() { return ((START + Math.round(offset)) % n + n) % n; }
+
   function place() {
     var half = count / 2;
     for (var i = 0; i < count; i++) {
       var p = i - START - offset;
       p = ((p + half) % count + count) % count - half;
       cards[i].style.setProperty("--p", p.toFixed(4));
+    }
+    var m = middle();
+    if (m !== lit && dots.length) {
+      if (lit >= 0) { dots[lit].classList.remove("is-on"); dots[lit].removeAttribute("aria-current"); }
+      dots[m].classList.add("is-on");
+      dots[m].setAttribute("aria-current", "true");
+      lit = m;
     }
   }
 
@@ -89,13 +103,20 @@
   function frame(now) {
     var dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
     last = now;
-    target = hovering || dragging || now < holdUntil || !visible || reduce.matches ? 0 : SPEED;
-    if (dragging) speed = 0;
-    speed += (target - speed) * Math.min(1, dt * EASE);
-    if (Math.abs(speed) < 0.0005 && target === 0) speed = 0;
-    offset += speed * dt;
+    target = hovering || dragging || goal !== null || now < holdUntil || !visible || reduce.matches ? 0 : SPEED;
+    if (dragging) { speed = 0; goal = null; }
+    if (goal !== null) {
+      // Ease onto the chosen photo, then rest there a while.
+      speed = 0;
+      offset += (goal - offset) * Math.min(1, dt * 5);
+      if (Math.abs(goal - offset) < 0.002) { offset = goal; goal = null; holdUntil = now + 2500; }
+    } else {
+      speed += (target - speed) * Math.min(1, dt * EASE);
+      if (Math.abs(speed) < 0.0005 && target === 0) speed = 0;
+      offset += speed * dt;
+    }
     place();
-    if (speed === 0 && target === 0 && !dragging && now >= holdUntil) {
+    if (speed === 0 && target === 0 && !dragging && goal === null && now >= holdUntil) {
       running = false;
       last = 0;
       return;
@@ -112,6 +133,18 @@
   build();
   place();
   wake();
+
+  // A dot turns the wheel the short way round to its photo.
+  dots.forEach(function (dot, k) {
+    dot.addEventListener("click", function () {
+      var d = ((k - middle()) % n + n) % n;
+      if (d > n / 2) d -= n;
+      goal = Math.round(offset) + d;
+      if (reduce.matches) { offset = goal; goal = null; holdUntil = performance.now() + 2500; place(); return; }
+      wake();
+    });
+  });
+  if (dotBox) dotBox.hidden = false;
 
   band.addEventListener("pointerenter", function (e) {
     if (e.pointerType === "mouse") { hovering = true; wake(); }

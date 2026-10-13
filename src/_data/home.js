@@ -157,6 +157,7 @@ module.exports = {
   sky: {
     lead: "In case you’ve been so busy to look up,",
     line: "This is your sky, as it looks right now.",
+    hint: "Drag the light to see other times.",   // shown while the window is open
   },
 
   about: {

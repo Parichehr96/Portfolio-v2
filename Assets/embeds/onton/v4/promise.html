@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ONTON's promise in three beats: an organizer creates an event, a guest shows up and checks in, and the guest gets an on-chain badge (a Soulbound Token). This story is about the first beat.">
+<title>ONTON — the promise</title>
+<link rel="stylesheet" href="case.css">
+<script src="case.js"></script>
+<style>
+  /* About: the whole promise, then the light settles on the beat this story is about. */
+  .canvas { height: 250px; padding: 20px 24px 0; }
+  .row { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr; align-items: center; }
+  .beat { height: 184px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); display: grid; grid-template-rows: 88px auto; gap: 10px; padding: 14px; transition: opacity .6s, box-shadow .6s, transform .6s var(--e-out); }
+  .beat .t { font: 600 14px/1.2 "Figtree"; } .beat .d { font: 400 11px/15px "Figtree"; color: var(--pg-muted); margin-top: 3px; }
+  .beat .n { font: 600 10px/1 "Figtree"; letter-spacing: .08em; color: var(--pg-faint); margin-bottom: 5px; }
+  .art { position: relative; display: grid; place-items: center; }
+  .link { height: 2px; background: var(--pg-border); position: relative; margin: 0 6px; overflow: hidden; border-radius: 1px; }
+  .link i { position: absolute; inset: 0; background: var(--on-blue); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-out); }
+  .link.on i { transform: none; }
+  .dim .beat:not(.me) { opacity: .42; }
+  .dim .beat.me { box-shadow: 0 0 0 2px var(--on-blue), 0 14px 30px -16px rgba(0, 122, 255, .55); transform: translateY(-3px); }
+  .note { margin-top: 14px; display: flex; justify-content: flex-start; padding-left: 4px; opacity: 0; transition: opacity .5s; }
+  .dim .note { opacity: 1; }
+
+  /* 1 · a mini form */
+  .form { width: 120px; display: grid; gap: 4px; }
+  .form .ln { height: 14px; border-radius: 5px; background: var(--on-ground); position: relative; overflow: hidden; }
+  .form .ln i { position: absolute; left: 6px; top: 5px; height: 4px; border-radius: 2px; background: #94A3B8; width: 0; transition: width .5s var(--e-out); }
+  .form .on-btn { height: 20px; font-size: 9px; border-radius: 6px; transform: scale(.94); opacity: .5; transition: transform .3s var(--e-out), opacity .3s; }
+  .form.ok .on-btn { transform: none; opacity: 1; }
+  /* 2 · a ticket, scanned */
+  .tk { width: 92px; height: 62px; border-radius: 9px; background: var(--on-blue); position: relative; overflow: hidden; display: grid; grid-template-columns: 38px 1fr; align-items: center; padding: 0 8px; gap: 8px; }
+  .tk .qr { width: 38px; height: 38px; border-radius: 4px; background:
+      conic-gradient(from 90deg at 3px 3px, #fff 90deg, transparent 0) 0 0/7px 7px, #fff; position: relative; }
+  .tk .qr::before { content: ""; position: absolute; inset: 3px; background: repeating-linear-gradient(90deg, #13212F 0 3px, transparent 3px 6px), repeating-linear-gradient(0deg, #13212F 0 3px, transparent 3px 7px); opacity: .85; mix-blend-mode: multiply; }
+  .tk b { display: block; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .8); margin: 3px 0; } .tk b + b { width: 70%; opacity: .7; }
+  .tk .scan { position: absolute; left: 0; right: 0; height: 2px; background: #FF3B30; box-shadow: 0 0 6px #FF3B30; top: 8px; opacity: 0; }
+  .tk.go .scan { animation: scan 1s var(--e-out) 2 alternate; }
+  @keyframes scan { 0% { top: 6px; opacity: 1; } 100% { top: 54px; opacity: 1; } }
+  .ck { position: absolute; right: -7px; top: -7px; width: 22px; height: 22px; border-radius: 50%; background: var(--on-green); color: #fff; display: grid; place-items: center; transform: scale(0); transition: transform .4s var(--e-out); }
+  .ck.on { transform: none; }
+  /* 3 · the badge */
+  .sbt { width: 70px; height: 70px; position: relative; }
+  .sbt svg { width: 100%; height: 100%; }
+  .sbt .shine { transform-origin: 35px 35px; transform: scale(.2) rotate(-40deg); opacity: 0; transition: transform .7s var(--e-out), opacity .4s; }
+  .sbt.on .shine { transform: none; opacity: 1; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="cv">
+    <div class="row">
+      <div class="beat me" id="b1"><div class="art"><div class="form" id="form"><div class="ln"><i data-w="70"></i></div><div class="ln"><i data-w="48"></i></div><div class="ln"><i data-w="84"></i></div><div class="on-btn">Create event</div></div></div>
+        <div><div class="n">01 · ORGANIZER</div><div class="t">Create the event</div><div class="d">Name, time, place, a reward</div></div></div>
+      <div class="link" id="l1"><i></i></div>
+      <div class="beat" id="b2"><div class="art"><div style="position:relative"><div class="tk" id="tk"><span class="qr"></span><span><b></b><b></b></span><span class="scan"></span></div><span class="ck" id="ck"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div></div>
+        <div><div class="n">02 · GUEST</div><div class="t">Show up</div><div class="d">The ticket is scanned at the door</div></div></div>
+      <div class="link" id="l2"><i></i></div>
+      <div class="beat" id="b3"><div class="art"><div class="sbt" id="sbt"><svg viewBox="0 0 70 70" aria-hidden="true">
+          <polygon points="35,3 63,19 63,51 35,67 7,51 7,19" fill="#E5F1FF" stroke="#007AFF" stroke-width="2"/>
+          <g class="shine"><polygon points="35,14 53,24.5 53,45.5 35,56 17,45.5 17,24.5" fill="#007AFF"/>
+          <path d="M26 35.5L32 41.5L44.5 29" stroke="#fff" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></svg></div></div>
+        <div><div class="n">03 · ON-CHAIN</div><div class="t">Get the badge</div><div class="d">A Soulbound Token that proves you were there</div></div></div>
+    </div>
+    <div class="note"><span class="tag">This story is about step 1, the one organizers got stuck on</span></div>
+  </div>
+</div>
+<script>
+  var cv = document.getElementById("cv");
+  async function run() {
+    cv.classList.remove("dim");
+    document.querySelectorAll(".form .ln i").forEach(function (x) { x.style.width = 0; });
+    ["l1", "l2"].forEach(function (id) { document.getElementById(id).classList.remove("on"); });
+    document.getElementById("form").classList.remove("ok"); document.getElementById("tk").classList.remove("go");
+    document.getElementById("ck").classList.remove("on"); document.getElementById("sbt").classList.remove("on");
+    if (END || reduced) {
+      document.querySelectorAll(".form .ln i").forEach(function (x) { x.style.width = x.dataset.w + "px"; });
+      document.getElementById("form").classList.add("ok"); ["l1", "l2"].forEach(function (id) { document.getElementById(id).classList.add("on"); });
+      document.getElementById("ck").classList.add("on"); document.getElementById("sbt").classList.add("on"); cv.classList.add("dim"); return;
+    }
+    await sleep(300);
+    var ls = document.querySelectorAll(".form .ln i");
+    for (var i = 0; i < ls.length; i++) { ls[i].style.width = ls[i].dataset.w + "px"; await sleep(260); }
+    document.getElementById("form").classList.add("ok"); await sleep(400);
+    document.getElementById("l1").classList.add("on"); await sleep(450);
+    document.getElementById("tk").classList.add("go"); await sleep(1900);
+    document.getElementById("ck").classList.add("on"); await sleep(350);
+    document.getElementById("l2").classList.add("on"); await sleep(450);
+    document.getElementById("sbt").classList.add("on"); await sleep(1300);
+    cv.classList.add("dim");
+  }
+  whenSeen(document.getElementById("f"), run);
+</script>
+</body>
+</html>

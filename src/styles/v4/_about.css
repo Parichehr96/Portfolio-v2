@@ -85,6 +85,47 @@
   color: var(--v4-text);
 }
 
+/* The dots under the wheel: one per photo, the middle one's filled. They
+   sit just under the middle card's caption, up in the wheel's band (whose
+   height is set by the text below), not after it. */
+.v4-photos__dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--v4-space-1);
+  margin-top: calc(-1 * var(--v4-photo-dots-lift));
+  /* ...and give the room back, so the text stays 390 under the middle card. */
+  margin-bottom: calc(var(--v4-photo-dots-lift) - var(--v4-photo-dot) - var(--v4-space-6));
+}
+
+.v4-photos__dots[hidden] {
+  display: none;
+}
+
+.v4-photos__dot {
+  width: var(--v4-photo-dot);
+  height: var(--v4-photo-dot);
+  padding: 0;
+  border: 1px solid var(--v4-border);
+  border-radius: var(--v4-radius-round);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.v4-photos__dot.is-on {
+  border-color: var(--v4-text);
+  background: var(--v4-text);
+}
+
+.v4-photos__dot:not(.is-on):hover {
+  border-color: var(--v4-text-muted);
+}
+
+.v4-photos__dot:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 2px;
+}
+
 /* Above the photo wheel, so a tilted card riding low never covers it. */
 .v4-about__text {
   position: relative;
