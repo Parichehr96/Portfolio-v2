@@ -12,6 +12,8 @@
   ?e=themes   Themes (section 13): the bento re-skins light, then dark.
   ?e=layers   Anatomy's second visual (section 10): the request card opens
               into its layers, labelled, and closes again.
+  ?e=components  Components (section 08): the periodic table's highlight steps
+              across the families, each one shown live in the box below.
   ?t=seconds  one still, for checking.
 -->
 <html><head><meta charset="utf-8"><style>
@@ -27,6 +29,9 @@ const LOOPS = {
             apply: (w, s) => w.set(s) },
   layers: { file: "anatomy-layers", h: 400, loop: 5.8, at: [0.6, 4.2], states: ["open", "closed"],
             apply: (w, s) => w.document.getElementById("c").classList.toggle("open", s === "open") },
+  // Seven of the table's own steps (every 1.5s, seven tiles on), across the families.
+  components: { h: 440, pad: 12, loop: 10.5, at: [0, 1.5, 3, 4.5, 6, 7.5, 9], states: [0, 7, 14, 21, 28, 35, 42],
+            apply: (w, s) => w.show(s) },
 };
 const L = LOOPS[E];
 const frame = w => new Promise(r => w.requestAnimationFrame(() => w.requestAnimationFrame(r)));
@@ -58,7 +63,7 @@ fetch("/Assets/embeds/wow-ds/" + (L.file || E) + ".html").then(r => r.text()).th
   html = html.replace(/whenSeen\([\s\S]*?\n?\s*\}\);\s*(?=<\/script>)/, "")
              .replace("<head>", '<head><base href="/Assets/embeds/wow-ds/">');
   ifr = document.createElement("iframe");
-  const s = Math.min((487.2 - 40) / 600, (312 - 40) / L.h);
+  const pad = 2 * (L.pad || 20), s = Math.min((487.2 - pad) / 600, (312 - pad) / L.h);
   Object.assign(ifr.style, { width: "600px", height: L.h + "px", left: (487.2 - 600 * s) / 2 + "px",
     top: (312 - L.h * s) / 2 + "px", transform: `scale(${s})` });
   ifr.srcdoc = html;

@@ -2,7 +2,7 @@
 /* Record a WOW design system thumbnail loop from stage.html, frame by frame.
  * (The Connect2WOW recorder, tools/connect2wow-thumbs/record.mjs, pointed here.)
  *
- *   node tools/wow-ds-thumbs/record.mjs <themes|layers>
+ *   node tools/wow-ds-thumbs/record.mjs <themes|layers|components>
  *     → Assets/v4/work/wow-design-system/<name>.{webm,mp4,jpg}
  *
  * Serves the repo root on a spare port, opens the stage in headless Chrome
@@ -19,7 +19,7 @@ import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const name = process.argv[2];
-if (!["themes", "layers"].includes(name)) { console.error("usage: record.mjs <themes|layers>"); process.exit(1); }
+if (!["themes", "layers", "components"].includes(name)) { console.error("usage: record.mjs <themes|layers|components>"); process.exit(1); }
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const OUT = join(ROOT, "Assets/v4/work/wow-design-system");
