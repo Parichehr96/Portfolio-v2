@@ -175,6 +175,7 @@
   --v4-panel-ratio: 812 / 520;
   --v4-panel-gap: 9.6px;
   --v4-radius-panel: 12px;
+  --v4-radius-panel-card: 8px;   /* the white ground inside a thumbnail */
   /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
   --v4-strip-slide: .55s;                       /* one thumbnail along */
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);

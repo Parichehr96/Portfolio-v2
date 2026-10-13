@@ -267,6 +267,14 @@ a.v4-project__link:hover {
    image, rising in one after another when the panel first comes to the
    front. Hidden only once the carousel runs, so they always show without
    it; .is-held keeps them up after, without playing again. */
+/* A white ground under a layered thumbnail's content (panel.box, its inset),
+   with the thumbnails' card corners. */
+.v4-project__box {
+  position: absolute;
+  border-radius: var(--v4-radius-panel-card);
+  background: var(--v4-surface);
+}
+
 .v4-project__layers {
   position: absolute;
   inset: 0;

@@ -5,7 +5,9 @@
  * to the first, so the loop has no seam.
  *
  *   node tools/cq-showcase/record.mjs <name> <canvas height> <run s> <hold s>
- *     → Assets/v4/work/challenquiz/cq-<name>.{webm,mp4,jpg}
+ *     [src] [width] [out dir] [prefix]
+ *     → Assets/v4/work/challenquiz/cq-<name>.{webm,mp4,jpg} by default; any
+ *       embed with src (e.g. ONTON's hero animation, out dir and prefix set).
  *
  * (Separate names from the cq thumbnails the Challenquiz chat is making.)
  */
@@ -15,10 +17,11 @@ import { tmpdir } from "node:os";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const [name, h, run, hold] = process.argv.slice(2);
+// Optional: a full embed path (src), its width, and where the files go.
+const [name, h, run, hold, src = "", w = "600", outDir = "Assets/v4/work/challenquiz", prefix = "cq-"] = process.argv.slice(2);
 if (!name || !h) { console.error("usage: record.mjs <name> <h> <run s> <hold s>"); process.exit(1); }
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const OUT = join(ROOT, "Assets/v4/work/challenquiz");
+const OUT = join(ROOT, outDir);
 const FPS = 60, HTTP = 8770, CDP = 9337, FADE = 0.6;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -44,9 +47,17 @@ try {
     if (m.result?.exceptionDetails) throw new Error(JSON.stringify(m.result.exceptionDetails)); return m.result?.result?.value; };
   await send("Page.enable");
   await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 520, deviceScaleFactor: 2, mobile: false });
-  await send("Page.navigate", { url: `http://127.0.0.1:${HTTP}/tools/cq-showcase/stage.html?f=${name}&h=${h}` });
+  await send("Page.navigate", { url: `http://127.0.0.1:${HTTP}/tools/cq-showcase/stage.html?f=${name}&h=${h}&w=${w}${src ? "&src=" + encodeURIComponent(src) : ""}` });
   for (let i = 0; i < 100 && (await evaluate("document.title")) !== "ready"; i++) await sleep(200);
   await sleep(400);
+  if (process.env.PROBE) {                                 // report the embed's loop length, record nothing
+    for (let k = 0; k < 600; k++) {
+      await evaluate(`window.setT(${k / 10})`);
+      const c = await evaluate(`document.querySelector("iframe").contentWindow.__cycle`);
+      if (c != null) { console.log("cycle ms", c); break; }
+    }
+    process.exit(0);
+  }
   const n = Math.round(+run * FPS);
   for (let k = 0; k < n; k++) {
     await evaluate(`window.setT(${k / FPS})`);
@@ -67,7 +78,7 @@ for i in range(${fadeN}):
     Image.blend(a,b,u).save(${JSON.stringify(frames)}+"/%04d.png" % (${k}+i))
 `]);
   const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "%04d.png"), "-vf", "scale=-2:780:flags=lanczos"];
-  const base = join(OUT, "cq-" + name);
+  const base = join(OUT, prefix + name);
   execFileSync("ffmpeg", [...input, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38", "-row-mt", "1", "-pix_fmt", "yuv420p", "-an", base + ".webm"]);
   execFileSync("ffmpeg", [...input, "-c:v", "libx264", "-crf", "27", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", base + ".mp4"]);
   execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", first, "-vf", "scale=-2:780:flags=lanczos", "-q:v", "3", base + ".jpg"]);

@@ -87,6 +87,7 @@ module.exports = {
           {
             motion: "layers",
             bg: "#F3F6F8",
+            box: "15% 3.33%",   // the white ground under the cards, 12 round them
             layers: [
               "/Assets/v4/work/connect2wow/panel-2-requests.png",
               "/Assets/v4/work/connect2wow/panel-2-hiring.png",
@@ -118,7 +119,9 @@ module.exports = {
           { motion: "anim", svg: "v4/work/onton-link.njk", alt: "An event linked to TON: Event and TON join, then come together" },
           // A loop recorded from the Figma flow by tools/onton-thumbs.
           { motion: "video", video: "/Assets/v4/work/onton/flow", alt: "Onton in Telegram: adding a VIP ticket, then creating the event, which lands in your events" },
-          {},
+          // Section 10's animation, "The new flow" (hero-animation.html), one 17.5s
+          // cycle recorded by tools/cq-showcase.
+          { motion: "video", video: "/Assets/v4/work/onton/new-flow", alt: "Creating an event in the new ONTON flow: name, poster, time and place, then the event created and in your list" },
         ],
       },
       {

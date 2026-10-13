@@ -15,10 +15,13 @@
 <html><head><meta charset="utf-8"><style>
 html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; background: #F3F6F8; }
 #panel { position: absolute; left: 0; top: 0; width: 487.2px; height: 312px; transform-origin: 0 0; transform: scale(1.66667); }
-iframe { position: absolute; border: 0; transform-origin: 0 0; background: transparent; }
+/* The visual on a white box of its own size, 8px corners (the thumbnails' card radius). */
+.box { position: absolute; overflow: hidden; border-radius: 8px; background: #fff; }
+iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: transparent; }
 </style></head><body><div id="panel"></div>
 <script>
-const q = new URLSearchParams(location.search), F = q.get("f"), H = +q.get("h") || 420, PAD = 40;
+const q = new URLSearchParams(location.search), F = q.get("f"), H = +q.get("h") || 420, WD = +q.get("w") || 600, PAD = 40;
+const SRC = q.get("src") || "/Assets/embeds/challenquiz/v4/" + F + ".html", BASE = SRC.replace(/[^/]*$/, "");
 const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_APP = "/Assets/embeds/challenquiz/v2/index.html";
 (function () {
   var realST = window.setTimeout.bind(window), vt = 0, q = [], seq = 0, rafs = [], seen = new WeakMap(), D0 = Date.now();
@@ -32,6 +35,18 @@ const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_A
   performance.now = function () { return vt; };
   Date.now = function () { return D0 + vt; };
   function tick() { return new Promise(function (r) { realST(r, 0); }); }
+  // For finding a loop's length: the clock when a ".stage" is first swapped in again.
+  new MutationObserver(function (ms) { ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) {
+    if (n.classList && n.classList.contains("stage") && window.__cycle == null && vt > 0) window.__cycle = vt; }); }); })
+    .observe(document.documentElement, { childList: true, subtree: true });
+  // SVG's own animations (SMIL): really always paused; their time is set from
+  // the clock while the page has them running.
+  var P = SVGSVGElement.prototype, rPause = P.pauseAnimations, rSet = P.setCurrentTime, svgs = [];
+  function st(svg) { if (!svg.__vt) { svg.__vt = { run: true, base: vt, at: 0 }; svgs.push(svg); rPause.call(svg); } return svg.__vt; }
+  P.pauseAnimations = function () { var x = st(this); if (x.run) { x.at += (vt - x.base) / 1000; x.run = false; } };
+  P.unpauseAnimations = function () { var x = st(this); if (!x.run) { x.base = vt; x.run = true; } };
+  P.setCurrentTime = function (t) { var x = st(this); x.at = t; x.base = vt; };
+  P.getCurrentTime = function () { var x = st(this); return x.run ? x.at + (vt - x.base) / 1000 : x.at; };
   window.__advanceTo = async function (end) {
     await tick();
     for (;;) { q.sort(function (a, b) { return a.t - b.t; }); var nx = q[0];
@@ -43,6 +58,8 @@ const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_A
         try { return !f.contentDocument || f.contentDocument.readyState !== "complete"; } catch (e) { return false; } });
       if (!busy) break; await new Promise(function (r) { realST(r, 25); });
     }
+    document.querySelectorAll("svg").forEach(function (svg) { if (svg.ownerSVGElement) return; var x = st(svg);
+      rSet.call(svg, x.run ? x.at + (vt - x.base) / 1000 : x.at); });
     document.getAnimations().forEach(function (a) {
       if (!seen.has(a)) seen.set(a, vt - (a.currentTime || 0));
       a.pause(); a.currentTime = Math.max(0, vt - seen.get(a)); });
@@ -53,12 +70,14 @@ window.setT = async function (t) {
   await win.__advanceTo(t * 1000);
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 };
-fetch("/Assets/embeds/challenquiz/v4/" + F + ".html").then(r => r.text()).then(html => {
-  html = html.replace("<head>", '<head><base href="/Assets/embeds/challenquiz/v4/">' + CLOCK);
-  const s = Math.min((487.2 - PAD) / 600, (312 - PAD) / H), ifr = document.createElement("iframe");
-  Object.assign(ifr.style, { width: "600px", height: H + "px", left: (487.2 - 600 * s) / 2 + "px", top: (312 - H * s) / 2 + "px", transform: `scale(${s})` });
+fetch(SRC).then(r => r.text()).then(html => {
+  html = html.replace(/<head>/i, '<head><base href="' + BASE + '">' + CLOCK);
+  const s = Math.min((487.2 - PAD) / WD, (312 - PAD) / H), ifr = document.createElement("iframe"), box = document.createElement("div");
+  box.className = "box";
+  Object.assign(box.style, { width: WD * s + "px", height: H * s + "px", left: (487.2 - WD * s) / 2 + "px", top: (312 - H * s) / 2 + "px" });
+  Object.assign(ifr.style, { width: WD + "px", height: H + "px", transform: `scale(${s})` });
   ifr.srcdoc = html;
   ifr.onload = async () => { win = ifr.contentWindow; await win.document.fonts.ready; await window.setT(0); document.title = "ready"; };
-  document.getElementById("panel").appendChild(ifr);
+  box.appendChild(ifr); document.getElementById("panel").appendChild(box);
 });
 </script></body></html>
