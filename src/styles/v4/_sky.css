@@ -62,30 +62,31 @@
   mask: url("/Assets/v4/sky/window-shape.svg") 0 0 / 100% 100% no-repeat; }
 
 /* THE WINDOW. Closed, the window (v4/sky-window.njk) lies over the sky as
-   two leaves, its halves split between the handles, the sky showing through
-   their glass. Opened (.is-open: hover, tap or focus), each leaf swings out
-   on its outer edge, past edge-on, to where the open sashes are drawn (113°
-   seen from 1250px out at its hinge: its free edge 146 out and 1.28 times
-   as tall, as drawn), where it hands over to them; the open frame is behind.
-   Closing plays it back. The open drawing (818 x 325) is set so its frame
-   (159..655 x 45..263) lies on the closed window (595 x 242): x 1.1996,
-   y 1.1101. */
+   two wings, its halves split between the handles, the sky showing through
+   their glass. Opened (.is-open: hover, tap or focus), each wing turns out
+   on its outer edge, past edge-on, to 113° (seen from 1250px out at its
+   hinge), where its back, the open sash flattened from window-open.svg, lies
+   exactly on the drawing. One smooth turn each way, nothing faded or swapped;
+   the open frame (the window's casing) comes in behind as it opens.
+   The open drawing (818 x 325) is set so its frame (159..655 x 45..263) lies
+   on the closed window (595 x 242): x 1.1996, y 1.1101. */
 .v4-sky__defs { position: absolute; width: 0; height: 0; }
-.v4-sky__leaf { position: absolute; inset: 0; width: 100%; max-width: none; height: 100%; pointer-events: none;
-  backface-visibility: visible;
-  transition: transform var(--v4-window-swing) cubic-bezier(.45, 0, .25, 1) .12s, opacity .14s linear; }
-.v4-sky__leaf--left { clip-path: inset(0 52.6% 0 0); transform-origin: 0 50%; transform: perspective(1250px) rotateY(0); }
-.v4-sky__leaf--right { clip-path: inset(0 0 0 47.4%); transform-origin: 100% 50%; transform: perspective(1250px) rotateY(0); }
-.v4-sky__view.is-open ~ .v4-sky__leaf { opacity: 0;
-  transition: transform var(--v4-window-swing) cubic-bezier(.45, 0, .25, 1), opacity .16s linear calc(var(--v4-window-swing) - .16s); }
-.v4-sky__view.is-open ~ .v4-sky__leaf--left { transform: perspective(1250px) rotateY(-112.6deg); }
-.v4-sky__view.is-open ~ .v4-sky__leaf--right { transform: perspective(1250px) rotateY(112.6deg); }
+.v4-sky__wing { position: absolute; inset: 0; pointer-events: none; transform-style: preserve-3d;
+  transition: transform var(--v4-window-swing) cubic-bezier(.45, 0, .25, 1); }
+.v4-sky__wing--left { transform-origin: 0 50%; transform: perspective(1250px) rotateY(0deg); }
+.v4-sky__wing--right { transform-origin: 100% 50%; transform: perspective(1250px) rotateY(0deg); }
+.v4-sky__view.is-open ~ .v4-sky__wing--left { transform: perspective(1250px) rotateY(-112.6deg); }
+.v4-sky__view.is-open ~ .v4-sky__wing--right { transform: perspective(1250px) rotateY(112.6deg); }
+.v4-sky__leaf { position: absolute; inset: 0; width: 100%; max-width: none; height: 100%; backface-visibility: hidden; }
+.v4-sky__leaf--left { clip-path: inset(0 52.6% 0 0); }
+.v4-sky__leaf--right { clip-path: inset(0 0 0 47.4%); }
+.v4-sky__back { position: absolute; top: 0; height: 100%; max-width: none; backface-visibility: hidden; transform: rotateY(180deg); }
+.v4-sky__back--left { left: 0; width: 47.4%; }
+.v4-sky__back--right { left: 47.4%; width: 52.6%; }
 
 .v4-sky__open { position: absolute; left: -32.06%; top: -20.64%; width: 164.93%; max-width: none; height: 149.09%; pointer-events: none; }
 .v4-sky__open--frame { opacity: 0; transition: opacity .2s ease calc(var(--v4-window-swing) + .1s); }
 .v4-sky__view.is-open .v4-sky__open--frame { opacity: 1; transition-delay: 0s; }
-.v4-sky__sash { opacity: 0; transition: opacity .14s linear; }
-.v4-sky__view.is-open ~ .v4-sky__sash { opacity: 1; transition-delay: calc(var(--v4-window-swing) - .16s); }
 
 /* Stars at night, fading out as the sky lightens. */
 .v4-sky__view::before {
@@ -173,5 +174,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span,
-  .v4-sky__leaf, .v4-sky__open { transition: none !important; }
+  .v4-sky__wing, .v4-sky__open { transition: none !important; }
 }

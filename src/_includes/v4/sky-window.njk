@@ -3,7 +3,7 @@
   the sky: the wooden frame and sashes, with the two panes cut out (a mask)
   so the sky shows through the glass. Drawn as two leaves (its halves, split
   between the handles) hinged on the window's outer edges, which swing open
-  (_sky.css) and hand over to the open window's drawn sashes.
+  (_sky.css) and show the open window's sashes on their backs.
 #}
 <svg class="v4-sky__defs" width="0" height="0" aria-hidden="true" focusable="false">
   <defs>
@@ -59,6 +59,15 @@
     </symbol>
   </defs>
 </svg>
-{#- The two halves of the closed window, each hinged on its outer edge. #}
-<svg class="v4-sky__leaf v4-sky__leaf--left" viewBox="0 0 595 242" aria-hidden="true" focusable="false"><use href="#v4-sky-closed"/></svg>
-<svg class="v4-sky__leaf v4-sky__leaf--right" viewBox="0 0 595 242" aria-hidden="true" focusable="false"><use href="#v4-sky-closed"/></svg>
+{#- The two halves of the closed window, each a wing hinged on its outer edge:
+    the closed half in front, and behind it the open sash as drawn in
+    window-open.svg, flattened (sash-back-*.png) so that where the wing comes to
+    rest it lands on the drawing exactly. One piece turning, nothing swapped. #}
+<div class="v4-sky__wing v4-sky__wing--left" aria-hidden="true">
+  <svg class="v4-sky__leaf v4-sky__leaf--left" viewBox="0 0 595 242" focusable="false"><use href="#v4-sky-closed"/></svg>
+  <img class="v4-sky__back v4-sky__back--left" src="/Assets/v4/sky/sash-back-l.png" alt="" width="282" height="242" />
+</div>
+<div class="v4-sky__wing v4-sky__wing--right" aria-hidden="true">
+  <svg class="v4-sky__leaf v4-sky__leaf--right" viewBox="0 0 595 242" focusable="false"><use href="#v4-sky-closed"/></svg>
+  <img class="v4-sky__back v4-sky__back--right" src="/Assets/v4/sky/sash-back-r.png" alt="" width="313" height="242" />
+</div>
