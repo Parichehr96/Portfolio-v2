@@ -6,8 +6,9 @@
 
   It plays only while it is the thumbnail at the front (.is-play, set by
   scripts/v4-strip.js); anywhere else, and with reduced motion, it rests on
-  the linked "Event ↔ TON". The comp's closing ONTON lockup (1537:101220) is
-  hidden in the file, so it is not drawn.
+  the linked "Event ↔ TON". It ends on the ONTON lockup (1537:101220,
+  hidden in the file and not in the export): the logo from
+  Assets/v4/experience/onton.svg and the word set in Figtree.
 #}
 <svg class="v4-onton-link" viewBox="0 0 488 312" fill="none" aria-hidden="true" focusable="false">
   <style>
@@ -20,8 +21,11 @@
     .is-play .v4-onton-link .ol-left { animation: ol-open 5.0026s linear infinite, ol-left-t 5.0026s linear infinite; }
     .is-play .v4-onton-link .ol-right { animation: ol-open 5.0026s linear infinite, ol-right-t 5.0026s linear infinite; }
     .is-play .v4-onton-link .ol-closed { animation: ol-closed 5.0026s linear infinite; }
+    .is-play .v4-onton-link .ol-final { animation: ol-final-o 5.0026s linear infinite, ol-final-t 5.0026s linear infinite; }
     /* At rest, the linked still: the open halves hidden under the closed link. */
-    .v4-onton-link .ol-left, .v4-onton-link .ol-right { opacity: 0; }
+    .v4-onton-link .ol-left, .v4-onton-link .ol-right, .v4-onton-link .ol-final { opacity: 0; }
+    .v4-onton-link .ol-final { transform-box: view-box; }
+    .v4-onton-link .ol-word { font-family: Figtree, sans-serif; font-size: 24px; font-weight: 500; }
     @keyframes ol-event-o { 0% { opacity: 0; } 2.399% { opacity: 0; animation-timing-function: ease-out; } 10.395% { opacity: 1; } 52.373% { opacity: 1; animation-timing-function: ease-in-out; } 64.367% { opacity: 0; } 100% { opacity: 0; } }
     @keyframes ol-event-t { 0% { transform: translate(0, 6px); } 2.399% { transform: translate(0, 6px); animation-timing-function: ease-out; } 10.395% { transform: translate(0, 0); } 49.974% { transform: translate(0, 0); animation-timing-function: ease-in-out; } 64.967% { transform: translate(68.4px, 0); } 100% { transform: translate(68.4px, 0); } }
     @keyframes ol-ton-o { 0% { opacity: 0; } 13.593% { opacity: 0; animation-timing-function: ease-out; } 21.589% { opacity: 1; } 52.373% { opacity: 1; animation-timing-function: ease-in-out; } 64.367% { opacity: 0; } 100% { opacity: 0; } }
@@ -30,6 +34,8 @@
     @keyframes ol-open { 0% { opacity: 1; } 43.558% { opacity: 1; } 43.578% { opacity: 0; } 100% { opacity: 0; } }
     @keyframes ol-left-t { 0% { transform: translate(-3px, 0); } 36.381% { transform: translate(-3px, 0); animation-timing-function: ease-out; } 43.578% { transform: translate(0, 0); } 100% { transform: translate(0, 0); } }
     @keyframes ol-right-t { 0% { transform: translate(3px, 0); } 36.381% { transform: translate(3px, 0); animation-timing-function: ease-out; } 43.578% { transform: translate(0, 0); } 100% { transform: translate(0, 0); } }
+    @keyframes ol-final-o { 0% { opacity: 0; } 60.769% { opacity: 0; animation-timing-function: ease-out; } 72.763% { opacity: 1; } 100% { opacity: 1; } }
+    @keyframes ol-final-t { 0% { transform: translate(0, 5px); } 60.769% { transform: translate(0, 5px); animation-timing-function: ease-out; } 72.763% { transform: translate(0, 0); } 100% { transform: translate(0, 0); } }
     @keyframes ol-closed { 0% { opacity: 0; } 43.558% { opacity: 0; } 43.578% { opacity: 1; } 100% { opacity: 1; } }
   </style>
   <rect width="487.2" height="312" rx="12" fill="#F3F6F8"/>
@@ -45,6 +51,13 @@
     <path class="ol-left" d="M247.65 160.5H244.65C243.457 160.5 242.312 160.026 241.468 159.182C240.624 158.338 240.15 157.193 240.15 156C240.15 154.807 240.624 153.662 241.468 152.818C242.312 151.974 243.457 151.5 244.65 151.5H247.65" stroke="#040418" stroke-opacity="0.4" stroke-width="1.32891" stroke-linecap="round" stroke-linejoin="round"/>
     <path class="ol-right" d="M252.15 151.5H255.15C256.344 151.5 257.488 151.974 258.332 152.818C259.176 153.662 259.65 154.807 259.65 156C259.65 157.193 259.176 158.338 258.332 159.182C257.488 160.026 256.344 160.5 255.15 160.5H252.15" stroke="#040418" stroke-opacity="0.4" stroke-width="1.32891" stroke-linecap="round" stroke-linejoin="round"/>
     <path class="ol-closed" d="M247.65 160.5H244.65C243.457 160.5 242.312 160.026 241.468 159.182C240.624 158.338 240.15 157.193 240.15 156C240.15 154.807 240.624 153.662 241.468 152.818C242.312 151.974 243.457 151.5 244.65 151.5H247.65M252.15 151.5H255.15C256.344 151.5 257.488 151.974 258.332 152.818C259.176 153.662 259.65 154.807 259.65 156C259.65 157.193 259.176 158.338 258.332 159.182C257.488 160.026 256.344 160.5 255.15 160.5H252.15M245.555 156H254.34" stroke="#040418" stroke-opacity="0.4" stroke-width="1.32891" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="ol-final">
+    <g transform="translate(182.3 141.6) scale(1.1982)">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M11.1365 0.014481C10.0832 0.135201 9.7494 0.189981 9.0993 0.348921C4.87734 1.38086 1.51404 4.67462 0.40092 8.86754C0.08514 10.057 0.01428 10.6273 0.01428 11.98C0.01428 13.325 0.0831 13.8837 0.39738 15.0903C1.59438 19.6852 5.59032 23.2069 10.3565 23.8674C11.0897 23.9691 12.8633 23.9691 13.5965 23.8674C18.3626 23.2069 22.3592 19.6846 23.5555 15.0903C23.7539 14.3281 23.9159 13.3981 23.9162 13.0186C23.9164 12.8803 23.9435 12.7504 23.9765 12.73C24.0115 12.7084 24.0365 12.3682 24.0365 11.913C24.0365 11.4082 24.0153 11.146 23.9765 11.17C23.9401 11.1925 23.9164 11.1056 23.9162 10.9486C23.9159 10.5542 23.7535 9.62696 23.5516 8.86604C22.6818 5.58836 20.3975 2.79362 17.3194 1.24136C16.3359 0.745341 14.9453 0.306141 13.8065 0.131841C13.2141 0.041181 11.5442 -0.032199 11.1365 0.014481ZM10.754 5.59328C8.1255 6.11552 6.08526 8.16962 5.5872 10.795C5.47086 11.4082 5.47086 12.5518 5.5872 13.165C6.08988 15.8148 8.1417 17.8666 10.7915 18.3693C11.4047 18.4857 12.5483 18.4857 13.1615 18.3693C15.8113 17.8666 17.8631 15.8148 18.3658 13.165C18.4821 12.5518 18.4821 11.4082 18.3658 10.795C17.8634 8.147 15.8095 6.09308 13.1615 5.59076C12.5729 5.4791 11.322 5.48042 10.754 5.59328ZM0 11.98C0 12.4255 0.00942 12.6078 0.021 12.385C0.03252 12.1623 0.03252 11.7978 0.021 11.575C0.00942 11.3523 0 11.5345 0 11.98Z" fill="#076CFA"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5038 8.37073C9.63652 8.72569 8.90573 9.39211 8.50451 10.1938C8.13995 10.9222 8.05721 11.321 8.09081 12.188C8.11493 12.81 8.14385 12.9734 8.29955 13.3677C8.39897 13.6194 8.57968 13.975 8.70112 14.158C8.98408 14.5843 9.73726 15.3002 9.85522 15.2549C9.90334 15.2365 9.92759 15.2459 9.90911 15.2758C9.89063 15.3057 10.0445 15.4146 10.251 15.5179L10.6265 15.7055L10.6565 13.8578L10.6865 12.01L11.1331 12.67C11.5684 13.3132 12.5082 14.7241 12.96 15.4124L13.1847 15.7549L13.5102 15.6109C14.5371 15.1568 15.3125 14.3036 15.7046 13.1965C15.7872 12.9632 15.8374 12.6344 15.8582 12.19C15.8951 11.4013 15.7977 10.9049 15.4797 10.2608C15.258 9.81169 14.8808 9.31795 14.7982 9.36895C14.7717 9.38533 14.7537 9.36235 14.7582 9.31783C14.7701 9.20113 14.2353 8.77531 13.7692 8.53039C13.5491 8.41471 13.353 8.32003 13.3335 8.32003C13.3141 8.32003 13.2911 9.15031 13.2823 10.165L13.2665 12.01L12.0441 10.18C11.3718 9.17353 10.8048 8.33233 10.7841 8.31073C10.7634 8.28907 10.6373 8.31607 10.5038 8.37073Z" fill="#549CFE"/>
+    </g>
+    <text class="ol-word" x="215.9" y="164.5" fill="black">ONTON</text>
   </g>
   <g class="ol-ton">
     <path d="M290.701 170.4C298.654 170.4 305.101 163.953 305.101 156C305.101 148.047 298.654 141.6 290.701 141.6C282.748 141.6 276.301 148.047 276.301 156C276.301 163.953 282.748 170.4 290.701 170.4Z" fill="#0098EA"/>
