@@ -149,12 +149,11 @@ module.exports = {
           { style: "lead", text: "Made three designers draw like one." },
           { text: " Co-built the library behind Connect2WOW: 65 component sets, 370 icons, and the rules that decide how everything looks and behaves." },
         ],
-        // Loops of the case study's own visuals, recorded by tools/wow-ds-thumbs;
-        // the third is still to be chosen.
+        // Loops of the case study's own visuals, recorded by tools/wow-ds-thumbs.
         panels: [
           { motion: "video", video: "/Assets/v4/work/wow-design-system/themes", alt: "WOW components in a bento re-skinning from light to dark" },
           { motion: "video", video: "/Assets/v4/work/wow-design-system/layers", alt: "A WOW request card opening into its layers: surface, identity, status and actions, each with its tokens" },
-          {},
+          { motion: "video", video: "/Assets/v4/work/wow-design-system/components", alt: "The WOW components as a periodic table, coloured by family, each shown live in turn" },
         ],
       },
     ],
