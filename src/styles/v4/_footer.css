@@ -31,6 +31,33 @@
   pointer-events: none;
 }
 
+/* What the pointer can find: the tower, and the circle the blades sweep. */
+.v4-mill__hit {
+  pointer-events: all;
+}
+
+.v4-mill__tower {
+  pointer-events: visiblePainted;
+}
+
+/* The wind speed, by the pointer (scripts/v4-wind.js). */
+.v4-mill-tip {
+  position: absolute;
+  z-index: 2;
+  padding: var(--v4-space-1) var(--v4-space-2);
+  border-radius: var(--v4-radius-panel-card);
+  background: var(--v4-text);
+  color: var(--v4-surface);
+  font-size: var(--v4-text-caption);
+  line-height: var(--v4-leading-caption);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.v4-mill-tip[hidden] {
+  display: none;
+}
+
 .v4-mill__blades {
   transform-box: view-box;
   transform-origin: 207.7px 219.1px;

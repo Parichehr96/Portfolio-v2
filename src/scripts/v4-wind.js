@@ -10,7 +10,8 @@
  * weather can't be fetched they sway as on a light breeze. Reduced motion:
  * no sway (CSS).
  *
- * THE WINDMILL (v4/windmill.njk) turns in the same wind: about a turn in 4.6s
+ * THE WINDMILL (v4/windmill.njk) turns in the same wind, anticlockwise, the
+ * way its wind line blows (right to left): about a turn in 4.6s
  * on a 10 km/h breeze, faster as it blows harder, slow on a calm day, easing
  * to each new pace rather than jumping. Every so often (more often the windier
  * it is) a gust runs down the blue wind line and the blades surge with it. Only
@@ -25,13 +26,14 @@
   var URL_WIND = "https://api.open-meteo.com/v1/forecast?latitude=52.37&longitude=4.89&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh";
   var CACHE = "v4-wind";
   var BREEZE = 10;                                         // km/h, when the weather is unknown
-  var millV = BREEZE;
+  var millV = BREEZE, millKnown = false;
 
   function setWind(kmh, fromDeg) {
     var v = Math.max(0, Math.min(90, +kmh || 0));
     // Lean with the wind: a westerly (from 180..360) pushes the crowns east (right).
     var dir = typeof fromDeg === "number" && fromDeg > 0 && fromDeg < 180 ? -1 : 1;
     millV = v;
+    if (typeof fromDeg === "number") millKnown = true;   // the live reading, not the stand-in breeze
     var bend = Math.min(13, 2.5 + v * 0.25);               // degrees of skew: 5 at 10 km/h
     var gust = bend * 0.3;                                 // a slower lean on top
     var period = Math.max(1.2, 3.2 - v * 0.05);            // seconds per sway
@@ -104,7 +106,7 @@
       boost *= Math.exp(-dt / 1.6);
       var target = pace() * (1 + 0.7 * boost);
       omega += (target - omega) * Math.min(1, dt * 1.5);
-      angle = (angle + omega * dt) % 360;
+      angle = (angle - omega * dt) % 360;                 // anticlockwise: the way the wind line blows
       blades.style.transform = "rotate(" + angle.toFixed(2) + "deg)";
       raf = requestAnimationFrame(frame);
     }
@@ -114,6 +116,26 @@
       wake();
     }).observe(mill);
     document.addEventListener("visibilitychange", wake);
+  }
+
+  // Hovered (or tapped), the windmill shows the wind speed by the pointer.
+  var tip = document.querySelector("[data-mill-tip]");
+  if (mill && tip) {
+    var foot = mill.closest("footer"), tipT = 0;
+    function show(e) {
+      tip.textContent = millKnown ? "Amsterdam wind speed: " + Math.round(millV) + " km/h" : "Amsterdam wind speed: loading\u2026";
+      tip.hidden = false;
+      var r = foot.getBoundingClientRect();
+      var x = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8);
+      tip.style.left = x + "px";
+      tip.style.top = (e.clientY - r.top - tip.offsetHeight - 12) + "px";
+    }
+    mill.addEventListener("pointermove", show);
+    mill.addEventListener("pointerleave", function () { tip.hidden = true; });
+    mill.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse") return;
+      show(e); clearTimeout(tipT); tipT = setTimeout(function () { tip.hidden = true; }, 2500);
+    });
   }
 
   if ("IntersectionObserver" in window) {

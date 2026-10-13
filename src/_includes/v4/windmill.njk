@@ -2,10 +2,13 @@
   THE WINDMILL in the footer (Figma 1531:25886, exported as
   Assets/v4/footer/windmill.svg): behind the city illustration, its foot on
   the footer's floor. scripts/v4-wind.js turns the blades round the hub at a
-  pace set by Amsterdam's wind right now, and now and then blows a gust down
-  the blue wind line. Without the script it stands still.
+  pace set by Amsterdam's wind right now, turning the way the wind line blows
+  (right to left, so anticlockwise), and now and then blows a gust down the
+  blue wind line. Without the script it stands still. Hovered (the tower, or
+  anywhere the blades sweep), it shows the wind speed in a tooltip.
 #}
 <svg class="v4-footer__mill" width="519" height="580" viewBox="0 0 519 580" fill="none" aria-hidden="true" focusable="false" data-mill>
+  <circle class="v4-mill__hit" cx="207.7" cy="219.1" r="178" fill="transparent"/>
   <g class="v4-mill__tower">
     <path d="M202.514 217.882L184.51 581.018H243.1L212.585 217.271L202.514 217.882Z" fill="#FB8451"/>
     <path d="M202.514 217.882L184.51 581.018H243.1L212.585 217.271L202.514 217.882Z" stroke="#CF4A32" stroke-width="1.584"/>
