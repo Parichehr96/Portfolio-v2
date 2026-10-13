@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The router as a machine: an alert drops in, its four axes are read off one by one (actionable, priority, source, status), and the component it becomes appears on a screen.">
+<title>Connect2WOW — alert router (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .msg { position: absolute; left: 24px; top: 26px; width: 200px; padding: 12px 14px; border-radius: 12px; background: var(--pg-ink); color: #fff; font: 600 14px/1.3 "Figtree"; transition: opacity .3s, transform .4s var(--ease); }
+  .msg small { display: block; font: 500 10px/1 "Figtree"; color: rgba(255,255,255,.55); margin-bottom: 6px; letter-spacing: .05em; text-transform: uppercase; }
+  .msg.out { opacity: 0; transform: translateY(-10px); }
+  .axes { position: absolute; left: 24px; top: 112px; width: 200px; display: grid; gap: 6px; }
+  .ax { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .ax b { font: 600 11px/1 "Figtree"; color: var(--pg-ink); opacity: 0; transform: translateX(6px); transition: opacity .25s, transform .35s var(--ease); }
+  .ax.on b { opacity: 1; transform: none; }
+  .ax.on { box-shadow: 0 0 0 1.5px var(--c2w-p10); }
+  .res { position: absolute; left: 24px; top: 300px; width: 200px; font: 500 11px/1.3 "Figtree"; color: var(--pg-muted); }
+  .res b { display: block; font: 600 20px/1.1 "Figtree"; color: var(--pg-ink); }
+  .pipe { position: absolute; left: 232px; top: 190px; width: 24px; height: 2px; background: var(--pg-frame-2); }
+  .scr { position: absolute; left: 262px; top: 26px; width: 316px; height: 328px; font-family: "Roboto"; overflow: hidden; }
+  .scr .top { height: 28px; border-bottom: 1px solid var(--c2w-line); display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; gap: 8px; color: var(--c2w-sub); position: relative; }
+  .scr .body { padding: 12px; display: grid; gap: 8px; }
+  .sk { height: 7px; border-radius: 4px; background: #EEF1F5; }
+  .h { position: absolute; opacity: 0; transform: scale(.95); transition: opacity .3s, transform .4s var(--ease); pointer-events: none; }
+  .h.on { opacity: 1; transform: none; }
+  .bdg { right: 34px; top: 5px; width: 13px; height: 13px; border-radius: 50%; background: #E82B32; color: #fff; font-size: 8px; display: grid; place-items: center; }
+  .ban { left: 0; right: 0; top: 28px; padding: 7px 10px; font-size: 9.5px; background: rgba(255,166,0,.14); color: #8A5A00; border-bottom: 1px solid #FDCE68; }
+  .toast { right: 10px; bottom: 10px; width: 170px; padding: 9px 10px; border-radius: 8px; background: #212327; color: #fff; font-size: 9.5px; display: flex; gap: 6px; align-items: center; }
+  .toast i { width: 8px; height: 8px; border-radius: 50%; background: #16CF4B; }
+  .inl { left: 12px; top: 106px; font-size: 9px; color: #E82B32; }
+  .modal-bg { inset: 0; background: rgba(13,18,51,.35); }
+  .modal { left: 50%; top: 50%; width: 200px; margin: -60px 0 0 -100px; padding: 12px; border-radius: 10px; background: #fff; font-size: 10px; box-shadow: 0 20px 40px -10px rgba(0,0,0,.4); }
+  .panel { right: 0; top: 28px; bottom: 0; width: 140px; background: #fff; border-left: 1px solid var(--c2w-line); padding: 10px; font-size: 9px; display: grid; gap: 6px; align-content: start; box-shadow: -10px 0 20px -12px rgba(0,0,0,.2); }
+  .panel div { padding: 6px; border-radius: 6px; background: #F4F7FB; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="msg" id="msg"><small>An alert arrives</small><span id="mt"></span></div>
+    <div class="axes" id="axes"></div>
+    <div class="res" id="res">Becomes a<b id="rb">—</b></div>
+    <div class="pipe"></div>
+    <div class="ui scr">
+      <div class="top"><span class="h bdg" id="h-Badge">3</span></div>
+      <div class="body"><div class="sk" style="width:40%;height:9px"></div><div class="ui-lbl" style="margin:6px 0 0">Field</div><div class="ui-field" id="fld">—</div><div style="height:12px"></div><div class="sk"></div><div class="sk" style="width:85%"></div><div class="sk" style="width:70%"></div><div class="ui-card" style="height:70px"></div></div>
+      <div class="h ban" id="h-Banner">⚠ Scheduled maintenance tonight 22:00–23:00</div>
+      <div class="h inl" id="h-Inline">This field is required</div>
+      <div class="h toast" id="h-Toast"><i></i>Saved successfully</div>
+      <div class="h panel" id="h-Panel"><b style="font-size:10px">Notifications</b><div>New report ready</div><div>Course assigned</div><div>Shift updated</div></div>
+      <div class="h modal-bg" id="h-Modalbg"></div>
+      <div class="h modal" id="h-Modal"><b>Delete this record?</b><p style="margin:6px 0 10px;color:#5B6475">This can't be undone.</p><div style="display:flex;gap:6px;justify-content:flex-end"><span class="ui-btn ui-btn--ghost">Cancel</span><span class="ui-btn" style="background:#E82B32">Delete</span></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  /* Straight from the V3 alert-routing embed: same axes, same six scenarios. */
+  var AX = ["Actionable", "Priority", "Source", "Status"];
+  var SCEN = [
+    ["“Saved successfully”", ["No", "Medium", "Task", "Success"], "Toast"],
+    ["“Invalid field”", ["Yes", "High", "Task", "Error"], "Inline"],
+    ["“Delete this record?”", ["Yes", "High", "User", "Warning"], "Modal"],
+    ["“Scheduled maintenance”", ["No", "Medium", "System", "Warning"], "Banner"],
+    ["“3 unread”", ["No", "Low", "System", "Info"], "Badge"],
+    ["“New report ready”", ["No", "Low", "System", "Success"], "Panel"]
+  ];
+  document.querySelector(".top").insertAdjacentHTML("afterbegin", ico("bell", 14));
+  var axes = document.getElementById("axes");
+  axes.innerHTML = AX.map(function (a) { return '<div class="ax">' + a + "<b></b></div>"; }).join("");
+  var rows = axes.children, msg = document.getElementById("msg"), mt = document.getElementById("mt"), rb = document.getElementById("rb");
+  function homes(on) { document.querySelectorAll(".h").forEach(function (h) { h.classList.toggle("on", h.id === "h-" + on || (on === "Modal" && h.id === "h-Modalbg")); }); document.getElementById("fld").style.borderColor = on === "Inline" ? "#E82B32" : ""; }
+  whenSeen(document.getElementById("f"), async function () {
+    var i = 0;
+    while (true) {
+      var s = SCEN[i];
+      msg.classList.add("out"); homes(null); rb.textContent = "—";
+      Array.prototype.forEach.call(rows, function (r) { r.classList.remove("on"); });
+      await sleep(350); mt.textContent = s[0]; msg.classList.remove("out");
+      for (var k = 0; k < 4; k++) { await sleep(380); rows[k].querySelector("b").textContent = s[1][k]; rows[k].classList.add("on"); }
+      await sleep(400); rb.textContent = s[2]; homes(s[2]);
+      await sleep(2200); i = (i + 1) % SCEN.length;
+    }
+  });
+</script>
+</body>
+</html>

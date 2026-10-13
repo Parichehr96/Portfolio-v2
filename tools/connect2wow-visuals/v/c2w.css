@@ -1,0 +1,119 @@
+/* Connect2WOW case-study visuals — shared styles.
+ *
+ * Two vocabularies live here:
+ *   --pg-*  the V4 case page (Figtree, navy ink, mist frame) — the "paper"
+ *           every visual sits on, so it matches /work/onton/.
+ *   --c2w-* the Connect2WOW product (Roboto, its own blue and neutral ramp,
+ *           from the WOW style guide) — used only where the product appears.
+ * Every visual is one 600-wide frame (the case column) that scales down.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap");
+
+:root {
+  /* page */
+  --pg-ink: #0D1233;
+  --pg-ink-60: rgba(13, 18, 51, .6);
+  --pg-muted: #475569;
+  --pg-faint: rgba(71, 85, 105, .6);
+  --pg-frame: #F3F6F8;
+  --pg-frame-2: #E8ECF0;
+  --pg-surface: #FFFFFF;
+  --pg-border: #E2E8F0;
+  --pg-accent: #3F3DB6;
+  --pg-tag: #0088FF;
+  --pg-tag-bg: rgba(0, 136, 255, .1);
+  --pg-neg: #D53434;
+  --pg-pos: #008000;
+
+  /* product — WOW style guide */
+  --c2w-p00: #1955CC;
+  --c2w-p10: #3374F5;
+  --c2w-p20: #85BCFF;
+  --c2w-p30: #E0EBFF;
+  --c2w-n00: #17191C;
+  --c2w-n10: #212327;
+  --c2w-n20: #2B2E33;
+  --c2w-n30: #33363D;
+  --c2w-n40: #41454C;
+  --c2w-n50: #555A63;
+  --c2w-n60: #ABB2BF;
+  --c2w-n70: #F9FAFB;
+  --c2w-n80: #FCFDFE;
+  --c2w-line: #E6E9EF;
+  --c2w-text: #1F2430;
+  --c2w-sub: #5B6475;
+  --c2w-red: #E82B32;
+  --c2w-amber: #FFA600;
+  --c2w-green: #16CF4B;
+
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-in: cubic-bezier(.55, 0, .75, 0);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: transparent; }
+body { font-family: "Figtree", system-ui, sans-serif; color: var(--pg-ink); -webkit-font-smoothing: antialiased; }
+
+/* THE FRAME — the case column's media box (620×406 in the comp, 600 here). */
+.frame {
+  position: relative; width: 100%; max-width: 600px; margin: 0 auto;
+  background: var(--pg-frame); border-radius: 20px; overflow: hidden;
+  container-type: inline-size;
+}
+.frame--white { background: var(--pg-surface); box-shadow: inset 0 0 0 1px var(--pg-border); }
+.frame--dark { background: #0E1015; color: #E9ECF2; }
+/* Inside the frame everything is laid out at 600 and scaled with the box. */
+.canvas { position: relative; width: 600px; transform-origin: 0 0; }
+.fit { width: 100%; }
+
+.eyebrow { font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+.cap { font: 400 12px/18px "Figtree"; color: var(--pg-muted); }
+.h { font: 600 15px/22px "Figtree"; color: var(--pg-ink); margin: 0; }
+.num { font: 600 34px/1 "Figtree"; letter-spacing: -.02em; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px;
+  font: 500 11px/14px "Figtree"; background: var(--pg-tag-bg); color: var(--pg-tag); white-space: nowrap; }
+.tag--grey { background: var(--pg-frame-2); color: var(--pg-muted); }
+.card { background: var(--pg-surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--pg-border); }
+.av { display: inline-grid; place-items: center; border-radius: 50%; color: #fff;
+  font: 600 12px/1 "Figtree"; flex: none; }
+
+/* ---- MINI PRODUCT UI (light theme, as in the HR screens) ---------------- */
+.ui { font-family: "Roboto", sans-serif; color: var(--c2w-text); background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 0 rgba(13,18,51,.04), 0 12px 32px -12px rgba(13,18,51,.18); overflow: hidden; }
+.ui-shell { display: grid; grid-template-columns: 44px 128px 1fr; height: 100%; }
+.ui-rail { border-right: 1px solid var(--c2w-line); display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; }
+.ui-logo { width: 20px; height: 20px; border-radius: 50%; border: 4px solid var(--c2w-p10); border-right-color: transparent; margin-bottom: 6px; }
+.ui-ico { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: var(--c2w-sub);
+  transition: background .3s, color .3s; }
+.ui-ico svg { width: 15px; height: 15px; }
+.ui-ico.is-on { background: var(--c2w-p30); color: var(--c2w-p10); }
+.ui-nav { border-right: 1px solid var(--c2w-line); padding: 10px 8px; font-size: 9.5px; }
+.ui-nav b { display: block; font-size: 10.5px; font-weight: 700; margin: 2px 4px 1px; }
+.ui-nav small { display: block; color: var(--c2w-sub); font-size: 9px; margin: 0 4px 10px; }
+.ui-nav i { display: block; font-style: normal; padding: 5px 6px; border-radius: 6px; color: var(--c2w-sub); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ui-nav i.is-on { background: var(--c2w-p30); color: var(--c2w-p00); font-weight: 500; }
+.ui-main { padding: 10px 12px; min-width: 0; }
+.ui-crumb { font-size: 9.5px; color: var(--c2w-sub); margin-bottom: 8px; }
+.ui-crumb b { color: var(--c2w-text); font-weight: 500; }
+.ui-tabs { display: flex; gap: 12px; font-size: 9px; color: var(--c2w-sub); border-bottom: 1px solid var(--c2w-line); margin: 8px 0; }
+.ui-tabs span { padding-bottom: 5px; }
+.ui-tabs .is-on { color: var(--c2w-text); box-shadow: inset 0 -2px 0 var(--c2w-text); }
+.ui-table { width: 100%; border-collapse: collapse; font-size: 9px; border: 1px solid var(--c2w-line); border-radius: 6px; overflow: hidden; }
+.ui-table th { background: #F1F3F6; color: var(--c2w-sub); font-weight: 500; text-align: left; padding: 5px 6px; }
+.ui-table td { padding: 5px 6px; border-top: 1px solid var(--c2w-line); white-space: nowrap; }
+.ui-card { border: 1px solid var(--c2w-line); border-radius: 8px; padding: 8px; }
+.ui-btn { display: inline-flex; align-items: center; justify-content: center; height: 20px; padding: 0 9px; border-radius: 5px;
+  font: 500 9px/1 "Roboto"; background: var(--c2w-p10); color: #fff; }
+.ui-btn--ghost { background: transparent; color: var(--c2w-text); box-shadow: inset 0 0 0 1px var(--c2w-line); }
+.ui-field { height: 22px; border: 1px solid var(--c2w-line); border-radius: 5px; display: flex; align-items: center; padding: 0 7px; font-size: 9px; color: var(--c2w-sub); }
+.ui-lbl { font-size: 8px; color: var(--c2w-sub); margin-bottom: 3px; }
+.ui-bar { height: 6px; border-radius: 3px; background: #EEF1F5; }
+.ui-pill { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 8px; background: var(--c2w-p30); color: var(--c2w-p00); }
+
+/* Reveal helpers driven by c2w.js */
+.rise { opacity: 0; transform: translateY(10px); transition: opacity .5s var(--ease), transform .6s var(--ease); }
+.is-in .rise, .rise.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}

@@ -55,7 +55,7 @@ page("cover-b", "foundations to screen, exploded", "Exploded stack: four planes 
   whenSeen(f);''')
 
 page("cover-c", "the library, wall to wall", "Library wall: a dense bento of real WOW components slowly drifts past, like a product page’s feature mosaic. Hover any tile to see its name and variant count.", 393,
-'''  .wall { position: absolute; left: -40px; top: -30px; width: 760px; display: grid; grid-template-columns: repeat(5, 140px); grid-auto-rows: 86px; gap: 10px; animation: drift 26s ease-in-out infinite alternate; }
+'''  .wall { position: absolute; left: -40px; top: -30px; width: 760px; display: grid; grid-template-columns: repeat(5, 140px); grid-auto-rows: 86px; gap: 10px; animation: drift 18s ease-in-out infinite alternate; }
   @keyframes drift { to { transform: translate(-90px, -60px); } }
   .t { position: relative; background: #F5F5F7; border-radius: 16px; display: grid; place-items: center; padding: 10px; overflow: hidden; transition: background .25s; }
   .t.w2 { grid-column: span 2; } .t.h2 { grid-row: span 2; }
@@ -179,7 +179,7 @@ page("problem-b", "spot the difference", "Spot the difference: three versions si
   .legend { position: absolute; left: 32px; right: 32px; top: 196px; display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 11.5px/1 "Figtree"; color: var(--pg-muted); }
   .legend span { display: inline-flex; gap: 6px; align-items: center; opacity: 0; transition: opacity .3s; }
   .legend span.on { opacity: 1; } .legend b { width: 16px; height: 16px; border-radius: 50%; background: #E05F2B; color: #fff; display: grid; place-items: center; font: 700 9px/1 "Figtree"; }
-  .one { position: absolute; left: 175px; top: 60px; width: 250px; opacity: 0; transform: translateY(14px); transition: opacity .6s .2s, transform .7s .2s var(--e-out); }
+  .one { position: absolute; left: 135px; top: 60px; width: 330px; opacity: 0; transform: translateY(14px); transition: opacity .6s .2s, transform .7s .2s var(--e-out); }
   .fixed .row3 { opacity: 0; transform: translateY(-10px); } .fixed .one { opacity: 1; transform: none; }
   .fixed .legend span { opacity: 0 !important; }
   .msg { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; font: 600 13px/1.3 "Figtree"; }''',

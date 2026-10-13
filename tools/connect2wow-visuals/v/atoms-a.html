@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Camera zoom-out: starts on one input field, pulls back to the form row, the card, then the whole HR screen. A level legend tracks atom → template.">
+<title>Connect2WOW — atom to screen (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 390px; overflow: hidden; }
+  .view { position: absolute; left: 0; top: 0; width: 600px; height: 340px; overflow: hidden; }
+  .cam { position: absolute; left: 0; top: 0; width: 600px; height: 340px; transform-origin: 0 0; transition: transform 1.3s cubic-bezier(.65,0,.35,1); }
+  .win { position: absolute; left: 40px; top: 24px; width: 520px; height: 296px; }
+  .ring { position: absolute; border: 2px solid #FFA600; border-radius: 8px; pointer-events: none; transition: all 1.3s cubic-bezier(.65,0,.35,1); }
+  .legend { position: absolute; left: 40px; right: 40px; bottom: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .legend span { font: 500 11px/1 "Figtree"; color: var(--pg-faint); padding-top: 8px; border-top: 2px solid var(--pg-frame-2); transition: color .3s, border-color .3s; }
+  .legend span b { display: block; font-weight: 600; margin-bottom: 3px; }
+  .legend span.is-on { color: var(--pg-ink); border-color: #FFA600; }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <div class="view"><div class="cam" id="cam">
+      <div class="ui win"><div class="ui-shell"><div class="ui-rail" id="rail"></div><div class="ui-nav" id="nav"></div>
+        <div class="ui-main">
+          <div class="ui-crumb">Workers / <b>Add worker</b></div>
+          <div class="ui-card" id="card">
+            <div style="font:500 10px Roboto;margin-bottom:8px">Worker information</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="row">
+              <div id="mol"><div class="ui-lbl">Full name</div><div class="ui-field" id="atom" style="color:#212327">Mark Rushmore</div></div>
+              <div><div class="ui-lbl">Discipline</div><div class="ui-field">Welding ▾</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+              <div><div class="ui-lbl">Position</div><div class="ui-field">Journeyman</div></div>
+              <div><div class="ui-lbl">Site</div><div class="ui-field">North Pad ▾</div></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><span class="ui-btn ui-btn--ghost">Cancel</span><span class="ui-btn">Save worker</span></div>
+          </div>
+          <div class="ui-tabs" style="margin-top:10px"><span class="is-on">Certificates</span><span>Documents</span><span>Payroll</span></div>
+          <table class="ui-table"><tr><th>Certificate</th><th>Issued by</th><th>Expires</th></tr><tr><td>First Aid</td><td>Tritech</td><td>Jan 2023</td></tr><tr><td>QA Professional</td><td>Tritech</td><td>Mar 2023</td></tr></table>
+        </div></div></div>
+      <div class="ring" id="ring"></div>
+    </div></div>
+    <div class="legend" id="lg"><span><b>Atom</b>input</span><span><b>Molecule</b>labelled field</span><span><b>Organism</b>form card</span><span><b>Template</b>HR screen</span></div>
+  </div>
+</div>
+<script>
+  document.getElementById("rail").innerHTML = C2W.rail("hr"); document.getElementById("nav").innerHTML = C2W.nav("hr");
+  var cam = document.getElementById("cam"), ring = document.getElementById("ring"), lg = document.getElementById("lg").children;
+  /* measure in cam space with the camera at rest */
+  function measure(el) { var x = 0, y = 0, n = el; while (n && n !== cam) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight }; }
+  var ids = ["atom", "mol", "card", null];
+  function focus(i) {
+    var b = ids[i] ? measure(document.getElementById(ids[i])) : { x: 40, y: 24, w: 520, h: 296 };
+    var s = Math.min(4, Math.min(520 / b.w, 300 / b.h) * (ids[i] ? .8 : 1));
+    var tx = 300 - (b.x + b.w / 2) * s, ty = 170 - (b.y + b.h / 2) * s;
+    cam.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+    ring.style.left = b.x - 3 + "px"; ring.style.top = b.y - 3 + "px"; ring.style.width = b.w + 6 + "px"; ring.style.height = b.h + 6 + "px";
+    ring.style.borderWidth = 2 / s + "px"; ring.style.borderRadius = 8 / s + "px"; ring.style.opacity = ids[i] ? 1 : 0;
+    Array.prototype.forEach.call(lg, function (l, k) { l.classList.toggle("is-on", k === i); });
+  }
+  addEventListener("load", function () { focus(0); });
+  focus(0);
+  whenSeen(document.getElementById("f"), async function () {
+    var i = 0;
+    while (true) { await sleep(i === 3 ? 3200 : 1900); i = (i + 1) % 4; focus(i); }
+  });
+</script>
+</body>
+</html>

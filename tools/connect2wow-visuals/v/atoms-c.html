@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The state matrix from the style guide, live: four controls × five states, a scan line moving down the states. Shows the rigour behind 'every state'.">
+<title>Connect2WOW — state matrix (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 18px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: "Roboto"; }
+  th { font: 500 10.5px/1 "Figtree"; color: var(--pg-faint); text-align: left; padding: 0 8px 10px; }
+  td { padding: 8px; border-top: 1px solid var(--pg-border); vertical-align: middle; transition: background .3s; }
+  td:first-child { font: 500 11px/1 "Figtree"; color: var(--pg-ink); width: 74px; }
+  tr.on td { background: #FFF8E6; }
+  .fld { height: 22px; border: 1px solid var(--c2w-line); border-radius: 5px; display: flex; align-items: center; justify-content: space-between; padding: 0 7px; font-size: 9.5px; color: var(--c2w-text); background: #fff; }
+  .sw { width: 26px; height: 14px; border-radius: 7px; background: #D5DAE2; position: relative; display: inline-block; }
+  .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+  .sw.on { background: #3374F5; } .sw.on::after { left: 14px; }
+  .cb { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid #ABB2BF; display: inline-grid; place-items: center; font-size: 9px; color: #fff; }
+  .cb.on { background: #3374F5; border-color: #3374F5; }
+  .dis { opacity: .45; }
+  .err { border-color: #E82B32; } .warn { border-color: #FFA600; } .hov { border-color: #3374F5; box-shadow: 0 0 0 3px rgba(51,116,245,.12); }
+  .ic { font-size: 10px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <table id="t">
+      <tr><th></th><th>Input</th><th>Select</th><th>Checkbox</th><th>Switch</th></tr>
+      <tr><td>Default</td><td><div class="fld">Text input</div></td><td><div class="fld">Natural gas<span>▾</span></div></td><td><span class="cb"></span></td><td><span class="sw"></span></td></tr>
+      <tr><td>Hover</td><td><div class="fld hov">Text input</div></td><td><div class="fld hov">Natural gas<span>▾</span></div></td><td><span class="cb" style="border-color:#3374F5"></span></td><td><span class="sw" style="box-shadow:0 0 0 3px rgba(51,116,245,.15)"></span></td></tr>
+      <tr><td>Selected</td><td><div class="fld" style="border-color:#1955CC">Mark Rushmore</div></td><td><div class="fld" style="border-color:#1955CC">Crude oil<span>▾</span></div></td><td><span class="cb on">✓</span></td><td><span class="sw on"></span></td></tr>
+      <tr><td>Error</td><td><div class="fld err">Text input<span class="ic" style="color:#E82B32">!</span></div></td><td><div class="fld err">Select<span class="ic" style="color:#E82B32">!</span></div></td><td><span class="cb" style="border-color:#E82B32"></span></td><td><span class="sw" style="background:#F6C3C5"></span></td></tr>
+      <tr><td>Warning</td><td><div class="fld warn">Text input<span class="ic" style="color:#FFA600">▲</span></div></td><td><div class="fld warn">Select<span class="ic" style="color:#FFA600">▲</span></div></td><td><span class="cb" style="border-color:#FFA600"></span></td><td><span class="sw" style="background:#FFE2A8"></span></td></tr>
+      <tr><td>Disabled</td><td><div class="fld dis" style="background:#F1F3F6">Text input</div></td><td><div class="fld dis" style="background:#F1F3F6">Select<span>▾</span></div></td><td><span class="cb on dis">✓</span></td><td><span class="sw on dis"></span></td></tr>
+    </table>
+    <div class="cap" style="margin-top:10px">Every control ships with every state, so no screen invents its own error.</div>
+  </div>
+</div>
+<script>
+  whenSeen(document.getElementById("f"), async function () {
+    var rows = document.querySelectorAll("#t tr"), i = 1;
+    while (true) { rows.forEach(function (r, k) { r.classList.toggle("on", k === i); }); i = i % (rows.length - 1) + 1; await sleep(1300); }
+  });
+</script>
+</body>
+</html>

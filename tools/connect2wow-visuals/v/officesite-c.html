@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ripple: one change at the centre (a certificate expires) travels out to everyone it touches — Mark, his HSE lead, his project manager, HR — each with the alert type they get.">
+<title>Connect2WOW — one change, many people (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .core { position: absolute; left: 300px; top: 180px; width: 150px; margin-left: -75px; margin-top: -30px; padding: 10px 12px; border-radius: 12px; background: var(--pg-ink); color: #fff; text-align: center; font: 600 12px/1.3 "Figtree"; z-index: 2; }
+  .core small { display: block; font: 400 10px/1.3 "Figtree"; color: rgba(255,255,255,.6); }
+  .ring { position: absolute; left: 300px; top: 180px; width: 10px; height: 10px; margin: -5px; border-radius: 50%; border: 1.5px solid #FFA600; opacity: 0; }
+  .go .ring { animation: rip 1.6s ease-out; }
+  @keyframes rip { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(34); } }
+  .canvas > svg { position: absolute; inset: 0; }
+  .canvas > svg path { stroke: #CBD5E1; stroke-width: 1.2; fill: none; stroke-dasharray: 4 4; }
+  .p { position: absolute; transform: translate(-50%, -50%); width: 150px; padding: 9px 10px; border-radius: 11px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); display: grid; grid-template-columns: 24px 1fr; gap: 3px 8px; transition: box-shadow .3s, transform .4s var(--ease); }
+  .p .av { width: 24px; height: 24px; font-size: 9px; grid-row: span 2; }
+  .p b { font: 600 11px/1.2 "Figtree"; }
+  .p .n { font: 400 10px/1.3 "Figtree"; color: var(--pg-muted); }
+  .p .ty { grid-column: 2; justify-self: start; font: 600 9px/1 "Figtree"; padding: 3px 6px; border-radius: 999px; opacity: 0; transition: opacity .3s; }
+  .p.on { box-shadow: 0 0 0 1.5px #FFA600, 0 8px 18px -10px rgba(255,166,0,.6); transform: translate(-50%, -50%) scale(1.03); }
+  .p.on .ty { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <svg viewBox="0 0 600 360" id="svg"></svg>
+    <div class="ring"></div>
+    <div class="core">First Aid expires<small>Mark Rushmore · in 12 days</small></div>
+    <div id="ps"></div>
+  </div>
+</div>
+<script>
+  var P = [
+    [110, 70, "MR", "#3374F5", "Mark · welder", "Renew before your next rotation", "Toast", "#E7F6EC", "#1F8A4C"],
+    [490, 70, "DO", "#D97706", "Daniel · HSE lead", "Crew member not cleared for site", "Banner", "#FFF4DE", "#8A5A00"],
+    [110, 290, "RM", "#7A5AF8", "Ryan · project", "North Pad crew: 1 cert expiring", "Badge", "#EAF1FF", "#1955CC"],
+    [490, 290, "SL", "#E2558E", "Sarah · HR", "Book renewal course for Mark", "Panel", "#F1F3F6", "#475569"]
+  ];
+  var ps = document.getElementById("ps"), svg = document.getElementById("svg"), s = "";
+  P.forEach(function (p) {
+    s += '<path d="M300 180 L' + p[0] + " " + p[1] + '"/>';
+    ps.insertAdjacentHTML("beforeend", '<div class="p" style="left:' + p[0] + "px;top:" + p[1] + 'px"><span class="av" style="background:' + p[3] + '">' + p[2] + "</span><b>" + p[4] + '</b><span class="n">' + p[5] + '</span><span class="ty" style="background:' + p[7] + ";color:" + p[8] + '">as a ' + p[6].toLowerCase() + "</span></div>");
+  });
+  svg.innerHTML = s;
+  var c = document.getElementById("c"), els = ps.children;
+  whenSeen(document.getElementById("f"), async function () {
+    while (true) {
+      c.classList.remove("go"); void c.offsetWidth; c.classList.add("go");
+      for (var i = 0; i < els.length; i++) { await sleep(260); els[i].classList.add("on"); }
+      await sleep(3000);
+      Array.prototype.forEach.call(els, function (e) { e.classList.remove("on"); });
+      await sleep(800);
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Priority dial: drag the slider from low to critical and the same alert morphs into its home — badge, toast, banner, then a modal that stops you.">
+<title>WOW design system — the priority dial</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .scr { position: absolute; left: 130px; top: 22px; width: 340px; height: 210px; border-radius: 14px; background: #F5F5F7; overflow: hidden; }
+  .top { height: 34px; background: #fff; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; position: relative; color: #1D2433; }
+  .bd { position: absolute; top: 4px; right: 6px; transition: opacity .3s, transform .4s var(--e-out); }
+  .sk { margin: 14px 14px 0; display: grid; gap: 8px; } .sk i { height: 8px; border-radius: 4px; background: #E5E7EB; display: block; }
+  .h { position: absolute; opacity: 0; transform: scale(.96); transition: opacity .35s, transform .45s var(--e-out); pointer-events: none; }
+  .h.on { opacity: 1; transform: none; }
+  .tst { left: 50%; bottom: 12px; transform: translateX(-50%) scale(.96); } .tst.on { transform: translateX(-50%); }
+  .ban { left: 0; right: 0; top: 34px; } .ban .w-banner { border-radius: 0; border-width: 0 0 1px; }
+  .scrim { inset: 0; background: rgba(17,24,39,.3); }
+  .mdl { left: 50%; top: 50%; width: 220px; margin: -56px 0 0 -110px; }
+  .dial { position: absolute; left: 130px; right: 130px; top: 262px; }
+  .dial input { width: 100%; accent-color: #0D1233; }
+  .ticks { display: flex; justify-content: space-between; font: 500 10.5px/1 "Figtree"; color: var(--pg-faint); margin-top: 4px; }
+  .ticks span.on { color: var(--pg-ink); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="scr w"><div class="top">%BELL%<span class="w-badge h bd" id="h0">3</span></div><div class="sk"><i style="width:40%"></i><i></i><i style="width:80%"></i><i style="width:65%"></i></div>
+      <div class="h tst" id="h1">%TOAST%</div><div class="h ban" id="h2">%BAN%</div><div class="h scrim" id="h3s"></div><div class="h mdl" id="h3">%MODAL%</div></div>
+    <div class="dial"><input type="range" min="0" max="3" step="1" value="0" id="rg" aria-label="Priority"><div class="ticks" id="tk"><span>Low · badge</span><span>Medium · toast</span><span>High · banner</span><span>Critical · modal</span></div></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  c.innerHTML = c.innerHTML.replace("%BELL%", I("iconoir:bell-notification", 18)).replace("%TOAST%", W.toast("Gas test logged")).replace("%BAN%", W.banner("Gas reading rising at bay 4", "warn")).replace("%MODAL%", '<div class="w-modal"><h4>Evacuate bay 4</h4><p>Gas reading above limit. Confirm the area is clear.</p><div style="display:flex;justify-content:flex-end">' + W.btn("Area is clear", "danger") + "</div></div>");
+  var rg = document.getElementById("rg"), auto = true;
+  function set(v) { rg.value = v; ["h0", "h1", "h2", "h3"].forEach(function (id, i) { document.getElementById(id).classList.toggle("on", i === v); }); document.getElementById("h3s").classList.toggle("on", v === 3);
+    document.querySelectorAll("#tk span").forEach(function (s, i) { s.classList.toggle("on", i === v); }); }
+  rg.addEventListener("input", function () { auto = false; set(+rg.value); });
+  set(0); whenSeen(f, async function () { var v = 0; while (auto) { await sleep(1700); if (!auto) break; v = (v + 1) % 4; set(v); } });
+</script>
+</body>
+</html>

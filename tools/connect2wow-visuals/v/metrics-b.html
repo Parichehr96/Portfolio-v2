@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Editorial strip: four large numerals on one ruled line, read left to right like a sentence. The quietest option.">
+<title>Connect2WOW — at a glance (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 190px; padding: 28px 28px 0; }
+  .lead { font: 500 13px/18px "Figtree"; color: var(--pg-muted); margin-bottom: 18px; }
+  .strip { display: grid; grid-template-columns: .8fr 1.3fr 1.1fr .8fr; border-top: 1px solid var(--pg-ink); }
+  .cell { padding: 14px 12px 0 0; border-right: 1px solid var(--pg-border); margin-right: 12px; }
+  .cell:last-child { border: 0; margin: 0; }
+  .big { font: 600 48px/1 "Figtree"; letter-spacing: -.03em; color: var(--pg-ink); display: block; margin-bottom: 8px;
+    clip-path: inset(0 100% 0 0); transition: clip-path .8s var(--ease); }
+  .is-in .big { clip-path: inset(0 0 0 0); }
+  .cell:nth-child(2) .big { transition-delay: .12s; } .cell:nth-child(3) .big { transition-delay: .24s; } .cell:nth-child(4) .big { transition-delay: .36s; }
+  .big em { font-style: normal; color: var(--c2w-p10); }
+  .what { font: 500 13px/18px "Figtree"; }
+  .why { font: 400 12px/16px "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <div class="lead">It never launched, so there is no usage data. This is the system we built instead.</div>
+    <div class="strip">
+      <div class="cell"><span class="big">7</span><div class="what">modules</div><div class="why">one shell</div></div>
+      <div class="cell"><span class="big">40<em>–</em>50</span><div class="what">components</div><div class="why">atoms to templates</div></div>
+      <div class="cell"><span class="big">370</span><div class="what">icons &amp; logos</div><div class="why">one drawn set</div></div>
+      <div class="cell"><span class="big">6</span><div class="what">alert types</div><div class="why">zero one-offs</div></div>
+    </div>
+  </div>
+</div>
+<script>whenSeen(document.getElementById("f"));</script>
+</body>
+</html>

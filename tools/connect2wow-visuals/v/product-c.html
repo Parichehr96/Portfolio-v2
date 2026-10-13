@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="X-ray: one Engineering screen with hotspots on every system part (rail, card, avatar, button, tabs). Hover or let it cycle; each label says where else the part is used.">
+<title>Connect2WOW — x-ray (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 390px; }
+  .win { position: absolute; left: 24px; top: 24px; width: 400px; height: 300px; }
+  .win .ui-shell { grid-template-columns: 44px 1fr; }
+  .hs { position: absolute; width: 18px; height: 18px; margin: -9px; border-radius: 50%; background: #FFA600; color: #fff; font: 700 9px/18px "Figtree"; text-align: center; cursor: pointer; box-shadow: 0 0 0 4px rgba(255,166,0,.25); z-index: 2; }
+  .hs.on { box-shadow: 0 0 0 7px rgba(255,166,0,.3); }
+  .box { position: absolute; border: 1.5px dashed #FFA600; border-radius: 8px; opacity: 0; transition: all .35s var(--ease); pointer-events: none; }
+  .box.on { opacity: 1; }
+  .side { position: absolute; left: 440px; top: 24px; width: 140px; }
+  .side .k { font: 600 16px/1.2 "Figtree"; margin: 6px 0; }
+  .side .u { font: 400 11.5px/16px "Figtree"; color: var(--pg-muted); }
+  .side .mods { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+  .side .mods span { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); color: #CBD5E1; transition: color .3s, background .3s; }
+  .side .mods span.on { color: var(--c2w-p10); background: var(--c2w-p30); box-shadow: none; }
+  .bar { position: absolute; left: 24px; right: 24px; bottom: 16px; display: flex; gap: 6px; }
+  .bar span { font: 500 10.5px/1 "Figtree"; padding: 6px 9px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); color: var(--pg-muted); cursor: pointer; }
+  .bar span.on { background: var(--pg-ink); color: #fff; box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="ui win" id="win"><div class="ui-shell"><div class="ui-rail" id="rail"></div><div class="ui-main" id="main"></div></div></div>
+    <div class="box" id="box"></div>
+    <div class="side"><div class="eyebrow">System part</div><div class="k" id="k">—</div><div class="u" id="u"></div><div class="mods" id="mods"></div></div>
+    <div class="bar" id="bar"></div>
+  </div>
+</div>
+<script>
+  document.getElementById("rail").innerHTML = C2W.rail("eng");
+  document.getElementById("main").innerHTML = C2W.main("eng");
+  var main = document.getElementById("main"), win = document.getElementById("win"), c = document.getElementById("c");
+  /* [label, selector inside the window, where it's used, modules] */
+  var P = [
+    ["Navigation rail", ".ui-rail", "The same rail on every screen of every module.", ["hr", "hse", "courses", "admin", "eng", "profile", "connection"]],
+    ["Breadcrumb", ".ui-crumb", "Tells you which module and page you're in.", ["hr", "hse", "courses", "admin", "eng", "connection"]],
+    ["Request card", ".ui-card", "Approvals in Engineering, HR resource requests, Connection invites.", ["hr", "eng", "connection"]],
+    ["Avatar", ".av", "One person, one look: profiles, tables, requests.", ["hr", "eng", "profile", "connection"]],
+    ["Button pair", ".ui-card span[style*='margin-left:auto']", "Decline / Approve: the same pair in every approval flow.", ["hr", "eng", "admin"]]
+  ];
+  var M = {}; C2W.modules.forEach(function (m) { M[m.id] = m; });
+  document.getElementById("mods").innerHTML = C2W.modules.map(function (m) { return '<span data-k="' + m.id + '">' + ico(m.icon, 12) + "</span>"; }).join("");
+  document.getElementById("bar").innerHTML = P.map(function (p, i) { return '<span data-i="' + i + '">' + (i + 1) + " · " + p[0] + "</span>"; }).join("");
+  function rect(el) { var a = el.getBoundingClientRect(), b = c.getBoundingClientRect(), s = b.width / 600; return { x: (a.left - b.left) / s, y: (a.top - b.top) / s, w: a.width / s, h: a.height / s }; }
+  var spots = P.map(function (p, i) { var d = document.createElement("span"); d.className = "hs"; d.textContent = i + 1; d.dataset.i = i; c.appendChild(d); return d; });
+  function place() { P.forEach(function (p, i) { var r = rect(win.querySelector(p[1])); spots[i].style.left = r.x + r.w - 4 + "px"; spots[i].style.top = r.y + 4 + "px"; }); }
+  function show(i) {
+    var p = P[i], r = rect(win.querySelector(p[1])), b = document.getElementById("box");
+    b.style.left = r.x - 3 + "px"; b.style.top = r.y - 3 + "px"; b.style.width = r.w + 6 + "px"; b.style.height = r.h + 6 + "px"; b.classList.add("on");
+    document.getElementById("k").textContent = p[0]; document.getElementById("u").textContent = p[2];
+    document.querySelectorAll("#mods span").forEach(function (s) { s.classList.toggle("on", p[3].indexOf(s.dataset.k) > -1); });
+    spots.forEach(function (s, k) { s.classList.toggle("on", k === i); });
+    document.querySelectorAll("#bar span").forEach(function (s, k) { s.classList.toggle("on", k === i); });
+  }
+  var auto = true;
+  c.addEventListener("mouseover", function (e) { var t = e.target.closest("[data-i]"); if (t) { auto = false; show(+t.dataset.i); } });
+  addEventListener("load", function () { place(); show(0); });
+  setTimeout(function () { place(); show(0); }, 60);
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { show(i); i = (i + 1) % P.length; await sleep(2200); } });
+</script>
+</body>
+</html>

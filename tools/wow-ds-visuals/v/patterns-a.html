@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Assembly: loose parts fly in and snap into three patterns — a record header, a form block and a table block — which then stack into a screen.">
+<title>WOW design system — parts snap into patterns</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 480px; }
+  .slot { position: absolute; left: 150px; width: 300px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px #E5E7EB; padding: 10px 12px; transition: transform .9s var(--e-out), opacity .6s; }
+  .s1 { top: 40px; } .s2 { top: 122px; } .s3 { top: 236px; }
+  .loose .s1 { transform: translate(-150px, -10px) rotate(-6deg); opacity: .0; } .loose .s2 { transform: translate(160px, 20px) rotate(5deg); opacity: 0; } .loose .s3 { transform: translate(-160px, 40px) rotate(4deg); opacity: 0; }
+  .tag2 { position: absolute; left: 470px; font: 600 11px/1.3 "Figtree"; color: var(--pg-ink); opacity: 1; transition: opacity .4s .6s; }
+  .tag2 small { display: block; font: 400 10px/1.3 "Figtree"; color: var(--pg-faint); }
+  .loose .tag2 { opacity: 0; transition-delay: 0s; }
+  .msg { position: absolute; left: 24px; top: 22px; font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <span class="msg" id="msg">Patterns</span>
+    <div class="slot s1 w" id="a"></div><div class="slot s2 w" id="b"></div><div class="slot s3 w" id="d"></div>
+    <span class="tag2" style="top:52px">Record header<small>avatar · title · facts</small></span>
+    <span class="tag2" style="top:150px">Form block<small>fields · help · actions</small></span>
+    <span class="tag2" style="top:270px">Table block<small>filters · table · pager</small></span>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("a").innerHTML = '<div style="display:flex;align-items:center;gap:10px">' + W.av("MR", "#2563EB", 32) + '<div style="flex:1"><b style="font:600 12px Inter, sans-serif">Mark Rushmore</b><div style="font:400 10px Inter, sans-serif;color:var(--w-sub)">Journeyman welder · North Pad</div></div>' + W.pill("Active") + "</div>";
+  document.getElementById("b").innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' + W.field("Site", "North Pad", "", "") + W.field("Start", "Mon 26 Sep", "", "") + '</div><div style="display:flex;justify-content:flex-end;gap:6px;margin-top:6px"><span class="w-btn p-outline sm">Cancel</span><span class="w-btn p-primary sm">Save</span></div>';
+  document.getElementById("d").innerHTML = '<div style="display:flex;gap:6px;margin-bottom:8px">' + W.chip("All", true) + W.chip("Employees") + W.chip("Contractors") + "</div>" + W.table();
+  whenSeen(f, async function () { while (true) { c.classList.add("loose"); await sleep(500); c.classList.remove("loose"); await sleep(4200); } });
+</script>
+</body>
+</html>

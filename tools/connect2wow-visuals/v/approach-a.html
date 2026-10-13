@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A small four-phase strip, each phase with the concrete thing it produced. Context, not the story — kept deliberately quiet.">
+<title>Connect2WOW — approach (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 18px; }
+  .strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .ph { padding: 12px; display: grid; gap: 8px; align-content: start; position: relative; }
+  .ph .n { font: 600 10px/1 "Figtree"; color: var(--pg-faint); }
+  .ph b { font: 600 14px/1 "Figtree"; }
+  .ph p { margin: 0; font: 400 11px/15px "Figtree"; color: var(--pg-muted); }
+  .out { display: flex; gap: 6px; align-items: center; padding: 7px 8px; border-radius: 8px; background: var(--pg-frame); font: 500 10.5px/13px "Figtree"; }
+  .out span { color: var(--c2w-p10); display: grid; }
+  .bar { height: 3px; border-radius: 2px; background: var(--pg-frame-2); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 100%; background: var(--c2w-p10); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+  .is-in .bar i { transform: none; }
+  .ph:nth-child(2) .bar i { transition-delay: .5s; } .ph:nth-child(3) .bar i { transition-delay: 1s; } .ph:nth-child(4) .bar i { transition-delay: 1.5s; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="strip">
+      <div class="card ph"><div class="bar"><i></i></div><span class="n">01</span><b>Discover</b><p>Industry research and stakeholder interviews.</p><div class="out"><span data-ico="chat" data-size="13"></span>Interviews, audit of HR tools</div></div>
+      <div class="card ph"><div class="bar"><i></i></div><span class="n">02</span><b>Define</b><p>Narrowed to the key modules and the principles.</p><div class="out"><span data-ico="connection" data-size="13"></span>Module map + principles</div></div>
+      <div class="card ph"><div class="bar"><i></i></div><span class="n">03</span><b>Develop</b><p>Atomic Design: atoms, molecules, organisms, templates.</p><div class="out"><span data-ico="sheet" data-size="13"></span>40–50 components</div></div>
+      <div class="card ph"><div class="bar"><i></i></div><span class="n">04</span><b>Deliver</b><p>Each module built and tested against the system.</p><div class="out"><span data-ico="check" data-size="13"></span>Tested HR module</div></div>
+    </div>
+  </div>
+</div>
+<script>whenSeen(document.getElementById("f"));</script>
+</body>
+</html>

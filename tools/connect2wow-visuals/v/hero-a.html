@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Light product on a sky gradient. The rail steps through the modules; the shell never moves, only the content swaps.">
+<title>Connect2WOW — one shell (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .frame { background: linear-gradient(160deg, #D6E2F5 0%, #EEF2F8 55%, #F3F6F8 100%); }
+  .canvas { height: 392px; }
+  .win { position: absolute; left: 34px; top: 34px; width: 532px; height: 324px; }
+  .ui-rail { position: relative; }
+  .mark { position: absolute; left: 9px; width: 26px; height: 26px; border-radius: 8px; background: var(--c2w-p30);
+    transition: top .45s var(--ease); z-index: 0; }
+  .ui-ico { position: relative; z-index: 1; }
+  .ui-ico.is-on { background: transparent; }
+  .swap { transition: opacity .22s ease, transform .35s var(--ease); }
+  .swap.is-out { opacity: 0; transform: translateY(6px); }
+  .label { position: absolute; right: 34px; bottom: 12px; display: flex; gap: 6px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="ui win">
+      <div class="ui-shell">
+        <div class="ui-rail" id="rail"></div>
+        <div class="ui-nav swap" id="nav"></div>
+        <div class="ui-main swap" id="main"></div>
+      </div>
+    </div>
+    <div class="label"><span class="tag" id="tag">HR</span><span class="tag tag--grey">same shell · same parts</span></div>
+  </div>
+</div>
+<script>
+  var order = ["hr", "hse", "courses", "eng", "profile", "connection", "admin"];
+  var names = { hr: "HR", hse: "HSE", courses: "Courses", eng: "Engineering", profile: "Profile", connection: "Connection", admin: "Administration" };
+  var rail = document.getElementById("rail"), nav = document.getElementById("nav"), main = document.getElementById("main"), tag = document.getElementById("tag");
+  rail.innerHTML = '<span class="mark" id="mark"></span>' + C2W.rail("hr");
+  var mark = document.getElementById("mark");
+  function put(id) {
+    nav.innerHTML = C2W.nav(id); main.innerHTML = C2W.main(id); tag.textContent = names[id];
+    var ic = rail.querySelector('[data-k="' + id + '"]');
+    rail.querySelectorAll(".ui-ico").forEach(function (n) { n.classList.toggle("is-on", n === ic); });
+    mark.style.top = ic.offsetTop + "px";
+  }
+  put("hr");
+  whenSeen(document.getElementById("f"), async function () {
+    var i = 0;
+    while (true) {
+      await sleep(2600);
+      i = (i + 1) % order.length;
+      mark.style.top = rail.querySelector('[data-k="' + order[i] + '"]').offsetTop + "px";
+      nav.classList.add("is-out"); main.classList.add("is-out");
+      await sleep(230);
+      put(order[i]);
+      nav.classList.remove("is-out"); await sleep(70); main.classList.remove("is-out");
+    }
+  });
+</script>
+</body>
+</html>

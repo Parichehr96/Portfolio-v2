@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every number is drawn as the quantity it counts: 7 module icons, 45 component blocks, a 370-dot icon grid, 6 alert chips. Fills in on view.">
+<title>Connect2WOW — at a glance (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 330px; padding: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 14px; height: 143px; display: grid; grid-template-rows: 1fr auto; }
+  .head { display: flex; align-items: baseline; gap: 8px; }
+  .head b { font: 600 24px/1 "Figtree"; letter-spacing: -.02em; }
+  .head span { font: 500 12px/1 "Figtree"; color: var(--pg-muted); }
+  .art { display: flex; flex-wrap: wrap; align-content: flex-start; }
+  .pop { opacity: 0; transform: scale(.4); transition: opacity .3s, transform .4s var(--ease); }
+  .pop.on { opacity: 1; transform: none; }
+  .m { width: 30px; height: 30px; border-radius: 9px; background: var(--c2w-p30); color: var(--c2w-p10); display: grid; place-items: center; margin: 0 6px 6px 0; }
+  .c { width: 14px; height: 14px; border-radius: 3px; margin: 0 4px 4px 0; background: var(--c2w-p10); }
+  .c.s { background: var(--c2w-p20); } .c.t { background: #C9D3E3; }
+  .d { width: 4px; height: 4px; border-radius: 1px; margin: 0 2px 2px 0; background: var(--pg-ink); }
+  .n { height: 15px; border-radius: 4px; margin: 0 0 4px; width: 100%; display: flex; align-items: center; gap: 6px; padding: 0 6px; font: 500 9px/1 "Figtree"; color: #fff; }
+  .n i { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="grid">
+      <div class="card"><div class="art" id="a1"></div><div class="head"><b>7</b><span>modules</span></div></div>
+      <div class="card"><div class="art" id="a2"></div><div class="head"><b>40–50</b><span>components · atoms, molecules, templates</span></div></div>
+      <div class="card"><div class="art" id="a3" style="width:260px"></div><div class="head"><b>370</b><span>icons and logos</span></div></div>
+      <div class="card"><div class="art" id="a4" style="display:block"></div><div class="head"><b>6</b><span>notification types</span></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  var a1 = document.getElementById("a1"), a2 = document.getElementById("a2"), a3 = document.getElementById("a3"), a4 = document.getElementById("a4");
+  a1.innerHTML = C2W.modules.map(function (m) { return '<span class="m pop">' + ico(m.icon, 15) + "</span>"; }).join("");
+  var h = ""; for (var i = 0; i < 45; i++) h += '<span class="c pop ' + (i < 18 ? "" : i < 36 ? "s" : "t") + '"></span>'; a2.innerHTML = h;
+  h = ""; for (i = 0; i < 370; i++) h += '<span class="d pop"></span>'; a3.innerHTML = h;
+  var N = [["Modal · high attention", "#e82b32"], ["Inline · contextual", "#e82b32"], ["Banner · system-level", "#ffa600"], ["Toast · medium attention", "#16cf4b"], ["Badge · low attention", "#3374f5"], ["Panel · collected", "#555A63"]];
+  a4.innerHTML = N.map(function (n) { return '<span class="n pop" style="background:' + n[1] + '"><i></i>' + n[0] + "</span>"; }).join("");
+  whenSeen(document.getElementById("f"), function () {
+    [a1, a2, a3, a4].forEach(function (a) {
+      var kids = a.children, step = 900 / kids.length;
+      Array.prototype.forEach.call(kids, function (k, i) { setTimeout(function () { k.classList.add("on"); }, reduced ? 0 : i * step); });
+    });
+  });
+</script>
+</body>
+</html>

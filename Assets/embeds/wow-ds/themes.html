@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Swatch picker, the Apple way: one bento of components and two swatches under it. Pick Light or Dark and every tile re-skins at once — the components never change, only the answers their tokens get.">
+<title>WOW design system — swatch picker</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .bento { position: absolute; left: 16px; right: 16px; top: 16px; height: 270px; display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 10px; }
+  .bento > div { background: var(--tile); border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; transition: background .5s ease; }
+  .bento .b1 { grid-row: span 2; } .bento .b1 .w-card { width: 100%; }
+  .bento .b2 .w-field { width: 100%; }
+  .pick { position: absolute; left: 0; right: 0; bottom: 18px; display: grid; justify-items: center; gap: 8px; }
+  .sw { display: flex; gap: 16px; }
+  .sw button { width: 28px; height: 28px; border-radius: 50%; border: 0; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); transition: box-shadow .25s; }
+  .sw button.on { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0071E3; }
+  .pick span { font: 500 12px/1 "Figtree"; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="bento w" id="bn"></div>
+    <div class="pick"><div class="sw"><button data-t="light" aria-label="Light" style="background:#F5F5F7"></button><button data-t="dark" aria-label="Dark" style="background:#15171C"></button></div><span id="nm">Light</span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var BENTO = '<div class="b1">' + W.req() + '</div><div class="b2">' + W.field("Site", "North Pad", "focus", "Where the crew works") + '</div><div class="b3">' + W.btn("Approve") + W.btn("Decline", "outline") + '</div><div class="b4">' + W.pill("Active") + W.pill("Expired", "red") + W.pill("In progress", "purple") + '</div><div class="b5">' + W.toast() + "</div>";
+  var bn = document.getElementById("bn"), auto = true; bn.innerHTML = BENTO;
+  function set(t) { bn.classList.toggle("dark", t === "dark"); document.getElementById("nm").textContent = t === "dark" ? "Dark" : "Light";
+    c.querySelectorAll(".sw button").forEach(function (b) { b.classList.toggle("on", b.dataset.t === t); }); }
+  c.querySelector(".sw").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { auto = false; set(b.dataset.t); } });
+  set("light"); whenSeen(f, async function () { var d = false; while (auto) { await sleep(2600); if (!auto) break; d = !d; set(d ? "dark" : "light"); } });
+</script>
+</body>
+</html>

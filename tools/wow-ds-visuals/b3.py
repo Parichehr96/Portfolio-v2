@@ -60,7 +60,7 @@ page("icons-c", "fourteen sets, by size", "Treemap: the 14 icon sets as tiles si
   var K = W.icons(), tm = document.getElementById("tm");
   /* squarified-ish: fill rows left to right, row height by share */
   var total = 370, Wd = 576, Ht = 320, rows = [[0, 1], [2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12, 13]], y = 0, h = "", shades = ["#E6EEFC", "#EEF2FF", "#F4EFFF", "#F5F5F7"];
-  rows.forEach(function (r, ri) { var sum = r.reduce(function (a, i) { return a + S[i][1]; }, 0), rh = Ht * sum / total, x = 0;
+  rows.forEach(function (r, ri) { var sum = r.reduce(function (a, i) { return a + S[i][1]; }, 0), rh = [118, 86, 64, 52][ri], x = 0;
     r.forEach(function (i, k) { var w = Wd * S[i][1] / sum;
       h += '<div class="cell" style="left:' + x + "px;top:" + y + "px;width:" + w + "px;height:" + rh + "px;background:" + shades[ri] + '"><div><b>' + S[i][0] + "</b><br><span>" + S[i][1] + ' glyphs</span></div><div class="gl">' + (w > 70 && rh > 60 ? [0, 1, 2].map(function (j) { return I(K[(i * 3 + j) % K.length], 14); }).join("") : "") + "</div></div>"; x += w; });
     y += rh; });
@@ -75,8 +75,8 @@ COMP = '''  var LIVE = {
     "Avatar + name": W.who("GW", "#3F3DB6", "Graham Whitfield", "Ops Manager"), "Chip": W.chip("Contractors", true), "Badge": '<span class="w-badge">3</span><span class="w-badge">12</span>', "Notification badge": '<span style="position:relative">' + I("iconoir:bell-notification", 22) + '<span class="w-dot" style="position:absolute;top:0;right:0"></span></span>',
     "User status": W.pill("On site", "green"), "Progress bar": '<div style="width:140px;height:6px;border-radius:3px;background:var(--w-line)"><div style="width:62%;height:100%;border-radius:3px;background:var(--w-blue)"></div></div>',
     "Stepper": '<span style="display:flex;gap:4px"><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-line);border-radius:2px"></i></span>',
-    "Alert": W.banner("Scheduled maintenance", "warn"), "Tooltip": '<span style="background:#1F2937;color:#fff;font:400 10px Inter;padding:6px 8px;border-radius:6px">Copied</span>', "Dialog": '<div style="transform:scale(.7)">' + W.modal() + "</div>", "Tab": W.tabs(),
-    "Breadcrumb": '<span style="font:400 11px Inter;color:var(--w-sub)">HR / People / <b style="color:var(--w-ink);font-weight:500">Mark</b></span>', "Chat list": W.who("NP", "#2563EB", "North Pad crew", "Daniel: gas test first"), "Message item": '<span style="background:var(--w-blue);color:#fff;font:400 11px Inter;padding:7px 10px;border-radius:12px">Copy, swapping it now</span>'
+    "Alert": W.banner("Scheduled maintenance", "warn"), "Tooltip": '<span style="background:#1F2937;color:#fff;font:400 10px Inter, sans-serif;padding:6px 8px;border-radius:6px">Copied</span>', "Dialog": '<div style="transform:scale(.7)">' + W.modal() + "</div>", "Tab": W.tabs(),
+    "Breadcrumb": '<span style="font:400 11px Inter, sans-serif;color:var(--w-sub)">HR / People / <b style="color:var(--w-ink);font-weight:500">Mark</b></span>', "Chat list": W.who("NP", "#2563EB", "North Pad crew", "Daniel: gas test first"), "Message item": '<span style="background:var(--w-blue);color:#fff;font:400 11px Inter, sans-serif;padding:7px 10px;border-radius:12px">Copy, swapping it now</span>'
   };
   var FAM = C2W.system.filter(function (g) { return g.id !== "found" && g.id !== "pat"; });'''
 
@@ -100,16 +100,21 @@ COMP + '''
   fam.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { auto = false; show(+b.dataset.i); } });
   show(0); whenSeen(f, async function () { while (auto) { await sleep(3600); if (!auto) break; show((cur + 1) % FAM.length); } });''')
 
-page("components-b", "a periodic table of components", "Periodic table: all 50 components as elements, coloured by family, each with a two-letter symbol and its variant count. Hover an element to see it live.", 420,
+page("components-b", "a periodic table of components", "Periodic table: all 50 components as elements, coloured by family, each with a two-letter symbol and its variant count. Hover an element to see it live.", 440,
 '''  .pt { position: absolute; left: 12px; right: 12px; top: 12px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
-  .el { aspect-ratio: 1 / 1.05; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; justify-content: space-between; cursor: default; transition: transform .2s var(--e-out), box-shadow .2s; }
+  .el { min-width: 0; aspect-ratio: 1 / 1.05; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; justify-content: space-between; cursor: default; transition: transform .2s var(--e-out), box-shadow .2s; }
   .el:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(13,18,51,.35); }
+  /* the element shown in the box below: ringed, lifted, the rest quieter */
+  .pt.has .el { opacity: .55; transition: opacity .25s, transform .2s var(--e-out), box-shadow .2s; } .pt.has .el.sel { opacity: 1; transform: translateY(-2px) scale(1.06); box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor, 0 10px 18px -8px rgba(13,18,51,.4); z-index: 1; }
   .el b { font: 700 15px/1 "Figtree"; letter-spacing: -.02em; } .el i { font: 600 8px/1 "Figtree"; font-style: normal; opacity: .7; text-align: right; }
   .el span { font: 500 7.5px/1.1 "Figtree"; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .k0 { background: #E6EEFC; color: #1D4ED8; } .k1 { background: #EAF8EF; color: #15803D; } .k2 { background: #FFF3EA; color: #B45309; } .k3 { background: #F4EFFF; color: #6D28D9; }
   .pre { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 74px; border-radius: 14px; background: #F5F5F7; display: flex; align-items: center; gap: 16px; padding: 0 16px; }
   .pre .nm b { display: block; font: 700 14px/1.2 "Figtree"; } .pre .nm span { font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .pre { overflow: hidden; }
   .pre .lv { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  /* tall parts (the table) show their top only, fading out inside the box */
+  .pre .lv.tall { align-self: stretch; align-items: flex-start; width: 300px; padding-top: 12px; -webkit-mask: linear-gradient(#000 55%, transparent 96%); mask: linear-gradient(#000 55%, transparent 96%); }
   .lg { display: flex; gap: 10px; font: 500 10px/1 "Figtree"; color: var(--pg-muted); } .lg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }''',
 '''    <div class="pt" id="pt"></div>
     <div class="pre w" id="pre"></div>''',
@@ -118,7 +123,7 @@ COMP + '''
   FAM.forEach(function (g, gi) { g.items.forEach(function (it) { if (/icons in|Icon sizes/.test(it)) return; var p = it.split("|"); ALL.push([p[0], p[1] || "", gi, g.name]); }); });
   function sym(n) { var w = n.replace(/[^A-Za-z ]/g, "").split(" "); return (w[0][0] + (w[1] ? w[1][0] : w[0][1])).replace(/^./, function (x) { return x.toUpperCase(); }); }
   pt.innerHTML = ALL.map(function (a, i) { return '<div class="el k' + a[2] + '" data-i="' + i + '"><i>' + (a[1] || "") + "</i><b>" + sym(a[0]) + "</b><span>" + a[0] + "</span></div>"; }).join("");
-  function show(i) { var a = ALL[i]; pre.innerHTML = '<div class="nm"><b>' + a[0] + "</b><span>" + a[3] + (a[1] ? " · " + a[1] + " variants" : "") + '</span></div><div class="lv">' + (LIVE[a[0]] || "") + "</div>"; }
+  function show(i) { var a = ALL[i]; pt.classList.add("has"); pt.querySelectorAll(".el").forEach(function (e) { e.classList.toggle("sel", +e.dataset.i === i); }); pre.innerHTML = '<div class="nm"><b>' + a[0] + "</b><span>" + a[3] + (a[1] ? " · " + a[1] + " variants" : "") + '</span></div><div class="lv' + (/w-table/.test(LIVE[a[0]] || "") ? " tall" : "") + '">' + (LIVE[a[0]] || "") + "</div>"; }
   pt.addEventListener("mouseover", function (e) { var el = e.target.closest(".el"); if (el) { auto = false; show(+el.dataset.i); } });
   var auto = true; show(0);
   pre.insertAdjacentHTML("afterend", "");
@@ -145,7 +150,7 @@ COMP + '''
     ["Actions & forms", "Text input", "12 variants · type × state", '<div style="width:220px">' + W.field("Full name", "Mark Rushmore", "focus", "As on the work permit") + "</div>", ["", "error", "warn", "off"].map(function (s) { return '<div style="width:110px">' + W.field("", s || "Default", s, "") + "</div>"; }).join("")],
     ["Data display", "Badge", "30 variants · type × mode × status × size", '<span style="position:relative">' + I("iconoir:bell-notification", 30) + '<span class="w-badge" style="position:absolute;top:-4px;right:-8px">3</span></span>', W.pill("Active") + W.pill("Review", "orange") + W.pill("Paused", "purple") + W.pill("Approved", "green") + W.pill("Expired", "red")],
     ["Feedback", "Dialog", "6 variants · size × confirmation", '<div style="transform:scale(.7)">' + W.modal() + "</div>", W.toast() + W.banner("Maintenance tonight", "warn")],
-    ["Chat", "Message item", "36 variants · status × mine / theirs", '<span style="background:var(--w-blue);color:#fff;font:400 12px Inter;padding:9px 12px;border-radius:14px">Gas test done, starting the cut</span>', W.pill("Sent", "blue") + W.pill("Delivered", "purple") + W.pill("Read", "green") + W.pill("Failed", "red")]
+    ["Chat", "Message item", "36 variants · status × mine / theirs", '<span style="background:var(--w-blue);color:#fff;font:400 12px Inter, sans-serif;padding:9px 12px;border-radius:14px">Gas test done, starting the cut</span>', W.pill("Sent", "blue") + W.pill("Delivered", "purple") + W.pill("Read", "green") + W.pill("Failed", "red")]
   ];
   var sl = document.getElementById("sl"), i = 0, auto = true;
   async function go(k) { i = (k + S.length) % S.length; sl.classList.add("out"); await sleep(260); var s = S[i];
@@ -197,7 +202,7 @@ page("states-b", "state matrix", "State matrix: five controls down the side, six
 
 page("states-c", "try to break it", "Playground: a real field and button from the system. Type, clear, or switch the state chips — every state you can reach is one the system already drew.", 360,
 '''  .card { position: absolute; left: 110px; right: 110px; top: 30px; background: #F5F5F7; border-radius: 20px; padding: 22px; display: grid; gap: 14px; }
-  .card input { border: 0; outline: 0; background: transparent; font: 400 12px/1 "Inter"; color: var(--w-ink); flex: 1; }
+  .card input { border: 0; outline: 0; background: transparent; font: 400 12px/1 "Inter", sans-serif; color: var(--w-ink); flex: 1; }
   .chips { position: absolute; left: 0; right: 0; bottom: 30px; display: flex; justify-content: center; gap: 6px; }
   .chips button { border: 0; border-radius: 999px; padding: 7px 11px; font: 600 11px/1 "Figtree"; background: #F5F5F7; color: var(--pg-ink); cursor: pointer; transition: background .2s, color .2s; }
   .chips button.on { background: #0D1233; color: #fff; }
@@ -271,18 +276,18 @@ page("anatomy-b", "redlines", "Redline spec: the card with its measurements draw
   whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1600); if (!auto) break; hl(G[i][0]); i = (i + 1) % G.length; } });''')
 
 page("anatomy-c", "numbered callouts", "Numbered callouts, like an annotated product diagram: six numbers on the card, a legend beside it. Hover a legend line to light its part.", 360,
-'''  .card { position: absolute; left: 30px; top: 70px; width: 290px; }
+'''  .card { position: absolute; left: 60px; top: 70px; width: 270px; }
   .num { position: absolute; width: 20px; height: 20px; margin: -10px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 700 10px/1 "Figtree"; box-shadow: 0 0 0 3px #fff; transition: transform .25s var(--e-out), background .25s; z-index: 2; }
   .num.on { transform: scale(1.25); background: #2563EB; }
-  .legend { position: absolute; left: 350px; right: 20px; top: 56px; display: grid; gap: 4px; }
-  .legend div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 7px 8px; border-radius: 10px; cursor: default; transition: background .2s; }
-  .legend div.on { background: #F5F5F7; }
+  .legend { position: absolute; left: 372px; right: 20px; top: 56px; display: grid; gap: 4px; }
+  .legend > div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 7px 8px; border-radius: 10px; cursor: default; transition: background .2s; }
+  .legend > div.on { background: #F5F5F7; }
   .legend span { width: 20px; height: 20px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 700 10px/1 "Figtree"; }
   .legend b { display: block; font: 700 12px/1.2 "Figtree"; } .legend small { font: 400 10.5px/1.35 "Figtree"; color: var(--pg-muted); }''',
 '''    <div class="card w" id="cd"></div>
     <div class="legend" id="lg"></div>''',
 '''  document.getElementById("cd").innerHTML = W.req();
-  var N = [[30, 70, "Card", "surface/card · 12 radius"], [74, 98, "Avatar", "28 px · initials fallback"], [200, 92, "Title & meta", "text/primary · text/secondary"], [140, 124, "Status pills", "one colour per meaning"], [100, 166, "Secondary action", "button/outline"], [250, 166, "Primary action", "button/primary · always right"]];
+  var N = [[60, 70, "Card", "surface/card · 12 radius"], [44, 96, "Avatar", "28 px · initials fallback"], [346, 96, "Title & meta", "text/primary · text/secondary"], [44, 130, "Status pills", "one colour per meaning"], [44, 166, "Secondary action", "button/outline"], [346, 166, "Primary action", "button/primary · always right"]];
   c.insertAdjacentHTML("beforeend", N.map(function (n, i) { return '<span class="num" data-i="' + i + '" style="left:' + n[0] + "px;top:" + n[1] + 'px">' + (i + 1) + "</span>"; }).join(""));
   var lg = document.getElementById("lg"), auto = true;
   lg.innerHTML = N.map(function (n, i) { return '<div data-i="' + i + '"><span>' + (i + 1) + "</span><div><b>" + n[2] + "</b><small>" + n[3] + "</small></div></div>"; }).join("");

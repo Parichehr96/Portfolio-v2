@@ -13,7 +13,7 @@ page("research-a", "compare the four", "Compare, Apple ‘compare models’ styl
   .took .k { color: #2563EB; }''',
 '''    <div class="cols" id="cols"></div>''',
 '''  document.getElementById("cols").innerHTML = W.RESEARCH.map(function (r, i) {
-    return '<div class="col" style="transition-delay:' + i * 90 + 'ms"><h4><i style="background:' + r.c + '"></i>' + r.name + '</h4><div><div class="k">Feedback components</div><div class="v">' + r.comp + '</div></div><div><div class="k">Severity</div><div class="v">' + r.sev + '</div></div><div><div class="k">Default</div><div class="v">' + r.def + '</div></div><div class="took"><div class="k">What WOW took</div><div class="v">' + r.took + "</div></div></div>";
+    return '<div class="col" style="transition-delay:' + i * 90 + 'ms"><h4>' + W.logo(r.name, 22, r.c) + r.name + '</h4><div><div class="k">Feedback components</div><div class="v">' + r.comp + '</div></div><div><div class="k">Severity</div><div class="v">' + r.sev + '</div></div><div><div class="k">Default</div><div class="v">' + r.def + '</div></div><div class="took"><div class="k">What WOW took</div><div class="v">' + r.took + "</div></div></div>";
   }).join("");
   whenSeen(f);''')
 
@@ -54,20 +54,20 @@ page("research-c", "flip cards", "Flip cards: four systems as product cards; eac
   .front { background: #F5F5F7; }
   .back { background: #0D1233; color: #fff; transform: rotateY(180deg); }
   .front h4 { margin: 0; font: 700 22px/1 "Figtree"; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
-  .front h4 i { width: 14px; height: 14px; border-radius: 4px; }
+  .front h4 svg { flex: none; }
   .front p, .back p { margin: 0; font: 400 11.5px/1.45 "Figtree"; }
   .front p { color: var(--pg-muted); }
   .back .k { font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: #93B4F5; }
   .back p { font-size: 13px; line-height: 1.45; }''',
 '''    <div class="grid" id="g"></div>''',
 '''  var g = document.getElementById("g"), auto = true;
-  g.innerHTML = W.RESEARCH.map(function (r) { return '<div class="fc"><div class="in"><div class="face front"><h4><i style="background:' + r.c + '"></i>' + r.name + "</h4><p>" + r.comp + "<br>" + r.sev + '</p></div><div class="face back"><span class="k">What WOW took</span><p>' + r.took + "</p></div></div></div>"; }).join("");
+  g.innerHTML = W.RESEARCH.map(function (r) { return '<div class="fc"><div class="in"><div class="face front"><h4>' + W.logo(r.name, 22, r.c) + r.name + "</h4><p>" + r.comp + "<br>" + r.sev + '</p></div><div class="face back"><span class="k">What WOW took</span><p>' + r.took + "</p></div></div></div>"; }).join("");
   g.addEventListener("click", function (e) { var t = e.target.closest(".fc"); if (t) { auto = false; t.classList.toggle("flip"); } });
   whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1800); if (!auto) break; var k = g.children; k[i].classList.toggle("flip"); i = (i + 1) % 4; } });''')
 
 # ---------------- PRINCIPLES ----------------
 P = '''  var PR = [
-    ["Structure decides, not taste", W.btn("OK", "primary").replace("p-primary", "p-primary\\" style=\\"border-radius:999px;background:#12B76A") + " " + W.btn("Confirm", "outline").replace("w-btn", "w-btn\\" style=\\"border-radius:0;font-family:Georgia"), W.btn("Approve") + " " + W.btn("Approve")],
+    ["Structure decides, not taste", W.btn("OK", "primary").replace("p-primary", "p-primary\\" style=\\"border-radius:999px;background:#12B76A") + " " + W.btn("Confirm", "outline").replace("w-btn", "w-btn\\" style=\\"border-radius:0;font-family:Georgia"), W.btn("Approve") + " " + W.btn("Dismiss", "secondary")],
     ["Colour carries meaning or nothing", W.pill("Active", "purple") + W.pill("Valid", "orange") + W.pill("Expired", "green"), W.pill("Valid") + W.pill("Valid") + W.pill("Expired", "red")],
     ["Every state ships", '<div style="width:150px">' + W.field("Site", "North Pad", "", "") + "</div>", '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:200px">' + W.field("", "Default", "", "") + W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "") + "</div>"],
     ["One name, one thing", '<span class="v">“OK” in Figma<br>“Submit” in code<br>“Confirm” in the meeting</span>', '<span class="v">“Approve”<br>in Figma, in code<br>and in the meeting</span>']
@@ -122,11 +122,12 @@ page("principles-c", "rules as switches", "Rule switches: each principle is a sw
 '''  .rows { position: absolute; left: 16px; right: 16px; top: 16px; display: grid; gap: 10px; }
   .r { display: grid; grid-template-columns: 210px 1fr; gap: 12px; align-items: center; background: #F5F5F7; border-radius: 16px; padding: 12px 14px; min-height: 82px; }
   .r .lab { display: flex; gap: 10px; align-items: center; cursor: pointer; font: 700 13px/1.25 "Figtree"; }
+  .r .lab .w-switch { flex: none; }
   .r .ex { background: #fff; border-radius: 12px; height: 60px; display: flex; align-items: center; justify-content: center; gap: 6px; overflow: hidden; position: relative; }
   .r .ex > div { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity .4s ease, transform .5s var(--e-out); }
   .r .on-v { opacity: 0; transform: translateY(6px); } .r.on .on-v { opacity: 1; transform: none; } .r.on .off-v { opacity: 0; transform: translateY(-6px); }
   .v { font: 400 10px/1.35 "Figtree"; color: var(--pg-ink); text-align: center; }
-  .r .ex .w-field { width: 120px; } .r .ex .w-field label, .r .ex .w-field .help { display: none; }''',
+  .r .ex > div { gap: 10px; } .r .ex .w-field { width: 104px; } .r .ex .w-field label, .r .ex .w-field .help { display: none; }''',
 '''    <div class="rows" id="rows"></div>''',
 P + '''
   PR[2][2] = W.field("", "Focus", "focus", "") + W.field("", "Error", "error", "") + W.field("", "Disabled", "off", "");
@@ -142,8 +143,8 @@ page("foundations-a", "foundations up close", "Close-up bento, like a product’
   .tcap { z-index: 2; }
   .chips { position: absolute; left: 50%; top: 52%; }
   .chips i { position: absolute; left: -28px; top: -70px; width: 56px; height: 140px; border-radius: 10px; transform-origin: 50% 100%; box-shadow: 0 6px 14px -6px rgba(13,18,51,.3); transition: transform 1s var(--e-out); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font: 600 8px/1 "Figtree"; font-style: normal; }
-  .aa { position: absolute; left: 18px; bottom: 6px; font: 600 120px/1 "Inter"; letter-spacing: -.04em; color: #1D2433; }
-  .aa small { position: absolute; right: -86px; top: 34px; font: 500 10px/1.5 "Figtree"; letter-spacing: 0; color: var(--pg-muted); width: 90px; }
+  .aa { position: absolute; left: 18px; bottom: 6px; font: 600 120px/1 "Inter", sans-serif; letter-spacing: -.04em; color: #1D2433; }
+  .aa small { position: absolute; left: 176px; top: 30px; font: 500 10px/1.5 "Figtree"; letter-spacing: 0; color: var(--pg-muted); width: 90px; }
   .ruler { position: absolute; left: 18px; right: 18px; top: 56px; display: flex; align-items: flex-end; gap: 10px; }
   .ruler div { display: grid; justify-items: center; gap: 6px; font: 500 9px/1 "Figtree"; color: var(--pg-muted); }
   .ruler i { display: block; background: #2563EB; border-radius: 2px; width: 12px; }
@@ -206,7 +207,7 @@ page("foundations-c", "a button, built from tokens", "Build-a-button: one empty 
   .bb { display: inline-flex; align-items: center; gap: 0; height: 56px; padding: 0 6px; border: 1.5px dashed #CBD5E1; border-radius: 0; font: 400 20px/1 "Times New Roman"; color: #1D2433; transition: all .6s var(--e-out); }
   .bb .ic { width: 0; overflow: hidden; transition: width .5s var(--e-out), margin .5s; }
   .bb.r { border-radius: 12px; } .bb.c { background: #2563EB; border-color: transparent; color: #fff; }
-  .bb.t { font: 500 20px/1 "Inter"; } .bb.p { padding: 0 24px; } .bb.i .ic { width: 24px; margin-right: 10px; } .bb.f { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #2563EB; }
+  .bb.t { font: 500 20px/1 "Inter", sans-serif; } .bb.p { padding: 0 24px; } .bb.i .ic { width: 24px; margin-right: 10px; } .bb.f { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #2563EB; }
   .steps { position: absolute; left: 24px; right: 24px; bottom: 22px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
   .steps div { padding-top: 8px; border-top: 2px solid #E2E8F0; font: 500 10.5px/1.35 "Figtree"; color: var(--pg-faint); transition: color .3s, border-color .3s; }
   .steps div b { display: block; font-weight: 700; } .steps div code { font: 500 9.5px/1.3 ui-monospace, monospace; }

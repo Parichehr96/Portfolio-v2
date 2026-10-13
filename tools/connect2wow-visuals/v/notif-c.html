@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every alert has a home: one screen with all six types in their places at once, numbered loudest to quietest. Hover a label to isolate it.">
+<title>Connect2WOW — six homes (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .scr { position: absolute; left: 20px; top: 20px; width: 380px; height: 360px; font-family: "Roboto"; overflow: hidden; }
+  .top { height: 30px; border-bottom: 1px solid var(--c2w-line); display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; color: var(--c2w-sub); position: relative; }
+  .body { padding: 14px; display: grid; gap: 8px; }
+  .sk { height: 7px; border-radius: 4px; background: #EEF1F5; }
+  .t { position: absolute; transition: opacity .3s; }
+  .dim .t:not(.on) { opacity: .15; }
+  .bdg { right: 8px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: #E82B32; color: #fff; font-size: 8px; display: grid; place-items: center; }
+  .ban { left: 0; right: 0; top: 30px; padding: 8px 12px; font-size: 10px; background: rgba(255,166,0,.14); color: #8A5A00; border-bottom: 1px solid #FDCE68; }
+  .inl { left: 14px; top: 132px; font-size: 9px; color: #E82B32; }
+  .toast { left: 14px; bottom: 12px; width: 170px; padding: 9px 10px; border-radius: 8px; background: #212327; color: #fff; font-size: 9.5px; display: flex; gap: 6px; align-items: center; }
+  .toast i { width: 8px; height: 8px; border-radius: 50%; background: #16CF4B; }
+  .panel { right: 0; top: 30px; bottom: 0; width: 130px; background: #fff; border-left: 1px solid var(--c2w-line); padding: 10px; font-size: 9px; display: grid; gap: 6px; align-content: start; }
+  .panel div { padding: 6px; border-radius: 6px; background: #F4F7FB; }
+  .modal { left: 70px; top: 170px; width: 170px; padding: 10px; border-radius: 10px; background: #fff; font-size: 9.5px; box-shadow: 0 0 0 1px var(--c2w-line), 0 20px 40px -12px rgba(0,0,0,.35); }
+  .num { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #FFA600; color: #fff; font: 700 9px/16px "Figtree"; text-align: center; z-index: 3; }
+  .list { position: absolute; left: 416px; top: 20px; width: 166px; display: grid; gap: 6px; }
+  .li { display: grid; grid-template-columns: 18px 1fr; gap: 6px; padding: 7px 8px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); cursor: default; transition: box-shadow .2s; }
+  .li .num { position: static; }
+  .li b { font: 600 11.5px/1.2 "Figtree"; } .li small { display: block; font: 400 10px/1.3 "Figtree"; color: var(--pg-faint); }
+  .li.on { box-shadow: 0 0 0 1.5px #FFA600; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="ui scr" id="scr">
+      <div class="top" id="top"><span class="t bdg" data-k="4">3</span></div>
+      <div class="body" style="padding-right:144px"><div class="sk" style="width:50%;height:9px;margin-top:30px"></div><div class="ui-lbl" style="margin:6px 0 0">Work permit no.</div><div class="ui-field" style="border-color:#E82B32">—</div><div style="height:14px"></div><div class="sk"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:65%"></div><div class="sk" style="width:90%"></div></div>
+      <div class="t ban" data-k="1">⚠ Scheduled maintenance tonight, 22:00</div>
+      <div class="t inl" data-k="2">This field is required</div>
+      <div class="t panel" data-k="5"><b style="font-size:10px">Notifications</b><div>New report ready</div><div>Course assigned</div></div>
+      <div class="t modal" data-k="0"><b>Delete this record?</b><p style="margin:5px 0 8px;color:#5B6475">This can't be undone.</p><div style="display:flex;gap:5px;justify-content:flex-end"><span class="ui-btn ui-btn--ghost">Cancel</span><span class="ui-btn" style="background:#E82B32">Delete</span></div></div>
+      <div class="t toast" data-k="3"><i></i>Saved successfully</div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+<script>
+  document.getElementById("top").insertAdjacentHTML("afterbegin", ico("bell", 14));
+  var L = [["Modal", "high · stops you"], ["Banner", "system-wide · stays"], ["Inline", "on the field · contextual"], ["Toast", "medium · 5 s, then gone"], ["Badge", "low · a count"], ["Panel", "collected · read later"]];
+  var list = document.getElementById("list"), scr = document.getElementById("scr");
+  list.innerHTML = '<div class="eyebrow" style="margin-bottom:2px">Loudest → quietest</div>' + L.map(function (l, i) { return '<div class="li" data-k="' + i + '"><span class="num">' + (i + 1) + "</span><span><b>" + l[0] + "</b><small>" + l[1] + "</small></span></div>"; }).join("");
+  /* markers on the screen */
+  var P = [[66, 166], [6, 34], [8, 128], [10, 312], [356, 4], [244, 34]];
+  P.forEach(function (p, i) { scr.insertAdjacentHTML("beforeend", '<span class="num t" data-k="' + i + '" style="left:' + p[0] + "px;top:" + p[1] + 'px">' + (i + 1) + "</span>"); });
+  function iso(k) {
+    scr.classList.toggle("dim", k != null);
+    scr.querySelectorAll(".t").forEach(function (t) { t.classList.toggle("on", t.dataset.k == k); });
+    list.querySelectorAll(".li").forEach(function (t) { t.classList.toggle("on", t.dataset.k == k); });
+  }
+  var auto = true;
+  list.addEventListener("mouseover", function (e) { var li = e.target.closest(".li"); if (li) { auto = false; iso(li.dataset.k); } });
+  list.addEventListener("mouseleave", function () { iso(null); });
+  whenSeen(document.getElementById("f"), async function () { await sleep(1200); var i = 0; while (auto) { iso(i); i = (i + 1) % 7; if (i === 6) { await sleep(1600); if (auto) iso(null); i = 0; } await sleep(1600); } });
+</script>
+</body>
+</html>

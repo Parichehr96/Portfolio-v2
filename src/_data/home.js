@@ -141,9 +141,6 @@ module.exports = {
         name: "WOW design system",
         href: "/work/wow-design-system/",
         navLabel: "Connect2WOW (Design system)",
-        // Draft: the page exists at its URL, but stays out of the homepage
-        // and the menu until Pari says it's ready.
-        soon: true,
         verified: true,
         years: "2021-2022",
         desc: [

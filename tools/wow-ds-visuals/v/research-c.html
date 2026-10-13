@@ -20,7 +20,7 @@
   .front { background: #F5F5F7; }
   .back { background: #0D1233; color: #fff; transform: rotateY(180deg); }
   .front h4 { margin: 0; font: 700 22px/1 "Figtree"; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
-  .front h4 i { width: 14px; height: 14px; border-radius: 4px; }
+  .front h4 svg { flex: none; }
   .front p, .back p { margin: 0; font: 400 11.5px/1.45 "Figtree"; }
   .front p { color: var(--pg-muted); }
   .back .k { font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: #93B4F5; }
@@ -36,7 +36,7 @@
 <script>
   var f = document.getElementById("f"), c = document.getElementById("c");
   var g = document.getElementById("g"), auto = true;
-  g.innerHTML = W.RESEARCH.map(function (r) { return '<div class="fc"><div class="in"><div class="face front"><h4><i style="background:' + r.c + '"></i>' + r.name + "</h4><p>" + r.comp + "<br>" + r.sev + '</p></div><div class="face back"><span class="k">What WOW took</span><p>' + r.took + "</p></div></div></div>"; }).join("");
+  g.innerHTML = W.RESEARCH.map(function (r) { return '<div class="fc"><div class="in"><div class="face front"><h4>' + W.logo(r.name, 22, r.c) + r.name + "</h4><p>" + r.comp + "<br>" + r.sev + '</p></div><div class="face back"><span class="k">What WOW took</span><p>' + r.took + "</p></div></div></div>"; }).join("");
   g.addEventListener("click", function (e) { var t = e.target.closest(".fc"); if (t) { auto = false; t.classList.toggle("flip"); } });
   whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1800); if (!auto) break; var k = g.children; k[i].classList.toggle("flip"); i = (i + 1) % 4; } });
 </script>

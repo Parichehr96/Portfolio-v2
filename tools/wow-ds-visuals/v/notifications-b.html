@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Severity matrix: four severities down the side, the components they can become across the top — one vocabulary, drawn in every combination. A highlight walks the rows.">
+<title>WOW design system — severity × component</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  table { position: absolute; left: 14px; right: 14px; top: 14px; width: 572px; border-collapse: separate; border-spacing: 5px; }
+  th { font: 600 10px/1 "Figtree"; color: var(--pg-faint); padding-bottom: 4px; }
+  td { background: #F5F5F7; border-radius: 12px; height: 62px; text-align: center; vertical-align: middle; transition: background .3s; }
+  td:first-child { background: none; text-align: left; font: 700 12px/1 "Figtree"; width: 74px; }
+  tr.on td:not(:first-child) { background: #EEF2FF; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <table class="w" id="t"></table>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var SV = [["Info", "info", "blue", "#2563EB"], ["Success", "info", "green", "#15803D"], ["Warning", "warn", "orange", "#DD6B20"], ["Error", "err", "red", "#C81E1E"]];
+  var t = document.getElementById("t");
+  t.innerHTML = "<tr><th></th><th>Inline</th><th>Toast</th><th>Banner</th><th>Badge</th></tr>" + SV.map(function (s) {
+    return "<tr><td>" + s[0] + '</td><td><span style="font:500 10.5px Inter, sans-serif;color:' + s[3] + '">' + I("hugeicons:information-diamond", 12) + " " + s[0] + ' message</span></td><td><span class="w-toast" style="padding:7px 9px;font-size:10px"><i style="background:' + s[3] + '"></i>' + s[0] + "</span></td><td>" +
+      '<div class="w-banner ' + (s[1] === "info" && s[2] === "green" ? "info" : s[1]) + '" style="padding:6px 8px;font-size:10px;' + (s[2] === "green" ? "background:var(--w-green-bg);border-color:var(--w-green-bd);color:var(--w-green)" : "") + '">' + s[0] + "</div></td><td>" + W.pill(s[0], s[2]) + "</td></tr>"; }).join("");
+  whenSeen(f, async function () { var rows = t.querySelectorAll("tr"), i = 1; while (true) { rows.forEach(function (r, k) { r.classList.toggle("on", k === i); }); i = i % 4 + 1; await sleep(1400); } });
+</script>
+</body>
+</html>

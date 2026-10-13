@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spend attention like it's scarce — pyramid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --high:#f9dddd; --high-on:#87201b;
+    --med:#fdf1d6;  --med-on:#b28a38;
+    --low:#d5e6fd;  --low-on:#224dab;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#fff;}
+  body{font-family:"Figtree",-apple-system,BlinkMacSystemFont,sans-serif;}
+  .wrap{display:flex;flex-direction:column;gap:16px;align-items:center;width:585px;max-width:100%;margin:0 auto;padding:32px;}
+  .frame{width:367px;max-width:100%;}
+  svg{display:block;width:100%;height:auto;}
+  .band{transition:fill .22s;cursor:pointer;}
+  .lb{font-family:"Figtree",sans-serif;font-weight:400;font-size:16px;letter-spacing:0.5px;fill:#1a1a1a;transition:fill .22s;pointer-events:none;}
+  .sub{font-family:"Figtree",sans-serif;font-weight:400;font-size:14px;letter-spacing:0.25px;fill:rgba(26,26,26,0.7);transition:fill .22s;pointer-events:none;}
+  .divider{height:2px;width:100%;background:rgba(120,120,120,0.2);}
+  .cap{font-family:"Figtree",sans-serif;font-weight:400;font-size:14px;line-height:20px;letter-spacing:0.25px;color:#727272;width:100%;}
+  .cap b{color:#1a1a1a;font-weight:700;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="frame">
+      <svg viewBox="0 0 367 318" xmlns="http://www.w3.org/2000/svg">
+        <polygon class="band" data-b="low"  points="45.6,239 321.4,239 366.5,317.2 0.46,317.2" fill="var(--low)"/>
+        <polygon class="band" data-b="med"  points="100.98,143 266,143 319.1,235 47.9,235" fill="var(--med)"/>
+        <polygon class="band" data-b="high" points="183.5,0 263.7,139 103.3,139" fill="var(--high)"/>
+        <text class="lb"  data-b="high" x="183.5" y="85"  text-anchor="middle">High</text>
+        <text class="sub" data-b="high" x="183.5" y="107" text-anchor="middle">Alert · Error</text>
+        <text class="lb"  data-b="med"  x="183.5" y="184" text-anchor="middle">Medium</text>
+        <text class="sub" data-b="med"  x="183.5" y="206" text-anchor="middle">Warning · Success</text>
+        <text class="lb"  data-b="low"  x="183.5" y="271" text-anchor="middle">Low</text>
+        <text class="sub" data-b="low"  x="183.5" y="293" text-anchor="middle">Status · Info</text>
+      </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="cap" id="cap">Attention budget; interrupt only when the cost of missing, beats the cost of interrupting. Hover a state to see the status.</div>
+  </div>
+
+<script>
+  const DEFAULT_CAP='Attention budget; interrupt only when the cost of missing, beats the cost of interrupting. Hover a state to see the status.';
+  const CAPS={
+    high:DEFAULT_CAP,
+    med:'<b>Medium attention:</b> Warnings, acknowledgments, success. Noticed, not intrusive.',
+    low:'<b>Low attention:</b> Informational, badges, status. Passive, never interrupts.'
+  };
+  const ON={high:'var(--high-on)',med:'var(--med-on)',low:'var(--low-on)'};
+  const OFF={high:'var(--high)',med:'var(--med)',low:'var(--low)'};
+  const SUBON={high:'#d9d9d9',med:'#f2f2f7',low:'#f2f2f7'};
+  const svg=document.querySelector('svg'), cap=document.getElementById('cap');
+  const bands=[...svg.querySelectorAll('.band')];
+  const lbs=[...svg.querySelectorAll('.lb')], subs=[...svg.querySelectorAll('.sub')];
+  function reset(){
+    bands.forEach(b=>b.setAttribute('fill',OFF[b.dataset.b]));
+    lbs.forEach(t=>{t.style.fill='#1a1a1a';t.style.fontWeight='400';});
+    subs.forEach(t=>t.style.fill='rgba(26,26,26,0.7)');
+    cap.innerHTML=DEFAULT_CAP;
+  }
+  bands.forEach(b=>{
+    b.addEventListener('mouseenter',()=>{
+      const k=b.dataset.b;
+      bands.forEach(x=>x.setAttribute('fill',x===b?ON[k]:OFF[x.dataset.b]));
+      lbs.forEach(t=>{const on=t.dataset.b===k;t.style.fill=on?'#fff':'#1a1a1a';t.style.fontWeight=on?'700':'400';});
+      subs.forEach(t=>t.style.fill=t.dataset.b===k?SUBON[k]:'rgba(26,26,26,0.7)');
+      cap.innerHTML=CAPS[k];
+    });
+  });
+  svg.addEventListener('mouseleave',reset);
+</script>
+</body>
+</html>

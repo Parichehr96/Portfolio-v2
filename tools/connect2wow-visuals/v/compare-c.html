@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Positioning map: generic → industry-specific against HR-only → HR + safety + field. The three HR tools cluster in one corner; Connect2WOW sits alone in the empty one.">
+<title>Connect2WOW — positioning (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .plot { position: absolute; left: 70px; top: 28px; width: 480px; height: 300px; border-left: 1.5px solid var(--pg-ink); border-bottom: 1.5px solid var(--pg-ink); }
+  .plot::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed #CBD5E1; }
+  .plot::after { content: ""; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #CBD5E1; }
+  .ax { position: absolute; font: 500 11px/1.2 "Figtree"; color: var(--pg-muted); }
+  .gap { position: absolute; right: 8px; top: 8px; width: 228px; height: 140px; border-radius: 12px; background: rgba(51,116,245,.07); }
+  .pt { position: absolute; transform: translate(-50%, -50%) scale(0); transition: transform .6s var(--ease); display: flex; align-items: center; gap: 7px; font: 600 12px/1 "Figtree"; white-space: nowrap; }
+  .is-in .pt { transform: translate(-50%, -50%); }
+  .pt i { width: 14px; height: 14px; border-radius: 50%; background: #94A3B8; box-shadow: 0 0 0 4px var(--pg-frame); flex: none; }
+  .pt.me i { width: 22px; height: 22px; background: var(--c2w-p10); box-shadow: 0 0 0 5px rgba(51,116,245,.2); }
+  .pt.me { font-size: 14px; }
+  .pt small { font: 400 10px/1.2 "Figtree"; color: var(--pg-faint); display: block; }
+  .q { position: absolute; font: 400 10px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="plot" id="p">
+      <div class="gap"></div>
+      <div class="pt" style="left:16%;top:76%;transition-delay:.1s"><i></i>BambooHR</div>
+      <div class="pt" style="left:22%;top:88%;transition-delay:.2s"><i></i>Personio</div>
+      <div class="pt" style="left:10%;top:64%;transition-delay:.3s"><i></i>HiBob</div>
+      <div class="pt me" style="left:82%;top:20%;transition-delay:.6s"><i></i><span>Connect2WOW<small>the empty corner</small></span></div>
+    </div>
+    <div class="ax" style="left:70px;top:338px">HR only</div>
+    <div class="ax" style="left:430px;top:338px;width:120px;text-align:right">HR + safety + field</div>
+    <div class="ax" style="left:12px;top:300px;width:54px;text-align:right">Generic</div>
+    <div class="ax" style="left:6px;top:28px;width:60px;text-align:right">Built for oil &amp; gas</div>
+    <div class="q" style="left:70px;top:360px">Qualitative, from the 2021 analysis</div>
+  </div>
+</div>
+<script>whenSeen(document.getElementById("f"));</script>
+</body>
+</html>

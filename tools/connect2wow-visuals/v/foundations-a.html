@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The foundations on one sheet: the neutral ramp as one bar, the four blues, Roboto's seven styles as a ladder, and a slowly scrolling icon wall.">
+<title>Connect2WOW — foundations (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { padding: 14px; }
+  .t { font: 600 11px/1 "Figtree"; color: var(--pg-faint); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; }
+  .ramp { display: flex; height: 44px; border-radius: 8px; overflow: hidden; }
+  .ramp span { flex: 1; position: relative; }
+  .ramp span em { position: absolute; bottom: 4px; left: 4px; font: 500 8px/1 "Roboto"; font-style: normal; }
+  .blues { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+  .blues span { height: 40px; border-radius: 8px; position: relative; }
+  .blues em { position: absolute; left: 6px; bottom: 5px; font: 500 8.5px/1 "Roboto"; font-style: normal; }
+  .ladder { font-family: "Roboto"; display: grid; gap: 4px; }
+  .ladder div { display: flex; align-items: baseline; justify-content: space-between; color: var(--c2w-text); border-bottom: 1px solid var(--pg-border); padding-bottom: 3px; }
+  .ladder small { font: 400 9px/1 "Figtree"; color: var(--pg-faint); white-space: nowrap; }
+  .wall { grid-column: 1 / -1; height: 112px; overflow: hidden; position: relative; }
+  .wall .track { display: grid; grid-template-columns: repeat(40, 26px); grid-auto-rows: 26px; gap: 6px; color: var(--c2w-text); animation: scroll 24s linear infinite; }
+  .wall .track span { display: grid; place-items: center; border-radius: 6px; background: var(--pg-frame); }
+  @keyframes scroll { to { transform: translateX(-640px); } }
+  .wall::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fff, transparent 12%, transparent 88%, #fff); pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="card"><div class="t">Colour<span>9 neutrals · 4 blues</span></div>
+      <div class="ramp" id="ramp"></div>
+      <div class="blues"><span style="background:#1955CC"><em style="color:#fff">P00</em></span><span style="background:#3374F5"><em style="color:#fff">P10</em></span><span style="background:#85BCFF"><em>P20</em></span><span style="background:#E0EBFF"><em>P30</em></span></div>
+    </div>
+    <div class="card"><div class="t">Type<span>Roboto · 7 styles</span></div>
+      <div class="ladder">
+        <div style="font-size:26px;line-height:1">Super<small>45 / 32</small></div>
+        <div style="font-size:18px">Header<small>24 / 34</small></div>
+        <div style="font-size:15px">Title<small>20 / 24</small></div>
+        <div style="font-size:13px;font-weight:500">Subtitle<small>16 / 24</small></div>
+        <div style="font-size:11px">Body 1 · Body 2<small>14 / 24 · 140%</small></div>
+        <div style="font-size:9px">Label<small>11 / 140%</small></div>
+      </div>
+      <div class="cap" style="margin-top:6px">Sizes shown at ~60%.</div>
+    </div>
+    <div class="card wall"><div class="t">Icons<span>370 · one grid, one stroke</span></div><div class="track" id="wall"></div></div>
+  </div>
+</div>
+<script>
+  var N = [["00", "#17191C"], ["10", "#212327"], ["20", "#2B2E33"], ["30", "#33363D"], ["40", "#41454C"], ["50", "#555A63"], ["60", "#ABB2BF"], ["70", "#F9FAFB"], ["80", "#FCFDFE"]];
+  document.getElementById("ramp").innerHTML = N.map(function (n, i) { return '<span style="background:' + n[1] + '"><em style="color:' + (i < 6 ? "#fff" : "#555A63") + '">N' + n[0] + "</em></span>"; }).join("");
+  /* Placeholder glyphs — swap for the real 370 from the WOW Figma file. */
+  var K = ["home", "hr", "hse", "courses", "admin", "eng", "profile", "connection", "bell", "chat", "cal", "doc", "gear", "sheet", "mail", "form", "phone", "check", "x", "search", "alert"], h = "";
+  for (var i = 0; i < 80; i++) h += "<span>" + ico(K[(i * 5) % K.length], 13) + "</span>";
+  document.getElementById("wall").innerHTML = h;
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Radial map: the product at the centre, seven modules on the first ring, the platform services as a dashed outer orbit. HR fans out into its real sub-pages.">
+<title>Connect2WOW — radial IA (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 420px; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .orbit { fill: none; stroke: var(--c2w-p20); stroke-width: 1.2; stroke-dasharray: 3 5; }
+  .sp { stroke: #C3CDDB; stroke-width: 1.2; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset .8s var(--ease); }
+  .is-in .sp { stroke-dashoffset: 0; }
+  .sp.hr { stroke: var(--c2w-p10); }
+  .core { position: absolute; left: 300px; top: 210px; width: 84px; height: 84px; margin: -42px; border-radius: 50%; background: var(--pg-ink); color: #fff;
+    display: grid; place-items: center; text-align: center; font: 600 11px/1.2 "Figtree"; }
+  .md { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 3px; font: 600 10.5px/1 "Figtree"; }
+  .md span { width: 34px; height: 34px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); display: grid; place-items: center; color: var(--c2w-p10); }
+  .md.hr span { background: var(--c2w-p10); color: #fff; box-shadow: none; }
+  .sub { position: absolute; transform: translate(-50%, -50%); padding: 4px 7px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); font: 500 9.5px/1 "Figtree"; white-space: nowrap; opacity: 0; transition: opacity .4s; }
+  .is-in .sub { opacity: 1; }
+  .pl { position: absolute; transform: translate(-50%, -50%); padding: 4px 8px; border-radius: 999px; background: var(--c2w-p30); color: var(--c2w-p00); font: 500 9.5px/1 "Figtree"; display: flex; gap: 4px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <svg viewBox="0 0 600 420" id="svg"></svg>
+    <div class="core">Connect<br>2WOW</div>
+  </div>
+</div>
+<script>
+  var cx = 300, cy = 210, c = document.getElementById("c"), svg = document.getElementById("svg"), s = "";
+  s += '<ellipse class="orbit" cx="300" cy="210" rx="270" ry="190"/>';
+  var mods = C2W.modules, R = 110;
+  mods.forEach(function (m, i) {
+    var a = -Math.PI / 2 + i * 2 * Math.PI / 7 + Math.PI / 7 * 0, x = cx + R * Math.cos(a), y = cy + R * .82 * Math.sin(a);
+    s += '<path class="sp' + (m.id === "hr" ? " hr" : "") + '" d="M' + cx + " " + cy + " L" + x + " " + y + '" style="transition-delay:' + i * 80 + 'ms"/>';
+    c.insertAdjacentHTML("beforeend", '<div class="md' + (m.id === "hr" ? " hr" : "") + '" style="left:' + x + "px;top:" + y + 'px"><span>' + ico(m.icon, 15) + "</span>" + (m.id === "admin" ? "Admin" : m.name) + "</div>");
+    if (m.id === "hr") {
+      var subs = ["Discipline / Position", "Corporate org.", "Documents", "Workers", "My reportees"];
+      subs.forEach(function (t, j) {
+        var b = a + (j - 2) * .36, sx = cx + 196 * Math.cos(b), sy = cy + 150 * Math.sin(b) - 8;
+        s += '<path class="sp hr" d="M' + x + " " + y + " L" + sx + " " + sy + '" style="transition-delay:' + (700 + j * 80) + 'ms"/>';
+        c.insertAdjacentHTML("beforeend", '<div class="sub" style="left:' + sx + "px;top:" + sy + "px;transition-delay:" + (900 + j * 80) + 'ms">' + t + "</div>");
+      });
+    }
+  });
+  C2W.platform.forEach(function (p, i) {
+    var a = Math.PI * (.18 + i * .16), x = cx + 270 * Math.cos(a), y = cy + 190 * Math.sin(a);
+    c.insertAdjacentHTML("beforeend", '<div class="pl" style="left:' + x + "px;top:" + y + 'px">' + ico(p.icon, 10) + p.name + "</div>");
+  });
+  svg.innerHTML = s;
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

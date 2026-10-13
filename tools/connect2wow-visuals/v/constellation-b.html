@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Orbit: the seven modules sit still; the five platform services slowly orbit around all of them, a reminder that every module calls on the same services.">
+<title>Connect2WOW — orbit (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 420px; }
+  .frame { background: radial-gradient(circle at 50% 50%, #1B2140 0%, #0D1233 70%); color: #fff; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .o { fill: none; stroke: rgba(133,188,255,.25); stroke-dasharray: 2 6; }
+  .md { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 5px; font: 600 10.5px/1 "Figtree"; color: rgba(255,255,255,.85); }
+  .md span { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); display: grid; place-items: center; color: #CFE0FF; }
+  .core { position: absolute; left: 300px; top: 210px; transform: translate(-50%, -50%); text-align: center; font: 600 12px/1.3 "Figtree"; color: rgba(255,255,255,.6); }
+  .core b { display: block; font-size: 15px; color: #fff; }
+  .sat { position: absolute; left: 0; top: 0; padding: 6px 10px; border-radius: 999px; background: var(--c2w-p10); color: #fff; font: 600 10.5px/1 "Figtree"; display: flex; gap: 5px; align-items: center; white-space: nowrap; box-shadow: 0 0 20px rgba(51,116,245,.6); will-change: transform; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <svg viewBox="0 0 600 420"><ellipse class="o" cx="300" cy="210" rx="140" ry="96"/><ellipse class="o" cx="300" cy="210" rx="226" ry="176"/></svg>
+    <div class="core"><b>7 modules</b>one shell</div>
+  </div>
+</div>
+<script>
+  var c = document.getElementById("c"), cx = 300, cy = 210;
+  C2W.modules.forEach(function (m, i) {
+    var a = -Math.PI / 2 + i * 2 * Math.PI / 7, x = cx + 140 * Math.cos(a), y = cy + 96 * Math.sin(a);
+    c.insertAdjacentHTML("beforeend", '<div class="md" style="left:' + x + "px;top:" + y + 'px"><span>' + ico(m.icon, 16) + "</span>" + (m.id === "admin" ? "Admin" : m.name) + "</div>");
+  });
+  var sats = C2W.platform.map(function (p) { var d = document.createElement("span"); d.className = "sat"; d.innerHTML = ico(p.icon, 12) + p.name; c.appendChild(d); return d; });
+  var t0 = performance.now(), run = false;
+  function frame(t) {
+    var k = window.END ? 0 : (t - t0) / 1000 * .12;
+    sats.forEach(function (s, i) {
+      var a = k + i * 2 * Math.PI / sats.length, x = cx + 226 * Math.cos(a) - s.offsetWidth / 2, y = cy + 176 * Math.sin(a) - s.offsetHeight / 2;
+      s.style.transform = "translate(" + x + "px," + y + "px)";
+    });
+    if (run && !window.END && !reduced) requestAnimationFrame(frame);
+  }
+  frame(t0);
+  whenSeen(document.getElementById("f"), function () { run = true; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>

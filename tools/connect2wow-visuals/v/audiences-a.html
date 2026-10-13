@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Persona cards, ONTON quote-card style: each has an office-to-site scale, the modules they live in, and one line in their own words.">
+<title>Connect2WOW — audiences (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .card { padding: 12px; display: grid; gap: 9px; align-content: start; }
+  .who { display: flex; gap: 8px; align-items: center; }
+  .who .av { width: 30px; height: 30px; }
+  .who b { display: block; font: 600 12px/15px "Figtree"; }
+  .who span { font: 400 11px/14px "Figtree"; color: var(--pg-muted); }
+  .scale { display: grid; gap: 4px; }
+  .scale .bar { position: relative; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #CBD5E1, #FFA600); }
+  .scale .bar i { position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--pg-ink); }
+  .scale .ends { display: flex; justify-content: space-between; font: 500 9px/1 "Figtree"; color: var(--pg-faint); }
+  .mods { display: flex; gap: 4px; flex-wrap: wrap; }
+  .mods span { display: inline-flex; gap: 3px; align-items: center; font: 500 10px/1 "Figtree"; color: var(--pg-muted); background: var(--pg-frame); padding: 4px 6px; border-radius: 6px; }
+  q { font: 400 11px/15px "Figtree"; color: var(--pg-ink-60); quotes: "“" "”"; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas"><div class="grid" id="g"></div></div>
+</div>
+<script>
+  var M = {}; C2W.modules.forEach(function (m) { M[m.id] = m; });
+  document.getElementById("g").innerHTML = C2W.people.map(function (p) {
+    return '<div class="card rise"><div class="who"><span class="av" style="background:' + p.c + '">' + p.i + "</span><div><b>" + p.name + "</b><span>" + p.role + "</span></div></div>" +
+      '<div class="scale"><div class="bar"><i style="left:' + p.site * 100 + '%"></i></div><div class="ends"><span>Office</span><span>Site</span></div></div>' +
+      '<div class="mods">' + p.mods.map(function (k) { return "<span>" + ico(M[k].icon, 10) + (k === "admin" ? "Admin" : M[k].name) + "</span>"; }).join("") + "</div>" +
+      "<q>" + p.quote + "</q></div>";
+  }).join("");
+  whenSeen(document.getElementById("f"), function () {
+    document.querySelectorAll(".rise").forEach(function (r, i) { setTimeout(function () { r.classList.add("is-in"); }, window.END ? 0 : i * 80); });
+  });
+</script>
+</body>
+</html>

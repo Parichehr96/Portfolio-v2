@@ -33,7 +33,7 @@
   var K = W.icons(), tm = document.getElementById("tm");
   /* squarified-ish: fill rows left to right, row height by share */
   var total = 370, Wd = 576, Ht = 320, rows = [[0, 1], [2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12, 13]], y = 0, h = "", shades = ["#E6EEFC", "#EEF2FF", "#F4EFFF", "#F5F5F7"];
-  rows.forEach(function (r, ri) { var sum = r.reduce(function (a, i) { return a + S[i][1]; }, 0), rh = Ht * sum / total, x = 0;
+  rows.forEach(function (r, ri) { var sum = r.reduce(function (a, i) { return a + S[i][1]; }, 0), rh = [118, 86, 64, 52][ri], x = 0;
     r.forEach(function (i, k) { var w = Wd * S[i][1] / sum;
       h += '<div class="cell" style="left:' + x + "px;top:" + y + "px;width:" + w + "px;height:" + rh + "px;background:" + shades[ri] + '"><div><b>' + S[i][0] + "</b><br><span>" + S[i][1] + ' glyphs</span></div><div class="gl">' + (w > 70 && rh > 60 ? [0, 1, 2].map(function (j) { return I(K[(i * 3 + j) % K.length], 14); }).join("") : "") + "</div></div>"; x += w; });
     y += rh; });

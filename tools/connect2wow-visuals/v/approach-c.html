@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The real timeline, May 2021 – Sep 2022: phases as bands, the 6-month design-system sprint highlighted, and the shutdown marked at the end.">
+<title>Connect2WOW — timeline (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 250px; }
+  .months { position: absolute; left: 30px; right: 30px; top: 46px; display: grid; grid-template-columns: repeat(17, 1fr); }
+  .months span { font: 500 9px/1 "Figtree"; color: var(--pg-faint); border-left: 1px solid var(--pg-border); padding: 0 0 6px 3px; height: 150px; }
+  .months span.y { color: var(--pg-ink); font-weight: 600; }
+  .band { position: absolute; height: 26px; border-radius: 7px; display: flex; align-items: center; padding: 0 9px; font: 600 11px/1 "Figtree"; color: #fff; white-space: nowrap;
+    transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease); }
+  .is-in .band { transform: none; }
+  .end { position: absolute; top: 40px; height: 170px; border-left: 2px solid var(--pg-neg); }
+  .end span { position: absolute; left: -2px; top: -22px; transform: translateX(-100%); font: 600 10px/1.2 "Figtree"; color: var(--pg-neg); white-space: nowrap; padding-right: 6px; text-align: right; }
+  .h { position: absolute; left: 30px; top: 16px; }
+  .flag { position: absolute; left: 30px; bottom: 12px; font: 400 10px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="h eyebrow">May 2021 → Sep 2022 · 17 months</div>
+    <div class="months" id="m"></div>
+    <div id="bands"></div>
+    <div class="end" id="end"><span>Shut down<br>before launch</span></div>
+  </div>
+</div>
+<script>
+  var M = ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+  document.getElementById("m").innerHTML = M.map(function (m, i) { return "<span" + (i === 0 || i === 8 ? ' class="y"' : "") + ">" + m + (i === 0 ? " ’21" : i === 8 ? " ’22" : "") + "</span>"; }).join("");
+  /* [label, start month index, length in months, colour, row]
+     ⚠ PLACEHOLDER PHASES. Only the start (May 2021), the end (Sep 2022) and the
+     design system's length (6 months) are confirmed — set the real months here. */
+  var B = [["Discover", 0, 2, "#94A3B8", 0], ["Define", 2, 2, "#64748B", 1], ["Design system · 6 months", 3, 6, "#3374F5", 2], ["Modules: HR, HSE, Courses…", 6, 9, "#3F3DB6", 3], ["Test & refine", 12, 5, "#7A5AF8", 4]];
+  var W = 540 / 17;
+  document.getElementById("bands").innerHTML = B.map(function (b, i) {
+    return '<div class="band" style="left:' + (30 + b[1] * W) + "px;width:" + (b[2] * W - 3) + "px;top:" + (66 + b[4] * 30) + "px;background:" + b[3] + ";transition-delay:" + i * 200 + 'ms">' + b[0] + "</div>";
+  }).join("");
+  document.getElementById("end").style.left = (30 + 17 * W) + "px";
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

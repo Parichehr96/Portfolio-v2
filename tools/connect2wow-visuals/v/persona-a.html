@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sarah's card beside a 2×2 empathy map. Notes that became design decisions are highlighted, each with its decision attached.">
+<title>Connect2WOW — persona + empathy (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 16px; display: grid; grid-template-columns: 172px 1fr; gap: 12px; }
+  .pc { padding: 14px; display: grid; gap: 10px; align-content: start; }
+  .ph { height: 112px; border-radius: 10px; background: linear-gradient(160deg, #F9D9E6, #F3F6F8); display: grid; place-items: center; }
+  .ph .av { width: 54px; height: 54px; font-size: 18px; }
+  .pc b { font: 600 14px/18px "Figtree"; display: block; }
+  .pc .r { font: 400 11px/15px "Figtree"; color: var(--pg-muted); }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 8px; font: 400 10.5px/14px "Figtree"; }
+  .kv span:nth-child(odd) { color: var(--pg-faint); }
+  .pc .qt { margin: 0; font: 500 11.5px/16px "Figtree"; color: var(--pg-ink); }
+  .em { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .q { padding: 10px; display: grid; gap: 6px; align-content: start; }
+  .q h4 { margin: 0; font: 600 10px/1 "Figtree"; letter-spacing: .06em; text-transform: uppercase; color: var(--pg-faint); }
+  .n { font: 400 11px/15px "Figtree"; color: var(--pg-ink-60); padding: 6px 8px; border-radius: 8px; background: var(--pg-frame); transition: background .4s, color .4s, box-shadow .4s; }
+  .n.k { background: #FFF6D6; color: var(--pg-ink); }
+  .n .d { display: block; margin-top: 4px; font: 600 10.5px/14px "Figtree"; color: var(--c2w-p00); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .5s var(--ease), opacity .4s; }
+  .is-in .n.k .d { max-height: 40px; opacity: 1; }
+  .n.k.focus { box-shadow: 0 0 0 1.5px #E5B400; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="card pc">
+      <div class="ph"><span class="av" style="background:#E2558E">SL</span></div>
+      <div><b>Sarah Lim</b><span class="r">HR Manager · mid-sized operator, Calgary</span></div>
+      <div class="kv"><span>Age</span><span>35</span><span>Experience</span><span>10+ yrs, oil &amp; gas HR</span><span>Works</span><span>Office, field workforce</span></div>
+      <p class="qt">“I want HR software that's easy to use, so I don't have to type out everything I need.”</p>
+    </div>
+    <div class="em" id="em"></div>
+  </div>
+</div>
+<script>
+  var Q = [
+    ["Thinks & feels", [["Hopes for a platform that fits oil and gas, not generic HR", "→ Certificates, sites and rotations are first-class data"], ["Worried about disruption during rollout", "→ Familiar patterns everywhere; nothing to relearn"]]],
+    ["Sees", [["No consistent progress across HR flows", "→ One step pattern for onboarding, off-boarding, reviews"], ["Data not connected between flows", "→ One record per person, read by every module"]]],
+    ["Hears", [["Connected platforms stay consistent", ""], ["Colleagues struggling with new software", ""]]],
+    ["Says & does", [["Retrieves the same piece of data again and again", "→ Search and pre-filled fields in every form"], ["Optimistic about the benefits, wary of the switch", ""]]]
+  ];
+  document.getElementById("em").innerHTML = Q.map(function (q) {
+    return '<div class="card q"><h4>' + q[0] + "</h4>" + q[1].map(function (n) { return '<div class="n' + (n[1] ? " k" : "") + '">' + n[0] + (n[1] ? '<span class="d">' + n[1] + "</span>" : "") + "</div>"; }).join("") + "</div>";
+  }).join("");
+  whenSeen(document.getElementById("f"), async function () {
+    var ks = document.querySelectorAll(".n.k"), i = 0;
+    while (true) { ks.forEach(function (k, j) { k.classList.toggle("focus", j === i); }); i = (i + 1) % ks.length; await sleep(2000); }
+  });
+</script>
+</body>
+</html>

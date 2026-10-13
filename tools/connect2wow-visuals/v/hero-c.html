@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Dark, editorial: a big module index on the left drives a dark product screen that bleeds off the right edge, in the original WOW dark theme.">
+<title>Connect2WOW — module index (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .index { position: absolute; left: 32px; top: 40px; width: 170px; }
+  .index .eyebrow { color: #6B7280; margin-bottom: 14px; }
+  .index li { list-style: none; font: 600 21px/31px "Figtree"; color: #3A3F4A; transition: color .35s, transform .45s var(--ease); display: flex; align-items: center; gap: 8px; }
+  .index li::before { content: ""; width: 0; height: 2px; background: var(--c2w-p10); transition: width .45s var(--ease); }
+  .index li.is-on { color: #F4F6FA; }
+  .index li.is-on::before { width: 14px; }
+  .index ul { margin: 0; padding: 0; }
+  .foot { position: absolute; left: 32px; bottom: 26px; font: 400 11px/16px "Figtree"; color: #6B7280; width: 160px; }
+  /* the dark product */
+  .win { position: absolute; left: 222px; top: 40px; width: 470px; height: 320px; background: var(--c2w-n10); color: #E7EAF0;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px #2B2E33; }
+  .win .ui-rail, .win .ui-nav { border-color: #2B2E33; }
+  .win .ui-ico { color: #8A92A3; }
+  .win .ui-ico.is-on { background: rgba(51,116,245,.18); color: #85BCFF; }
+  .win .ui-nav i { color: #9AA1AF; }
+  .win .ui-nav i.is-on { background: rgba(51,116,245,.18); color: #CFE0FF; }
+  .win .ui-nav small, .win .ui-lbl, .win .ui-crumb { color: #8A92A3; }
+  .win .ui-crumb b { color: #E7EAF0; }
+  .win .ui-card, .win .ui-table, .win .ui-field, .win .ui-tabs { border-color: #33363D; }
+  .win .ui-table th { background: #2B2E33; color: #9AA1AF; }
+  .win .ui-table td { border-color: #33363D; }
+  .win .ui-tabs .is-on { color: #fff; box-shadow: inset 0 -2px 0 #85BCFF; }
+  .win .ui-btn--ghost { color: #E7EAF0; box-shadow: inset 0 0 0 1px #41454C; }
+  .win .ui-pill { background: rgba(51,116,245,.2); color: #CFE0FF; }
+  .win .ui-bar { background: #33363D; }
+  .win .ui-shell { grid-template-columns: 44px 120px 1fr; }
+  .swap { transition: opacity .25s ease, transform .45s var(--ease); }
+  .swap.is-out { opacity: 0; transform: translateX(10px); }
+  .glow { position: absolute; right: -80px; top: -60px; width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(51,116,245,.22), transparent 65%); }
+</style>
+</head>
+<body>
+<div class="frame frame--dark" id="f">
+  <div class="canvas">
+    <div class="glow"></div>
+    <div class="index"><div class="eyebrow">7 modules · 1 shell</div><ul id="list"></ul></div>
+    <div class="foot">Five shared services under every module: notifications, chat, calendar, editors, settings.</div>
+    <div class="ui win">
+      <div class="ui-shell">
+        <div class="ui-rail" id="rail"></div>
+        <div class="ui-nav swap" id="nav"></div>
+        <div class="ui-main swap" id="main"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var order = ["hr", "hse", "courses", "admin", "eng", "profile", "connection"];
+  var names = { hr: "HR", hse: "HSE", courses: "Courses", eng: "Engineering", profile: "Profile", connection: "Connection", admin: "Administration" };
+  var list = document.getElementById("list"), rail = document.getElementById("rail"), nav = document.getElementById("nav"), main = document.getElementById("main");
+  list.innerHTML = order.map(function (k) { return '<li data-k="' + k + '">' + names[k] + "</li>"; }).join("");
+  function put(id) {
+    rail.innerHTML = C2W.rail(id, ["home"].concat(order));
+    nav.innerHTML = C2W.nav(id); main.innerHTML = C2W.main(id);
+    list.querySelectorAll("li").forEach(function (l) { l.classList.toggle("is-on", l.dataset.k === id); });
+  }
+  put("hr");
+  whenSeen(document.getElementById("f"), async function () {
+    var i = 0;
+    while (true) {
+      await sleep(2500);
+      i = (i + 1) % order.length;
+      nav.classList.add("is-out"); main.classList.add("is-out");
+      await sleep(240); put(order[i]);
+      nav.classList.remove("is-out"); await sleep(80); main.classList.remove("is-out");
+    }
+  });
+</script>
+</body>
+</html>

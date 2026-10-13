@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Before / after: the same request card as the 2022 library drew it (Roboto, the original blues) and as it was revisited in 2026 (Inter, the new blue). Drag the divider.">
+<title>WOW design system — 2022 to 2026</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 330px; }
+  .half { position: absolute; inset: 0; display: grid; place-items: center; }
+  .old { background: #fff; } .new { background: #F5F5F7; clip-path: inset(0 0 0 var(--x, 50%)); }
+  .oc { box-sizing: border-box; width: 280px; font-family: Roboto, Arial, sans-serif; background: #fff; border: 1px solid #ABB2BF; border-radius: 8px; padding: 12px; }
+  .oc b { display: block; font: 500 12px/1.3 Roboto, Arial; color: #212327; } .oc small { font: 400 10px/1.3 Roboto, Arial; color: #555A63; }
+  .oc .bt { display: flex; gap: 6px; margin-top: 10px; } .oc .bt span { flex: 1; text-align: center; padding: 7px; border-radius: 4px; font: 500 10.5px/1 Roboto, Arial; }
+  .new .w-card { box-sizing: border-box; width: 280px; } .oc { min-height: 0; }
+  .yr { position: absolute; top: 16px; font: 700 12px/1 "Figtree"; color: var(--pg-faint); }
+  .div { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; margin-left: -1px; background: #0D1233; cursor: ew-resize; }
+  .div i { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; background: #0D1233; color: #fff; display: grid; place-items: center; font: 600 11px/1 "Figtree"; font-style: normal; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="half old"><span class="yr" style="left:18px">2022</span><div class="oc"><div style="display:flex;gap:8px;align-items:center"><span style="width:28px;height:28px;border-radius:50%;background:#3374F5;color:#fff;display:grid;place-items:center;font:500 10px Roboto,Arial">RM</span><div><b>2 welders · North Pad</b><small>Requested by Ryan Mitchell · Sep 25–27</small></div></div><div style="display:flex;gap:6px;margin-top:10px"><span style="font:400 10px Roboto,Arial;color:#B36200;background:#FFF4E5;padding:4px 8px;border-radius:4px">Awaiting approval</span><span style="font:400 10px Roboto,Arial;color:#3374F5;background:#EAF1FE;padding:4px 8px;border-radius:4px">Engineering</span></div><div class="bt"><span style="box-shadow:inset 0 0 0 1px #ABB2BF;color:#212327">Decline</span><span style="background:#3374F5;color:#fff">Approve</span></div></div></div>
+    <div class="half new w"><span class="yr" style="right:18px">2026</span><div id="nw"></div></div>
+    <div class="div" id="dv"><i>⇆</i></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  document.getElementById("nw").innerHTML = W.req();
+  var drag = false;
+  function set(p) { c.style.setProperty("--x", Math.max(4, Math.min(96, p)) + "%"); }
+  function pos(e) { var r = f.getBoundingClientRect(); return (e.clientX - r.left) / r.width * 100; }
+  document.getElementById("dv").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(pos(e)); }); addEventListener("pointerup", function () { drag = false; });
+  c.addEventListener("click", function (e) { if (!e.target.closest(".div")) set(pos(e)); });
+  set(92); whenSeen(f, async function () { for (var x = 92; x >= 50; x--) { if (drag) return; set(x); await sleep(14); } });
+</script>
+</body>
+</html>

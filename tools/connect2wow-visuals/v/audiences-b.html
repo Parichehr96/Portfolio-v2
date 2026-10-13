@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="One axis from head office to remote site. Each persona sits where they work; the spotlight cycles (or follows hover) and shows their modules and quote.">
+<title>Connect2WOW — office to site (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 340px; }
+  .axis { position: absolute; left: 50px; right: 50px; top: 150px; height: 2px; background: linear-gradient(90deg, #94A3B8, #FFA600); border-radius: 2px; }
+  .end { position: absolute; top: 166px; display: flex; gap: 6px; align-items: center; font: 600 11px/1 "Figtree"; color: var(--pg-muted); }
+  .end span { display: grid; }
+  .p { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; cursor: pointer; transition: transform .4s var(--ease); }
+  .p .av { width: 36px; height: 36px; font-size: 12px; box-shadow: 0 0 0 4px var(--pg-frame); transition: box-shadow .3s, transform .4s var(--ease); }
+  .p small { font: 500 10px/1.2 "Figtree"; color: var(--pg-muted); text-align: center; white-space: nowrap; }
+  .p::after { content: ""; position: absolute; top: 100%; left: 50%; width: 1px; background: #CBD5E1; }
+  .p.is-on .av { transform: scale(1.18); box-shadow: 0 0 0 4px var(--pg-frame), 0 0 0 6px currentColor; }
+  .stem { position: absolute; width: 1px; background: #CBD5E1; }
+  .spot { position: absolute; left: 50px; right: 50px; top: 214px; height: 104px; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; }
+  .spot b { font: 600 14px/18px "Figtree"; }
+  .spot .r { font: 400 12px/16px "Figtree"; color: var(--pg-muted); }
+  .spot p { margin: 0; grid-column: 1 / -1; font: 400 13px/19px "Figtree"; color: var(--pg-ink-60); }
+  .spot .mods { display: flex; gap: 4px; align-items: start; grid-row: 1 / 3; grid-column: 2; }
+  .spot .mods span { display: inline-flex; gap: 4px; align-items: center; font: 500 10px/1 "Figtree"; background: var(--c2w-p30); color: var(--c2w-p00); padding: 5px 7px; border-radius: 6px; }
+  .fade { transition: opacity .25s; } .fade.out { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="axis"></div>
+    <div class="end" style="left:50px"><span data-ico="hr" data-size="13"></span>Head office · Calgary</div>
+    <div class="end" style="right:50px"><span data-ico="hse" data-size="13"></span>Remote / offshore site</div>
+    <div class="card spot fade" id="spot"></div>
+  </div>
+</div>
+<script>
+  var M = {}; C2W.modules.forEach(function (m) { M[m.id] = m; });
+  var c = document.getElementById("c"), spot = document.getElementById("spot"), els = [];
+  var Y = [64, 64, 104, 64, 104, 104];
+  var SHORT = ["HR manager", "Welder", "HSE lead", "Project manager", "Ops manager", "Admin"];
+  C2W.people.forEach(function (p, i) {
+    var x = 50 + 500 * p.site, y = Y[i];
+    c.insertAdjacentHTML("beforeend", '<span class="stem" style="left:' + x + "px;top:" + (y + 34) + "px;height:" + (150 - y - 34) + 'px"></span>');
+    var d = document.createElement("div");
+    d.className = "p"; d.style.left = x + "px"; d.style.top = y + "px"; d.style.color = p.c;
+    d.innerHTML = '<span class="av" style="background:' + p.c + '">' + p.i + "</span><small>" + SHORT[i] + "</small>";
+    c.appendChild(d); els.push(d);
+    d.addEventListener("mouseenter", function () { auto = false; show(i); });
+  });
+  var cur = -1, auto = true;
+  async function show(i) {
+    if (i === cur) return; cur = i; var p = C2W.people[i];
+    els.forEach(function (e, k) { e.classList.toggle("is-on", k === i); });
+    spot.classList.add("out"); await sleep(180);
+    spot.innerHTML = "<div><b>" + p.name + '</b> <span class="r">· ' + p.role + " · " + p.where + "</span></div>" +
+      '<div class="mods">' + p.mods.map(function (k) { return "<span>" + ico(M[k].icon, 11) + (k === "admin" ? "Admin" : M[k].name) + "</span>"; }).join("") + "</div>" +
+      "<p>“" + p.quote + "”</p>";
+    spot.classList.remove("out");
+  }
+  show(0);
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { await sleep(2800); if (!auto) break; i = (i + 1) % els.length; show(i); } });
+</script>
+</body>
+</html>

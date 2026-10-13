@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Spot the difference: three versions side by side; numbered red rings mark each mismatch (radius, buttons, wording, avatar, type) — then one WOW card replaces all three.">
+<title>WOW design system — spot the difference</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .row3 { position: absolute; left: 0; right: 0; top: 46px; display: flex; justify-content: center; gap: 10px; transition: opacity .5s, transform .6s var(--e-out); }
+  .row3 > div { zoom: .84; position: relative; }
+  .ring { position: absolute; width: 26px; height: 26px; margin: -13px; border-radius: 50%; border: 2px solid #E05F2B; display: grid; place-items: center; font: 700 10px/1 "Figtree"; color: #fff; background: #E05F2B; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .4s var(--e-out); }
+  .ring.on { opacity: 1; transform: none; }
+  .legend { position: absolute; left: 32px; right: 32px; top: 196px; display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 11.5px/1 "Figtree"; color: var(--pg-muted); }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; opacity: 0; transition: opacity .3s; }
+  .legend span.on { opacity: 1; } .legend b { width: 16px; height: 16px; border-radius: 50%; background: #E05F2B; color: #fff; display: grid; place-items: center; font: 700 9px/1 "Figtree"; }
+  .one { position: absolute; left: 135px; top: 60px; width: 330px; opacity: 0; transform: translateY(14px); transition: opacity .6s .2s, transform .7s .2s var(--e-out); }
+  .fixed .row3 { opacity: 0; transform: translateY(-10px); } .fixed .one { opacity: 1; transform: none; }
+  .fixed .legend span { opacity: 0 !important; }
+  .msg { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; font: 600 13px/1.3 "Figtree"; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="row3" id="r"></div>
+    <div class="legend" id="lg"></div>
+    <div class="one w" id="one"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  /* three designers' versions of the same card */
+  var V = [
+    { r: 4, f: "Arial, sans-serif", bd: "#D0D5DD", ok: "background:#12B76A;color:#fff;border-radius:4px;text-transform:uppercase", no: "color:#D92D20;box-shadow:inset 0 0 0 1px #D92D20;border-radius:4px;text-transform:uppercase", av: "4px", ac: "#7A5AF8", l: "Resource Request" },
+    { r: 14, f: "Georgia, serif", bd: "#E0E7FF", bg: "#F8FAFF", ok: "background:#4F46E5;color:#fff;border-radius:999px", no: "color:#4F46E5;border-radius:999px", av: "50%", ac: "#E2558E", l: "resource request" },
+    { r: 0, f: "Courier New, monospace", bd: "#111827", ok: "background:#111827;color:#fff;border-radius:0", no: "color:#111827;box-shadow:inset 0 0 0 1px #111827;border-radius:0", av: "0", ac: "#0E9384", l: "Request: Resource" }
+  ];
+  function rough(v) {
+    return '<div style="background:' + (v.bg || "#fff") + ";border-radius:" + v.r + "px;box-shadow:0 0 0 1px " + v.bd + ";padding:12px;font-family:" + v.f + ';width:210px">' +
+      '<div style="display:flex;gap:8px;align-items:center"><span style="width:26px;height:26px;border-radius:' + v.av + ";background:" + v.ac + ';color:#fff;display:grid;place-items:center;font:600 9px Figtree">RM</span><div><div style="font-weight:700;font-size:11.5px;color:#1D2433">2 welders · North Pad</div><div style="font-size:9.5px;color:#667085">' + v.l + " · Sep 25–27</div></div></div>" +
+      '<div style="display:flex;gap:6px;justify-content:flex-end;margin-top:10px"><span style="padding:6px 10px;font-size:9.5px;' + v.no + '">Decline</span><span style="padding:6px 10px;font-size:9.5px;' + v.ok + '">Approve</span></div></div>';
+  }
+  var r = document.getElementById("r");
+  r.innerHTML = V.map(function (v) { return "<div>" + rough(v) + "</div>"; }).join("");
+  document.getElementById("one").innerHTML = W.req();
+  /* rings over the three cards: [card, x, y, number] */
+  var RINGS = [[0, -4, -4, 1], [1, -4, -4, 1], [2, -4, -4, 1], [0, 204, 84, 2], [1, 204, 84, 2], [2, 204, 84, 2], [0, 140, -8, 3], [1, 140, -8, 3], [2, 140, -8, 3], [0, -8, 40, 4], [1, -8, 40, 4], [2, -8, 40, 4]];
+  RINGS.forEach(function (g) { r.children[g[0]].insertAdjacentHTML("beforeend", '<span class="ring" data-n="' + g[3] + '" style="left:' + g[1] + "px;top:" + g[2] + 'px">' + g[3] + "</span>"); });
+  var L = ["Corner radius: 4, 14, 0", "Buttons: green caps, pill, black", "Wording: three ways to say it", "Avatar: square, round, sharp"];
+  document.getElementById("lg").innerHTML = L.map(function (t, i) { return '<span data-n="' + (i + 1) + '"><b>' + (i + 1) + "</b>" + t + "</span>"; }).join("");
+  whenSeen(f, async function () {
+    while (true) {
+      c.classList.remove("fixed"); document.getElementById("msg").textContent = "Three designers, no shared rules";
+      c.querySelectorAll(".ring,.legend span").forEach(function (e) { e.classList.remove("on"); });
+      for (var n = 1; n <= 4; n++) { await sleep(700); c.querySelectorAll('[data-n="' + n + '"]').forEach(function (e) { e.classList.add("on"); }); }
+      await sleep(1400); c.classList.add("fixed"); document.getElementById("msg").textContent = "With WOW: one card, nothing to spot";
+      await sleep(3200);
+    }
+  });
+</script>
+</body>
+</html>

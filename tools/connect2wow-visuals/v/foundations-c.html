@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Token to screen: pick a token on the left and every place it's used on the screen lights up. Shows the system in use, not just documented.">
+<title>Connect2WOW — token to screen (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 360px; display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 18px; }
+  .toks { display: grid; gap: 6px; align-content: start; }
+  .tk { display: flex; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 9px; border: 0; background: transparent; text-align: left; cursor: pointer; font: 500 11px/1.2 "Figtree"; color: var(--pg-ink); transition: background .2s; }
+  .tk i { width: 22px; height: 22px; border-radius: 6px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .tk small { display: block; font: 400 9.5px/1.2 "Figtree"; color: var(--pg-faint); }
+  .tk.is-on { background: #fff; box-shadow: 0 0 0 1px var(--pg-border); }
+  .scr { padding: 14px; font-family: "Roboto"; position: relative; }
+  [data-t] { transition: outline-color .25s, box-shadow .25s; outline: 2px solid transparent; outline-offset: 2px; border-radius: 5px; }
+  .hl [data-t].on { outline-color: #FFA600; }
+  .hl [data-t]:not(.on) { opacity: .45; }
+  .hl [data-t] { transition: opacity .25s, outline-color .25s; }
+  .count { position: absolute; right: 14px; top: 12px; font: 600 10px/1 "Figtree"; color: #B36B00; background: #FFF4DE; padding: 4px 7px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="toks" id="toks"></div>
+    <div class="ui scr" id="scr">
+      <span class="count" id="count"></span>
+      <div data-t="n10" style="font:700 13px Roboto;color:#212327;margin-bottom:2px">Incident report</div>
+      <div data-t="n50" style="font-size:10px;color:#555A63;margin-bottom:10px">North Pad · reported by D. Okafor, 08:42</div>
+      <div data-t="red" style="display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;background:#FDECEC;color:#B4232A;font-size:10px;margin-bottom:10px">⚠ Gas reading above limit — area evacuated</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div><div data-t="n50" class="ui-lbl">Severity</div><div data-t="n30" class="ui-field" style="color:#212327">High</div></div>
+        <div><div data-t="n50" class="ui-lbl">Site</div><div data-t="n30" class="ui-field" style="color:#212327">North Pad</div></div>
+      </div>
+      <div data-t="n50" class="ui-lbl">Assigned to</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px"><span data-t="p30" class="ui-pill">D. Okafor</span><span data-t="p30" class="ui-pill">S. Lim</span></div>
+      <div style="display:flex;gap:6px;align-items:center"><span data-t="green" style="font-size:9.5px;color:#16CF4B">● Supervisor notified</span>
+        <span style="margin-left:auto;display:flex;gap:6px"><span data-t="n30" class="ui-btn ui-btn--ghost">Save draft</span><span data-t="p10" class="ui-btn">Submit report</span></span></div>
+    </div>
+  </div>
+</div>
+<script>
+  var T = [["p10", "#3374F5", "Primary 10", "actions, selection"], ["p30", "#E0EBFF", "Primary 30", "tags, highlights"], ["n10", "#212327", "Neutral 10", "headings"], ["n30", "#33363D", "Neutral 30", "borders, fields"],
+    ["n50", "#555A63", "Neutral 50", "secondary text"], ["red", "#E82B32", "Error", "alerts only"], ["green", "#16CF4B", "Success", "confirmations"]];
+  var toks = document.getElementById("toks"), scr = document.getElementById("scr"), count = document.getElementById("count");
+  toks.innerHTML = T.map(function (t) { return '<button class="tk" data-k="' + t[0] + '"><i style="background:' + t[1] + '"></i><span>' + t[2] + "<small>" + t[3] + "</small></span></button>"; }).join("");
+  function pick(k) {
+    scr.classList.add("hl"); var n = 0;
+    scr.querySelectorAll("[data-t]").forEach(function (e) { var on = e.dataset.t === k; e.classList.toggle("on", on); n += on; });
+    toks.querySelectorAll(".tk").forEach(function (b) { b.classList.toggle("is-on", b.dataset.k === k); });
+    count.textContent = n + (n === 1 ? " use" : " uses");
+  }
+  var auto = true;
+  toks.addEventListener("click", function (e) { var b = e.target.closest(".tk"); if (b) { auto = false; pick(b.dataset.k); } });
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { pick(T[i][0]); i = (i + 1) % T.length; await sleep(1800); } });
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Hex to variable: raw colour values on the left resolve into named variables on the right, one by one, while a counter climbs to the 771 bindings made without changing a pixel.">
+<title>WOW design system — hex to variable</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .list { position: absolute; left: 30px; right: 30px; top: 24px; display: grid; gap: 7px; }
+  .it { display: grid; grid-template-columns: 22px 1fr 24px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: #F5F5F7; }
+  .it i { width: 18px; height: 18px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .it code { font: 500 11px/1 ui-monospace, monospace; color: var(--pg-ink); }
+  .it .hx { transition: opacity .4s; } .it .vr { opacity: 0; color: #2563EB; transition: opacity .4s; }
+  .it.done .hx { opacity: .35; text-decoration: line-through; } .it.done .vr { opacity: 1; }
+  .it .ar { color: #CBD5E1; font: 600 14px/1 "Figtree"; text-align: center; }
+  .count { position: absolute; left: 30px; bottom: 20px; font: 700 30px/1 "Figtree"; letter-spacing: -.02em; }
+  .count small { font: 500 12px/1 "Figtree"; color: var(--pg-muted); letter-spacing: 0; margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="list" id="ls"></div>
+    <div class="count"><span id="n">0</span><small>colour values bound to variables · 0 pixels changed</small></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var R = [["#2563EB", "action/primary"], ["#1D4ED8", "action/primary-hover"], ["#E6EEFC", "surface/selected"], ["#1D2433", "text/primary"], ["#6B7280", "text/secondary"], ["#E5E7EB", "border/default"], ["#C81E1E", "status/error"]];
+  var ls = document.getElementById("ls");
+  ls.innerHTML = R.map(function (r) { return '<div class="it"><i style="background:' + r[0] + '"></i><code class="hx">' + r[0] + '</code><span class="ar">→</span><code class="vr">' + r[1] + "</code></div>"; }).join("");
+  whenSeen(f, async function () { while (true) { ls.querySelectorAll(".it").forEach(function (x) { x.classList.remove("done"); }); document.getElementById("n").textContent = 0; await sleep(500);
+    var items = ls.querySelectorAll(".it"); for (var i = 0; i < items.length; i++) { items[i].classList.add("done"); document.getElementById("n").textContent = Math.round(771 * (i + 1) / items.length); await sleep(450); } await sleep(2600); } });
+</script>
+</body>
+</html>

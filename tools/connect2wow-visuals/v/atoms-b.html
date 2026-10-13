@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Four columns, left to right: atoms (cycling through their states), a molecule, an organism, a template. The same parts visibly carry across.">
+<title>Connect2WOW — atomic ladder (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 18px; }
+  .cols { display: grid; grid-template-columns: 1fr 1.1fr 1.3fr 1.2fr; gap: 10px; align-items: stretch; }
+  .col { grid-template-rows: auto 1fr; }
+  .col { display: grid; gap: 8px; }
+  .lv { font: 600 12px/1 "Figtree"; } .lv small { display: block; font: 400 10px/1.3 "Figtree"; color: var(--pg-faint); margin-top: 3px; }
+  .pan { background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px var(--pg-border); padding: 10px; font-family: "Roboto"; display: grid; gap: 7px; align-content: center; }
+  .ui-field { transition: border-color .3s, background .3s, color .3s; }
+  .st-hover { border-color: #3374F5; }
+  .st-error { border-color: #E82B32; }
+  .st-warning { border-color: #FFA600; }
+  .st-disabled { background: #F1F3F6; color: #ABB2BF; }
+  .help { font-size: 8px; color: var(--c2w-sub); transition: color .3s; }
+  .help.st-error { color: #E82B32; } .help.st-warning { color: #B36B00; }
+  .state { font: 500 9.5px/1 "Figtree"; color: #B36B00; background: #FFF4DE; padding: 3px 6px; border-radius: 999px; justify-self: start; }
+  .arrow { position: relative; }
+  .mini { height: 140px; padding: 0; overflow: hidden; display: grid; grid-template-columns: 22px 1fr; }
+  .mini .r { border-right: 1px solid var(--c2w-line); display: grid; align-content: start; justify-items: center; gap: 6px; padding-top: 8px; }
+  .mini .r i { width: 10px; height: 10px; border-radius: 3px; background: #E2E8F0; } .mini .r i.on { background: var(--c2w-p10); }
+  .mini .m { padding: 8px; display: grid; gap: 6px; align-content: start; }
+  .sk { height: 6px; border-radius: 3px; background: #EEF1F5; }
+  .hl { box-shadow: 0 0 0 1.5px #FFA600; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="cols">
+      <div class="col"><div class="lv">Atoms<small>with every state</small></div>
+        <div class="pan"><span class="state" id="st">default</span><div class="ui-field" id="a1">Text input</div><div style="display:flex;gap:5px"><span class="ui-btn">Save</span><span class="ui-btn ui-btn--ghost">Cancel</span></div><div style="display:flex;gap:8px;align-items:center;font-size:9px"><span style="width:10px;height:10px;border-radius:3px;background:#3374F5;display:inline-block"></span>Checkbox</div></div></div>
+      <div class="col"><div class="lv">Molecule<small>label + field + help</small></div>
+        <div class="pan"><div class="ui-lbl">Full name</div><div class="ui-field" id="a2">Mark Rushmore</div><div class="help" id="h2">As on the work permit</div></div></div>
+      <div class="col"><div class="lv">Organism<small>form card</small></div>
+        <div class="pan"><div style="font-size:9.5px;font-weight:500">Worker information</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><div class="hl" style="padding:2px"><div class="ui-lbl">Full name</div><div class="ui-field" id="a3" style="height:18px">Mark R.</div></div><div style="padding:2px"><div class="ui-lbl">Discipline</div><div class="ui-field" style="height:18px">Welding</div></div></div>
+          <div style="display:flex;justify-content:flex-end;gap:4px"><span class="ui-btn ui-btn--ghost" style="height:16px">Cancel</span><span class="ui-btn" style="height:16px">Save</span></div></div></div>
+      <div class="col"><div class="lv">Template<small>HR · add worker</small></div>
+        <div class="pan mini"><div class="r"><i></i><i class="on"></i><i></i><i></i><i></i></div>
+          <div class="m"><div class="sk" style="width:50%"></div><div class="hl" style="border:1px solid var(--c2w-line);border-radius:6px;padding:6px;display:grid;gap:4px"><div class="sk" style="width:40%"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px"><div class="sk" style="height:10px;background:#fff;border:1px solid #E6E9EF" id="a4"></div><div class="sk" style="height:10px;background:#fff;border:1px solid #E6E9EF"></div></div></div><div class="sk"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:65%"></div></div></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  var S = [["default", ""], ["hover", "st-hover"], ["error", "st-error"], ["warning", "st-warning"], ["disabled", "st-disabled"]];
+  var H = { default: "As on the work permit", hover: "As on the work permit", error: "Name is required", warning: "Doesn't match the permit", disabled: "Locked after review" };
+  function setS(k) {
+    var s = S[k];
+    document.getElementById("st").textContent = s[0];
+    ["a1", "a2", "a3"].forEach(function (id) { var e = document.getElementById(id); S.forEach(function (x) { if (x[1]) e.classList.remove(x[1]); }); if (s[1]) e.classList.add(s[1]); });
+    var h = document.getElementById("h2"); h.className = "help " + s[1]; h.textContent = H[s[0]];
+    var a4 = document.getElementById("a4"); a4.style.borderColor = { "st-hover": "#3374F5", "st-error": "#E82B32", "st-warning": "#FFA600" }[s[1]] || "#E6E9EF";
+  }
+  whenSeen(document.getElementById("f"), async function () { var k = 0; while (true) { setS(k); k = (k + 1) % S.length; await sleep(1500); } });
+</script>
+</body>
+</html>

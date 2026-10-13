@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The Double Diamond drawn as it is: two diamonds trace in, phases label each half, outputs sit under the points where it narrows.">
+<title>Connect2WOW — double diamond (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 280px; }
+  .canvas > svg { position: absolute; left: 0; top: 0; }
+  .dd { fill: rgba(51,116,245,.06); stroke: var(--c2w-p10); stroke-width: 1.5; stroke-dasharray: 900; stroke-dashoffset: 900; transition: stroke-dashoffset 1.6s var(--ease); }
+  .is-in .dd { stroke-dashoffset: 0; }
+  .dd2 { transition-delay: .7s; }
+  .ph { position: absolute; top: 110px; width: 130px; text-align: center; font: 600 13px/1 "Figtree"; }
+  .ph small { display: block; font: 400 10px/1.3 "Figtree"; color: var(--pg-muted); margin-top: 4px; }
+  .pt { position: absolute; transform: translateX(-50%); top: 200px; text-align: center; width: 140px; opacity: 0; transition: opacity .5s; }
+  .is-in .pt { opacity: 1; }
+  .pt i { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--pg-ink); margin: 0 auto 8px; }
+  .pt b { display: block; font: 600 11px/1.3 "Figtree"; }
+  .pt span { font: 400 10.5px/1.35 "Figtree"; color: var(--pg-muted); }
+  .lb { position: absolute; top: 18px; font: 600 10px/1 "Figtree"; letter-spacing: .06em; text-transform: uppercase; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <div class="lb" style="left:46px">Problem space</div><div class="lb" style="left:330px">Solution space</div>
+    <svg width="600" height="280" viewBox="0 0 600 280">
+      <path class="dd" d="M40 120 L160 40 L280 120 L160 200 Z"/>
+      <path class="dd dd2" d="M300 120 L420 40 L540 120 L420 200 Z"/>
+    </svg>
+    <div class="ph" style="left:56px;top:96px">Discover<small>research, interviews</small></div>
+    <div class="ph" style="left:156px;top:128px">Define<small>modules, principles</small></div>
+    <div class="ph" style="left:316px;top:96px">Develop<small>Atomic Design</small></div>
+    <div class="ph" style="left:416px;top:128px">Deliver<small>test per module</small></div>
+    <div class="pt" style="left:290px;transition-delay:1.2s"><i></i><b>The brief</b><span>7 modules, 5 shared services, one system</span></div>
+    <div class="pt" style="left:526px;width:124px;transition-delay:2s"><i></i><b>The system</b><span>40–50 components, every module built from them</span></div>
+  </div>
+</div>
+<script>whenSeen(document.getElementById("f"));</script>
+</body>
+</html>

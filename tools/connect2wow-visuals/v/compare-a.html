@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ONTON's competitor layout: a dark self card for Connect2WOW, then the market table with yes/partial/no marks and the closing note.">
+<title>Connect2WOW — compared (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 16px; display: grid; grid-template-columns: 190px 1fr; gap: 12px; }
+  .self { background: #0D1233; color: #fff; border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .self .lg { display: flex; gap: 8px; align-items: center; font: 600 13px/1 "Figtree"; }
+  .self .lg i { width: 18px; height: 18px; border-radius: 50%; border: 4px solid var(--c2w-p20); border-right-color: transparent; }
+  .self .big { font: 600 30px/1 "Figtree"; letter-spacing: -.02em; }
+  .self p { margin: 0; font: 400 11.5px/16px "Figtree"; color: rgba(255,255,255,.7); }
+  .self dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 8px; font: 400 11px/14px "Figtree"; border-top: 1px solid rgba(255,255,255,.14); padding-top: 10px; }
+  .self dd { margin: 0; font-weight: 600; color: #9FE3B4; }
+  .mk { padding: 14px; }
+  .mk h4 { margin: 0 0 10px; font: 600 13px/1 "Figtree"; }
+  table { width: 100%; border-collapse: collapse; font: 400 11px/14px "Figtree"; }
+  th { text-align: left; font-weight: 500; color: var(--pg-faint); padding: 0 6px 8px 0; font-size: 10px; }
+  td { padding: 9px 6px 9px 0; border-top: 1px solid var(--pg-border); color: var(--pg-ink-60); }
+  td:first-child { color: var(--pg-ink); font-weight: 600; }
+  .y, .p, .n { display: inline-flex; align-items: center; gap: 4px; }
+  .y::before, .p::before, .n::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+  .y::before { background: var(--pg-pos); } .p::before { background: #FFA600; } .n::before { background: #CBD5E1; }
+  .note { margin-top: 10px; font: 400 11.5px/16px "Figtree"; color: var(--pg-muted); }
+  .rise { transition-delay: calc(var(--i) * 70ms); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="self">
+      <div class="lg"><i></i>Connect2WOW</div>
+      <div class="big">1 product</div>
+      <p>HR, safety, courses and field operations in one shell, built for oil and gas.</p>
+      <dl><dt>Built for oil &amp; gas</dt><dd>Yes</dd><dt>Safety (HSE) built in</dt><dd>Yes</dd><dt>Office + field</dt><dd>Yes</dd></dl>
+    </div>
+    <div class="card mk">
+      <h4>The rest of the market</h4>
+      <table>
+        <tr><th></th><th>Oil &amp; gas</th><th>Safety (HSE)</th><th>Customisable</th><th>UX</th></tr>
+        <tr class="rise" style="--i:1"><td>BambooHR</td><td><span class="n">No</span></td><td><span class="p">Add-on</span></td><td><span class="p">Limited</span></td><td>Friendly</td></tr>
+        <tr class="rise" style="--i:2"><td>Personio</td><td><span class="n">No</span></td><td><span class="n">No</span></td><td><span class="y">Yes</span></td><td>Steep</td></tr>
+        <tr class="rise" style="--i:3"><td>HiBob</td><td><span class="n">No</span></td><td><span class="n">No</span></td><td><span class="p">Limited</span></td><td>Modern</td></tr>
+      </table>
+      <div class="note">Each was strong on HR. None was built for the industry, and safety was an add-on at best.</div>
+    </div>
+  </div>
+</div>
+<script>whenSeen(document.getElementById("f"), function () { document.querySelectorAll(".rise").forEach(function (r) { r.classList.add("is-in"); }); });</script>
+</body>
+</html>

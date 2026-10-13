@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The rhythm: one week as a strip — each designer researching their own components, the end-of-day decision every evening, and the Friday handover with engineering.">
+<title>WOW design system — the rhythm</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 330px; }
+  .wk { position: absolute; left: 18px; right: 18px; top: 40px; display: grid; grid-template-columns: 90px repeat(5, 1fr); gap: 6px; }
+  .wk .h { font: 600 10px/1 "Figtree"; color: var(--pg-faint); text-align: center; padding-bottom: 4px; }
+  .wk .who { display: flex; align-items: center; gap: 6px; font: 600 11px/1 "Figtree"; }
+  .cell { height: 34px; border-radius: 8px; background: #F5F5F7; display: grid; place-items: center; font: 500 9.5px/1.2 "Figtree"; color: var(--pg-muted); text-align: center; padding: 0 4px; opacity: 0; transition: opacity .3s, background .3s; }
+  .cell.on { opacity: 1; }
+  .cell.dec { background: #E6EEFC; color: #1D4ED8; font-weight: 700; } .cell.ho { background: #0D1233; color: #fff; font-weight: 700; }
+  .legend { position: absolute; left: 18px; right: 18px; bottom: 22px; display: flex; gap: 16px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="wk" id="wk"></div>
+    <div class="legend"><span><i style="background:#F5F5F7;box-shadow:inset 0 0 0 1px #E2E8F0"></i>Research, alone</span><span><i style="background:#E6EEFC"></i>Decide together, every evening</span><span><i style="background:#0D1233"></i>Handover to engineering, weekly</span></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var D = ["Mon", "Tue", "Wed", "Thu", "Fri"], P = [["ND", "#0E9384", "Niloufar"], ["MH", "#E2558E", "Mobina"], ["PT", "#2563EB", "Parichehr"]];
+  var R = [["Select", "Mega-select", "Table", "Table", "Stepper"], ["Badge", "Chip", "Alert", "Dialog", "Tooltip"], ["Button", "Field", "Tabs", "Drawer", "Org chart"]];
+  var h = "<span></span>" + D.map(function (d) { return '<span class="h">' + d + "</span>"; }).join("");
+  P.forEach(function (p, i) { h += '<span class="who">' + W.av(p[0], p[1], 20) + p[2] + "</span>" + R[i].map(function (x) { return '<span class="cell">' + x + "</span>"; }).join(""); });
+  h += '<span class="who" style="font-size:10px;color:var(--pg-muted)">Together</span>' + D.map(function (d, i) { return '<span class="cell dec">Decide</span>'; }).join("");
+  h += '<span class="who" style="font-size:10px;color:var(--pg-muted)">Engineering</span><span></span><span></span><span></span><span></span><span class="cell ho">Handover</span>';
+  document.getElementById("wk").innerHTML = h;
+  whenSeen(f, async function () { var cells = c.querySelectorAll(".cell"); while (true) { cells.forEach(function (x) { x.classList.remove("on"); }); await sleep(300);
+    for (var d = 0; d < 5; d++) { c.querySelectorAll(".wk > :nth-child(6n+" + (d + 2) + ") ").forEach(function (x) { if (x.classList.contains("cell")) x.classList.add("on"); }); await sleep(450); }
+    c.querySelectorAll(".cell.ho").forEach(function (x) { x.classList.add("on"); }); await sleep(2600); } });
+</script>
+</body>
+</html>

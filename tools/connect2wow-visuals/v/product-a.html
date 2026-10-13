@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A swipeable strip of all seven modules, each captioned with the shared components it reuses. Auto-advances; drag or use the arrows.">
+<title>Connect2WOW — module strip (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 330px; }
+  .strip { position: absolute; left: 0; right: 0; top: 20px; display: flex; gap: 14px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; }
+  .strip::-webkit-scrollbar { display: none; }
+  .it { flex: none; width: 340px; scroll-snap-align: start; }
+  .shot { width: 340px; height: 196px; overflow: hidden; border-radius: 12px; position: relative; }
+  .shot .ui { position: absolute; left: 0; top: 0; width: 520px; height: 300px; transform: scale(.6538); transform-origin: 0 0; border-radius: 18px; }
+  .meta { margin-top: 10px; display: grid; gap: 6px; }
+  .meta b { font: 600 13px/1 "Figtree"; display: flex; gap: 6px; align-items: center; } .meta b span { color: var(--c2w-p10); display: grid; }
+  .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+  .chips span { font: 500 10px/1 "Figtree"; color: var(--pg-muted); background: #fff; box-shadow: 0 0 0 1px var(--pg-border); padding: 4px 7px; border-radius: 999px; }
+  .nav { position: absolute; right: 24px; bottom: 14px; display: flex; gap: 6px; }
+  .nav button { width: 28px; height: 28px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); cursor: pointer; font: 600 13px/1 "Figtree"; color: var(--pg-ink); }
+  .count { position: absolute; left: 24px; bottom: 22px; font: 500 11px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="strip" id="strip"></div>
+    <div class="count" id="count">1 / 7</div>
+    <div class="nav"><button id="prev" aria-label="Previous">‹</button><button id="next" aria-label="Next">›</button></div>
+  </div>
+</div>
+<script>
+  var USES = {
+    hr: ["Card", "Tabs", "Table", "Pill", "Avatar"], hse: ["Stat card", "Table", "Severity pill"], courses: ["Card", "Progress bar", "Button"],
+    admin: ["Table", "Switch"], eng: ["Request card", "Approve / Decline", "Avatar"], profile: ["Cover", "Tabs", "Chip", "Button"], connection: ["Search field", "Card", "Pill"]
+  };
+  var strip = document.getElementById("strip");
+  strip.innerHTML = C2W.modules.map(function (m) {
+    return '<div class="it"><div class="shot"><div class="ui"><div class="ui-shell"><div class="ui-rail">' + C2W.rail(m.id) + '</div><div class="ui-nav">' + C2W.nav(m.id) + '</div><div class="ui-main">' + C2W.main(m.id) + "</div></div></div></div>" +
+      '<div class="meta"><b><span>' + ico(m.icon, 14) + "</span>" + m.name + '</b><div class="chips">' + USES[m.id].map(function (u) { return "<span>" + u + "</span>"; }).join("") + "</div></div></div>";
+  }).join("");
+  var i = 0, auto = true, W = 354;
+  function go(k) { i = (k + 7) % 7; strip.scrollLeft = i * W; document.getElementById("count").textContent = i + 1 + " / 7"; }
+  document.getElementById("prev").onclick = function () { auto = false; go(i - 1); };
+  document.getElementById("next").onclick = function () { auto = false; go(i + 1); };
+  strip.addEventListener("pointerdown", function () { auto = false; });
+  strip.addEventListener("scroll", function () { var k = Math.round(strip.scrollLeft / W); document.getElementById("count").textContent = k + 1 + " / 7"; i = k; });
+  whenSeen(document.getElementById("f"), async function () { while (auto) { await sleep(2600); if (!auto) break; go(i + 1); } });
+</script>
+</body>
+</html>

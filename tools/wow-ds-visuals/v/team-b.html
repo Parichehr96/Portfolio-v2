@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Three lanes merge: each designer’s research flows down their own lane, and every evening the lanes meet in one decision that goes into the library.">
+<title>WOW design system — three lanes, one library</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 360px; }
+  .ln { position: absolute; top: 24px; width: 150px; display: grid; justify-items: center; gap: 8px; }
+  .ln .p { display: flex; align-items: center; gap: 6px; font: 700 12px/1 "Figtree"; }
+  .tok { padding: 6px 10px; border-radius: 999px; background: #F5F5F7; font: 500 10.5px/1 "Figtree"; color: var(--pg-ink); transition: transform 1s var(--e-out), opacity .5s; }
+  .canvas > svg { position: absolute; inset: 0; } .canvas > svg path { fill: none; stroke: #E2E8F0; stroke-width: 2; }
+  .lib { position: absolute; left: 190px; width: 220px; top: 250px; height: 70px; border-radius: 16px; background: #0D1233; color: #fff; display: grid; place-items: center; text-align: center; font: 700 13px/1.3 "Figtree"; }
+  .lib small { display: block; font: 400 10.5px/1.3 "Figtree"; color: rgba(255,255,255,.65); }
+  .moving .tok.go { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <svg viewBox="0 0 600 360"><path d="M95 150 C95 210 300 200 300 250"/><path d="M300 150 L300 250"/><path d="M505 150 C505 210 300 200 300 250"/></svg>
+    <div id="lanes"></div>
+    <div class="lib" id="lib">The library<small id="cnt">decided together: 0 today</small></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var P = [["ND", "#0E9384", "Niloufar", 20, ["Select", "Table", "Stepper"]], ["MH", "#E2558E", "Mobina", 225, ["Badge", "Alert", "Dialog"]], ["PT", "#2563EB", "Parichehr", 430, ["Button", "Field", "Tabs"]]];
+  document.getElementById("lanes").innerHTML = P.map(function (p, i) { return '<div class="ln" style="left:' + p[3] + 'px"><span class="p">' + W.av(p[0], p[1], 22) + p[2] + "</span>" + p[4].map(function (t) { return '<span class="tok" data-l="' + i + '">' + t + "</span>"; }).join("") + "</div>"; }).join("");
+  whenSeen(f, async function () { var round = 0; while (true) { var n = 0; c.querySelectorAll(".tok").forEach(function (t) { t.style.transform = ""; t.style.opacity = 1; }); await sleep(800);
+    for (var r = 0; r < 3; r++) { c.querySelectorAll(".ln").forEach(function (ln, i) { var t = ln.querySelectorAll(".tok")[r]; var dx = 300 - (P[i][3] + 75); t.style.transform = "translate(" + dx + "px," + (250 - 40 - r * 34) + "px) scale(.8)"; t.style.opacity = 0; });
+      await sleep(1000); n += 3; document.getElementById("cnt").textContent = "decided together: " + n + " today"; }
+    await sleep(1800); } });
+</script>
+</body>
+</html>

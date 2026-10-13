@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bipartite flow: components on the left, modules on the right, a ribbon for every use. Thick bundles show the parts that held the product together.">
+<title>Connect2WOW — component flow (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .canvas > svg path { fill: none; stroke: var(--c2w-p20); stroke-opacity: .45; stroke-width: 5; transition: stroke-opacity .25s, stroke .25s; }
+  .canvas > svg path.on { stroke: var(--c2w-p10); stroke-opacity: .9; }
+  .dim > svg path:not(.on) { stroke-opacity: .12; }
+  .n { position: absolute; transform: translateY(-50%); display: flex; align-items: center; gap: 8px; font: 600 11.5px/1 "Figtree"; cursor: default; }
+  .n small { font: 500 10px/1 "Figtree"; color: var(--pg-faint); }
+  .l { left: 24px; width: 140px; justify-content: flex-end; flex-direction: row-reverse; }
+  .l i { width: 6px; border-radius: 3px; background: var(--pg-ink); }
+  .r { left: 436px; }
+  .r span { width: 26px; height: 26px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); display: grid; place-items: center; color: var(--c2w-p10); }
+  .hd { position: absolute; top: 16px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="hd eyebrow" style="left:24px">Shared components</div>
+    <div class="hd eyebrow" style="left:436px">Modules</div>
+    <svg viewBox="0 0 600 400" id="svg"></svg>
+  </div>
+</div>
+<script>
+  var c = document.getElementById("c"), svg = document.getElementById("svg"), names = Object.keys(C2W.uses).sort(function (a, b) { return C2W.uses[b].length - C2W.uses[a].length; });
+  var LY = {}, RY = {}, s = "";
+  names.forEach(function (n, i) { LY[n] = 52 + i * 43; c.insertAdjacentHTML("beforeend", '<div class="n l" data-c="' + n + '" style="top:' + LY[n] + 'px"><i style="height:' + C2W.uses[n].length * 4 + 'px"></i>' + n + " <small>×" + C2W.uses[n].length + "</small></div>"); });
+  C2W.modules.forEach(function (m, i) { RY[m.id] = 60 + i * 48; c.insertAdjacentHTML("beforeend", '<div class="n r" data-m="' + m.id + '" style="top:' + RY[m.id] + 'px"><span>' + ico(m.icon, 13) + "</span>" + m.name + "</div>"); });
+  names.forEach(function (n) { C2W.uses[n].forEach(function (k) { var y1 = LY[n], y2 = RY[k]; s += '<path data-c="' + n + '" data-m="' + k + '" d="M176 ' + y1 + " C300 " + y1 + " 310 " + y2 + " 428 " + y2 + '"/>'; }); });
+  svg.innerHTML = s;
+  function hl(attr, v) {
+    c.classList.toggle("dim", !!v);
+    svg.querySelectorAll("path").forEach(function (p) { p.classList.toggle("on", !!v && p.dataset[attr] === v); });
+  }
+  var auto = true;
+  c.addEventListener("mouseover", function (e) { var t = e.target.closest(".n"); if (!t) return; auto = false; t.dataset.c ? hl("c", t.dataset.c) : hl("m", t.dataset.m); });
+  c.addEventListener("mouseleave", function () { hl(null); });
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { hl("c", names[i]); i = (i + 1) % names.length; await sleep(1600); } });
+</script>
+</body>
+</html>

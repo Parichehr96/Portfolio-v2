@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Grey to colour: a wipe sweeps across a greyscale screen and colour appears only where it means something — selection, state, alerts. Drag to scrub.">
+<title>Connect2WOW — how little colour (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 380px; user-select: none; }
+  .win { position: absolute; left: 34px; top: 30px; width: 532px; height: 290px; }
+  .grey { filter: grayscale(1) contrast(.95); }
+  .col { clip-path: inset(0 calc(100% - var(--x, 0%)) 0 0); }
+  .line { position: absolute; top: 22px; height: 306px; left: calc(34px + 532px * var(--p, 0)); width: 2px; margin-left: -1px; background: var(--c2w-p10); cursor: ew-resize; }
+  .line i { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font: 600 9px/1 "Figtree"; font-style: normal; color: #fff; background: var(--c2w-p10); padding: 4px 6px; border-radius: 999px; white-space: nowrap; }
+  .foot { position: absolute; left: 34px; right: 34px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .foot b { font: 600 12px/1 "Figtree"; }
+  .legend { display: flex; gap: 10px; }
+  .legend span { display: inline-flex; gap: 4px; align-items: center; font: 400 11px/1 "Figtree"; color: var(--pg-muted); }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="ui win grey"><div class="ui-shell"><div class="ui-rail" id="r1"></div><div class="ui-nav" id="n1"></div><div class="ui-main" id="m1"></div></div></div>
+    <div class="ui win col" id="colour"><div class="ui-shell"><div class="ui-rail" id="r2"></div><div class="ui-nav" id="n2"></div><div class="ui-main" id="m2"></div></div></div>
+    <div class="line" id="line"><i>colour</i></div>
+    <div class="foot"><b>Colour only where it means something</b><div class="legend"><span><i style="background:#3374F5"></i>selection</span><span><i style="background:#E82B32"></i>alert</span><span><i style="background:#16CF4B"></i>OK</span></div></div>
+  </div>
+</div>
+<script>
+  ["1", "2"].forEach(function (k) {
+    document.getElementById("r" + k).innerHTML = C2W.rail("hse"); document.getElementById("n" + k).innerHTML = C2W.nav("hse"); document.getElementById("m" + k).innerHTML = C2W.main("hse");
+  });
+  var c = document.getElementById("c"), f = document.getElementById("f"), drag = false;
+  function set(p) { p = Math.max(0, Math.min(1, p)); c.style.setProperty("--p", p); document.getElementById("colour").style.setProperty("--x", p * 100 + "%"); }
+  function at(e) { var r = f.getBoundingClientRect(), s = r.width / 600; return ((e.clientX - r.left) / s - 34) / 532; }
+  document.getElementById("line").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(at(e)); });
+  addEventListener("pointerup", function () { drag = false; });
+  set(0);
+  whenSeen(f, async function () {
+    await sleep(500);
+    for (var i = 0; i <= 100; i++) { if (drag) return; set(i / 100 * .62); await sleep(16); }
+  });
+</script>
+</body>
+</html>

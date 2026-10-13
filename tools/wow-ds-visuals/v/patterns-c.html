@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Building blocks: patterns as labelled blocks that stack, one by one, into a page wireframe — header, filters, table, side card — then the real screen fades in behind them.">
+<title>WOW design system — blocks into a page</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .page { position: absolute; left: 110px; top: 30px; width: 380px; height: 238px; border-radius: 12px; background: #F5F5F7; overflow: hidden; }
+  .page img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transition: opacity .8s; }
+  .page.real img { opacity: 1; }
+  .blk { position: absolute; border-radius: 8px; display: grid; place-items: center; font: 700 10.5px/1 "Figtree"; color: #fff; opacity: 0; transform: translateY(-30px); transition: opacity .35s, transform .55s cubic-bezier(.34,1.4,.64,1); }
+  .blk.on { opacity: .92; transform: none; } .page.real .blk { opacity: 0; }
+  .list { position: absolute; left: 110px; right: 110px; top: 288px; display: flex; justify-content: center; gap: 14px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .list i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="page" id="pg"><img src="/Assets/v4/case/connect2wow/screens/hr-people.webp" alt=""></div>
+    <div class="list" id="ls"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var B = [["Shell", "#0D1233", 0, 0, 17, 100], ["Sidebar", "#3F3DB6", 17, 0, 19, 100], ["Record header", "#2563EB", 38, 8, 60, 12], ["Filters", "#7C3AED", 38, 24, 60, 7], ["Table block", "#15803D", 38, 34, 60, 60]];
+  var pg = document.getElementById("pg");
+  pg.insertAdjacentHTML("beforeend", B.map(function (b) { return '<div class="blk" style="background:' + b[1] + ";left:" + b[2] + "%;top:" + b[3] + "%;width:" + b[4] + "%;height:" + b[5] + '%">' + b[0] + "</div>"; }).join(""));
+  document.getElementById("ls").innerHTML = B.map(function (b) { return '<span><i style="background:' + b[1] + '"></i>' + b[0] + "</span>"; }).join("");
+  whenSeen(f, async function () { var bl = pg.querySelectorAll(".blk"); while (true) { pg.classList.remove("real"); bl.forEach(function (x) { x.classList.remove("on"); }); await sleep(500);
+    for (var i = 0; i < bl.length; i++) { bl[i].classList.add("on"); await sleep(550); } await sleep(900); pg.classList.add("real"); await sleep(2800); } });
+</script>
+</body>
+</html>

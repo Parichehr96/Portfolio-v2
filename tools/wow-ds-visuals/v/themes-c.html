@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Token answers: a component asks for a name — ‘surface’, ‘text, secondary’, ‘action, primary’ — and each theme answers with its own value. Flip the theme and watch only the answers change.">
+<title>WOW design system — ask a name, get an answer</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 410px; }
+  .q { position: absolute; left: 20px; right: 20px; top: 20px; display: grid; gap: 8px; }
+  .row { display: grid; grid-template-columns: 170px 30px 1fr 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: #F5F5F7; }
+  .row code { font: 600 11px/1 ui-monospace, monospace; color: var(--pg-ink); }
+  .row .ar { color: #CBD5E1; font: 600 14px/1 "Figtree"; text-align: center; }
+  .ans { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; font: 500 10.5px/1 ui-monospace, monospace; transition: opacity .35s, box-shadow .35s; opacity: .35; }
+  .ans i { width: 18px; height: 18px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+  .ans.on { opacity: 1; box-shadow: 0 0 0 1.5px #2563EB; background: #fff; }
+  .hd { display: grid; grid-template-columns: 170px 30px 1fr 1fr; gap: 10px; padding: 0 10px; font: 600 9.5px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; color: var(--pg-faint); }
+  .tg { position: absolute; left: 0; right: 0; bottom: 20px; display: flex; justify-content: center; gap: 8px; align-items: center; font: 600 12px/1 "Figtree"; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="q" id="q"><div class="hd"><span>The component asks</span><span></span><span>Light answers</span><span>Dark answers</span></div></div>
+    <label class="tg w" id="tg"><span class="w-switch" id="sw"></span><span id="tl">Light</span></label>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var R = [["surface/card", "#FFFFFF", "#15171C"], ["text/primary", "#1D2433", "#F3F4F6"], ["text/secondary", "#6B7280", "#9CA3AF"], ["border/default", "#E5E7EB", "#2B2F38"], ["action/primary", "#2563EB", "#5B8DEF"], ["status/error", "#C81E1E", "#F87171"]];
+  document.getElementById("q").insertAdjacentHTML("beforeend", R.map(function (r) { return '<div class="row"><code>' + r[0] + '</code><span class="ar">→</span><span class="ans l"><i style="background:' + r[1] + '"></i>' + r[1] + '</span><span class="ans d"><i style="background:' + r[2] + '"></i>' + r[2] + "</span></div>"; }).join(""));
+  var dark = false, auto = true;
+  function set(d) { dark = d; c.querySelectorAll(".ans.l").forEach(function (a) { a.classList.toggle("on", !d); }); c.querySelectorAll(".ans.d").forEach(function (a) { a.classList.toggle("on", d); });
+    document.getElementById("sw").classList.toggle("on", d); document.getElementById("tl").textContent = d ? "Dark" : "Light"; }
+  document.getElementById("tg").addEventListener("click", function (e) { e.preventDefault(); auto = false; set(!dark); });
+  set(false); whenSeen(f, async function () { while (auto) { await sleep(2400); if (!auto) break; set(!dark); } });
+</script>
+</body>
+</html>

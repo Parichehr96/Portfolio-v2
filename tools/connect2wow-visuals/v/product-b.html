@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bento grid: HR large, four other modules as tiles. Same blue, same cards, same tables — the consistency reads at a glance without any captions.">
+<title>Connect2WOW — bento (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { padding: 14px; display: grid; grid-template-columns: 1.35fr 1fr 1fr; grid-template-rows: 150px 150px; gap: 10px; }
+  .tile { position: relative; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); }
+  .tile.big { grid-row: span 2; }
+  .tile .in { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .tile .in.ui { box-shadow: none; border-radius: 0; }
+  .lab { position: absolute; left: 8px; bottom: 8px; display: inline-flex; gap: 4px; align-items: center; font: 600 10px/1 "Figtree"; color: var(--pg-ink); background: rgba(255,255,255,.92); padding: 5px 8px; border-radius: 999px; box-shadow: 0 0 0 1px var(--pg-border); }
+  .lab span { color: var(--c2w-p10); display: grid; }
+  .tile { opacity: 0; transform: translateY(8px); transition: opacity .5s, transform .6s var(--ease); }
+  .is-in .tile { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c"></div>
+</div>
+<script>
+  var L = [["hr", true], ["hse"], ["eng"], ["profile"], ["connection"]], c = document.getElementById("c"), N = {};
+  C2W.modules.forEach(function (m) { N[m.id] = m; });
+  L.forEach(function (l, k) {
+    var big = l[1], w = big ? 520 : 300, h = big ? 520 : 260, inner;
+    inner = big
+      ? '<div class="in ui" style="width:520px;height:600px"><div class="ui-shell"><div class="ui-rail">' + C2W.rail(l[0]) + '</div><div class="ui-nav">' + C2W.nav(l[0]) + '</div><div class="ui-main">' + C2W.main(l[0]) + "</div></div></div>"
+      : '<div class="in ui-main" style="width:300px;font-family:Roboto">' + C2W.main(l[0]) + "</div>";
+    c.insertAdjacentHTML("beforeend", '<div class="tile' + (big ? " big" : "") + '" style="transition-delay:' + k * 90 + 'ms">' + inner + '<span class="lab"><span>' + ico(N[l[0]].icon, 11) + "</span>" + N[l[0]].name + "</span></div>");
+  });
+  function scaleIn() {
+    c.querySelectorAll(".tile").forEach(function (t) { var i = t.querySelector(".in"), s = t.clientWidth / i.offsetWidth; i.style.transform = "scale(" + s + ")"; });
+  }
+  addEventListener("load", scaleIn); scaleIn();
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

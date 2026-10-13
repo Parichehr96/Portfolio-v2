@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Exploded layers: modules on top, platform services in the middle, the design system at the base. The stack separates on view to show the three layers.">
+<title>Connect2WOW — layers (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 420px; perspective: 1200px; }
+  .stack { position: absolute; left: 200px; top: 110px; width: 330px; height: 250px; transform-style: preserve-3d; transform: rotateX(56deg) rotateZ(-38deg); }
+  .ly { position: absolute; inset: 0; border-radius: 16px; transition: transform 1.1s var(--ease); display: grid; padding: 18px; gap: 8px; }
+  .ly1 { background: rgba(255,255,255,.96); box-shadow: 0 0 0 1px var(--pg-border); grid-template-columns: repeat(4, 1fr); align-content: center; }
+  .ly2 { background: rgba(224,235,255,.95); box-shadow: 0 0 0 1px #C9DBFF; grid-template-columns: repeat(5, 1fr); align-content: center; }
+  .ly3 { background: rgba(13,18,51,.94); grid-template-columns: repeat(6, 1fr); align-content: center; }
+  .is-in .ly1 { transform: translateZ(150px); }
+  .is-in .ly2 { transform: translateZ(75px); }
+  .tile { border-radius: 8px; height: 46px; display: grid; place-items: center; }
+  .ly1 .tile { background: #F3F6F8; color: var(--c2w-p10); }
+  .ly2 .tile { background: #fff; color: var(--c2w-p00); }
+  .ly3 .tile { height: 30px; background: rgba(255,255,255,.08); }
+  .ly3 .tile.c { background: var(--c2w-p10); } .ly3 .tile.c2 { background: var(--c2w-p20); } .ly3 .tile.n { background: #555A63; }
+  .lab { position: absolute; left: 30px; width: 140px; opacity: 0; transition: opacity .5s 1s; }
+  .is-in .lab { opacity: 1; }
+  .lab b { display: block; font: 600 13px/1.2 "Figtree"; }
+  .lab span { font: 400 11px/15px "Figtree"; color: var(--pg-muted); }
+  .lab i { display: block; width: 20px; height: 3px; border-radius: 2px; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="stack">
+      <div class="ly ly3" id="l3"></div>
+      <div class="ly ly2" id="l2"></div>
+      <div class="ly ly1" id="l1"></div>
+    </div>
+    <div class="lab" style="top:40px"><i style="background:#CBD5E1"></i><b>7 modules</b><span>where a job gets done</span></div>
+    <div class="lab" style="top:170px"><i style="background:var(--c2w-p20)"></i><b>5 platform services</b><span>notifications, chat, calendar, editors, settings</span></div>
+    <div class="lab" style="top:300px"><i style="background:var(--pg-ink)"></i><b>Design system</b><span>tokens and 40–50 components under all of it</span></div>
+  </div>
+</div>
+<script>
+  document.getElementById("l1").innerHTML = C2W.modules.map(function (m) { return '<div class="tile">' + ico(m.icon, 18) + "</div>"; }).join("") + '<div class="tile" style="background:transparent"></div>';
+  document.getElementById("l2").innerHTML = C2W.platform.map(function (p) { return '<div class="tile">' + ico(p.icon, 16) + "</div>"; }).join("");
+  var h = "", k = ["c", "c2", "n", "", "c", ""];
+  for (var i = 0; i < 18; i++) h += '<div class="tile ' + k[(i * 7) % 6] + '"></div>';
+  document.getElementById("l3").innerHTML = h;
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

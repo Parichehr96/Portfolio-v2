@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Diagonal split: the same bento drawn light and dark at once, divided by a line you can drag across — the theme is the only thing that changes.">
+<title>WOW design system — drag across the theme</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 330px; }
+  .bento { position: absolute; left: 16px; right: 16px; top: 16px; height: 270px; display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 10px; }
+  .bento > div { background: var(--tile); border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; transition: background .5s ease; }
+  .bento .b1 { grid-row: span 2; } .bento .b1 .w-card { width: 100%; }
+  .bento .b2 .w-field { width: 100%; }
+  .layer { position: absolute; inset: 0; }
+  .layer.dk { clip-path: polygon(var(--x, 55%) 0, 100% 0, 100% 100%, calc(var(--x, 55%) - 12%) 100%); background: #000; }
+  .layer.lt { background: #fff; }
+  .div { position: absolute; top: 0; bottom: 0; width: 2px; left: var(--x, 55%); transform: skewX(-20deg); transform-origin: top; background: #2563EB; cursor: ew-resize; }
+  .div i { position: absolute; top: 46%; left: -14px; width: 30px; height: 30px; border-radius: 50%; background: #2563EB; color: #fff; display: grid; place-items: center; font: 600 11px/1 "Figtree"; font-style: normal; transform: skewX(20deg); }
+  .lbl { position: absolute; bottom: 10px; font: 600 10px/1 "Figtree"; letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="layer lt w"><div class="bento" id="a"></div><span class="lbl" style="left:18px;color:rgba(13,18,51,.4)">Light</span></div>
+    <div class="layer dk w dark"><div class="bento" id="b"></div><span class="lbl" style="right:18px;color:rgba(255,255,255,.5)">Dark</span></div>
+    <div class="div" id="dv"><i>⇆</i></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var BENTO = '<div class="b1">' + W.req() + '</div><div class="b2">' + W.field("Site", "North Pad", "focus", "Where the crew works") + '</div><div class="b3">' + W.btn("Approve") + W.btn("Decline", "outline") + '</div><div class="b4">' + W.pill("Active") + W.pill("Expired", "red") + W.pill("In progress", "purple") + '</div><div class="b5">' + W.toast() + "</div>";
+  document.getElementById("a").innerHTML = BENTO; document.getElementById("b").innerHTML = BENTO;
+  var drag = false;
+  function set(p) { c.style.setProperty("--x", Math.max(10, Math.min(98, p)) + "%"); }
+  function pos(e) { var r = f.getBoundingClientRect(); return (e.clientX - r.left) / r.width * 100; }
+  document.getElementById("dv").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(pos(e)); }); addEventListener("pointerup", function () { drag = false; });
+  set(96); whenSeen(f, async function () { for (var x = 96; x >= 58; x--) { if (drag) return; set(x); await sleep(14); } });
+</script>
+</body>
+</html>

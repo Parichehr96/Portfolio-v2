@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Before/after with a draggable divider (the ONTON sand line): disconnected tools with their four pain points vs one shell with seven modules.">
+<title>Connect2WOW — before / after (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 360px; user-select: none; }
+  .side { position: absolute; inset: 0; padding: 22px 26px; }
+  .before { background: #F3F6F8; }
+  .after { background: #fff; clip-path: inset(0 0 0 var(--x, 50%)); }
+  .lbl { font: 600 11px/1 "Figtree"; letter-spacing: .06em; text-transform: uppercase; color: var(--pg-faint); }
+  .after .lbl { text-align: right; }
+  /* before: islands */
+  .isl { position: absolute; display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border);
+    font: 500 11px/1 "Figtree"; color: var(--pg-ink); }
+  .isl span { color: var(--pg-muted); display: grid; }
+  .pain { position: absolute; display: flex; gap: 6px; align-items: center; font: 500 11px/1 "Figtree"; color: var(--pg-neg); }
+  .pain::before { content: "–"; display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; background: var(--pg-neg); color: #fff; font-size: 11px; }
+  svg.links { position: absolute; inset: 0; }
+  /* after: one shell */
+  .one { position: absolute; right: 26px; top: 50px; width: 300px; height: 230px; }
+  .one .ui-shell { grid-template-columns: 1fr; }
+  .mods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 14px; }
+  .mod { border: 1px solid var(--c2w-line); border-radius: 8px; padding: 8px 6px; display: grid; justify-items: center; gap: 5px; font: 500 9px/1 "Roboto"; color: var(--c2w-text); }
+  .mod span { color: var(--c2w-p10); display: grid; }
+  .plat { margin: 0 14px; border-radius: 8px; background: var(--c2w-p30); padding: 7px 10px; font: 500 9px/1.3 "Roboto"; color: var(--c2w-p00); display: flex; gap: 10px; justify-content: center; }
+  .gain { position: absolute; right: 26px; display: flex; gap: 6px; align-items: center; font: 500 11px/1 "Figtree"; color: var(--pg-pos); }
+  .gain::before { content: "✓"; display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; background: var(--pg-pos); color: #fff; font-size: 9px; }
+  /* divider */
+  .div { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; margin-left: -1px; background: #D1C7BD; cursor: ew-resize; }
+  .div i { position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #D1C7BD, 0 4px 12px rgba(0,0,0,.12);
+    display: grid; place-items: center; font: 600 11px/1 "Figtree"; color: var(--pg-muted); font-style: normal; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="side before">
+      <div class="lbl">Before</div>
+      <svg class="links" viewBox="0 0 600 360"><g stroke="#C5CDD8" stroke-dasharray="3 4" fill="none" stroke-width="1.2">
+        <path d="M95 96 L205 128"/><path d="M95 96 L80 200"/><path d="M205 128 L215 230"/><path d="M80 200 L215 230"/></g>
+        <g fill="#D53434"><circle cx="150" cy="112" r="3"/><circle cx="88" cy="148" r="3"/><circle cx="210" cy="180" r="3"/><circle cx="148" cy="215" r="3"/></g></svg>
+      <div class="isl" style="left:40px;top:80px"><span data-ico="sheet"></span>HR sheets</div>
+      <div class="isl" style="left:160px;top:112px"><span data-ico="form"></span>Safety forms</div>
+      <div class="isl" style="left:30px;top:186px"><span data-ico="mail"></span>Email</div>
+      <div class="isl" style="left:170px;top:214px"><span data-ico="chat"></span>Site chat</div>
+      <div class="pain" style="left:26px;top:276px">Manual HR processes</div>
+      <div class="pain" style="left:26px;top:298px">Safety split from HR</div>
+      <div class="pain" style="left:26px;top:320px">No central comms or scheduling</div>
+      <div class="pain" style="left:200px;top:276px">Field cut off from office</div>
+    </div>
+    <div class="side after" id="after">
+      <div class="lbl">After</div>
+      <div class="ui one"><div class="ui-shell"><div><div class="mods" id="mods"></div><div class="plat" id="plat"></div></div></div></div>
+      <div class="gain" style="top:298px">One record per person, every module</div>
+      <div class="gain" style="top:320px">Office and site in the same product</div>
+    </div>
+    <div class="div" id="div"><i>⇆</i></div>
+  </div>
+</div>
+<script>
+  document.getElementById("mods").innerHTML = C2W.modules.map(function (m) { return '<div class="mod"><span>' + ico(m.icon, 15) + "</span>" + (m.name === "Administration" ? "Admin" : m.name) + "</div>"; }).join("") +
+    '<div class="mod" style="border-style:dashed;color:#8A92A3">+ tools</div>';
+  document.getElementById("plat").innerHTML = C2W.platform.map(function (p) { return p.name; }).join(" · ");
+  var c = document.getElementById("c"), f = document.getElementById("f"), drag = false;
+  function set(px) { var x = Math.max(8, Math.min(92, px)); c.style.setProperty("--x", x + "%"); }
+  function pos(e) { var r = f.getBoundingClientRect(); return ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * 100; }
+  document.getElementById("div").addEventListener("pointerdown", function (e) { drag = true; e.preventDefault(); });
+  addEventListener("pointermove", function (e) { if (drag) set(pos(e)); });
+  addEventListener("pointerup", function () { drag = false; });
+  f.addEventListener("click", function (e) { if (e.target.closest(".div")) return; set(pos(e)); });
+  /* A nudge on view so people see it moves: sweep from before to the middle. */
+  set(92);
+  whenSeen(f, async function () {
+    for (var x = 92; x >= 50; x -= 1) { if (drag) return; set(x); await sleep(14); }
+  });
+</script>
+</body>
+</html>

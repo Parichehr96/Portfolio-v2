@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Periodic table: all 50 components as elements, coloured by family, each with a two-letter symbol and its variant count. Hover an element to see it live.">
+<title>WOW design system — a periodic table of components</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 440px; }
+  .pt { position: absolute; left: 12px; right: 12px; top: 12px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .el { min-width: 0; aspect-ratio: 1 / 1.05; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; justify-content: space-between; cursor: default; transition: transform .2s var(--e-out), box-shadow .2s; }
+  .el:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(13,18,51,.35); }
+  /* the element shown in the box below: ringed, lifted, the rest quieter */
+  .pt.has .el { opacity: .55; transition: opacity .25s, transform .2s var(--e-out), box-shadow .2s; } .pt.has .el.sel { opacity: 1; transform: translateY(-2px) scale(1.06); box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor, 0 10px 18px -8px rgba(13,18,51,.4); z-index: 1; }
+  .el b { font: 700 15px/1 "Figtree"; letter-spacing: -.02em; } .el i { font: 600 8px/1 "Figtree"; font-style: normal; opacity: .7; text-align: right; }
+  .el span { font: 500 7.5px/1.1 "Figtree"; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .k0 { background: #E6EEFC; color: #1D4ED8; } .k1 { background: #EAF8EF; color: #15803D; } .k2 { background: #FFF3EA; color: #B45309; } .k3 { background: #F4EFFF; color: #6D28D9; }
+  .pre { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 74px; border-radius: 14px; background: #F5F5F7; display: flex; align-items: center; gap: 16px; padding: 0 16px; }
+  .pre .nm b { display: block; font: 700 14px/1.2 "Figtree"; } .pre .nm span { font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .pre { overflow: hidden; }
+  .pre .lv { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  /* tall parts (the table) show their top only, fading out inside the box */
+  .pre .lv.tall { align-self: stretch; align-items: flex-start; width: 300px; padding-top: 12px; -webkit-mask: linear-gradient(#000 55%, transparent 96%); mask: linear-gradient(#000 55%, transparent 96%); }
+  .lg { display: flex; gap: 10px; font: 500 10px/1 "Figtree"; color: var(--pg-muted); } .lg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="pt" id="pt"></div>
+    <div class="pre w" id="pre"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  var LIVE = {
+    "Button": W.btn("Approve"), "Text input": W.field("Site", "North Pad", "", ""), "Text field": W.field("Notes", "Gas test done", "focus", ""), "Select": W.field("Discipline", "Welding ▾", "", ""),
+    "Mega-select": '<span class="w-chip on">Welders ×</span><span class="w-chip on">Pipefitters ×</span>', "Select menu item": '<span class="w-chip">North Pad</span>', "Checkbox": '<span class="w-check on">' + I("hugeicons:check", 11) + '</span><span class="w-check"></span>',
+    "Radio button": '<span class="w-radio on"></span><span class="w-radio"></span>', "Switch": '<span class="w-switch on"></span><span class="w-switch"></span>', "Suffix / prefix": W.field("Rate", "$ 62 / h", "", ""),
+    "Table": W.table(), "List": W.who("SL", "#E2558E", "Sarah Lim", "HR Manager"), "List item": W.who("MR", "#2563EB", "Mark Rushmore", "Welder"), "Avatar": W.av("SL", "#E2558E", 30) + W.av("DO", "#D97706", 30),
+    "Avatar + name": W.who("GW", "#3F3DB6", "Graham Whitfield", "Ops Manager"), "Chip": W.chip("Contractors", true), "Badge": '<span class="w-badge">3</span><span class="w-badge">12</span>', "Notification badge": '<span style="position:relative">' + I("iconoir:bell-notification", 22) + '<span class="w-dot" style="position:absolute;top:0;right:0"></span></span>',
+    "User status": W.pill("On site", "green"), "Progress bar": '<div style="width:140px;height:6px;border-radius:3px;background:var(--w-line)"><div style="width:62%;height:100%;border-radius:3px;background:var(--w-blue)"></div></div>',
+    "Stepper": '<span style="display:flex;gap:4px"><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-blue);border-radius:2px"></i><i style="width:28px;height:3px;background:var(--w-line);border-radius:2px"></i></span>',
+    "Alert": W.banner("Scheduled maintenance", "warn"), "Tooltip": '<span style="background:#1F2937;color:#fff;font:400 10px Inter, sans-serif;padding:6px 8px;border-radius:6px">Copied</span>', "Dialog": '<div style="transform:scale(.7)">' + W.modal() + "</div>", "Tab": W.tabs(),
+    "Breadcrumb": '<span style="font:400 11px Inter, sans-serif;color:var(--w-sub)">HR / People / <b style="color:var(--w-ink);font-weight:500">Mark</b></span>', "Chat list": W.who("NP", "#2563EB", "North Pad crew", "Daniel: gas test first"), "Message item": '<span style="background:var(--w-blue);color:#fff;font:400 11px Inter, sans-serif;padding:7px 10px;border-radius:12px">Copy, swapping it now</span>'
+  };
+  var FAM = C2W.system.filter(function (g) { return g.id !== "found" && g.id !== "pat"; });
+  var pt = document.getElementById("pt"), pre = document.getElementById("pre"), ALL = [];
+  FAM.forEach(function (g, gi) { g.items.forEach(function (it) { if (/icons in|Icon sizes/.test(it)) return; var p = it.split("|"); ALL.push([p[0], p[1] || "", gi, g.name]); }); });
+  function sym(n) { var w = n.replace(/[^A-Za-z ]/g, "").split(" "); return (w[0][0] + (w[1] ? w[1][0] : w[0][1])).replace(/^./, function (x) { return x.toUpperCase(); }); }
+  pt.innerHTML = ALL.map(function (a, i) { return '<div class="el k' + a[2] + '" data-i="' + i + '"><i>' + (a[1] || "") + "</i><b>" + sym(a[0]) + "</b><span>" + a[0] + "</span></div>"; }).join("");
+  function show(i) { var a = ALL[i]; pt.classList.add("has"); pt.querySelectorAll(".el").forEach(function (e) { e.classList.toggle("sel", +e.dataset.i === i); }); pre.innerHTML = '<div class="nm"><b>' + a[0] + "</b><span>" + a[3] + (a[1] ? " · " + a[1] + " variants" : "") + '</span></div><div class="lv' + (/w-table/.test(LIVE[a[0]] || "") ? " tall" : "") + '">' + (LIVE[a[0]] || "") + "</div>"; }
+  pt.addEventListener("mouseover", function (e) { var el = e.target.closest(".el"); if (el) { auto = false; show(+el.dataset.i); } });
+  var auto = true; show(0);
+  pre.insertAdjacentHTML("afterend", "");
+  whenSeen(f, async function () { var i = 0; while (auto) { await sleep(1500); if (!auto) break; i = (i + 7) % ALL.length; show(i); } });
+</script>
+</body>
+</html>

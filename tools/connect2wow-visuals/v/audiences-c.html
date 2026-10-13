@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Who lives where: a persona × module matrix. Hover a row or column to trace it; shows that no module served only one kind of user.">
+<title>Connect2WOW — persona × module (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 18px 18px 14px; }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; }
+  th, td { padding: 0; text-align: center; }
+  thead th { font: 500 10px/1.2 "Figtree"; color: var(--pg-muted); padding-bottom: 8px; vertical-align: bottom; }
+  thead th span { display: grid; place-items: center; margin-bottom: 4px; color: var(--pg-ink); }
+  tbody th { text-align: left; padding: 5px 8px 5px 0; white-space: nowrap; }
+  .who { display: flex; gap: 8px; align-items: center; }
+  .who .av { width: 26px; height: 26px; font-size: 10px; }
+  .who b { display: block; font: 600 11.5px/14px "Figtree"; }
+  .who small { font: 400 10px/12px "Figtree"; color: var(--pg-faint); }
+  td { height: 40px; border-top: 1px solid var(--pg-border); transition: background .2s; }
+  td i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; transform: scale(0); transition: transform .4s var(--ease); }
+  .is-in td i { transform: none; }
+  td i.on { background: var(--c2w-p10); }
+  td i.off { width: 4px; height: 4px; background: #CBD5E1; }
+  tr:hover td, td.col { background: rgba(51,116,245,.06); }
+  .foot { display: flex; justify-content: space-between; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <table id="t"></table>
+    <div class="foot"><span class="cap">● lives in this module daily</span><span class="cap">Every module serves at least two kinds of people.</span></div>
+  </div>
+</div>
+<script>
+  var mods = C2W.modules, t = document.getElementById("t");
+  var h = "<thead><tr><th></th>" + mods.map(function (m) { return "<th><span>" + ico(m.icon, 15) + "</span>" + (m.id === "admin" ? "Admin" : m.id === "connection" ? "Connect." : m.name) + "</th>"; }).join("") + "</tr></thead><tbody>";
+  C2W.people.forEach(function (p, r) {
+    h += '<tr><th><div class="who"><span class="av" style="background:' + p.c + '">' + p.i + "</span><div><b>" + p.name + "</b><small>" + p.where + "</small></div></div></th>" +
+      mods.map(function (m, k) { var on = p.mods.indexOf(m.id) > -1; return '<td data-c="' + k + '"><i class="' + (on ? "on" : "off") + '" style="transition-delay:' + (r * 60 + k * 30) + 'ms"></i></td>'; }).join("") + "</tr>";
+  });
+  t.innerHTML = h + "</tbody>";
+  t.addEventListener("mouseover", function (e) {
+    var td = e.target.closest("td"); t.querySelectorAll("td").forEach(function (x) { x.classList.toggle("col", !!td && x.dataset.c === td.dataset.c); });
+  });
+  t.addEventListener("mouseleave", function () { t.querySelectorAll("td").forEach(function (x) { x.classList.remove("col"); }); });
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

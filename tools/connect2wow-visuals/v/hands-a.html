@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Merge: three versions of one approval card (three hands, no system) slide together and resolve into the single system card.">
+<title>Connect2WOW — three hands, merge (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="hands-shared.js"></script>
+<style>
+  .canvas { height: 300px; }
+  .slot { position: absolute; top: 70px; width: 172px; transition: left 1s cubic-bezier(.65,0,.35,1), opacity .5s, transform 1s cubic-bezier(.65,0,.35,1); }
+  .slot .who { font: 500 10px/1 "Figtree"; color: var(--pg-faint); margin-bottom: 8px; transition: opacity .4s; }
+  .merged .slot .who { opacity: 0; }
+  .sys { position: absolute; left: 214px; top: 86px; width: 172px; opacity: 0; transform: scale(.96); transition: opacity .5s .7s, transform .6s .7s var(--ease); }
+  .merged .sys { opacity: 1; transform: none; }
+  .merged .slot { left: 214px !important; opacity: 0; transform: scale(.94); }
+  .t { position: absolute; left: 0; right: 0; top: 24px; text-align: center; font: 600 13px/1 "Figtree"; transition: opacity .3s; }
+  .t small { display: block; font: 400 11px/1.4 "Figtree"; color: var(--pg-muted); margin-top: 4px; }
+  .rule { position: absolute; left: 24px; right: 24px; bottom: 22px; display: flex; justify-content: center; gap: 18px; font: 500 11px/1 "Figtree"; color: var(--pg-muted); }
+  .rule span { display: inline-flex; gap: 5px; align-items: center; }
+  .rule i { width: 8px; height: 8px; border-radius: 50%; background: #CBD5E1; transition: background .3s; }
+  .merged .rule i { background: var(--c2w-p10); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="t" id="t">Three hands, no system<small>the same approval card, designed three times</small></div>
+    <div class="slot" style="left:20px"><div class="who">Designer 1</div><div id="v0"></div></div>
+    <div class="slot" style="left:214px"><div class="who">Designer 2</div><div id="v1"></div></div>
+    <div class="slot" style="left:408px"><div class="who">Designer 3</div><div id="v2"></div></div>
+    <div class="sys" id="sys"></div>
+    <div class="rule"><span><i></i>one radius</span><span><i></i>one button pair</span><span><i></i>one type scale</span><span><i></i>one avatar</span></div>
+  </div>
+</div>
+<script>
+  [0, 1, 2].forEach(function (i) { document.getElementById("v" + i).innerHTML = HANDS.card(HANDS.V[i]); });
+  document.getElementById("sys").innerHTML = HANDS.card(HANDS.SYS);
+  var c = document.getElementById("c"), t = document.getElementById("t");
+  function state(m) {
+    c.classList.toggle("merged", m);
+    t.innerHTML = m ? "One system, one card<small>you can't tell whose hand it was, which was the point</small>" : "Three hands, no system<small>the same approval card, designed three times</small>";
+  }
+  whenSeen(document.getElementById("f"), async function () { var m = false; while (true) { await sleep(m ? 3200 : 2600); m = !m; state(m); } });
+</script>
+</body>
+</html>

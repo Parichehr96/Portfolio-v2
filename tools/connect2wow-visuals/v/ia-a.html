@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zoomable IA: seven modules on a platform band; click a module to open its tree. HR opens first with the real structure from the original IA.">
+<title>Connect2WOW — IA tree (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .mods { position: absolute; left: 18px; right: 18px; top: 22px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .m { border: 0; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--pg-border); padding: 9px 4px; display: grid; justify-items: center; gap: 5px;
+    font: 500 10.5px/1 "Figtree"; color: var(--pg-ink); cursor: pointer; transition: background .25s, color .25s, box-shadow .25s; }
+  .m span { color: var(--c2w-p10); display: grid; }
+  .m.is-on { background: var(--c2w-p10); color: #fff; box-shadow: none; }
+  .m.is-on span { color: #fff; }
+  .plat { position: absolute; left: 18px; right: 18px; top: 84px; height: 26px; border-radius: 8px; background: var(--c2w-p30); display: flex; align-items: center; justify-content: center; gap: 14px;
+    font: 500 10.5px/1 "Figtree"; color: var(--c2w-p00); }
+  .plat b { font-weight: 600; margin-right: 4px; }
+  .plat span { display: inline-flex; gap: 4px; align-items: center; }
+  .canvas > svg { position: absolute; left: 0; top: 0; }
+  .canvas > svg path { fill: none; stroke: #B9C4D4; stroke-width: 1.2; }
+  .tree { position: absolute; left: 0; top: 0; width: 600px; height: 400px; }
+  .nd { position: absolute; transform: translate(-50%, 0); padding: 6px 9px; border-radius: 7px; font: 500 10.5px/1.1 "Figtree"; white-space: nowrap; opacity: 0; translate: 0 6px;
+    transition: opacity .35s, translate .45s var(--ease); }
+  .nd.on { opacity: 1; translate: 0 0; }
+  .l1 { background: var(--pg-ink); color: #fff; }
+  .l2 { background: #fff; box-shadow: 0 0 0 1px var(--pg-border); color: var(--pg-ink); }
+  .hint { position: absolute; right: 18px; bottom: 12px; font: 400 10.5px/1 "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="mods" id="mods"></div>
+    <div class="plat" id="plat"></div>
+    <svg width="600" height="400" id="svg"></svg>
+    <div class="tree" id="tree"></div>
+    <div class="hint">Click a module to open its tree</div>
+  </div>
+</div>
+<script>
+  /* HR is the real structure from the original IA. The others are illustrative
+     until the full IA is redrawn — edit freely. */
+  var T = {
+    hr: [["Discipline / Position", ["Category", "Discipline", "Position"]], ["Corporate org.", ["Org chart", "Report to me", "Request for resource"]], ["Documents", ["Onboarding", "Off-boarding", "Policies", "Templates"]], ["Workers", ["Employee", "Sub-contractor", "Job posting"]], ["My reportees", []]],
+    hse: [["Incidents", ["Report", "Investigate"]], ["Inspections", ["Checklists"]], ["Hazard register", []], ["Permits", []], ["Audits", []]],
+    courses: [["My courses", []], ["Certificates", ["Expiring", "History"]], ["Mandatory training", []], ["Catalogue", []]],
+    admin: [["Roles", []], ["Permissions", ["Per module", "Per site"]], ["Users", []], ["Audit log", []]],
+    eng: [["Work orders", ["Approve", "Issue"]], ["Resource requests", []], ["Diagrams", []], ["Reports", []]],
+    profile: [["Biography", []], ["Certificates", []], ["Skills", []], ["Work history", []]],
+    connection: [["Workers", []], ["Providers", []], ["Companies", []], ["My network", ["Requests"]]]
+  };
+  var mods = document.getElementById("mods"), tree = document.getElementById("tree"), svg = document.getElementById("svg");
+  mods.innerHTML = C2W.modules.map(function (m) { return '<button class="m" data-k="' + m.id + '"><span>' + ico(m.icon, 15) + "</span>" + (m.id === "admin" ? "Admin" : m.name) + "</button>"; }).join("");
+  document.getElementById("plat").innerHTML = "<b>Platform</b>" + C2W.platform.map(function (p) { return "<span>" + ico(p.icon, 11) + p.name + "</span>"; }).join("");
+  async function open(k) {
+    mods.querySelectorAll(".m").forEach(function (b) { b.classList.toggle("is-on", b.dataset.k === k); });
+    var btn = mods.querySelector('[data-k="' + k + '"]'), bx = btn.offsetLeft + 18 + btn.offsetWidth / 2;
+    tree.innerHTML = ""; svg.innerHTML = "";
+    var L1 = T[k], n = L1.length, x0 = 30, x1 = 570, step = (x1 - x0) / n, paths = "";
+    L1.forEach(function (a, i) {
+      var cx = x0 + step * (i + .5);
+      paths += '<path d="M' + bx + " 112 C" + bx + " 140 " + cx + " 132 " + cx + ' 160"/>';
+      tree.insertAdjacentHTML("beforeend", '<div class="nd l1" style="left:' + cx + 'px;top:160px">' + a[0] + "</div>");
+      a[1].forEach(function (s, j) {
+        paths += '<path d="M' + cx + " 184 L" + cx + " " + (206 + j * 34) + '"/>';
+        tree.insertAdjacentHTML("beforeend", '<div class="nd l2" style="left:' + cx + "px;top:" + (200 + j * 34) + 'px">' + s + "</div>");
+      });
+    });
+    svg.innerHTML = paths;
+    var nds = tree.querySelectorAll(".nd");
+    for (var i = 0; i < nds.length; i++) { (function (e, d) { setTimeout(function () { e.classList.add("on"); }, window.END ? 0 : d); })(nds[i], i * 45); }
+  }
+  mods.addEventListener("click", function (e) { var b = e.target.closest(".m"); if (b) open(b.dataset.k); });
+  whenSeen(document.getElementById("f"), function () { open("hr"); });
+</script>
+</body>
+</html>

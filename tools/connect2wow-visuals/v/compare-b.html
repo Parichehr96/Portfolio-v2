@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Coverage strip: each product is a row of segments (HR, safety, field, industry). The competitors fill the HR end; only Connect2WOW fills the line.">
+<title>Connect2WOW — coverage (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { padding: 22px 22px 18px; }
+  .cols { display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
+  .cols span { font: 500 10px/1.2 "Figtree"; color: var(--pg-faint); }
+  .row { display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 4px; align-items: center; margin-bottom: 8px; }
+  .row b { font: 600 12px/1 "Figtree"; }
+  .seg { height: 26px; border-radius: 6px; background: var(--pg-frame-2); position: relative; overflow: hidden; }
+  .seg i { position: absolute; inset: 0; transform: scaleX(0); transform-origin: left; transition: transform .7s var(--ease); }
+  .is-in .seg i { transform: none; }
+  .seg em { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font: 500 10px/1 "Figtree"; font-style: normal; color: #fff; }
+  .full i { background: #64748B; } .half i { background: repeating-linear-gradient(135deg, #94A3B8 0 5px, #CBD5E1 5px 10px); }
+  .me .full i { background: var(--c2w-p10); }
+  .me { padding-top: 8px; border-top: 1px dashed var(--pg-border); }
+  .key { display: flex; gap: 14px; margin-top: 10px; }
+  .key span { display: inline-flex; gap: 5px; align-items: center; font: 400 11px/1 "Figtree"; color: var(--pg-muted); }
+  .key i { width: 14px; height: 10px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="frame frame--white" id="f">
+  <div class="canvas">
+    <div class="cols"><span></span><span>Core HR</span><span>Safety (HSE)</span><span>Field workforce</span><span>Built for oil &amp; gas</span></div>
+    <div id="rows"></div>
+    <div class="key"><span><i style="background:#64748B"></i>covered</span><span><i style="background:repeating-linear-gradient(135deg,#94A3B8 0 3px,#CBD5E1 3px 6px)"></i>through an add-on</span><span><i style="background:#E8ECF0"></i>not covered</span></div>
+  </div>
+</div>
+<script>
+  var R = [["BambooHR", ["full", "half", "", ""]], ["Personio", ["full", "", "", ""]], ["HiBob", ["full", "", "", ""]], ["Connect2WOW", ["full", "full", "full", "full"], 1]];
+  document.getElementById("rows").innerHTML = R.map(function (r, k) {
+    return '<div class="row' + (r[2] ? " me" : "") + '"><b>' + r[0] + "</b>" + r[1].map(function (s, j) {
+      return '<div class="seg ' + s + '"><i style="transition-delay:' + (k * 140 + j * 90) + 'ms"></i>' + (r[2] ? "<em>✓</em>" : "") + "</div>";
+    }).join("") + "</div>";
+  }).join("");
+  whenSeen(document.getElementById("f"));
+</script>
+</body>
+</html>

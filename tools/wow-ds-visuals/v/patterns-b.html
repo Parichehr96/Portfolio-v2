@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pattern finder: pick a pattern and the real screens that use it light up, each with the pattern outlined — proof that screens are assembled, not drawn.">
+<title>WOW design system — where each pattern lives</title>
+<link rel="stylesheet" href="/Assets/embeds/connect2wow/v4/case.css">
+<link rel="stylesheet" href="wow.css">
+<script src="/Assets/embeds/connect2wow/v4/icons.js"></script>
+<script src="/Assets/embeds/connect2wow/v4/case.js"></script>
+<script src="wow.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .chips { position: absolute; left: 16px; right: 16px; top: 14px; display: flex; gap: 6px; }
+  .chips button { border: 0; border-radius: 999px; padding: 7px 11px; font: 600 11px/1 "Figtree"; background: #F5F5F7; color: var(--pg-ink); cursor: pointer; transition: background .2s, color .2s; }
+  .chips button.on { background: #0D1233; color: #fff; }
+  .shots { position: absolute; left: 16px; right: 16px; top: 54px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .sh { position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px #E2E8F0; transition: opacity .3s, filter .3s; }
+  .sh img { display: block; width: 100%; aspect-ratio: 1440 / 900; }
+  .sh.dim { opacity: .3; filter: grayscale(1); }
+  .sh .hl { position: absolute; border: 2px solid #2563EB; border-radius: 6px; background: rgba(37,99,235,.08); transition: all .4s var(--e-out); }
+  .sh span { display: block; padding: 6px 8px; font: 500 10px/1 "Figtree"; color: var(--pg-muted); background: #fff; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="chips" id="ch"></div>
+    <div class="shots" id="sh"></div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f"), c = document.getElementById("c");
+  /* screens and where each pattern sits on them, as % boxes [x,y,w,h] */
+  var SC = [["hr-record", "HR · worker record"], ["hse-permit", "HSE · permit"], ["eng-wo", "Engineering · work order"], ["hr-people", "HR · people"], ["home", "Home"], ["courses-req", "Courses · requirements"]];
+  var PT = [["Record header", { "hr-record": [25, 9, 73, 11], "hse-permit": [25, 16, 73, 9], "eng-wo": [25, 9, 73, 10] }], ["Table block", { "hr-people": [25, 16, 73, 74], "hse-permit": [25, 31, 73, 21], "courses-req": [25, 29, 73, 35] }], ["Approval request", { "home": [6, 21, 30, 25], "hse-permit": [82, 18, 16, 6], "eng-wo": [25, 23, 73, 6] }], ["Status pill", { "hr-people": [62, 26, 16, 58], "courses-req": [38, 32, 14, 30], "hse-permit": [55, 37, 25, 12] }]];
+  var ch = document.getElementById("ch"), sh = document.getElementById("sh"), cur = 0, auto = true;
+  ch.innerHTML = PT.map(function (p, i) { return '<button data-i="' + i + '">' + p[0] + "</button>"; }).join("");
+  sh.innerHTML = SC.map(function (s) { return '<div class="sh" data-s="' + s[0] + '"><div style="position:relative"><img src="/Assets/v4/case/connect2wow/screens/' + s[0] + '.webp" alt=""><i class="hl"></i></div><span>' + s[1] + "</span></div>"; }).join("");
+  function show(i) { cur = i; var m = PT[i][1];
+    ch.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.dataset.i === i); });
+    sh.querySelectorAll(".sh").forEach(function (d) { var b = m[d.dataset.s], hl = d.querySelector(".hl"); d.classList.toggle("dim", !b);
+      if (b) { hl.style.left = b[0] + "%"; hl.style.top = b[1] + "%"; hl.style.width = b[2] + "%"; hl.style.height = b[3] + "%"; hl.style.opacity = 1; } else hl.style.opacity = 0; }); }
+  ch.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { auto = false; show(+b.dataset.i); } });
+  show(0); whenSeen(f, async function () { while (auto) { await sleep(2600); if (!auto) break; show((cur + 1) % PT.length); } });
+</script>
+</body>
+</html>

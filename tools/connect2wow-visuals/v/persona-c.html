@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Insight → decision: research notes on the left are wired to the design decisions they caused on the right. Hover either side to trace a line.">
+<title>Connect2WOW — insight to decision (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 370px; }
+  .col { position: absolute; top: 46px; width: 210px; display: grid; gap: 8px; }
+  .l { left: 20px; } .r { right: 20px; }
+  .hd { position: absolute; top: 20px; display: flex; gap: 8px; align-items: center; }
+  .hd .av { width: 18px; height: 18px; font-size: 8px; }
+  .it { padding: 9px 11px; font: 400 11.5px/15px "Figtree"; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); cursor: default; transition: box-shadow .25s, opacity .25s; }
+  .it small { display: block; font: 600 9px/1 "Figtree"; letter-spacing: .05em; text-transform: uppercase; color: var(--pg-faint); margin-bottom: 4px; }
+  .r .it { background: var(--c2w-p30); box-shadow: none; color: var(--c2w-p00); font-weight: 500; }
+  .canvas > svg { position: absolute; inset: 0; pointer-events: none; }
+  .canvas > svg path { fill: none; stroke: #C7D2E3; stroke-width: 1.5; stroke-dasharray: 400; stroke-dashoffset: 400; transition: stroke-dashoffset 1s var(--ease), stroke .25s, stroke-width .25s, opacity .25s; }
+  .is-in .canvas > svg path { stroke-dashoffset: 0; }
+  .dim .it:not(.hl) { opacity: .35; }
+  .dim > svg path:not(.hl) { opacity: .2; }
+  .canvas > svg path.hl { stroke: var(--c2w-p10); stroke-width: 2; }
+  .r .it.hl { box-shadow: 0 0 0 1.5px var(--c2w-p10); }
+  .l .it.hl { box-shadow: 0 0 0 1.5px var(--pg-ink); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c">
+    <div class="hd" style="left:20px"><span class="av" style="background:#E2558E">SL</span><span class="eyebrow">What we heard</span></div>
+    <div class="hd" style="right:20px"><span class="eyebrow">What we designed</span></div>
+    <svg viewBox="0 0 600 370" id="svg"></svg>
+    <div class="col l" id="L"></div>
+    <div class="col r" id="R"></div>
+  </div>
+</div>
+<script>
+  var L = [["Sees", "Data isn't connected between flows"], ["Sees", "No consistent progress across HR flows"], ["Says & does", "Retrieves the same data again and again"], ["Thinks", "Worried about disruption during rollout"], ["Thinks", "Hopes it fits oil and gas, not generic HR"]];
+  var R = ["One record per person, read by every module", "One step pattern for every HR flow", "Search + pre-filled fields in every form", "Familiar patterns; nothing exotic to learn", "Certificates, sites and rotations as core data"];
+  var W = [[0, 0], [1, 1], [2, 2], [0, 2], [3, 3], [4, 4], [3, 1]];
+  var Lc = document.getElementById("L"), Rc = document.getElementById("R"), svg = document.getElementById("svg"), c = document.getElementById("c");
+  Lc.innerHTML = L.map(function (x, i) { return '<div class="it" data-l="' + i + '"><small>' + x[0] + "</small>" + x[1] + "</div>"; }).join("");
+  Rc.innerHTML = R.map(function (x, i) { return '<div class="it" data-r="' + i + '">' + x + "</div>"; }).join("");
+  function draw() {
+    svg.innerHTML = "";
+    W.forEach(function (w, k) {
+      var a = Lc.children[w[0]], b = Rc.children[w[1]];
+      var y1 = 46 + a.offsetTop + a.offsetHeight / 2, y2 = 46 + b.offsetTop + b.offsetHeight / 2, x1 = 230, x2 = 370;
+      var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("d", "M" + x1 + " " + y1 + " C" + (x1 + 70) + " " + y1 + " " + (x2 - 70) + " " + y2 + " " + x2 + " " + y2);
+      p.dataset.l = w[0]; p.dataset.r = w[1]; p.style.transitionDelay = k * 90 + "ms"; svg.appendChild(p);
+    });
+  }
+  draw(); addEventListener("load", draw);
+  function hl(side, i) {
+    c.classList.toggle("dim", side != null);
+    var ls = {}, rs = {};
+    W.forEach(function (w) { if (side != null && ((side === "l" && w[0] == i) || (side === "r" && w[1] == i))) { ls[w[0]] = 1; rs[w[1]] = 1; } });
+    Lc.querySelectorAll(".it").forEach(function (e) { e.classList.toggle("hl", !!ls[e.dataset.l]); });
+    Rc.querySelectorAll(".it").forEach(function (e) { e.classList.toggle("hl", !!rs[e.dataset.r]); });
+    svg.querySelectorAll("path").forEach(function (p) { p.classList.toggle("hl", !!(ls[p.dataset.l] && rs[p.dataset.r]) && (side === "l" ? p.dataset.l == i : p.dataset.r == i)); });
+  }
+  var auto = true;
+  c.addEventListener("mouseover", function (e) { var it = e.target.closest(".it"); if (!it) return; auto = false; hl(it.dataset.l != null ? "l" : "r", it.dataset.l != null ? it.dataset.l : it.dataset.r); });
+  c.addEventListener("mouseleave", function () { hl(null); });
+  whenSeen(document.getElementById("f"), async function () { await sleep(1400); var i = 0; while (auto) { hl("l", i); i = (i + 1) % L.length; await sleep(2000); } if (!auto) return; });
+</script>
+</body>
+</html>

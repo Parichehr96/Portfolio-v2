@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Constellation: components in the middle, modules around them, a line for every use. Hover a component (or let it cycle) and every module that uses it lights up.">
+<title>Connect2WOW — constellation (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 420px; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .canvas > svg line { stroke: #D9E0EA; stroke-width: 1; transition: stroke .3s, stroke-width .3s, opacity .3s; }
+  .canvas > svg line.on { stroke: var(--c2w-p10); stroke-width: 1.8; }
+  .dim > svg line:not(.on) { opacity: .35; }
+  .md { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; font: 600 10.5px/1 "Figtree"; transition: opacity .3s; }
+  .md span { width: 38px; height: 38px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--pg-border); display: grid; place-items: center; color: var(--pg-muted); transition: all .3s; }
+  .md.on span { background: var(--c2w-p10); color: #fff; box-shadow: 0 6px 16px -6px rgba(51,116,245,.6); }
+  .dim .md:not(.on) { opacity: .4; }
+  .cp { position: absolute; transform: translate(-50%, -50%); padding: 5px 9px; border-radius: 999px; background: var(--pg-frame-2); font: 600 10.5px/1 "Figtree"; color: var(--pg-ink); cursor: pointer; transition: all .25s; white-space: nowrap; }
+  .cp.on { background: var(--pg-ink); color: #fff; }
+  .cp small { font-weight: 400; opacity: .7; margin-left: 3px; }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas" id="c"><svg viewBox="0 0 600 420" id="svg"></svg></div>
+</div>
+<script>
+  var c = document.getElementById("c"), svg = document.getElementById("svg"), cx = 300, cy = 210, MP = {}, CP = {};
+  C2W.modules.forEach(function (m, i) {
+    var a = -Math.PI / 2 + i * 2 * Math.PI / 7, x = cx + 240 * Math.cos(a), y = cy + 172 * Math.sin(a);
+    MP[m.id] = [x, y];
+    c.insertAdjacentHTML("beforeend", '<div class="md" data-k="' + m.id + '" style="left:' + x + "px;top:" + y + 'px"><span>' + ico(m.icon, 17) + "</span>" + (m.id === "admin" ? "Admin" : m.name) + "</div>");
+  });
+  var names = Object.keys(C2W.uses);
+  names.forEach(function (n, i) {
+    var a = -Math.PI / 2 + i * 2 * Math.PI / names.length + .3, x = cx + 88 * Math.cos(a), y = cy + 62 * Math.sin(a);
+    CP[n] = [x, y];
+  });
+  var s = "";
+  names.forEach(function (n) { C2W.uses[n].forEach(function (k) { s += '<line data-c="' + n + '" data-m="' + k + '" x1="' + CP[n][0] + '" y1="' + CP[n][1] + '" x2="' + MP[k][0] + '" y2="' + MP[k][1] + '"/>'; }); });
+  svg.innerHTML = s;
+  names.forEach(function (n) { c.insertAdjacentHTML("beforeend", '<span class="cp" data-c="' + n + '" style="left:' + CP[n][0] + "px;top:" + CP[n][1] + 'px">' + n + "<small>" + C2W.uses[n].length + "</small></span>"); });
+  function pick(n) {
+    c.classList.toggle("dim", !!n);
+    c.querySelectorAll("line").forEach(function (l) { l.classList.toggle("on", l.dataset.c === n); });
+    c.querySelectorAll(".cp").forEach(function (e) { e.classList.toggle("on", e.dataset.c === n); });
+    var used = n ? C2W.uses[n] : [];
+    c.querySelectorAll(".md").forEach(function (e) { e.classList.toggle("on", used.indexOf(e.dataset.k) > -1); });
+  }
+  var auto = true;
+  c.addEventListener("mouseover", function (e) { var t = e.target.closest(".cp"); if (t) { auto = false; pick(t.dataset.c); } });
+  whenSeen(document.getElementById("f"), async function () { var i = 0; while (auto) { pick(names[i]); i = (i + 1) % names.length; await sleep(1700); } });
+</script>
+</body>
+</html>

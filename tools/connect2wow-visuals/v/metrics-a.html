@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Closest to the ONTON metrics block: four white cards, numbers count up, a grey tag replaces the trend arrow.">
+<title>Connect2WOW — at a glance (A)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 252px; padding: 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 16px 18px; height: 100px; display: flex; flex-direction: column; justify-content: space-between; }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .num { font-variant-numeric: tabular-nums; }
+  .lbl { font: 500 14px/20px "Figtree"; color: var(--pg-ink); }
+  .from { font: 400 12px/16px "Figtree"; color: var(--pg-faint); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="grid">
+      <div class="card rise"><div class="top"><span class="num" data-to="7">0</span><span class="tag tag--grey">one shell</span></div><div><div class="lbl">Modules</div><div class="from">HR to Connection</div></div></div>
+      <div class="card rise"><div class="top"><span class="num" data-to="40" data-to2="50">0</span><span class="tag tag--grey">atoms → templates</span></div><div><div class="lbl">Components</div><div class="from">Built once, used in every module</div></div></div>
+      <div class="card rise"><div class="top"><span class="num" data-to="370">0</span><span class="tag tag--grey">one drawn set</span></div><div><div class="lbl">Icons and logos</div><div class="from">Same grid, same stroke</div></div></div>
+      <div class="card rise"><div class="top"><span class="num" data-to="6">0</span><span class="tag">0 one-offs</span></div><div><div class="lbl">Notification types</div><div class="from">Decided by one four-axis model</div></div></div>
+    </div>
+  </div>
+</div>
+<script>
+  var f = document.getElementById("f");
+  whenSeen(f, function () {
+    f.querySelectorAll(".rise").forEach(function (r, i) { setTimeout(function () { r.classList.add("is-in"); }, i * 90); });
+    f.querySelectorAll("[data-to]").forEach(function (n) {
+      var to = +n.dataset.to, to2 = n.dataset.to2, t0 = performance.now(), d = reduced ? 1 : 1100;
+      (function tick(t) {
+        var p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3);
+        n.textContent = Math.round(to * e) + (to2 && p === 1 ? "–" + to2 : "");
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  });
+</script>
+</body>
+</html>

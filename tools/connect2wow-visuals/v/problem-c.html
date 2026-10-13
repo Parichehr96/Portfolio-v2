@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Network diagram: people tangled through point-to-point tools, then every line re-routes through one hub. Toggles between the two states.">
+<title>Connect2WOW — tangle to hub (C)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<style>
+  .canvas { height: 380px; }
+  .canvas > svg { position: absolute; inset: 0; }
+  .ln { fill: none; stroke-width: 1.4; transition: d .9s var(--ease), stroke .6s; }
+  .tangle .ln { stroke: #C8B6B6; }
+  .hubbed .ln { stroke: var(--c2w-p20); }
+  .node { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 5px; font: 500 11px/1.2 "Figtree"; text-align: center; color: var(--pg-ink); }
+  .node .av { width: 34px; height: 34px; font-size: 12px; box-shadow: 0 0 0 4px var(--pg-frame); }
+  .node small { color: var(--pg-faint); font-size: 10px; }
+  .hub { position: absolute; left: 300px; top: 190px; width: 86px; height: 86px; margin: -43px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 1px var(--pg-border), 0 10px 30px -10px rgba(51,116,245,.45); display: grid; place-items: center; text-align: center;
+    font: 600 11px/1.25 "Figtree"; transition: opacity .6s, transform .8s var(--ease); }
+  .hub span { display: block; width: 22px; height: 22px; margin: 0 auto 4px; border-radius: 50%; border: 5px solid var(--c2w-p10); border-right-color: transparent; }
+  .tangle .hub { opacity: 0; transform: scale(.6); }
+  .state { position: absolute; left: 18px; top: 16px; display: flex; gap: 4px; }
+  .state button { font: 500 11px/1 "Figtree"; border: 0; border-radius: 999px; padding: 6px 10px; background: #fff; color: var(--pg-muted); cursor: pointer; box-shadow: 0 0 0 1px var(--pg-border); }
+  .state button.is-on { background: var(--pg-ink); color: #fff; box-shadow: none; }
+  .x { position: absolute; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: var(--pg-neg); color: #fff; display: grid; place-items: center; font: 700 9px/1 "Figtree"; transition: opacity .4s; }
+  .hubbed .x { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="frame tangle" id="f">
+  <div class="canvas">
+    <svg viewBox="0 0 600 380" id="svg"></svg>
+    <div class="hub"><div><span></span>Connect2WOW</div></div>
+    <div id="nodes"></div>
+    <div class="state"><button data-s="tangle" class="is-on">Before</button><button data-s="hubbed">After</button></div>
+  </div>
+</div>
+<script>
+  var N = [
+    ["SL", "#E2558E", "HR manager", "office", 110, 92], ["DO", "#D97706", "HSE lead", "site + office", 300, 64],
+    ["GW", "#3F3DB6", "Ops manager", "office", 490, 92], ["RM", "#7A5AF8", "Project manager", "site + office", 510, 270],
+    ["MR", "#3374F5", "Welder", "site", 300, 330], ["AD", "#0E9384", "Admin", "office", 90, 270]
+  ];
+  var nodes = document.getElementById("nodes"), svg = document.getElementById("svg"), f = document.getElementById("f");
+  N.forEach(function (n) {
+    nodes.insertAdjacentHTML("beforeend", '<div class="node" style="left:' + n[4] + "px;top:" + n[5] + 'px">' + '<span class="av" style="background:' + n[1] + '">' + n[0] + "</span>" + n[2] + "<small>" + n[3] + "</small></div>");
+  });
+  /* each pair that needs to talk; before = a wobbly direct line, after = via hub */
+  var P = [[0, 1], [0, 4], [0, 5], [1, 4], [1, 2], [2, 3], [3, 4], [0, 2], [3, 1], [5, 3]];
+  var paths = P.map(function (p, i) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", "path"); el.setAttribute("class", "ln"); svg.appendChild(el); return el;
+  });
+  function draw(state) {
+    P.forEach(function (p, i) {
+      var a = N[p[0]], b = N[p[1]], mx = (a[4] + b[4]) / 2, my = (a[5] + b[5]) / 2;
+      var d = state === "tangle"
+        ? "M" + a[4] + " " + a[5] + " C" + (mx + (i % 2 ? 60 : -60)) + " " + (my - 50) + " " + (mx - (i % 3 ? 40 : -40)) + " " + (my + 50) + " " + b[4] + " " + b[5]
+        : "M" + a[4] + " " + a[5] + " C" + (a[4] + 300) / 2 + " " + (a[5] + 190) / 2 + " " + (b[4] + 300) / 2 + " " + (b[5] + 190) / 2 + " " + b[4] + " " + b[5];
+      paths[i].setAttribute("d", d); paths[i].style.d = "path('" + d + "')";
+    });
+    f.className = "frame " + state;
+    document.querySelectorAll(".state button").forEach(function (b) { b.classList.toggle("is-on", b.dataset.s === state); });
+  }
+  /* broken-link markers on the tangle */
+  [[205, 78], [170, 200], [400, 180], [300, 250]].forEach(function (x) { nodes.insertAdjacentHTML("beforeend", '<span class="x" style="left:' + x[0] + "px;top:" + x[1] + 'px">×</span>'); });
+  draw("tangle");
+  var auto = true;
+  document.querySelectorAll(".state button").forEach(function (b) { b.onclick = function () { auto = false; draw(b.dataset.s); }; });
+  whenSeen(f, async function () { var s = "tangle"; while (auto) { await sleep(2600); if (!auto) break; s = s === "tangle" ? "hubbed" : "tangle"; draw(s); } });
+</script>
+</body>
+</html>

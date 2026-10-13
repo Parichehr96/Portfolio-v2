@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Annotated: the shell is outlined and labelled 'never moves', the content area 'swaps per module'. Teaches the idea while it plays.">
+<title>Connect2WOW — one shell, annotated (B)</title>
+<link rel="stylesheet" href="c2w.css">
+<script src="c2w.js"></script>
+<script src="screens.js"></script>
+<style>
+  .canvas { height: 400px; }
+  .win { position: absolute; left: 40px; top: 52px; width: 520px; height: 300px; }
+  .ui-ico.is-on { transition: background .35s, color .35s; }
+  .swap { transition: opacity .22s ease, filter .3s ease; }
+  .swap.is-out { opacity: 0; filter: blur(2px); }
+  /* the two annotations */
+  .zone { position: absolute; border-radius: 10px; pointer-events: none; }
+  .zone--shell { left: 34px; top: 46px; width: 178px; height: 312px; border: 1.5px dashed var(--pg-accent); }
+  .zone--content { left: 214px; top: 46px; width: 352px; height: 312px; border: 1.5px solid var(--c2w-p10);
+    box-shadow: 0 0 0 4px rgba(51,116,245,.10); animation: pulse 2.6s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(51,116,245,.10); } 50% { box-shadow: 0 0 0 9px rgba(51,116,245,.04); } }
+  .note { position: absolute; display: flex; align-items: center; gap: 6px; font: 600 11px/1 "Figtree"; }
+  .note i { width: 6px; height: 6px; border-radius: 50%; }
+  .n1 { left: 40px; top: 22px; color: var(--pg-accent); } .n1 i { background: var(--pg-accent); }
+  .n2 { left: 226px; top: 22px; color: var(--c2w-p10); } .n2 i { background: var(--c2w-p10); }
+  .ticker { position: absolute; left: 40px; right: 40px; bottom: 16px; display: flex; gap: 4px; }
+  .ticker span { flex: 1; font: 500 10px/1 "Figtree"; color: var(--pg-faint); padding-top: 8px; border-top: 2px solid var(--pg-frame-2); transition: color .3s, border-color .3s; }
+  .ticker span.is-on { color: var(--pg-ink); border-color: var(--c2w-p10); }
+</style>
+</head>
+<body>
+<div class="frame" id="f">
+  <div class="canvas">
+    <div class="note n1"><i></i>Shell · never moves</div>
+    <div class="note n2"><i></i>Content · swaps per module, built from the same parts</div>
+    <div class="ui win">
+      <div class="ui-shell">
+        <div class="ui-rail" id="rail"></div>
+        <div class="ui-nav swap" id="nav"></div>
+        <div class="ui-main swap" id="main"></div>
+      </div>
+    </div>
+    <div class="zone zone--shell"></div>
+    <div class="zone zone--content"></div>
+    <div class="ticker" id="ticker"></div>
+  </div>
+</div>
+<script>
+  var order = ["hr", "hse", "courses", "admin", "eng", "profile", "connection"];
+  var names = { hr: "HR", hse: "HSE", courses: "Courses", eng: "Engineering", profile: "Profile", connection: "Connection", admin: "Admin" };
+  var rail = document.getElementById("rail"), nav = document.getElementById("nav"), main = document.getElementById("main"), tk = document.getElementById("ticker");
+  tk.innerHTML = order.map(function (k) { return '<span data-k="' + k + '">' + names[k] + "</span>"; }).join("");
+  function put(id) {
+    rail.innerHTML = C2W.rail(id, ["home"].concat(order));
+    nav.innerHTML = C2W.nav(id); main.innerHTML = C2W.main(id);
+    tk.querySelectorAll("span").forEach(function (s) { s.classList.toggle("is-on", s.dataset.k === id); });
+  }
+  put("hr");
+  whenSeen(document.getElementById("f"), async function () {
+    var i = 0;
+    while (true) {
+      await sleep(2400);
+      i = (i + 1) % order.length;
+      nav.classList.add("is-out"); main.classList.add("is-out");
+      await sleep(220); put(order[i]);
+      nav.classList.remove("is-out"); main.classList.remove("is-out");
+    }
+  });
+</script>
+</body>
+</html>
