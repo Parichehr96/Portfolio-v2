@@ -16,6 +16,9 @@
  * to each new pace rather than jumping. Every so often (more often the windier
  * it is) a gust runs down the blue wind line and the blades surge with it. Only
  * while the footer is on screen; reduced motion leaves the mill still.
+ *
+ * Hovering the windmill shows Amsterdam's wind speed; hovering the one lit
+ * window in the navy house (class="me" in amsterdam.svg) says who is in it.
  */
 (function () {
   "use strict";
@@ -70,6 +73,7 @@
       el.removeAttribute("height");
       el.classList.add("v4-footer__art");
       img.replaceWith(el);
+      if (tip) me();                                       // the lit window, now that it is inline
       wind().then(function (c) { setWind(c.v, c.d); }).catch(function () {});
     }).catch(function () {});
   }
@@ -118,23 +122,29 @@
     document.addEventListener("visibilitychange", wake);
   }
 
-  // Hovered (or tapped), the windmill shows the wind speed by the pointer.
+  // Hovered (or tapped), the windmill shows the wind speed by the pointer;
+  // the one lit window in the city, who is behind it.
   var tip = document.querySelector("[data-mill-tip]");
-  if (mill && tip) {
-    var foot = mill.closest("footer"), tipT = 0;
-    function show(e) {
-      tip.textContent = millKnown ? "Amsterdam wind speed: " + Math.round(millV) + " km/h" : "Amsterdam wind speed: loading\u2026";
-      tip.hidden = false;
-      var r = foot.getBoundingClientRect();
-      var x = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8);
-      tip.style.left = x + "px";
-      tip.style.top = (e.clientY - r.top - tip.offsetHeight - 12) + "px";
-    }
-    mill.addEventListener("pointermove", show);
-    mill.addEventListener("pointerleave", function () { tip.hidden = true; });
-    mill.addEventListener("pointerdown", function (e) {
+  var foot = tip && tip.closest("footer"), tipT = 0;
+  function place(e, text) {
+    tip.textContent = text;
+    tip.hidden = false;
+    var r = foot.getBoundingClientRect();
+    tip.style.left = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8) + "px";
+    tip.style.top = (e.clientY - r.top - tip.offsetHeight - 12) + "px";
+  }
+  function hover(el, text) {
+    el.addEventListener("pointermove", function (e) { place(e, text()); });
+    el.addEventListener("pointerleave", function () { tip.hidden = true; });
+    el.addEventListener("pointerdown", function (e) {
       if (e.pointerType === "mouse") return;
-      show(e); clearTimeout(tipT); tipT = setTimeout(function () { tip.hidden = true; }, 2500);
+      place(e, text()); clearTimeout(tipT); tipT = setTimeout(function () { tip.hidden = true; }, 2500);
+    });
+  }
+  function me() { var w = holder.querySelector(".me"); if (w) hover(w, function () { return "Me, working somewhere in Amsterdam"; }); }
+  if (mill && tip) {
+    hover(mill, function () {
+      return millKnown ? "Amsterdam wind speed: " + Math.round(millV) + " km/h" : "Amsterdam wind speed: loading\u2026";
     });
   }
 

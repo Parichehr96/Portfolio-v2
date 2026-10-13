@@ -40,7 +40,13 @@
   pointer-events: visiblePainted;
 }
 
-/* The wind speed, by the pointer (scripts/v4-wind.js). */
+/* One lit window in the navy house (class="me" in amsterdam.svg): hovered,
+   it says who is in there. */
+.v4-footer__art .me {
+  pointer-events: visiblePainted;
+}
+
+/* The wind speed, by the pointer (scripts/v4-wind.js); the lit window's note too. */
 .v4-mill-tip {
   position: absolute;
   z-index: 2;
