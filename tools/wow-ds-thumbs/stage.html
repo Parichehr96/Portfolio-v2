@@ -1,0 +1,78 @@
+<!doctype html>
+<!--
+  WOW DESIGN SYSTEM THUMBNAILS — recorded by record.mjs into
+  Assets/v4/work/wow-design-system/<e>.{webm,mp4,jpg}.
+
+  Puts one of the case study's own visuals (Assets/embeds/wow-ds/<e>.html)
+  on the thumbnail's grey panel, centred and scaled to fit, and plays its
+  loop exactly as the case page does, but frame by frame: the embed's own
+  timer is taken out and window.setT(seconds) sets its state and the exact
+  progress of every transition, so the recording is even and loops cleanly.
+
+  ?e=themes   Themes (section 13): the bento re-skins light, then dark.
+  ?e=layers   Anatomy's second visual (section 10): the request card opens
+              into its layers, labelled, and closes again.
+  ?t=seconds  one still, for checking.
+-->
+<html><head><meta charset="utf-8"><style>
+html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; background: #F3F6F8; }
+#panel { position: absolute; left: 0; top: 0; width: 487.2px; height: 312px; transform-origin: 0 0; transform: scale(1.66667); }
+iframe { position: absolute; border: 0; transform-origin: 0 0; background: transparent; }
+</style></head><body><div id="panel"></div>
+<script>
+const q = new URLSearchParams(location.search), E = q.get("e") || "themes";
+// Each loop: when it toggles (seconds) and how to put it in either state.
+const LOOPS = {
+  themes: { h: 360, loop: 5.2, at: [0, 2.6], states: ["light", "dark"],
+            apply: (w, s) => w.set(s) },
+  layers: { file: "anatomy-layers", h: 400, loop: 5.8, at: [0.6, 4.2], states: ["open", "closed"],
+            apply: (w, s) => w.document.getElementById("c").classList.toggle("open", s === "open") },
+};
+const L = LOOPS[E];
+const frame = w => new Promise(r => w.requestAnimationFrame(() => w.requestAnimationFrame(r)));
+let ifr, win, cur = null;
+
+// Where in the loop: the state now, and how long since it last changed.
+function stateAt(t) {
+  t = ((t % L.loop) + L.loop) % L.loop;
+  let i = L.at.length - 1;
+  for (let k = 0; k < L.at.length; k++) if (t >= L.at[k]) i = k;
+  const since = t >= L.at[i] ? t - L.at[i] : t + L.loop - L.at[i];
+  return { s: L.states[i], since };
+}
+
+window.setT = async function (t) {
+  const { s, since } = stateAt(t);
+  if (s !== cur) { L.apply(win, s); cur = s; win.document.body.offsetWidth; }
+  win.document.getAnimations().forEach(a => {
+    a.pause();
+    const end = a.effect.getComputedTiming().endTime;
+    a.currentTime = Math.min(since * 1000, end);
+  });
+  await frame(win);
+};
+window.LOOP = L.loop;
+
+fetch("/Assets/embeds/wow-ds/" + (L.file || E) + ".html").then(r => r.text()).then(html => {
+  // The embed without its own timer (its whenSeen loop), at its own base.
+  html = html.replace(/whenSeen\([\s\S]*?\n?\s*\}\);\s*(?=<\/script>)/, "")
+             .replace("<head>", '<head><base href="/Assets/embeds/wow-ds/">');
+  ifr = document.createElement("iframe");
+  const s = Math.min((487.2 - 40) / 600, (312 - 40) / L.h);
+  Object.assign(ifr.style, { width: "600px", height: L.h + "px", left: (487.2 - 600 * s) / 2 + "px",
+    top: (312 - L.h * s) / 2 + "px", transform: `scale(${s})` });
+  ifr.srcdoc = html;
+  ifr.onload = async () => {
+    win = ifr.contentWindow;
+    await win.document.fonts.ready;
+    // Start settled in the state before the first toggle, with no transition.
+    const prev = stateAt(-0.001).s, st = win.document.createElement("style");
+    st.textContent = "*{transition:none!important}"; win.document.head.appendChild(st);
+    L.apply(win, prev); cur = prev; win.document.body.offsetWidth; st.remove();
+    await frame(win);
+    await window.setT(q.has("t") ? +q.get("t") : 0);
+    document.title = "ready";
+  };
+  document.getElementById("panel").appendChild(ifr);
+});
+</script></body></html>
