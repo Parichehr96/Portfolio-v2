@@ -160,8 +160,8 @@
 .v4-sky__hint { display: inline-grid; font-style: normal; }
 .v4-sky__note .v4-sky__hint span { grid-area: 1 / 1; color: var(--v4-text-muted); line-height: inherit; letter-spacing: inherit; transition: opacity .3s ease; }
 .v4-sky__note .v4-sky__hint .v4-sky__hint-open { opacity: 0; }
-.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint-shut { opacity: 0; }
-.v4-sky__view.is-open ~ .v4-sky__note .v4-sky__hint-open { opacity: 1; transition-delay: .05s; }
+.v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__hint-shut { opacity: 0; }
+.v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__hint-open { opacity: 1; transition-delay: .05s; }
 
 @media (prefers-reduced-motion: reduce) {
   .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__hint span,
