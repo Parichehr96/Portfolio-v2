@@ -42,7 +42,7 @@ layout: layouts/v4.njk
         stays put and scrolls away with the name. -#}
     <div class="v4-case__bar">
       <div class="v4-case__bar-inner">
-        <a class="v4-case__back" href="{{ backHref }}">
+        <a class="v4-case__back" href="{{ backHref }}" data-case-back>
           <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
           {{ c.back.label }}
         </a>
@@ -52,6 +52,22 @@ layout: layouts/v4.njk
         </a>
       </div>
     </div>
+
+    {#- Back, when the reader came from the homepage: a step back in history,
+        so the browser returns them to exactly where they were. Otherwise
+        (a shared link, a new tab) the href takes them to this case's card. -#}
+    <script>
+      (function () {
+        var back = document.querySelector("[data-case-back]");
+        var ref = document.referrer && new URL(document.referrer);
+        if (!back || !ref || ref.origin !== location.origin || ref.pathname !== "/" || history.length < 2) return;
+        back.addEventListener("click", function (e) {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+          e.preventDefault();
+          history.back();
+        });
+      })();
+    </script>
 
     <div class="v4-case__title-row">
       <h1 class="v4-case__name">{{ c.name }}</h1>

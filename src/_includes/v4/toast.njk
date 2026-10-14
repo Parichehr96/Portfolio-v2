@@ -30,7 +30,13 @@
     if ((seen && !hard) || back) document.documentElement.classList.add("is-toast-skipped");
     // Showing it: start at the top. Otherwise the browser restores the last
     // scroll position, which leaves the sticky toast lying over the intro.
-    else if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    // Only for this load: once loaded, the browser remembers the scroll again,
+    // so coming back to the page (Back, or a case study's Back) returns to
+    // where the reader was, not the top.
+    else if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+      window.addEventListener("load", function () { history.scrollRestoration = "auto"; });
+    }
     sessionStorage.setItem("v4-toast-seen", "1");
   } catch (e) {}
 </script>
