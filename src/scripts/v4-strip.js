@@ -182,8 +182,8 @@
       if (moved > 5) { e.stopPropagation(); e.preventDefault(); moved = 0; }
     }, true);
 
-    // The arrows; a press is theirs, not the card's link.
-    Array.prototype.forEach.call(strip.querySelectorAll("[data-strip-step]"), function (b) {
+    // The arrows, beside the strip (outside its clip); a press is theirs, not the card's link.
+    Array.prototype.forEach.call(strip.parentNode.querySelectorAll("[data-strip-step]"), function (b) {
       b.hidden = false;
       b.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
       b.addEventListener("click", function (e) {

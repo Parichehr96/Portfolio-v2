@@ -44,6 +44,7 @@
     </p>
   </header>
 
+  <div class="v4-project__carousel">
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
@@ -68,6 +69,7 @@
       </figure>
       {%- endfor %}
     </div>
+  </div>
     {#- One thumbnail back or on (scripts/v4-strip.js shows them once the carousel runs). #}
     <button class="v4-project__arrow v4-project__arrow--prev" type="button" data-strip-step="-1" aria-label="Previous {{ project.name }} screen" hidden><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/></svg></button>
     <button class="v4-project__arrow v4-project__arrow--next" type="button" data-strip-step="1" aria-label="Next {{ project.name }} screen" hidden><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/></svg></button>

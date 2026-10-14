@@ -160,8 +160,8 @@
   /* How long the toast stays up; its timer band fills over exactly this. */
   --v4-toast-duration: 10s;
 
-  /* Work — 1490:17237. Rows are 100 apart; each strip panel is 0.6 of the
-     old 812 × 520, with 9.6 between them. */
+  /* Work — 1490:17237. Rows are 100 apart; each strip panel is 812 × 520 in
+     shape, 556 wide, with 12 between them. */
   /* ONE SPACING SYSTEM for the page:
      a section heading to its content       24  (--v4-heading-gap)
      blocks inside a section                40  (--v4-inner-gap)
@@ -173,9 +173,9 @@
   --v4-section-gap: 90px;
   --v4-footer-gap: 120px;
   --v4-row-gap: 100px;
-  --v4-panel-width: 487.2px;   /* 0.6 of the comp's 812 x 520 (1490:17256) */
+  --v4-panel-width: 556px;     /* the front one, centred in the 600 column with 10 of each neighbour showing */
   --v4-panel-ratio: 812 / 520;
-  --v4-panel-gap: 9.6px;
+  --v4-panel-gap: 12px;
   --v4-radius-panel: 12px;
   --v4-radius-panel-card: 8px;   /* the white ground inside a thumbnail */
   /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
@@ -183,8 +183,9 @@
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
   --v4-strip-dim: .4;                           /* the neighbours either side */
   --v4-strip-arrow: 34px;
-  --v4-strip-arrow-inset: 4px;                  /* from the strip's edges, over the neighbours */
-  --v4-strip-arrow-bg: rgb(255 255 255 / .72);  /* frosted, over the dimmed neighbour */
+  --v4-strip-arrow-out: 30px;                   /* each chevron's centre, outside the column's edge */
+  --v4-strip-arrow-inset: 4px;                  /* narrow screens: from the strip's edges, over the neighbours */
+  --v4-strip-arrow-bg: rgb(255 255 255 / .72);  /* narrow screens: frosted, over the dimmed neighbour */
   --v4-layer-time: .6s;                         /* each layer rising in */
   --v4-layer-lead: .15s;
   --v4-layer-step: .16s;

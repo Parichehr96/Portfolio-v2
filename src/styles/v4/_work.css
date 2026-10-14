@@ -125,10 +125,15 @@ a.v4-project__link:hover {
    swipe, sideways scroll, drag or arrow key moves it one thumbnail, either
    way, for ever. Without the script it is a plain horizontal scroller. The
    panel cut off at the right edge says "there is more". */
-.v4-project__strip {
+/* The strip and its arrows: the arrows sit outside the strip's clip. */
+.v4-project__carousel {
   position: relative;
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
   margin-inline: var(--v4-column-inset) auto;
+}
+
+.v4-project__strip {
+  position: relative;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -177,8 +182,9 @@ a.v4-project__link:hover {
   transition: none;
 }
 
-/* The arrows (1534:28726): frosted white rounds with a chevron, over each
-   side, centred on the thumbnails' height. */
+/* The arrows: plain chevrons outside the column, either side, centred on
+   the thumbnails' height. Below 900 there is no room out there, so they
+   come back over the neighbours as frosted rounds. */
 .v4-project__arrow {
   position: absolute;
   top: 50%;
@@ -191,9 +197,7 @@ a.v4-project__link:hover {
   padding: 0;
   border: 0;
   border-radius: var(--v4-radius-round);
-  background: var(--v4-strip-arrow-bg);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: transparent;
   color: var(--v4-text-muted);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -204,7 +208,7 @@ a.v4-project__link:hover {
 }
 
 .v4-project__arrow--prev {
-  left: var(--v4-strip-arrow-inset);
+  left: calc(-1 * var(--v4-strip-arrow-out) - var(--v4-strip-arrow) / 2);
 }
 
 .v4-project__arrow--prev svg {
@@ -212,13 +216,28 @@ a.v4-project__link:hover {
 }
 
 .v4-project__arrow--next {
-  right: var(--v4-strip-arrow-inset);
+  right: calc(-1 * var(--v4-strip-arrow-out) - var(--v4-strip-arrow) / 2);
 }
 
 .v4-project__arrow:hover {
-  background: var(--v4-surface);
+  background: var(--v4-surface-muted);
   color: var(--v4-text);
-  transform: scale(1.06);
+}
+
+@media (max-width: 899px) {
+  .v4-project__arrow {
+    background: var(--v4-strip-arrow-bg);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .v4-project__arrow--prev { left: var(--v4-strip-arrow-inset); }
+  .v4-project__arrow--next { right: var(--v4-strip-arrow-inset); }
+
+  .v4-project__arrow:hover {
+    background: var(--v4-surface);
+    transform: scale(1.06);
+  }
 }
 
 .v4-project__arrow:focus-visible {
