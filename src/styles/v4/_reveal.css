@@ -5,8 +5,8 @@
    Only with html.js-reveal (set in layouts/v4.njk before first paint, home
    only, never for reduced motion). Each block rises in from a little low and
    transparent: at load the rail, name (its logo drawing itself), bio, meta,
-   clock, "Selected project", then the first project's name and its
-   thumbnails one by one; further down (the sky too), everything as it is scrolled to.
+   clock, the sky and its lines, "Selected project", then the first project's name and its
+   thumbnails one by one; further down, everything as it is scrolled to.
    ========================================================================== */
 
 /* THE FIRST SCREEN is CSS only: fixed delays, no script involved, so it
@@ -17,6 +17,8 @@
   .v4-intro__bio,
   .v4-intro__meta,
   .v4-status,
+  .v4-sky__view,
+  .v4-sky__note,
   .v4-work > .v4-label:first-child,
   .v4-work > .v4-project:first-of-type .v4-project__head,
   .v4-work > .v4-project:first-of-type .v4-project__panel
@@ -29,9 +31,11 @@
 .js-reveal .v4-intro__bio { --n: 2; }
 .js-reveal .v4-intro__meta { --n: 3; }
 .js-reveal .v4-status { --n: 4; }
-.js-reveal .v4-work > .v4-label:first-child { --n: 5; }
-.js-reveal .v4-work > .v4-project:first-of-type .v4-project__head { --n: 6; }
-/* The thumbnails' --n (7, 8, 9 …) is set in v4/project-row.njk, as the
+.js-reveal .v4-sky__view { --n: 5; }
+.js-reveal .v4-sky__note { --n: 6; }
+.js-reveal .v4-work > .v4-label:first-child { --n: 7; }
+.js-reveal .v4-work > .v4-project:first-of-type .v4-project__head { --n: 8; }
+/* The thumbnails' --n (9, 10, 11 …) is set in v4/project-row.njk, as the
    strip's carousel adds copies before them. */
 
 /* A case study's first screen: the rail, then the name with Back and Next,

@@ -26,8 +26,6 @@
   var watched = Array.prototype.slice.call(document.querySelectorAll([
     ".v4-label",
     ".v4-project__head",
-    ".v4-sky__frame",
-    ".v4-sky__note",
     ".v4-about__photos",
     ".v4-about__text > p",
     ".v4-about__card",

@@ -217,6 +217,16 @@
     }
   });
 
+  // Back from a case study lands on its card (/#work-<id>, v4-case.njk). Done
+  // here rather than left to the browser, which can miss it while the page
+  // is still settling; again on load, once images have their heights.
+  var landing = /^#work-[\w-]+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
+  if (landing) {
+    var land = function () { landing.scrollIntoView({ behavior: "instant", block: "start" }); };
+    land();
+    window.addEventListener("load", land, { once: true });
+  }
+
   Array.prototype.slice.call(document.querySelectorAll("[data-card-href]")).forEach(function (card) {
     var href = card.getAttribute("data-card-href");
     function open(e) {

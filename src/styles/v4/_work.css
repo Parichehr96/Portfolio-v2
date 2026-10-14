@@ -350,6 +350,18 @@ a.v4-project__link:hover {
   }
 }
 
+/* Landed on from a case study's Back (/#work-<id>): a little room above the
+   card, and clear of the sticky bar on narrow screens. */
+.v4-project {
+  scroll-margin-top: 40px;
+}
+
+@media (max-width: 899px) {
+  .v4-project {
+    scroll-margin-top: calc(var(--v4-bar-h) + 24px);
+  }
+}
+
 /* A linked project is clickable as a whole (scripts/v4-strip.js): the
    pointer says so, and its name's rule turns solid while hovered. The strip
    keeps its grab cursor, since it also drags. */
