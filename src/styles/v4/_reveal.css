@@ -4,8 +4,8 @@
 
    Only with html.js-reveal (set in layouts/v4.njk before first paint, home
    only, never for reduced motion). Each block rises in from a little low and
-   transparent: at load the rail, the sky and its lines, then the name (its logo
-   drawing itself), bio, meta, clock, "Selected project", then the first project's name and its
+   transparent: at load the rail, name (its logo drawing itself), bio, meta,
+   clock, the sky and its lines, "Selected project", then the first project's name and its
    thumbnails one by one; further down, everything as it is scrolled to.
    ========================================================================== */
 
@@ -27,12 +27,12 @@
   animation-delay: calc(var(--n, 0) * var(--v4-intro-stagger));
 }
 
-.js-reveal .v4-sky__view { --n: 1; }
-.js-reveal .v4-sky__note { --n: 2; }
-.js-reveal .v4-intro__name { --n: 3; }
-.js-reveal .v4-intro__bio { --n: 4; }
-.js-reveal .v4-intro__meta { --n: 5; }
-.js-reveal .v4-status { --n: 6; }
+.js-reveal .v4-intro__name { --n: 1; }
+.js-reveal .v4-intro__bio { --n: 2; }
+.js-reveal .v4-intro__meta { --n: 3; }
+.js-reveal .v4-status { --n: 4; }
+.js-reveal .v4-sky__view { --n: 5; }
+.js-reveal .v4-sky__note { --n: 6; }
 .js-reveal .v4-work > .v4-label:first-child { --n: 7; }
 .js-reveal .v4-work > .v4-project:first-of-type .v4-project__head { --n: 8; }
 /* The thumbnails' --n (9, 10, 11 …) is set in v4/project-row.njk, as the
