@@ -36,6 +36,7 @@
 
 <body class="v4" data-page="{{ pageId or 'home' }}" id="top">
   {{ content | safe }}
+  {% include "v4/consent.njk" %}
 
   <script defer src="/scripts/mailto-fallback.js"></script>
   <script defer src="/scripts/clock.js"></script>
@@ -51,6 +52,7 @@
   <script defer src="/scripts/v4-sky.js"></script>
   <script defer src="/scripts/v4-wind.js"></script>
   <script defer src="/scripts/v4-analytics.js"></script>
+  <script defer src="/scripts/v4-consent.js"></script>
 
   {%- if site.analytics.vercel %}
   <script>

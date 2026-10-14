@@ -14,6 +14,15 @@ module.exports = {
     body: "Case studies, writings, and details are actively rolling in.",
   },
 
+  // ---- Consent banner — v4/consent.njk, on every V4 page until answered ------
+  consent: {
+    title: "I’m a designer, so I’m curious. Mind if I peek out the window?",
+    body: "I’m only using your approximate location (city-ish, never your address), which pages you visit, and where you click. Anonymous, no ads, and it helps me make this portfolio better for the next person.",
+    yes: "Sure, peek away",
+    no: "Keep the curtains closed",
+    settings: "Cookie settings",
+  },
+
   // ---- Left rail — 911:530 ---------------------------------------------------
   // `target` is the id of the section the item scrolls to and highlights for.
   rail: [

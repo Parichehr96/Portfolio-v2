@@ -1,0 +1,217 @@
+/* ============================================================================
+   CONSENT BANNER — v4/consent.njk, scripts/v4-consent.js
+   A small white card, bottom-left, over the page. Its little window opens
+   for a yes and draws its curtains for a no, then the card goes.
+   ========================================================================== */
+
+.v4-consent {
+  position: fixed;
+  left: var(--v4-space-6);
+  bottom: var(--v4-space-6);
+  z-index: 30;
+  width: 360px;
+  padding: var(--v4-space-5);
+  background: var(--v4-surface);
+  border: 1px solid var(--v4-border);
+  border-radius: var(--v4-radius-card);
+  box-shadow: 0 12px 32px rgb(15 23 42 / 0.1), 0 2px 6px rgb(15 23 42 / 0.05);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(.22, .61, .36, 1);
+}
+
+.v4-consent[hidden] {
+  display: none;
+}
+
+.v4-consent.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.v4-consent.is-out {
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+}
+
+/* The window: the hero's closed drawing in two halves over a bit of sky,
+   each half hinged on its outer edge. */
+.v4-consent__window {
+  position: relative;
+  width: 128px;
+  height: 52px;
+  margin-bottom: var(--v4-space-3);
+  perspective: 420px;
+}
+
+.v4-consent__sky,
+.v4-consent__wing {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.v4-consent__sky {
+  left: 4%;
+  right: 4%;
+  top: 6%;
+  bottom: 6%;
+  overflow: hidden;
+  background: linear-gradient(#7fb2ec, #cfe4fa);
+}
+
+.v4-consent__sun {
+  position: absolute;
+  left: 22%;
+  top: 22%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7d6 35%, rgb(255 247 214 / 0) 70%);
+}
+
+/* The curtains, behind the glass (inside the sky, so they never show
+   outside the window): in from the sides for a no. */
+.v4-consent__curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.18) 0 3px, rgb(120 72 40 / 0.12) 3px 6px),
+    #e8c9a8;
+  transition: transform 0.55s cubic-bezier(.45, 0, .25, 1);
+}
+
+.v4-consent__curtain--left {
+  left: 0;
+  transform: translateX(-104%) scaleX(0.3);
+  transform-origin: left center;
+}
+
+.v4-consent__curtain--right {
+  right: 0;
+  transform: translateX(104%) scaleX(0.3);
+  transform-origin: right center;
+}
+
+.v4-consent.is-closed .v4-consent__curtain {
+  transform: none;
+}
+
+/* The two halves of the frame, swung open for a yes. */
+.v4-consent__wing {
+  width: 50%;
+  overflow: hidden;
+  transition: transform 0.75s cubic-bezier(.45, 0, .25, 1);
+}
+
+.v4-consent__wing img {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  max-width: none;
+  height: 100%;
+}
+
+.v4-consent__wing--left {
+  left: 0;
+  transform-origin: 0 50%;
+}
+
+.v4-consent__wing--left img {
+  left: 0;
+}
+
+.v4-consent__wing--right {
+  right: 0;
+  transform-origin: 100% 50%;
+}
+
+.v4-consent__wing--right img {
+  right: 0;
+}
+
+.v4-consent.is-open .v4-consent__wing--left {
+  transform: rotateY(-112deg);
+}
+
+.v4-consent.is-open .v4-consent__wing--right {
+  transform: rotateY(112deg);
+}
+
+.v4-consent__title {
+  font-size: var(--v4-text-body);
+  font-weight: var(--v4-weight-semibold);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text);
+}
+
+.v4-consent__body {
+  margin-top: var(--v4-space-2);
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+}
+
+/* Two answers, the same weight: neither is the "right" one. */
+.v4-consent__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--v4-space-2);
+  margin-top: var(--v4-space-4);
+}
+
+.v4-consent__button {
+  min-height: 40px;
+  padding: var(--v4-space-2) var(--v4-space-3);
+  border: 1px solid var(--v4-border);
+  border-radius: var(--v4-radius-button);
+  background: var(--v4-surface);
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.v4-consent__button:hover {
+  background: var(--v4-surface-muted);
+}
+
+.v4-consent__button:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 2px;
+}
+
+/* "Cookie settings", after the copyright line in the footer. */
+.v4-footer__consent {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Phones: across the foot of the screen. */
+@media (max-width: 599px) {
+  .v4-consent {
+    left: var(--v4-space-4);
+    right: var(--v4-space-4);
+    bottom: var(--v4-space-4);
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-consent,
+  .v4-consent__wing,
+  .v4-consent__curtain {
+    transition: opacity 0.2s ease;
+  }
+}

@@ -1,0 +1,27 @@
+{#
+  CONSENT BANNER — "A, the window card". Bottom-left, on every V4 page, until
+  the visitor answers; "Cookie settings" in the footer brings it back.
+
+  The little window is the hero's own (Assets/v4/consent/window.svg, the
+  closed drawing with its panes see-through), in two halves over a bit of
+  sky. "Sure, peek away" swings the halves open; "Keep the curtains closed"
+  draws two curtains across. Then the card goes. scripts/v4-consent.js holds
+  the logic; partials/head-analytics.njk what each answer turns on.
+#}
+<aside class="v4-consent" data-consent role="dialog" aria-labelledby="v4-consent-title" aria-describedby="v4-consent-body" hidden>
+  <div class="v4-consent__window" aria-hidden="true">
+    <span class="v4-consent__sky">
+      <i class="v4-consent__sun"></i>
+      <i class="v4-consent__curtain v4-consent__curtain--left"></i>
+      <i class="v4-consent__curtain v4-consent__curtain--right"></i>
+    </span>
+    <span class="v4-consent__wing v4-consent__wing--left"><img src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" /></span>
+    <span class="v4-consent__wing v4-consent__wing--right"><img src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" /></span>
+  </div>
+  <p class="v4-consent__title" id="v4-consent-title">{{ home.consent.title }}</p>
+  <p class="v4-consent__body" id="v4-consent-body">{{ home.consent.body }}</p>
+  <div class="v4-consent__actions">
+    <button class="v4-consent__button" type="button" data-consent-answer="granted">{{ home.consent.yes }}</button>
+    <button class="v4-consent__button" type="button" data-consent-answer="denied">{{ home.consent.no }}</button>
+  </div>
+</aside>
