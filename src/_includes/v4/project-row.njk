@@ -48,7 +48,7 @@
   <div class="v4-project__strip" data-strip role="region" aria-label="{{ project.name }} screens">
     <div class="v4-project__track">
       {%- for panel in project.panels %}
-      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video and not panel.svg %} v4-project__panel--empty{% endif %}" style="--n: {{ 8 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
+      <figure class="v4-project__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}{% if not panel.src and not panel.layers and not panel.video and not panel.svg %} v4-project__panel--empty{% endif %}" style="--n: {{ 6 + loop.index }}{% if panel.bg %}; background: {{ panel.bg }}{% endif %}">
         {%- if panel.svg %}
         <div class="v4-project__svg" role="img" aria-label="{{ panel.alt }}">{% include panel.svg %}</div>
         {%- elif panel.video %}
