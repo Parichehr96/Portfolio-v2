@@ -1,0 +1,58 @@
+<!doctype html>
+<!--
+  LINKEDIN BANNER, 1580 x 400 (790 x 200 at 2x) — rendered by ../og-image/render.mjs style
+  (render.mjs here). The link preview's style: white, Figtree, the footer's
+  Amsterdam and the hero's window. ?v=1|2|3 picks a direction. The profile
+  photo covers the bottom-left (about 0..300 x 230..400), kept clear.
+-->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; width: 1580px; height: 400px; overflow: hidden; background: #fff; font-family: "Figtree", sans-serif; position: relative; }
+.name { font-size: 20px; font-weight: 500; color: #475569; }
+.line { margin-top: 8px; font-size: 44px; font-weight: 600; line-height: 1.12; color: #0f172a; letter-spacing: -.015em; }
+.where { margin-top: 12px; font-size: 20px; color: #64748b; }
+img { position: absolute; display: block; max-width: none; }
+.v { display: none; }
+body[data-v="1"] .v1, body[data-v="2"] .v2, body[data-v="3"] .v3 { display: block; }
+
+/* 1 · The street on the right, words on the left past the photo. */
+.v1 .text { position: absolute; left: 380px; top: 96px; }
+.v1 .art { right: -40px; bottom: 0; width: 880px; }
+.v1 .mill { right: 700px; bottom: 0; width: 214px; }
+
+/* 2 · Words centred above the whole street, as the link preview. */
+.v2 .text { position: absolute; left: 0; right: 0; top: 34px; text-align: center; }
+.v2 .line { font-size: 40px; }
+/* The street the full width, edge to edge; its canal edge just under the
+   foot of the frame, so the roofs clear the words. */
+.v2 .text { top: 26px; }
+.v2 .art { left: 0; bottom: -26px; width: 1580px; }
+.v2 .mill { left: 36px; bottom: 0; width: 300px; }
+
+/* 3 · The window on the right, the sky through it; words on the left. */
+.v3 .text { position: absolute; left: 380px; top: 104px; }
+.v3 .win { position: absolute; right: 96px; top: 58px; width: 595px; height: 242px; }
+.v3 .sky { position: absolute; inset: 6% 3.5%; border-radius: 6px;
+  background: radial-gradient(circle at 30% 30%, rgb(255 250 238 / .9) 0%, rgb(255 236 206 / .4) 10%, rgb(255 214 176 / 0) 30%),
+              linear-gradient(180deg, #1f63bf 0%, #4f93e0 42%, #9ccaf2 72%, #d8ebf8 100%); }
+.v3 .frame { left: 0; top: 0; width: 100%; height: 100%; }
+.v3 .note { position: absolute; right: 96px; top: 316px; width: 595px; font-size: 16px; color: #64748b; }
+</style></head><body>
+<div class="v v1">
+  <div class="text"><div class="name">Parichehr Talebzadeh</div><div class="line">I make complex products<br>simple to use.</div><div class="where">Product designer in Amsterdam</div></div>
+  <img class="mill" src="/Assets/v4/footer/windmill.svg" alt=""><img class="art" src="/Assets/v4/footer/amsterdam.svg" alt="">
+</div>
+<div class="v v2">
+  <div class="text"><div class="name">Parichehr Talebzadeh</div><div class="line">I make complex products simple to use.</div><div class="where">Product designer in Amsterdam</div></div>
+  <img class="mill" src="/Assets/v4/footer/windmill.svg" alt=""><img class="art" src="/Assets/v4/footer/amsterdam.svg" alt="">
+</div>
+<div class="v v3">
+  <div class="text"><div class="name">Parichehr Talebzadeh</div><div class="line">I make complex products<br>simple to use.</div><div class="where">Product designer in Amsterdam</div></div>
+  <div class="win"><div class="sky"></div><img class="frame" src="/Assets/v4/consent/window.svg" alt=""></div>
+</div>
+<script>
+document.body.dataset.v = new URLSearchParams(location.search).get("v") || "1";
+Promise.all([document.fonts.ready, ...[...document.images].map(i => i.complete ? 0 : new Promise(r => i.onload = r))]).then(() => { document.title = "ready"; });
+</script>
+</body></html>
