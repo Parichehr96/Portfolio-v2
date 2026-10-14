@@ -175,18 +175,16 @@
 .v4-sky__track:has(.v4-sky__hour:focus-visible) { outline: 2px solid var(--v4-sky-on-glass); outline-offset: 6px; border-radius: 4px; }
 
 /* The two lines under the sky (1497:23078). */
-.v4-sky__note { display: flex; flex-direction: column; font-size: var(--v4-text-ui); }
-.v4-sky__lead { line-height: 24px; color: var(--v4-text-muted); transition: opacity .3s ease; }
-.v4-sky__line { display: grid; line-height: 1.45; letter-spacing: .14px; color: var(--v4-sky-ink); font-feature-settings: "lnum" 1, "tnum" 1; }
-/* Closed, two lines; open (hover, tap or focus), the first fades (keeping its
-   room, so nothing moves) and the second says what to do. */
-.v4-sky__line > span { grid-area: 1 / 1; transition: opacity .3s ease; }
-.v4-sky__line-open { opacity: 0; }
-.v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__lead,
-.v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__line-shut { opacity: 0; }
+.v4-sky__note { display: grid; font-size: var(--v4-text-ui); }
+.v4-sky__lead { grid-area: 1 / 1; line-height: 24px; color: var(--v4-text-muted); transition: opacity .3s ease; }
+.v4-sky__line { line-height: 1.45; letter-spacing: .14px; color: var(--v4-sky-ink); font-feature-settings: "lnum" 1, "tnum" 1; transition: opacity .3s ease; }
+/* Closed, two lines; open (hover, tap or focus), both give way to one line in
+   the first one's place, right under the window. */
+.v4-sky__line-open { grid-area: 1 / 1; align-self: center; opacity: 0; }
+.v4-sky__frame:has(.is-open) ~ .v4-sky__note :is(.v4-sky__lead, .v4-sky__line:not(.v4-sky__line-open)) { opacity: 0; }
 .v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__line-open { opacity: 1; transition-delay: .05s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__lead, .v4-sky__line > span,
+  .v4-sky__view, .v4-sky__view::before, .v4-sky__time, .v4-sky__control, .v4-sky__lead, .v4-sky__line,
   .v4-sky__wing, .v4-sky__open { transition: none !important; }
 }
