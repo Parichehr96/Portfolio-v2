@@ -3,6 +3,9 @@
  *
  *   node tools/og-image/render.mjs [out]   (default tools/linkedin-banner/banner.jpg)
  *
+ * SCALE=2 renders at twice the size (3160 x 800); an out path ending .png
+ * gives a lossless PNG.
+ *
  * Serves the repo root, opens the stage in headless Chrome at 1x, waits for
  * the fonts and drawings, and captures it. Needs Google Chrome.
  */
@@ -38,11 +41,12 @@ try {
   const title = async () => (await send("Runtime.evaluate", { expression: "document.title", returnByValue: true })).result?.result?.value;
 
   await send("Page.enable");
-  await send("Emulation.setDeviceMetricsOverride", { width: 1580, height: 400, deviceScaleFactor: 1, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: 1580, height: 400, deviceScaleFactor: +(process.env.SCALE || 1), mobile: false });
   await send("Page.navigate", { url: `http://127.0.0.1:${HTTP}/tools/linkedin-banner/stage.html?v=${process.env.V || 1}` });
   for (let i = 0; i < 100 && (await title()) !== "ready"; i++) await sleep(200);
   await sleep(300);
-  const shot = await send("Page.captureScreenshot", { format: "jpeg", quality: 92 });
+  const png = OUT.endsWith(".png");
+  const shot = await send("Page.captureScreenshot", png ? { format: "png" } : { format: "jpeg", quality: 92 });
   writeFileSync(OUT, Buffer.from(shot.result.data, "base64"));
   console.log("→ " + OUT);
   ws.close();
