@@ -19,14 +19,14 @@
     <span class="v4-sky__time" data-sky-time aria-live="polite">12:00</span>
     <div class="v4-sky__control">
       <div class="v4-sky__slider">
-        <label for="sky-hour">Hour</label>
+        <span class="v4-sky__day" data-sky-day aria-hidden="true">Hour</span>
         <div class="v4-sky__track">
           <svg viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
             <line class="v4-sky__horizon" x1="0" y1="50" x2="1440" y2="50"></line>
             <path class="v4-sky__path" data-sky-path d="M0 96 C360 96 480 4 720 4 C960 4 1080 96 1440 96"></path>
           </svg>
           <span class="v4-sky__knob" aria-hidden="true"></span>
-          <input class="v4-sky__hour" id="sky-hour" type="range" min="0" max="1439" step="5" value="720">
+          <input class="v4-sky__hour" id="sky-hour" type="range" min="0" max="1439" step="5" value="720" aria-label="Hour">
         </div>
       </div>
       <button class="v4-sky__now" type="button" data-sky-now aria-pressed="true">Now</button>

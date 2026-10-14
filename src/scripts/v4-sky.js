@@ -20,6 +20,7 @@
   var control = panel.querySelector(".v4-sky__control");
   var track = panel.querySelector(".v4-sky__track");
   var hourIn = panel.querySelector("#sky-hour");
+  var dayEl = panel.querySelector("[data-sky-day]");
   var nowBtn = panel.querySelector("[data-sky-now]");
   var timeEl = panel.querySelector("[data-sky-time]");
   var pathEl = panel.querySelector("[data-sky-path]");
@@ -145,6 +146,8 @@
     sky.style.setProperty("--glow", Math.max(0, Math.min(.9, (s.alt + 5) / 11)).toFixed(2));
     sky.style.setProperty("--stars", Math.max(0, Math.min(1, (-s.alt - 6) / 8)).toFixed(2));
     timeEl.textContent = hhmm(date);
+    // The track's label: the day the sky is for, as "Oct 14".
+    if (dayEl) dayEl.textContent = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     if (live) hourIn.value = String(minuteOf(date));
     hourIn.setAttribute("aria-valuetext", hhmm(date));
     drawTrack(date);

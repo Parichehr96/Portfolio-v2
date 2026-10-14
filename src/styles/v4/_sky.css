@@ -134,7 +134,7 @@
   padding: 7px 14px; border-radius: var(--v4-radius-round);
 }
 .v4-sky__slider { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; }
-.v4-sky__slider label { flex: none; font-size: 11px; font-weight: var(--v4-weight-medium); line-height: 1.45; letter-spacing: .3px; color: var(--v4-sky-on-glass-soft); }
+.v4-sky__slider .v4-sky__day { flex: none; font-size: 11px; font-weight: var(--v4-weight-medium); line-height: 1.45; letter-spacing: .3px; color: var(--v4-sky-on-glass-soft); }
 .v4-sky__now {
   font: inherit; font-size: 11.5px; font-weight: var(--v4-weight-semibold); line-height: 16px; color: var(--v4-sky-on-glass);
   background: none; border: 0; border-bottom: 1px dashed var(--v4-sky-on-glass-soft); padding: 0 0 1px; cursor: pointer;
