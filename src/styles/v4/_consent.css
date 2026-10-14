@@ -76,7 +76,7 @@
   position: relative;
   width: 128px;
   height: 52px;
-  margin: var(--v4-space-2) 0 var(--v4-space-4) 32px;   /* room for the sashes to swing out */
+  margin: var(--v4-space-2) 0 var(--v4-space-4);   /* on the text's edge; opened, the left sash swings past the card's */
 }
 
 .v4-consent__sky {
