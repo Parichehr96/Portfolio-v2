@@ -9,7 +9,7 @@
   left: var(--v4-space-6);
   bottom: var(--v4-space-6);
   z-index: 30;
-  width: 360px;
+  width: 404px;
   padding: var(--v4-space-5);
   background: var(--v4-surface);
   border: 1px solid var(--v4-border);
@@ -76,18 +76,11 @@
   position: relative;
   width: 128px;
   height: 52px;
-  margin-bottom: var(--v4-space-3);
-  perspective: 420px;
-}
-
-.v4-consent__sky,
-.v4-consent__wing {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  margin: var(--v4-space-2) 0 var(--v4-space-4) 32px;   /* room for the sashes to swing out */
 }
 
 .v4-consent__sky {
+  position: absolute;
   left: 4%;
   right: 4%;
   top: 6%;
@@ -135,46 +128,74 @@
   transform: none;
 }
 
-/* The two halves of the frame, swung open for a yes. */
+/* The window, as the hero's (_sky.css): two wings hinged on the outer
+   edges, each the closed drawing's half on its front and the open sash on
+   its back, turned to 112.6° from a perspective scaled with the window
+   (1250px at 595 wide), so each back lands where the hero's does. The open
+   frame comes in behind them as they go. */
+.v4-consent__frame {
+  position: absolute;
+  left: -32.06%;
+  top: -20.64%;
+  width: 164.93%;
+  max-width: none;
+  height: 149.09%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.v4-consent.is-open .v4-consent__frame {
+  opacity: 1;
+}
+
 .v4-consent__wing {
-  width: 50%;
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
   transition: transform 0.75s cubic-bezier(.45, 0, .25, 1);
 }
 
-.v4-consent__wing img {
-  position: absolute;
-  top: 0;
-  width: 200%;
-  max-width: none;
-  height: 100%;
-}
-
 .v4-consent__wing--left {
-  left: 0;
   transform-origin: 0 50%;
-}
-
-.v4-consent__wing--left img {
-  left: 0;
+  transform: perspective(269px) rotateY(0deg);
 }
 
 .v4-consent__wing--right {
-  right: 0;
   transform-origin: 100% 50%;
-}
-
-.v4-consent__wing--right img {
-  right: 0;
+  transform: perspective(269px) rotateY(0deg);
 }
 
 .v4-consent.is-open .v4-consent__wing--left {
-  transform: rotateY(-112deg);
+  transform: perspective(269px) rotateY(-112.6deg);
 }
 
 .v4-consent.is-open .v4-consent__wing--right {
-  transform: rotateY(112deg);
+  transform: perspective(269px) rotateY(112.6deg);
 }
+
+.v4-consent__leaf {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.v4-consent__leaf--left { clip-path: inset(0 52.6% 0 0); }
+.v4-consent__leaf--right { clip-path: inset(0 0 0 47.4%); }
+
+.v4-consent__back {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  max-width: none;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.v4-consent__back--left { left: 0; width: 52.44%; }
+.v4-consent__back--right { left: 42.36%; width: 57.64%; }
 
 .v4-consent__title {
   font-size: var(--v4-text-body);
@@ -190,35 +211,54 @@
   color: var(--v4-text-muted);
 }
 
-/* Two answers, the same weight: neither is the "right" one. */
+/* The answers: a yes as the button, a no as a dotted link beside it, on
+   one line. */
 .v4-consent__actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--v4-space-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--v4-space-2) var(--v4-space-5);
   margin-top: var(--v4-space-4);
 }
 
 .v4-consent__button {
-  min-height: 40px;
-  padding: var(--v4-space-2) var(--v4-space-3);
-  border: 1px solid var(--v4-border);
-  border-radius: var(--v4-radius-button);
-  background: var(--v4-surface);
+  padding: 0;
+  border: 0;
+  background: none;
   font-size: var(--v4-text-ui);
   font-weight: var(--v4-weight-medium);
   line-height: var(--v4-leading-ui);
+  white-space: nowrap;
   color: var(--v4-text);
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.v4-consent__button:hover {
-  background: var(--v4-surface-muted);
+.v4-consent__button--yes {
+  min-height: 40px;
+  padding: var(--v4-space-2) var(--v4-space-5);
+  border-radius: var(--v4-radius-button);
+  background: var(--v4-text);
+  color: var(--v4-surface);
+  transition: opacity 0.2s ease;
+}
+
+.v4-consent__button--yes:hover {
+  opacity: 0.85;
+}
+
+.v4-consent__button--no {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.v4-consent__button--no:hover {
+  text-decoration-style: solid;
 }
 
 .v4-consent__button:focus-visible {
   outline: 2px solid var(--v4-text);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* "Cookie settings", after the copyright line in the footer. */
@@ -252,6 +292,7 @@
 @media (prefers-reduced-motion: reduce) {
   .v4-consent,
   .v4-consent__wing,
+  .v4-consent__frame,
   .v4-consent__curtain {
     transition: opacity 0.2s ease;
   }

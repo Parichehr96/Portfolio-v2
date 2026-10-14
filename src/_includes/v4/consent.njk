@@ -3,9 +3,10 @@
   the visitor answers; "Cookie settings" in the footer brings it back.
 
   The little window is the hero's own (Assets/v4/consent/window.svg, the
-  closed drawing with its panes see-through), in two halves over a bit of
-  sky. "Sure, peek away" swings the halves open; "Keep the curtains closed"
-  draws two curtains across. Then the card goes. scripts/v4-consent.js holds
+  closed drawing with its panes see-through), built as the hero's is (v4/sky-window.njk):
+  two wings over a bit of sky, each with the open sash drawn on its back, and
+  the open frame coming in behind. "Sure, peek away" swings them open; "Keep
+  the curtains closed" draws two curtains across. Then the card goes. scripts/v4-consent.js holds
   the logic; partials/head-analytics.njk what each answer turns on.
 #}
 <aside class="v4-consent" data-consent role="dialog" aria-labelledby="v4-consent-title" aria-describedby="v4-consent-body" hidden>
@@ -15,13 +16,20 @@
       <i class="v4-consent__curtain v4-consent__curtain--left"></i>
       <i class="v4-consent__curtain v4-consent__curtain--right"></i>
     </span>
-    <span class="v4-consent__wing v4-consent__wing--left"><img src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" /></span>
-    <span class="v4-consent__wing v4-consent__wing--right"><img src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" /></span>
+    <img class="v4-consent__frame" src="/Assets/v4/consent/window-open-frame.svg" alt="" width="818" height="325" />
+    <span class="v4-consent__wing v4-consent__wing--left">
+      <img class="v4-consent__leaf v4-consent__leaf--left" src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" />
+      <img class="v4-consent__back v4-consent__back--left" src="/Assets/v4/sky/sash-back-l.png" alt="" width="312" height="242" />
+    </span>
+    <span class="v4-consent__wing v4-consent__wing--right">
+      <img class="v4-consent__leaf v4-consent__leaf--right" src="/Assets/v4/consent/window.svg" alt="" width="595" height="242" />
+      <img class="v4-consent__back v4-consent__back--right" src="/Assets/v4/sky/sash-back-r.png" alt="" width="343" height="242" />
+    </span>
   </div>
   <p class="v4-consent__title" id="v4-consent-title">{{ home.consent.title }}</p>
   <p class="v4-consent__body" id="v4-consent-body">{{ home.consent.body }}</p>
   <div class="v4-consent__actions">
-    <button class="v4-consent__button" type="button" data-consent-answer="granted">{{ home.consent.yes }}</button>
-    <button class="v4-consent__button" type="button" data-consent-answer="denied">{{ home.consent.no }}</button>
+    <button class="v4-consent__button v4-consent__button--yes" type="button" data-consent-answer="granted">{{ home.consent.yes }}</button>
+    <button class="v4-consent__button v4-consent__button--no" type="button" data-consent-answer="denied">{{ home.consent.no }}</button>
   </div>
 </aside>
