@@ -343,10 +343,10 @@ module.exports = {
     body: "I’m always open to thoughtful conversations, interesting product challenges, and teams that care about making complicated things feel simple. If that sounds like what you’re working on, I’d love to hear about it.",
     cta: { label: "Book a Call", url: "https://calendar.app.google/esnBYXwJEYMbRyxb6" },
     socials: [
+      { name: "Email", url: "mailto:info@parichehr.design", icon: "/Assets/v4/footer/mail.svg" },
+      { name: "LinkedIn", url: "https://linkedin.com/in/parichehr-talebzadeh", icon: "/Assets/v4/footer/linkedin.svg" },
       { name: "Dribbble", url: "https://dribbble.com/pariuxd", icon: "/Assets/v4/footer/dribbble.svg" },
       { name: "Behance", url: "https://behance.net/pariuxd", icon: "/Assets/v4/footer/behance.svg" },
-      { name: "LinkedIn", url: "https://linkedin.com/in/parichehr-talebzadeh", icon: "/Assets/v4/footer/linkedin.svg" },
-      { name: "Email", url: "mailto:info@parichehr.design", icon: "/Assets/v4/footer/mail.svg" },
     ],
     owner: "Pari’s portfolio",
   },
