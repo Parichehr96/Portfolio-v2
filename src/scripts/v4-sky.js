@@ -10,6 +10,8 @@
  *      the visitor's day, crossing the horizon at sunrise and sunset, with a
  *      dot to drag. Leaving returns to now.
  * Without this script the panel shows a clear midday sky (_sky.css).
+ * Each redraw is announced on the panel ("v4:sky"), for the weather over it
+ * (scripts/v4-weather.js).
  */
 (function () {
   "use strict";
@@ -54,7 +56,8 @@
   }
   function placeFor(tz) {
     var c = ZONES[tz];
-    if (c) return { tz: tz, lat: c[0], lon: c[1] };
+    // The city named after the zone ("Europe/Amsterdam" → "Amsterdam"), unless its point is another city's.
+    if (c) return { tz: tz, lat: c[0], lon: c[1], city: ({ "Asia/Kolkata": "New Delhi" })[tz] || tz.split("/").pop().replace(/_/g, " ") };
     var south = /^(Australia|Pacific\/Auckland|America\/(Sao|Buenos|Santiago|Lima))/.test(tz);
     return { tz: tz, lat: south ? -30 : 45, lon: offsetHours(tz, new Date()) * 15 };
   }
@@ -152,6 +155,10 @@
     hourIn.setAttribute("aria-valuetext", hhmm(date));
     drawTrack(date);
     nowBtn.setAttribute("aria-pressed", live ? "true" : "false");
+    // For the weather over it (scripts/v4-weather.js): when, where, the sun, the colours.
+    panel.dispatchEvent(new CustomEvent("v4:sky", { detail: {
+      date: date, live: live, alt: s.alt, setting: setting, cols: cols,
+      lat: place.lat, lon: place.lon, tz: place.tz, city: place.city || "" } }));
   }
 
   hourIn.addEventListener("input", function () { live = false; at = atMinute(+hourIn.value); render(); });
