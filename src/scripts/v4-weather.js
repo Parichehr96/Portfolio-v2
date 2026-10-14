@@ -48,12 +48,14 @@
   function fetchWeather(lat, lon) {
     var id = lat.toFixed(2) + "," + lon.toFixed(2);
     try { var c = JSON.parse(sessionStorage.getItem(KEY) || "null");
-      if (c && c.id === id && Date.now() - c.t < 15 * 60000) return Promise.resolve(c.d); } catch (e) {}
+      if (c && c.id === id && Date.now() - c.t < 15 * 60000 && c.d && c.d.hourly && c.d.current) return Promise.resolve(c.d); } catch (e) {}
     var vars = "cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,weather_code,precipitation,snowfall,wind_speed_10m,wind_direction_10m";
     return fetch("https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
       "&current=" + vars + "&hourly=" + vars + "&wind_speed_unit=kmh&timezone=auto&forecast_days=2")
       .then(function (r) { return r.json(); })
-      .then(function (d) { try { sessionStorage.setItem(KEY, JSON.stringify({ id: id, t: Date.now(), d: d })); } catch (e) {} return d; });
+      .then(function (d) {
+        if (!d || !d.hourly || !d.current) throw new Error("no weather");   // never keep a failed answer
+        try { sessionStorage.setItem(KEY, JSON.stringify({ id: id, t: Date.now(), d: d })); } catch (e) {} return d; });
   }
 
   // The hour's local stamp in the place's time zone, as Open-Meteo writes it.
@@ -274,19 +276,25 @@
   function wake() { if (!raf && seen && !document.hidden) raf = requestAnimationFrame(frame); }
 
   // ---------- The sky's moments, and the tooltip ----------
+  // The weather for the sky's place; tried again every 2 minutes if it can't be had,
+  // and refreshed every 15 while the page stays open.
+  var retry = 0;
+  function load() {
+    clearTimeout(retry);
+    fetchWeather(sky.lat, sky.lon).then(function (d) { data = d; setWant(); wake(); retry = setTimeout(load, 15 * 60000); })
+      .catch(function () { retry = setTimeout(load, 2 * 60000); });
+  }
   var asked = "";
   panel.addEventListener("v4:sky", function (e) {
     sky = e.detail;
     var id = sky.lat + "," + sky.lon;
-    if (asked !== id && !FORCE) {
-      asked = id;
-      fetchWeather(sky.lat, sky.lon).then(function (d) { data = d; setWant(); wake(); }).catch(function () {});
-    }
+    if (asked !== id && !FORCE) { asked = id; load(); }
     setWant(); wake();
   });
 
   function words() {
-    if (!wx) return "";
+    var place = sky && sky.city ? " (" + sky.city + ")" : "";
+    if (!wx) return sky ? "Your sky" + place + ": checking the weather\u2026" : "";
     var pct = Math.round(wx.cover * 100), what = "";
     if (wx.kind === "thunder") what = "thunderstorm";
     else if (wx.kind === "snow") what = "snow";

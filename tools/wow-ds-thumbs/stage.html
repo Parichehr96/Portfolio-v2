@@ -29,7 +29,8 @@ const q = new URLSearchParams(location.search), E = q.get("e") || "themes";
 const LOOPS = {
   themes: { h: 360, loop: 5.2, at: [0, 2.6], states: ["light", "dark"],
             apply: (w, s) => w.set(s) },
-  layers: { file: "anatomy-layers", h: 400, loop: 5.8, at: [0.6, 4.2], states: ["open", "closed"],
+  // Its labels in from the edge (and a little narrower), the whole centred (content 41..559 of 600).
+  layers: { file: "anatomy-layers", h: 400, loop: 5.8, css: ".lab{left:41px!important;width:156px!important}.stage{left:247px!important}", at: [0.6, 4.2], states: ["open", "closed"],
             apply: (w, s) => w.document.getElementById("c").classList.toggle("open", s === "open") },
   // Seven of the table's own steps (every 1.5s, seven tiles on), across the families.
   components: { h: 440, pad: 12, loop: 10.5, at: [0, 1.5, 3, 4.5, 6, 7.5, 9], states: [0, 7, 14, 21, 28, 35, 42],
@@ -63,7 +64,7 @@ window.LOOP = L.loop;
 fetch("/Assets/embeds/wow-ds/" + (L.file || E) + ".html").then(r => r.text()).then(html => {
   // The embed without its own timer (its whenSeen loop), at its own base.
   html = html.replace(/whenSeen\([\s\S]*?\n?\s*\}\);\s*(?=<\/script>)/, "")
-             .replace("<head>", '<head><base href="/Assets/embeds/wow-ds/">');
+             .replace("<head>", '<head><base href="/Assets/embeds/wow-ds/">' + (L.css ? "<style>" + L.css + "</style>" : ""));
   ifr = document.createElement("iframe");
   const pad = 2 * (L.pad || 20), s = Math.min((487.2 - pad) / 600, (312 - pad) / L.h);
   const box = document.createElement("div"); box.className = "box";
