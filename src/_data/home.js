@@ -303,7 +303,7 @@ module.exports = {
         company: "Onton",
         href: "/work/onton/",
         logo: "/Assets/v4/experience/onton.svg",
-        dates: "Dec 2023 - Jun 2025",
+        dates: "Dec 2023 - Jul 2025",
         summary: "Event management platform serving organizers and attendees (30,000+ users). Sole designer, owning end-to-end product design from discovery to delivery.",
       },
       {
