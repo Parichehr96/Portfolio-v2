@@ -166,10 +166,10 @@ module.exports = {
   // ---- About — 911:727 (label), 911:854 (text), 918:32037 + 918:32133 --------
   // ---- Sky — 1497:23078: the two lines under the visitor's sky ------------
   sky: {
-    lead: "In case you’ve been so busy to look up,",
+    // Under the closed window, two lines; open, the first goes and the second says what to do.
+    lead: "In case you’ve been so busy to look up, hover to open the window.",
     line: "This is your sky, as it looks right now.",
-    hintShut: "Hover to open the window",          // under the closed window
-    hint: "Drag the light to see other times.",   // shown while the window is open
+    lineOpen: "This is your sky, drag the light to see how it changes.",
   },
 
   about: {
