@@ -110,7 +110,8 @@ module.exports = {
         verified: true,
         years: "2024-2025",
         desc: [
-          { text: "Redesigned a Web3 event platform end to end, making event creation as simple as in any other event app, so organizers stopped dropping off and the product grew from " },
+          { style: "lead", text: "Redesigned a Web3 event platform end to end," },
+          { text: " making event creation as simple as in any other event app, so organizers stopped dropping off and the product grew from " },
           { style: "stat", text: "87 to 1,500" },
           { text: " daily active users." },
         ],
