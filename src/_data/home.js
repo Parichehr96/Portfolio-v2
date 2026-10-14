@@ -345,6 +345,7 @@ module.exports = {
       { name: "Dribbble", url: "https://dribbble.com/pariuxd", icon: "/Assets/v4/footer/dribbble.svg" },
       { name: "Behance", url: "https://behance.net/pariuxd", icon: "/Assets/v4/footer/behance.svg" },
       { name: "LinkedIn", url: "https://linkedin.com/in/parichehr-talebzadeh", icon: "/Assets/v4/footer/linkedin.svg" },
+      { name: "Email", url: "mailto:info@parichehr.design", icon: "/Assets/v4/footer/mail.svg" },
     ],
     owner: "Pari’s portfolio",
   },

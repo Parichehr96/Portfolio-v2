@@ -33,7 +33,8 @@
     <div class="v4-footer__meta">
       <ul class="v4-footer__socials">
         {%- for s in home.footer.socials %}
-        <li><a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}"><img src="{{ s.icon }}" alt="" /></a></li>
+        {%- set mail = s.url.startsWith("mailto:") %}
+        <li><a href="{{ s.url }}"{% if not mail %} target="_blank" rel="noopener"{% endif %} aria-label="{{ s.name }}{% if mail %} {{ s.url | replace('mailto:', '') }}{% endif %}"><img src="{{ s.icon }}" alt="" /></a></li>
         {%- endfor %}
       </ul>
       <p class="v4-footer__updated">Last updated: {{ build.updated }}</p>
