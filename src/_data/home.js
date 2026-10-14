@@ -47,7 +47,7 @@ module.exports = {
     bio: {
       before: "I make complex products simple to use. ",
       strong: "5+ years",
-      after: " designing Web3, consumer and enterprise products, often as the only designer on the team.",
+      after: " designing Web3, consumer and enterprise products, often owning design end to end alongside founders, engineers and researchers.",
     },
     location: "Based in the Netherlands",
   },
@@ -218,7 +218,7 @@ module.exports = {
     ],
     paragraphs: [
       "I'm drawn to complex products. Industrial Design taught me to think in systems. My Master's in Interaction Design taught me to ground those systems in evidence.",
-      "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to about 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
+      "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often owning design end to end alongside founders, engineers and researchers. I've cut a core task from 7 minutes to about 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
       "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
       "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
       "Hover to see my ...",

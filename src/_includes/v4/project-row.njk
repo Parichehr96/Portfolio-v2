@@ -19,7 +19,7 @@
 {#- A linked project is clickable as a whole card (name, text and strip),
     scripts/v4-strip.js; the name stays the real link for keyboards and
     screen readers. -#}
-<article class="v4-project{% if linked %} v4-project--linked{% endif %}" aria-labelledby="project-{{ project.id }}"{% if linked %} data-card-href="{{ project.href }}"{% endif %}>
+<article class="v4-project{% if linked %} v4-project--linked{% endif %}" id="work-{{ project.id }}" aria-labelledby="project-{{ project.id }}"{% if linked %} data-card-href="{{ project.href }}"{% endif %}>
   <header class="v4-project__head">
     <div class="v4-project__title-row">
       <h3 class="v4-project__name" id="project-{{ project.id }}">

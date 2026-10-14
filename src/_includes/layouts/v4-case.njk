@@ -25,19 +25,16 @@ layout: layouts/v4.njk
   what lets Back and Next float there with no ground behind them.
 #}
 {%- set c = cases[caseKey] -%}
-{#- BACK AND NEXT walk the case studies in the homepage's order
-    (home.work.projects; only ones that are live, with a page and not `soon`),
-    each the other's reverse. Back from the first goes to the top of the
-    homepage; Next from the last goes to Parichehr (/#about). -#}
+{#- BACK goes to this case study's card on the homepage (/#work-<id>, the id
+    on v4/project-row.njk; scripts/v4-rail.js makes the jump). NEXT goes to the
+    next case study in the homepage's order (home.work.projects; live ones, with
+    a page and not `soon`); the last has none. -#}
 {%- set live = [] -%}
 {%- for p in home.work.projects -%}{%- if p.href and not p.soon -%}{%- set live = live.concat([p]) -%}{%- endif -%}{%- endfor -%}
-{%- set backHref = "/" -%}
-{%- set nextHref = "/#about" -%}
+{%- set backHref = "/#work-" + caseKey -%}
+{%- set nextHref = "" -%}
 {%- for p in live -%}
-  {%- if p.id == caseKey -%}
-    {%- if not loop.first -%}{%- set backHref = live[loop.index0 - 1].href -%}{%- endif -%}
-    {%- if not loop.last -%}{%- set nextHref = live[loop.index0 + 1].href -%}{%- endif -%}
-  {%- endif -%}
+  {%- if p.id == caseKey and not loop.last -%}{%- set nextHref = live[loop.index0 + 1].href -%}{%- endif -%}
 {%- endfor -%}
 
 <div class="v4-shell v4-shell--case">
@@ -57,10 +54,12 @@ layout: layouts/v4.njk
           <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
           {{ c.back.label }}
         </a>
+        {%- if nextHref %}
         <a class="v4-case__next" href="{{ nextHref }}">
           {{ c.next.label }}
           <img src="/Assets/v4/case/next.svg" width="20" height="20" alt="" />
         </a>
+        {%- endif %}
       </div>
     </div>
 

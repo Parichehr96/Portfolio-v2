@@ -39,7 +39,12 @@
   position: sticky;
   top: var(--v4-edge);
   padding-left: var(--v4-edge);
-  pointer-events: auto;
+  pointer-events: none;   /* the column lets clicks through to what lies under it (a case study's Back); */
+}
+
+.v4-rail a,
+.v4-rail button {
+  pointer-events: auto;   /* only its own links and buttons take them */
 }
 
 .v4-rail__list {
@@ -48,8 +53,12 @@
   gap: var(--v4-space-3);
 }
 
+/* Only as wide as its words: a full-width item stretched across the page
+   and sat, invisibly, over the case studies' Back button. */
 .v4-rail__item {
   display: flex;
+  align-self: flex-start;
+  width: max-content;
   align-items: center;
   gap: var(--v4-space-2);
   font-size: var(--v4-text-ui);

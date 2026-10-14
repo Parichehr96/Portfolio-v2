@@ -25,7 +25,9 @@
     var seen = sessionStorage.getItem("v4-toast-seen");
     var hard = sessionStorage.getItem("v4-hard-reload");
     sessionStorage.removeItem("v4-hard-reload");
-    if (seen && !hard) document.documentElement.classList.add("is-toast-skipped");
+    // Back from a case study (/#work-<id>) lands on its card: no toast over it.
+    var back = /^#work-/.test(location.hash);
+    if ((seen && !hard) || back) document.documentElement.classList.add("is-toast-skipped");
     // Showing it: start at the top. Otherwise the browser restores the last
     // scroll position, which leaves the sticky toast lying over the intro.
     else if ("scrollRestoration" in history) history.scrollRestoration = "manual";
