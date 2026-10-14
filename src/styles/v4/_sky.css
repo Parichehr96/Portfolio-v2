@@ -186,7 +186,8 @@
 .v4-sky__mine { display: none; }
 .consent-denied .v4-sky__note > :not(.v4-sky__mine) { display: none; }
 .consent-denied .v4-sky__note > .v4-sky__mine { display: block; grid-area: auto; }
-.consent-denied .v4-sky__view { cursor: pointer; }
+.consent-denied .v4-sky__view,
+.consent-pending .v4-sky__view { cursor: pointer; }   /* shut until a yes; a click asks */
 .v4-sky__frame:has(.is-open) ~ .v4-sky__note :is(.v4-sky__lead, .v4-sky__line:not(.v4-sky__line-open)) { opacity: 0; }
 .v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__line-open { opacity: 1; transition-delay: .05s; }
 

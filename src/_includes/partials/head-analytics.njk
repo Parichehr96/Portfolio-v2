@@ -14,6 +14,8 @@
   window.__consent = (function () { try { return localStorage.getItem("v4-consent") || ""; } catch (e) { return ""; } })();
   // A no closes the curtains on the visitor's sky too: the hero shows mine (v4/sky.njk).
   if (window.__consent === "denied") document.documentElement.classList.add("consent-denied");
+  // No answer yet: the window stays shut until there is one.
+  else if (window.__consent !== "granted") document.documentElement.classList.add("consent-pending");
 </script>
 {%- if site.analytics.ga4 %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"></script>

@@ -40,6 +40,7 @@
   function apply(answer) {
     var yes = answer === "granted";
     document.documentElement.classList.toggle("consent-denied", !yes);
+    document.documentElement.classList.remove("consent-pending");
     document.dispatchEvent(new CustomEvent("v4:consent", { detail: { answer: answer } }));
     if (typeof window.gtag === "function")
       window.gtag("consent", "update", { analytics_storage: yes ? "granted" : "denied" });

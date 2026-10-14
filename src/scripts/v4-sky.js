@@ -175,7 +175,7 @@
   var hoverable = window.matchMedia("(hover: hover) and (pointer: fine)");
   var open = false;
   function setOpen(next) {
-    if (next && mine()) return;                          // closed curtains: a click asks again instead
+    if (next && window.__consent !== "granted") return;  // shut until a yes: a click asks instead
     if (next === open) return;
     open = next;
     panel.classList.toggle("is-open", open);
@@ -185,11 +185,11 @@
   panel.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(true); });
   panel.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(false); });
   panel.addEventListener("click", function () {
-    if (mine()) { if (window.__consentAsk) window.__consentAsk(); return; }
+    if (window.__consent !== "granted") { if (window.__consentAsk) window.__consentAsk(); return; }
     if (!hoverable.matches) setOpen(true);
   });
   panel.addEventListener("keydown", function (e) {
-    if (mine() && (e.key === "Enter" || e.key === " ") && window.__consentAsk) { e.preventDefault(); window.__consentAsk(); }
+    if (window.__consent !== "granted" && (e.key === "Enter" || e.key === " ") && window.__consentAsk) { e.preventDefault(); window.__consentAsk(); }
   });
   // An answer changes whose sky it is.
   document.addEventListener("v4:consent", function () {
