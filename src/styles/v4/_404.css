@@ -1,0 +1,175 @@
+/* ============================================================================
+   404 — src/404.njk. The hero's window on a night sky, centred, with the
+   line under it and the way home below.
+   ========================================================================== */
+
+.v4-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 120px 0 var(--v4-footer-gap);
+  text-align: center;
+}
+
+.v4-404__frame {
+  margin-inline: auto;
+}
+
+/* Night: the sky's own darkest palette, its stars on, no sun. */
+.v4-404__view {
+  --c0: #03050d; --c1: #060a1a; --c2: #0a1024; --c3: #111832; --c4: #08102a;
+  --glow: 0; --stars: 1;
+}
+
+.v4-404__sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The stars of the 404, twinkling, out of step; open, they brighten. */
+.v4-404__star {
+  fill: #fff;
+  opacity: 0.7;
+  animation: v4-404-twinkle 3s ease-in-out calc(var(--i) * -0.43s) infinite;
+  transition: opacity 0.4s ease;
+}
+
+.v4-404__view.is-open .v4-404__star {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes v4-404-twinkle {
+  50% { opacity: 0.25; }
+}
+
+/* Open, the lines join them up, one after another. */
+.v4-404__line {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.6);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.v4-404__view.is-open .v4-404__line {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.7s cubic-bezier(.45, 0, .25, 1) calc(var(--v4-window-swing) * 0.6 + var(--i) * 0.18s);
+}
+
+/* And a shooting star goes by, once per opening. */
+.v4-404__shoot {
+  stroke: #fff;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.v4-404__view.is-open .v4-404__shoot {
+  animation: v4-404-shoot 0.9s ease-out calc(var(--v4-window-swing) + 0.9s) 1 both;
+}
+
+@keyframes v4-404-shoot {
+  0% { opacity: 0; transform: translate(0, 0); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-160px, 70px); }
+}
+
+.v4-404__note {
+  display: grid;
+  margin-top: var(--v4-space-5);
+  font-size: var(--v4-text-ui);
+  line-height: var(--v4-leading-ui);
+  color: var(--v4-text-muted);
+}
+
+.v4-404__hint {
+  grid-area: 1 / 1;
+  transition: opacity 0.3s ease;
+}
+
+.v4-404__hint--open,
+.v4-404__frame:has(.is-open) ~ .v4-404__note .v4-404__hint:not(.v4-404__hint--open) {
+  opacity: 0;
+}
+
+.v4-404__frame:has(.is-open) ~ .v4-404__note .v4-404__hint--open {
+  opacity: 1;
+}
+
+.v4-404__title {
+  margin-top: var(--v4-inner-gap);
+  font-size: var(--v4-text-display);
+  font-weight: var(--v4-weight-semibold);
+  line-height: 1.5;
+  color: var(--v4-text);
+}
+
+.v4-404__body {
+  max-width: 440px;
+  margin-top: var(--v4-space-3);
+  font-size: var(--v4-text-body);
+  line-height: var(--v4-leading-body);
+  color: var(--v4-text-muted);
+}
+
+/* Home as the button, the work as a dotted link beside it (the consent
+   card's pair). */
+.v4-404__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--v4-space-3) var(--v4-space-6);
+  margin-top: var(--v4-space-6);
+}
+
+.v4-404__home {
+  padding: var(--v4-space-2) var(--v4-space-5);
+  border-radius: var(--v4-radius-button);
+  background: var(--v4-text);
+  color: var(--v4-surface);
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-medium);
+  line-height: 24px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.v4-404__home:hover { opacity: 0.85; }
+
+.v4-404__work {
+  font-size: var(--v4-text-ui);
+  font-weight: var(--v4-weight-medium);
+  color: var(--v4-text);
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.v4-404__work:hover { text-decoration-style: solid; }
+
+.v4-404__home:focus-visible,
+.v4-404__work:focus-visible {
+  outline: 2px solid var(--v4-text);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-404__star { animation: none; }
+  .v4-404__view.is-open .v4-404__line { transition-delay: 0s; }
+  .v4-404__view.is-open .v4-404__shoot { animation: none; }
+}
+
+@media (max-width: 599px) {
+  .v4-404 { padding-top: 72px; }
+}

@@ -1,87 +1,60 @@
 ---
-layout: layouts/base.njk
+layout: layouts/v4.njk
 title: "404 · Parichehr Talebzadeh"
-description: "That page isn't here — head back to the homepage."
+description: "This page flew out the window. Head back to the homepage."
 pageId: "404"
-nav: false
 permalink: /404.html
-# OUT OF collections.all, which is what src/sitemap.njk iterates — an error page
-# in the sitemap is an invitation to index it. Excluding it at the collection
-# level rather than filtering in the sitemap keeps it out of anything else that
-# ever walks the collection too.
+# Out of collections.all (and so the sitemap), and noindex in head-seo.njk.
 eleventyExcludeFromCollections: true
-# Drives the robots tag and the skipped canonical in head-seo.njk.
 noindex: true
 ---
 {#
-  404 — Figma 295:11180 (1512 x 884).
-
-  PERMALINK IS THE WHOLE WIRING. Vercel serves /404.html from the output root for
-  any unmatched route on a static build, so this file needs no rule in
-  vercel.json and does not interact with the three redirects committed there.
-
-  nav: false — the comp's two 96px bands are EMPTY. No logo, no nav, no footer;
-  the header rule-band is a frame, not the site header with its contents hidden.
-  base.njk's flag drops it, which is why this page needs no layout of its own.
-
-  THE ILLUSTRATION IS STATIC. It is the same character as the About section's,
-  and that one follows the cursor with its eyes — this one deliberately does not.
-  An error page that watches you is a joke that lands once and then reads as
-  broken; the comp draws it looking away.
-
-  BOTH ASSETS ARE <img>, INCLUDING THE SVG, and the title is the interesting one:
-  404-title.svg bakes fill="#1A1A1A". That is --fig-ink, and this page's light
-  scope sets --text-primary to --fig-black (#000000) — so inlining it through the
-  inlineSvg filter the way the hero's "Designer" word is done would recolour it to
-  pure black and miss the node by 26 levels on every channel. The filter exists
-  for artwork that MUST inherit; this is artwork that must not.
-
-  EVERYTHING IN BOTH COLUMNS IS CENTRED, which is not a simplification of the
-  comp but a reading of it. The node gives the title y=178 inside a 692 banner and
-  the button x=216 inside a 636 one; 692 minus the 336 of stacked content is 356,
-  half of which is 178, and (636-204)/2 is exactly 216. The illustration is inset
-  55.28 left and 55.27 right, 35 top and 35 bottom. Absolute offsets would restate
-  those numbers; flex centring reproduces them and survives a font swap.
+  404 — the hero's window (v4/sky-window.njk), closed on a night sky. Hover it
+  (tap on touch, focus from the keyboard) and it swings open: the stars join
+  up into a 404 and a shooting star goes by (_404.css, scripts/v4-404.js).
+  Vercel serves /404.html for any unmatched route; no rule in vercel.json.
 #}
-
-{% from "components/button.njk" import button %}
-
-<div class="fourohfour">
-  <div class="fourohfour__band">
-    <div class="fourohfour__hero">
-      <div class="fourohfour__inner">
-
-        <div class="fourohfour__banner">
-          <p class="fourohfour__title">
-            <img
-              src="/Assets/images/404/404-title.svg"
-              alt="404"
-              width="280"
-              height="102"
-            />
-          </p>
-
-          <p class="fourohfour__subtitle">{{ site.notFound.subtitle }}</p>
-
-          {{ button(label=site.notFound.cta, href="/", iconName="arrow-right", variant="solid") }}
-        </div>
-
-        <div class="fourohfour__summary">
-          {# aria-hidden: the portrait carries nothing the "404" and the sentence
-             above it do not already say, and alt text on it would make a screen
-             reader announce a decoration between the message and the way out. #}
-          <img
-            class="fourohfour__art"
-            src="/Assets/images/404/illustration-pari-404.png"
-            alt=""
-            aria-hidden="true"
-            width="1577"
-            height="1866"
-            decoding="async"
-          />
-        </div>
-
-      </div>
+<main class="v4-404">
+  <div class="v4-sky__frame v4-404__frame">
+    <div class="v4-sky__view v4-404__view" data-404-window tabindex="0" aria-label="A window onto a night sky. Open it to look for the page.">
+      {%- include "v4/sky-window-open-frame.njk" %}
+      <svg class="v4-404__sky" viewBox="0 0 595 242" aria-hidden="true" focusable="false">
+        <line class="v4-404__shoot" x1="520" y1="40" x2="470" y2="62"/>
+      <path class="v4-404__line" style="--i: 0" d="M170 64 L170 126 L214 126 L234 126" pathLength="1"/>
+      <path class="v4-404__line" style="--i: 1" d="M214 84 L214 126 L214 174" pathLength="1"/>
+      <path class="v4-404__line" style="--i: 2" d="M298 64 L331 88 L333 146 L298 174 L265 150 L263 90 L298 64" pathLength="1"/>
+      <path class="v4-404__line" style="--i: 3" d="M360 64 L360 126 L404 126 L424 126" pathLength="1"/>
+      <path class="v4-404__line" style="--i: 4" d="M404 84 L404 126 L404 174" pathLength="1"/>
+      <circle class="v4-404__star" style="--i: 0" cx="170" cy="64" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 1" cx="170" cy="126" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 2" cx="234" cy="126" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 3" cx="214" cy="84" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 4" cx="214" cy="174" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 5" cx="214" cy="126" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 6" cx="298" cy="64" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 0" cx="331" cy="88" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 1" cx="333" cy="146" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 2" cx="298" cy="174" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 3" cx="265" cy="150" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 4" cx="263" cy="90" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 5" cx="360" cy="64" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 6" cx="360" cy="126" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 0" cx="424" cy="126" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 1" cx="404" cy="84" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 2" cx="404" cy="174" r="2.4"/>
+      <circle class="v4-404__star" style="--i: 3" cx="404" cy="126" r="2.4"/>
+      </svg>
     </div>
+    {% include "v4/sky-window.njk" %}
   </div>
-</div>
+  <p class="v4-404__note">
+    <span class="v4-404__hint">{{ home.notFound.hint }}</span>
+    <span class="v4-404__hint v4-404__hint--open">{{ home.notFound.hintOpen }}</span>
+  </p>
+  <h1 class="v4-404__title">{{ home.notFound.title }}</h1>
+  <p class="v4-404__body">{{ home.notFound.body }}</p>
+  <div class="v4-404__actions">
+    <a class="v4-404__home" href="/">{{ home.notFound.home }}</a>
+    <a class="v4-404__work" href="/#work">{{ home.notFound.work }}</a>
+  </div>
+</main>

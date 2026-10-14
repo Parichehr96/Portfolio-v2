@@ -14,6 +14,16 @@ module.exports = {
     body: "Case studies, writings, and details are actively rolling in.",
   },
 
+  // ---- 404 — src/404.njk: the hero's window, a night sky that spells 404 ---
+  notFound: {
+    hint: "Hover to open the window.",
+    hintOpen: "Nope, not out there either. Just stars.",
+    title: "This page flew out the window.",
+    body: "The link might be old, or the page moved somewhere new. Let’s get you back to something real.",
+    home: "Back to the homepage",
+    work: "See the work",
+  },
+
   // ---- Consent banner — v4/consent.njk, on every V4 page until answered ------
   consent: {
     title: "I’m a designer, so I’m curious. Mind if I peek out the window?",
