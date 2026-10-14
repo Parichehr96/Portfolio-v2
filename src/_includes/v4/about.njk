@@ -29,6 +29,8 @@
     <button class="v4-photos__dot" type="button" aria-label="Photo {{ loop.index }} of {{ home.about.photos | length }}: {{ photo.caption }}"></button>
     {%- endfor %}
   </div>
+  {#- The window (v4/sky.njk), between the photos and the words. #}
+  {% include "v4/sky.njk" %}
   <div class="v4-about__text">
     {%- for p in home.about.paragraphs %}
     <p>{{ p }}</p>

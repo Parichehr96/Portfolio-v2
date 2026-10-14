@@ -126,6 +126,14 @@
   outline-offset: 2px;
 }
 
+/* The window, between the photo wheel and the text: 40 either side, and
+   above the wheel like the text. */
+.v4-about > .v4-sky {
+  position: relative;
+  z-index: 1;
+  margin-block: calc(var(--v4-inner-gap) - var(--v4-space-6));
+}
+
 /* Above the photo wheel, so a tilted card riding low never covers it. */
 .v4-about__text {
   position: relative;
