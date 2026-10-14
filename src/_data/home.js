@@ -296,7 +296,7 @@ module.exports = {
         company: "Freelance",
         href: "https://www.nomadicai.com/",
         logo: "/Assets/v4/experience/freelance.svg",
-        dates: "Sep 2025 - March 2026",
+        dates: "Sep 2025 - Present",
         summary: "Nomadic is a vision-AI platform for autonomous-vehicle video data. Co-redesigned the website and brand visual identity.",
       },
       {
