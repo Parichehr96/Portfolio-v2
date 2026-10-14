@@ -31,7 +31,12 @@
   </div>
   <div class="v4-about__text">
     {%- for p in home.about.paragraphs %}
+    {#- "Hover to see my …" says Tap on a phone, which has nothing to hover. -#}
+    {%- if p.startsWith("Hover") %}
+    <p><span class="v4-for-hover">{{ p }}</span><span class="v4-for-touch">{{ p | replace("Hover", "Tap") }}</span></p>
+    {%- else %}
     <p>{{ p }}</p>
+    {%- endif %}
     {%- endfor %}
   </div>
   <div class="v4-about__cards">

@@ -102,6 +102,7 @@
 }
 
 .v4-photos__dot {
+  position: relative;
   width: var(--v4-photo-dot);
   height: var(--v4-photo-dot);
   padding: 0;
@@ -110,6 +111,14 @@
   background: transparent;
   cursor: pointer;
   transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* A finger-sized target round each small dot, as wide as its share of the
+   row and well above and below it, without changing how the row looks. */
+.v4-photos__dot::before {
+  content: "";
+  position: absolute;
+  inset: -14px calc(-1 * var(--v4-space-1) / 2);
 }
 
 .v4-photos__dot.is-on {

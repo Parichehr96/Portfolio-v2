@@ -258,6 +258,10 @@ a.v4-project__link:hover {
 }
 
 @media (max-width: 899px) {
+  .v4-project {
+    --v4-strip-arrow: 40px;   /* a finger-sized round on phones */
+  }
+
   .v4-project__arrow {
     background: var(--v4-strip-arrow-bg);
     -webkit-backdrop-filter: blur(8px);

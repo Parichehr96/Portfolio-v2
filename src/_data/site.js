@@ -22,7 +22,7 @@ module.exports = {
   ogDescription: "Product designer building interaction systems. Based in Amsterdam.",
   ogImage: "/Assets/images/og-v4.jpg",   // tools/og-image (render.mjs), 1200 x 630
   ogImageAlt: "Parichehr Talebzadeh: I make complex products simple to use. Product designer in Amsterdam, over a row of Amsterdam canal houses, a bridge and a windmill",
-  themeColor: "#111323",
+  themeColor: "#ffffff",   // the phone browser's bar, white like the page
   locale: "en_US",
   lang: "en",
 

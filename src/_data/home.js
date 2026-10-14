@@ -188,6 +188,7 @@ module.exports = {
   sky: {
     // Under the closed window, two lines; open, the first goes and the second says what to do.
     lead: "In case you’ve been so busy to look up, hover to open the window.",
+    leadTouch: "In case you’ve been so busy to look up, tap to open the window.",   // phones: nothing to hover
     line: "This is your sky, as it looks right now.",
     lineOpen: "This is your sky, drag the light to see how it changes.",
     // After "Keep the curtains closed" (v4/consent.njk): my sky, not theirs; a click on the window asks again.

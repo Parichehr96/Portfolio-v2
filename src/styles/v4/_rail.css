@@ -165,6 +165,15 @@
    height plus the usual gap free above the intro. Anchor jumps land under the bar
    (scroll-padding in base.css). Above the page's raised pieces (the About
    text, an open folder), hence the z-index. */
+/* Phones: the bar's links keep their look but take a finger-sized touch,
+   12 above and below each, given back by the margins so nothing moves. */
+@media (max-width: 899px) {
+  .v4-rail__item {
+    padding-block: 12px;
+    margin-block: -12px;
+  }
+}
+
 @media (max-width: 899px) {
   .v4-shell {
     margin-top: 0;

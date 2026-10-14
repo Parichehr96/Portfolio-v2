@@ -263,7 +263,8 @@
 
 /* "Cookie settings", after the copyright line in the footer. */
 .v4-footer__consent {
-  padding: 0;
+  padding: 12px 0;   /* a finger-sized touch, */
+  margin: -12px 0;   /* given back so the line keeps its height */
   border: 0;
   background: none;
   font: inherit;

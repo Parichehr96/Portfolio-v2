@@ -141,6 +141,7 @@
 .v4-case__next {
   position: absolute;
   top: 50%;
+  padding-block: 12px;   /* a finger-sized touch; centred, so it moves nothing */
   display: flex;
   align-items: center;
   gap: var(--v4-space-1);

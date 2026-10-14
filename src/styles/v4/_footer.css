@@ -169,17 +169,20 @@
   gap: var(--v4-space-4);
 }
 
+/* Each icon sits in a 44px touch target, the gap folded into it, so the
+   icons stay 20 apart as drawn. */
 .v4-footer__socials {
   display: flex;
-  gap: var(--v4-space-5);
+  gap: 0;
+  margin-inline: -10px;
 }
 
 .v4-footer__socials a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--v4-space-6);
-  height: var(--v4-space-6);
+  width: 44px;
+  height: 44px;
   transition: opacity 0.2s ease;
 }
 

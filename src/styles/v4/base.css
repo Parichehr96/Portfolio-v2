@@ -75,3 +75,13 @@ ol {
     scroll-padding-top: var(--v4-bar-h);
   }
 }
+
+
+/* Words for the pointer the visitor has: "hover" with a mouse, "tap" on a
+   touch screen (v4/sky.njk, v4/about.njk). */
+.v4-for-touch { display: none; }
+
+@media (hover: none) {
+  .v4-for-hover { display: none; }
+  .v4-for-touch { display: inline; }
+}
