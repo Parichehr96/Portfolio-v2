@@ -109,13 +109,16 @@
   transition: opacity .6s linear;
 }
 
-/* Time and hour track: hidden until the sky is opened. */
+/* The hour track: hidden until the window is opened. The time joins it only
+   once the hour is moved off now (the Now button no longer pressed); the
+   time now is on the clock beside the page already. */
 .v4-sky__time,
 .v4-sky__control {
   opacity: 0; translate: 0 6px; visibility: hidden;
   transition: opacity .3s ease, translate .3s ease, visibility 0s linear .3s;
 }
-.v4-sky__view.is-open :is(.v4-sky__time, .v4-sky__control) {
+.v4-sky__view.is-open .v4-sky__control,
+.v4-sky__view.is-open:has(.v4-sky__now[aria-pressed="false"]) .v4-sky__time {
   opacity: 1; translate: 0 0; visibility: visible;
   transition: opacity .35s ease .05s, translate .35s ease .05s, visibility 0s;
 }
