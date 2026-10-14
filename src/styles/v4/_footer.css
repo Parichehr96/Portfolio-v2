@@ -105,6 +105,20 @@
   transform: translateX(-50%);
 }
 
+/* Phones: the whole street, scaled to the screen's width instead of its
+   middle cut out of the 1600; the windmill scales with it and keeps its
+   place in the city (the same 1512-page geometry, at the street's scale). */
+@media (max-width: 899px) {
+  .v4-footer {
+    --v4-footer-art: 100vw;
+    --v4-footer-art-h: calc(100vw * 397 / 1600);
+    --v4-footer-page: calc(100vw * 1512 / 1600);
+    --v4-footer-mill-w: calc(100vw * 519 / 1600);
+    min-height: 0;
+    padding-bottom: calc(100vw * 580 / 1600 + var(--v4-space-4));   /* the windmill, the tallest thing, clears the words */
+  }
+}
+
 .v4-footer__content {
   position: relative;
   width: min(var(--v4-column), 100%);

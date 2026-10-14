@@ -190,8 +190,14 @@
     width: auto;
   }
 
+  /* Pinned to the screen, not the page's column: as sticky it ran out of
+     room at the footer and slid up over the last lines before leaving. */
   .v4-rail {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
     height: var(--v4-bar-h);
     justify-content: center;
     padding-inline: var(--v4-space-4);
