@@ -104,7 +104,7 @@ module.exports = function () {
       card: {
         title: "Every other user was dropping at the same point",
         body:
-          "Sole designer on an on-chain event App that made Web3 event check-in feel native; grew it from 87 to 1,500 daily active users.",
+          "Sole designer on an on-chain event app: redesigned how organizers create events, and made check-in feel native; grew it from 87 to 1,500 daily active users.",
       },
       motion: motionFor("onton"),
       title: "ONTON",

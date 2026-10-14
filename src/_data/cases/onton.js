@@ -32,7 +32,7 @@ module.exports = {
     { label: "Craft", values: ["Product design,", "UX research,", "interactive prototyping"] },
     { label: "Role", values: ["Sole product designer"] },
     { label: "Team", values: ["Founder, 4 engineers, marketing & research"] },
-    { label: "Timeline", values: ["Q4 2023 - Q2 2025"] },
+    { label: "Timeline", values: ["Dec 2023 – Jul 2025"] },
     { label: "Outcome", values: ["87 → 1,500+ DAU,", "event creation ~7 min → ~1 min,", "retention +21.2%"] },
   ],
 
@@ -62,7 +62,7 @@ module.exports = {
         {
           type: "metrics",
           items: [
-            { value: "~33%", change: "+64%", trend: "up", label: "Event-creation completion", from: "From 20%" },
+            { value: "81%", change: "+305%", trend: "up", label: "Event-creation completion", from: "From 20%" },
             { value: "~1 min", change: "−86%", trend: "up", label: "Time to create an event", from: "From ~7 min" },
             { value: "42%", change: "NEW", label: "Events made by duplicating or repeating", from: "Not possible before" },
             { value: "4/5", change: "+100%", label: "Organizers who came back", from: "From 2 / 5" },

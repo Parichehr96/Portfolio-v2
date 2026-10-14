@@ -108,7 +108,7 @@ module.exports = {
         navLabel: "ONTON",
         href: "/work/onton/",
         verified: true,
-        years: "2024-2025",
+        years: "2023-2025",
         desc: [
           { style: "lead", text: "Redesigned a Web3 event platform end to end," },
           { text: " making event creation as simple as in any other event app, so organizers stopped dropping off and the product grew from " },
@@ -130,10 +130,10 @@ module.exports = {
         name: "Challenquiz",
         href: "/work/challenquiz/",
         verified: true,
-        years: "2024-2025",
+        years: "2023",
         desc: [
           { style: "lead", text: "Made a multiplayer game feel multiplayer" },
-          { text: ". Redesigned the in-game flow. In usability testing, time-to-start halved and completion went from 60% to 100%" },
+          { text: ". Redesigned the in-game flow. In usability testing, time-to-start halved and games finished cleanly went from 60% to 100%." },
         ],
         // The case study's own visuals, recorded by tools/cq-showcase: the insight,
         // the moment the result lands, and the outcome.
@@ -196,7 +196,7 @@ module.exports = {
     ],
     paragraphs: [
       "I'm drawn to complex products. Industrial Design taught me to think in systems. My Master's in Interaction Design taught me to ground those systems in evidence.",
-      "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to under 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
+      "Over five years I've shipped consumer apps, B2B platforms and Web3 products, often as the sole or lead designer. I've cut a core task from 7 minutes to about 1, halved time-to-start in a game, and built design systems that outlived my time on the team.",
       "I care about structure before pixels, evidence over opinion, and shipping something useful over polishing something theoretical.",
       "I'm looking for a team in the Netherlands building ambitious products, where design shapes the direction and not just the surface.",
       "Hover to see my ...",

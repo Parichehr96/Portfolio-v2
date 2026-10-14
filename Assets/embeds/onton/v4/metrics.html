@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The four results drawn as what they measure: completion from 1 in 5 organizers to 1 in 3, creation time from about 7 minutes to about 1, 42% of events made by duplicating, and 4 of 5 organizers coming back instead of 2.">
+<meta name="description" content="The four results drawn as what they measure: completion from 1 in 5 organizers to 4 in 5, creation time from about 7 minutes to about 1, 42% of events made by duplicating, and 4 of 5 organizers coming back instead of 2.">
 <title>ONTON — metrics</title>
 <link rel="stylesheet" href="case.css">
 <script src="case.js"></script>
@@ -61,7 +61,7 @@
   <div class="canvas">
     <div class="grid">
       <div class="card"><div class="art"><div class="ppl" id="ppl"></div><div class="ratio" id="ratio"><b>1 in 5</b>finished</div></div>
-        <div><div class="head"><b id="v1">20%</b><span>event-creation completion</span></div><div class="from">From 20% · +64%</div></div></div>
+        <div><div class="head"><b id="v1">20%</b><span>event-creation completion</span></div><div class="from">From 20% · +305%</div></div></div>
       <div class="card"><div class="art">
           <svg class="watch" viewBox="0 0 92 92" aria-hidden="true"><circle class="bg" cx="46" cy="46" r="38"/><circle class="arc" id="arc" cx="46" cy="46" r="38"/><text x="46" y="53" text-anchor="middle" id="wt">7′</text></svg>
           <div class="ticks"><div><i id="t1" style="width:84px;background:#CBD5E1"></i>before</div><div><i id="t2" style="width:84px"></i>after</div></div>
@@ -78,7 +78,7 @@
   var C = 2 * Math.PI * 38, arc = document.getElementById("arc");
   arc.style.strokeDasharray = C; arc.style.strokeDashoffset = 0;
 
-  /* 15 organizers start: 3 finish before (20%), 5 after (~33%) */
+  /* 15 organizers start: 3 finish before (20%), 12 after (~81%) */
   var ppl = document.getElementById("ppl"), h = "";
   for (var i = 0; i < 15; i++) h += "<i" + (i < 3 ? ' class="done"' : "") + "></i>"; ppl.innerHTML = h;
   /* 12 events in a run: 5 of them copies (42%) */
@@ -92,9 +92,9 @@
   whenSeen(document.getElementById("f"), async function () {
     await sleep(300);
     /* 1 */
-    var p = ppl.children; [3, 4].forEach(function (k, j) { setTimeout(function () { p[k].classList.add("done", "new"); }, reduced ? 0 : 500 + j * 350); });
-    setTimeout(function () { document.getElementById("ratio").innerHTML = "<b>1 in 3</b>finished"; }, reduced ? 0 : 900);
-    count(document.getElementById("v1"), 20, 33, 1300, function (v) { return "~" + Math.round(v) + "%"; });
+    var p = ppl.children; [3, 4, 5, 6, 7, 8, 9, 10, 11].forEach(function (k, j) { setTimeout(function () { p[k].classList.add("done", "new"); }, reduced ? 0 : 400 + j * 110); });
+    setTimeout(function () { document.getElementById("ratio").innerHTML = "<b>4 in 5</b>finished"; }, reduced ? 0 : 900);
+    count(document.getElementById("v1"), 20, 81, 1300, function (v) { return Math.round(v) + "%"; });
     /* 2 */
     arc.style.strokeDashoffset = C * (1 - 1 / 7);
     document.getElementById("t2").style.width = "12px"; document.getElementById("t2").style.background = "var(--on-blue)";
