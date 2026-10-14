@@ -18,7 +18,7 @@
 
 .v4-top {
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
-  margin-inline: var(--v4-column-inset) auto;
+  margin: 32px auto 0 var(--v4-column-inset);   /* close under the window, so they read as one */
 }
 
 /* ---- Right column: clock ---------------------------------------------- */

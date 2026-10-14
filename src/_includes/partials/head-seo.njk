@@ -73,20 +73,17 @@
 </script>
 {%- endif %}
 
-{#- ICONS. The .ico is FIRST and unqualified because that is the one legacy
-    browsers fetch by guessing /favicon.ico regardless of markup; declaring it
-    keeps that fetch on a path we control. Everything after it is progressive:
-    an SVG for anything that takes one, then the PNG ladder for the rest.
-    All of them are the monogram (528:68221) in cream on the brand dark, and all
-    of them are OPAQUE — iOS and Android composite a home-screen icon against an
-    unknown background and an alpha channel there shows as a black or white
-    rectangle behind the glyph. -#}
-<link rel="icon" href="/Assets/favicon/favicon.ico" sizes="16x16 32x32 48x48" />
+{#- ICONS. The SVG FIRST: browsers that take one (Chrome, Edge, Firefox) use it,
+    and it is the monogram on nothing, navy on a light tab and white on a dark
+    one. The .ico and the small PNGs are the navy monogram, also on nothing,
+    for the rest. The home-screen icon below stays OPAQUE: iOS and Android
+    composite it against an unknown background, where an alpha channel shows
+    as a black or white rectangle behind the glyph. (The opaque 192 and 512
+    are no longer offered as tab icons, so no browser picks a tile for a tab.) -#}
 <link rel="icon" type="image/svg+xml" href="/Assets/favicon/favicon.svg" />
+<link rel="icon" href="/Assets/favicon/favicon.ico" sizes="16x16 32x32 48x48" />
 <link rel="icon" type="image/png" sizes="16x16" href="/Assets/favicon/favicon-16.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/Assets/favicon/favicon-32.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="/Assets/favicon/favicon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="/Assets/favicon/favicon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/Assets/favicon/apple-touch-icon.png" />
 <meta name="theme-color" content="{{ site.themeColor }}" />
 
