@@ -22,9 +22,31 @@ iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; 
 <script>
 const q = new URLSearchParams(location.search), F = q.get("f"), H = +q.get("h") || 420, WD = +q.get("w") || 600, PAD = 40;
 const SRC = q.get("src") || "/Assets/embeds/challenquiz/v4/" + F + ".html", BASE = SRC.replace(/[^/]*$/, "");
-const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_APP = "/Assets/embeds/challenquiz/v2/index.html";
-(function () {
-  var realST = window.setTimeout.bind(window), vt = 0, q = [], seq = 0, rafs = [], seen = new WeakMap(), D0 = Date.now();
+// The clock, for the visual and for any frame inside it (window.__CLOCK_JS).
+const CLOCK_JS = `(function () {
+  var realST = window.setTimeout.bind(window), q = [], seq = 0, rafs = [], seen = new WeakMap(), D0 = Date.now();
+  // A frame inside starts at its parent's moment and is stepped with it.
+  var vt = window.parent !== window && window.parent.__vtNow ? window.parent.__vtNow() : 0;
+  window.__vtNow = function () { return vt; };
+  // Loaded by srcdoc, a frame has no address: hand its query to URLSearchParams.
+  if (window.__cqSearch) { var USP = window.URLSearchParams;
+    window.URLSearchParams = function (init) { return new USP(init === "" || init == null || init === location.search ? window.__cqSearch : init); };
+    window.URLSearchParams.prototype = USP.prototype; }
+  // Frames inside (the phones' live prototype) get this clock too: loaded here, by srcdoc.
+  window.__pending = 0;
+  function clockFrame(el) {
+    if (el.__clocked || !el.getAttribute("src") || !window.top.__CLOCK_JS) return;
+    el.__clocked = true;
+    var u = new URL(el.getAttribute("src"), document.baseURI); el.removeAttribute("src"); window.__pending++;
+    fetch(u.href).then(function (r) { return r.text(); }).then(function (html) {
+      el.addEventListener("load", function () { window.__pending--; }, { once: true });
+      el.srcdoc = html.replace(/<head>/i, '<head><base href="' + u.href.replace(/[^/]*$/, "") + '"><script>window.__cqSearch=' +
+        JSON.stringify(u.search) + ";" + window.top.__CLOCK_JS + "<\\/script>");
+    });
+  }
+  new MutationObserver(function (ms) { ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) {
+    if (n.tagName === "IFRAME") clockFrame(n); else if (n.querySelectorAll) [].forEach.call(n.querySelectorAll("iframe"), clockFrame); }); }); })
+    .observe(document.documentElement, { childList: true, subtree: true });
   window.setTimeout = function (f, ms) { var a = [].slice.call(arguments, 2), id = ++seq;
     q.push({ id: id, t: vt + (+ms || 0), f: function () { f.apply(null, a); } }); return id; };
   window.clearTimeout = window.clearInterval = function (id) { q = q.filter(function (x) { return x.id !== id; }); };
@@ -52,6 +74,9 @@ const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_A
     for (;;) { q.sort(function (a, b) { return a.t - b.t; }); var nx = q[0];
       if (!nx || nx.t > end) break; q.shift(); vt = nx.t; nx.f(); await tick(); }
     vt = end; var rs = rafs; rafs = []; rs.forEach(function (r) { r.cb(vt); }); await tick();
+    for (var w = 0; w < 200 && window.__pending > 0; w++) await new Promise(function (r) { realST(r, 25); });
+    var kids = document.querySelectorAll("iframe");
+    for (var c = 0; c < kids.length; c++) { try { if (kids[c].contentWindow.__advanceTo) await kids[c].contentWindow.__advanceTo(end); } catch (e) {} }
     // The phones show the live prototype in frames of their own: let them finish loading.
     for (var i = 0; i < 200; i++) {
       var busy = [].some.call(document.querySelectorAll("iframe"), function (f) {
@@ -64,7 +89,11 @@ const CLOCK = `<style>.replay{display:none!important}</style><script>window.CQ_A
       if (!seen.has(a)) seen.set(a, vt - (a.currentTime || 0));
       a.pause(); a.currentTime = Math.max(0, vt - seen.get(a)); });
   };
-})();<\/script>`;
+})();`;
+window.__CLOCK_JS = CLOCK_JS;
+// The thumbnails' visuals: white grounds (the box gives the corners), no Replay.
+const CLOCK = `<style>.replay{display:none!important}.frame{background:#fff!important;border-radius:0!important;box-shadow:none!important}</style>` +
+  `<script>window.CQ_APP = "/Assets/embeds/challenquiz/v2/index.html";` + CLOCK_JS + `<\/script>`;
 let win;
 window.setT = async function (t) {
   await win.__advanceTo(t * 1000);
