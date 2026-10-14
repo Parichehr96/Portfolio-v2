@@ -38,7 +38,7 @@ module.exports = function () {
       year: "2023",
       location: "Remote, Finland",
       title: "Web3 consumer products on Telegram",
-      body: "Sole designer on ONTON for 13 months. Grew the product from 87 to 1,500 daily active users. I naturally notice broken handoffs, conflicting requirements, and gaps between what a product promises and what users actually experience.",
+      body: "Sole designer on ONTON for 20 months. Grew the product from 87 to 1,500 daily active users. I naturally notice broken handoffs, conflicting requirements, and gaps between what a product promises and what users actually experience.",
       image: "/Assets/images/timeline/2023-2025.png",
       alt: "Web3 consumer products on Telegram, Finland remote, 2023",
     },

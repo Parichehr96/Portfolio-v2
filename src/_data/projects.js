@@ -117,7 +117,7 @@ module.exports = function () {
       role: "Sole Product Designer",
       domain: "Web3",
       summary:
-        "Web3 consumer product on Telegram. Grew from 87 to 1,500 daily active users over 13 months as the only designer.",
+        "Web3 consumer product on Telegram. Grew from 87 to 1,500 daily active users over 20 months as the only designer.",
     },
     {
       slug: "challenquiz",
