@@ -224,6 +224,39 @@ a.v4-project__link:hover {
   color: var(--v4-text);
 }
 
+/* A nudge outwards now and then, two small tugs, so the eye finds the
+   arrows and reads the strip as something that moves. The chevron moves (by
+   `translate`, apart from its turn), not the button, so the hover still works.
+   Still while hovered, and for reduced motion. */
+.v4-project__arrow svg {
+  animation: v4-arrow-nudge 3.2s ease-in-out infinite;
+}
+
+.v4-project__arrow--prev svg {
+  --nudge: -5px;
+}
+
+.v4-project__arrow--next svg {
+  --nudge: 5px;
+}
+
+.v4-project__arrow:hover svg,
+.v4-project__arrow:focus-visible svg {
+  animation: none;
+}
+
+@keyframes v4-arrow-nudge {
+  0%, 62%, 100% { translate: 0 0; }
+  70% { translate: var(--nudge) 0; }
+  78% { translate: 0 0; }
+  85% { translate: calc(var(--nudge) * .6) 0; }
+  92% { translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-project__arrow svg { animation: none; }
+}
+
 @media (max-width: 899px) {
   .v4-project__arrow {
     background: var(--v4-strip-arrow-bg);
