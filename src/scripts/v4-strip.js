@@ -124,8 +124,10 @@
       if (e.target === track && e.propertyName === "transform") settle();
     });
 
-    function go(dir) {
+    // `via` says how (arrow, swipe, scroll, key), for scripts/v4-analytics.js.
+    function go(dir, via) {
       idx = Math.max(0, Math.min(3 * N - 1, idx + dir));
+      strip.dispatchEvent(new CustomEvent("v4:strip", { bubbles: true, detail: { dir: dir, via: via || "" } }));
       place(true);
       clearTimeout(timer);
       timer = setTimeout(settle, reduce ? 0 : SLIDE + 80);
@@ -141,7 +143,7 @@
       quiet = setTimeout(function () { locked = false; acc = 0; }, 180);
       if (locked) return;
       acc += dx;
-      if (Math.abs(acc) >= WHEEL) { go(acc > 0 ? 1 : -1); locked = true; acc = 0; }
+      if (Math.abs(acc) >= WHEEL) { go(acc > 0 ? 1 : -1, "scroll"); locked = true; acc = 0; }
     }, { passive: false });
 
     // Drag (mouse) or swipe (touch, pen): follows the pointer, then steps.
@@ -172,7 +174,7 @@
       try { strip.releasePointerCapture(e.pointerId); } catch (err) {}
       if (axis !== "x") return;
       var dx = e.clientX - startX;
-      if (Math.abs(dx) >= SWIPE) go(dx < 0 ? 1 : -1);
+      if (Math.abs(dx) >= SWIPE) go(dx < 0 ? 1 : -1, "swipe");
       else { place(true); timer = setTimeout(settle, SLIDE + 80); }
     }
     strip.addEventListener("pointerup", release);
@@ -188,13 +190,13 @@
       b.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
       b.addEventListener("click", function (e) {
         e.stopPropagation();
-        go(+b.getAttribute("data-strip-step"));
+        go(+b.getAttribute("data-strip-step"), "arrow");
       });
     });
 
     strip.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); go(1, "key"); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); go(-1, "key"); }
     });
 
     window.addEventListener("resize", function () { place(false); update(); });

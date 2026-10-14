@@ -175,6 +175,7 @@
     if (next === open) return;
     open = next;
     panel.classList.toggle("is-open", open);
+    panel.dispatchEvent(new CustomEvent("v4:window", { bubbles: true, detail: { open: open } }));   // for scripts/v4-analytics.js
     if (!open) { live = true; render(); }               // back to the sky right now
   }
   panel.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(true); });
