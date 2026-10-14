@@ -123,12 +123,13 @@
 /* ---- Status clock -------------------------------------------------------- */
 /* Top-aligned, so "At 19:07" starts on the same line as the name and the
    menu's first item. */
-/* Stacked: the face on top, the words under it, left-aligned. */
+/* Side by side (1490:17036): the face, then the words 8 to its right,
+   starting 7 down; 100 + 8 + 190 is the column's 298. */
 .v4-status {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
-  gap: var(--v4-space-3);
+  gap: var(--v4-space-2);
 }
 
 .v4-status__face {
@@ -179,6 +180,7 @@
   display: flex;
   flex-direction: column;
   width: var(--v4-status-text);
+  margin-top: 7px;
 }
 
 .v4-status__time {
