@@ -181,6 +181,12 @@
 /* Closed, two lines; open (hover, tap or focus), both give way to one line in
    the first one's place, right under the window. */
 .v4-sky__line-open { grid-area: 1 / 1; align-self: center; opacity: 0; }
+/* After a no (html.consent-denied, scripts/v4-consent.js): my sky, with its
+   own two lines, and the window asks again instead of opening. */
+.v4-sky__mine { display: none; }
+.consent-denied .v4-sky__note > :not(.v4-sky__mine) { display: none; }
+.consent-denied .v4-sky__note > .v4-sky__mine { display: block; grid-area: auto; }
+.consent-denied .v4-sky__view { cursor: pointer; }
 .v4-sky__frame:has(.is-open) ~ .v4-sky__note :is(.v4-sky__lead, .v4-sky__line:not(.v4-sky__line-open)) { opacity: 0; }
 .v4-sky__frame:has(.is-open) ~ .v4-sky__note .v4-sky__line-open { opacity: 1; transition-delay: .05s; }
 

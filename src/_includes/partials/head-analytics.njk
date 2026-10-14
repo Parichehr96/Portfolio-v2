@@ -12,6 +12,8 @@
     is not loaded at all until a yes. -#}
 <script>
   window.__consent = (function () { try { return localStorage.getItem("v4-consent") || ""; } catch (e) { return ""; } })();
+  // A no closes the curtains on the visitor's sky too: the hero shows mine (v4/sky.njk).
+  if (window.__consent === "denied") document.documentElement.classList.add("consent-denied");
 </script>
 {%- if site.analytics.ga4 %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"></script>

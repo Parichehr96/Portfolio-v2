@@ -107,7 +107,10 @@
     return cols;
   }
 
-  var place = placeFor(Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Amsterdam");
+  // Theirs, unless they kept the curtains closed (scripts/v4-consent.js): then mine, Amsterdam's.
+  var theirs = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Amsterdam";
+  function mine() { return window.__consent === "denied"; }
+  var place = placeFor(mine() ? "Europe/Amsterdam" : theirs);
   var live = true, at = new Date();
   function hhmm(date) { return new Intl.DateTimeFormat("en-GB", { timeZone: place.tz, hour: "2-digit", minute: "2-digit" }).format(date); }
   function minuteOf(date) { var p = hhmm(date).split(":"); return +p[0] * 60 + +p[1]; }
@@ -172,6 +175,7 @@
   var hoverable = window.matchMedia("(hover: hover) and (pointer: fine)");
   var open = false;
   function setOpen(next) {
+    if (next && mine()) return;                          // closed curtains: a click asks again instead
     if (next === open) return;
     open = next;
     panel.classList.toggle("is-open", open);
@@ -180,7 +184,20 @@
   }
   panel.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(true); });
   panel.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse" && hoverable.matches) setOpen(false); });
-  panel.addEventListener("click", function () { if (!hoverable.matches) setOpen(true); });
+  panel.addEventListener("click", function () {
+    if (mine()) { if (window.__consentAsk) window.__consentAsk(); return; }
+    if (!hoverable.matches) setOpen(true);
+  });
+  panel.addEventListener("keydown", function (e) {
+    if (mine() && (e.key === "Enter" || e.key === " ") && window.__consentAsk) { e.preventDefault(); window.__consentAsk(); }
+  });
+  // An answer changes whose sky it is.
+  document.addEventListener("v4:consent", function () {
+    place = placeFor(mine() ? "Europe/Amsterdam" : theirs);
+    trackDay = "";
+    setOpen(false);
+    live = true; render();
+  });
   document.addEventListener("click", function (e) { if (!hoverable.matches && open && !panel.contains(e.target)) setOpen(false); });
   panel.addEventListener("focusin", function () { if (panel.matches(":focus-visible") || panel.querySelector(":focus-visible")) setOpen(true); });
   panel.addEventListener("focusout", function (e) { if (!panel.contains(e.relatedTarget) && !panel.matches(":hover")) setOpen(false); });

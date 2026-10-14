@@ -180,6 +180,9 @@ module.exports = {
     lead: "In case you’ve been so busy to look up, hover to open the window.",
     line: "This is your sky, as it looks right now.",
     lineOpen: "This is your sky, drag the light to see how it changes.",
+    // After "Keep the curtains closed" (v4/consent.njk): my sky, not theirs; a click on the window asks again.
+    leadMine: "You kept the curtains closed, so here’s my sky instead. Click the window if you change your mind.",
+    lineMine: "This is my sky in Amsterdam, as it looks right now.",
   },
 
   about: {

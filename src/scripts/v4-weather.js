@@ -294,7 +294,8 @@
 
   function words() {
     var place = sky && sky.city ? " (" + sky.city + ")" : "";
-    if (!wx) return sky ? "Your sky" + place + ": checking the weather\u2026" : "";
+    var whose = window.__consent === "denied" ? "My sky" : "Your sky";   // after a no, the sky is mine
+    if (!wx) return sky ? whose + place + ": checking the weather\u2026" : "";
     var pct = Math.round(wx.cover * 100), what = "";
     if (wx.kind === "thunder") what = "thunderstorm";
     else if (wx.kind === "snow") what = "snow";
@@ -302,7 +303,7 @@
     else if (wx.kind === "drizzle") what = "drizzle";
     else if (wx.kind === "rain") what = wx.precip < 1 ? "light rain" : wx.precip > 4 ? "heavy rain" : "rain";
     var where = sky && sky.city ? " (" + sky.city + ")" : "";       // the city the forecast is for
-    return "Your sky" + where + ": " + (pct < 5 ? "clear" : pct + "% cloud") + (what ? ", " + what : "");
+    return whose + where + ": " + (pct < 5 ? "clear" : pct + "% cloud") + (what ? ", " + what : "");
   }
   panel.addEventListener("pointermove", function (e) {
     var text = words();
