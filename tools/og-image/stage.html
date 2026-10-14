@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  THE LINK PREVIEW (og:image), 1200 x 630 — rendered by render.mjs into
+  Assets/images/og-v4.jpg. Option B: the footer's Amsterdam (the canal
+  houses, the bridge, the lit window that is me, the windmill), with the
+  one-line bio above it. Built from the site's own drawings and type.
+-->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fff; font-family: "Figtree", sans-serif; }
+.text { position: absolute; left: 0; right: 0; top: 92px; text-align: center; }
+.name { font-size: 22px; font-weight: 500; color: #475569; letter-spacing: .01em; }
+.line { margin-top: 14px; font-size: 54px; font-weight: 600; line-height: 1.12; color: #0f172a; letter-spacing: -.015em; }
+.where { margin-top: 18px; font-size: 22px; color: #64748b; }
+.city { position: absolute; left: 0; bottom: 0; width: 1200px; height: 300px; }
+/* The footer's own layout, at 0.75: the 1600-wide street centred on the
+   1512 page, the windmill at the page's left edge. */
+.art { position: absolute; bottom: 0; left: 0; width: 1200px; height: auto; }
+.mill { position: absolute; bottom: 0; left: 33px; width: 389px; height: auto; }
+</style></head><body>
+<div class="text">
+  <div class="name">Parichehr Talebzadeh</div>
+  <div class="line">I make complex products<br>simple to use.</div>
+  <div class="where">Product designer in Amsterdam</div>
+</div>
+<div class="city">
+  <img class="mill" src="/Assets/v4/footer/windmill.svg" alt="">
+  <img class="art" src="/Assets/v4/footer/amsterdam.svg" alt="">
+</div>
+<script>
+Promise.all([document.fonts.ready, ...[...document.images].map(i => i.complete ? 0 : new Promise(r => i.onload = r))])
+  .then(() => { document.title = "ready"; });
+</script>
+</body></html>
