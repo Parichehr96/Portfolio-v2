@@ -49,4 +49,15 @@
   window.addEventListener("scroll", queue, { passive: true });
   window.addEventListener("resize", queue);
   update();
+
+  // ARRIVING AT A SECTION (/#about, say, from a case study's Next). The page
+  // scrolls smoothly (base.css), and on arrival that smooth jump gets cut
+  // short, leaving the reader at the top; so it is made here, instantly, and
+  // again once images have their heights.
+  var arrival = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (arrival) {
+    var go = function () { arrival.scrollIntoView({ behavior: "instant", block: "start" }); };
+    go();
+    window.addEventListener("load", go, { once: true });
+  }
 })();

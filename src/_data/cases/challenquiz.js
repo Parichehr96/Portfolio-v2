@@ -20,7 +20,7 @@ module.exports = {
   slug: "challenquiz",
   name: "Challenquiz",
   back: { label: "Back", href: "/#work" }, // label only; the href comes from home.work.projects
-  next: { label: "Next", href: "/work/connect2wow/" },
+  next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover (B): Lena's four verbs light up while the real prototype shows the moment that answers each.
   hero: {

@@ -17,7 +17,7 @@ module.exports = {
   slug: "onton",
   name: "ONTON",
   back: { label: "Back", href: "/#work" },
-  next: { label: "Next", href: "/work/challenquiz/" },
+  next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // The cover: the Discover screen, animated. Built from Figma 1329:26318 in
   // Portfolio-v2 (tools/onton-animation/build_hero.py); starts when in view.

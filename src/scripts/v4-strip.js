@@ -217,45 +217,6 @@
     }
   });
 
-  // COMING BACK. The homepage keeps its own place: the scroll is saved as the
-  // reader leaves (for a case study, say), and put back when they return with
-  // the browser's back or a case study's Back (a step back in history). Not
-  // left to the browser, which forgets it when the toast has turned its
-  // scroll memory off (v4/toast.njk). Back from a case study opened some other
-  // way lands on its card (/#work-<id>, v4-case.njk) instead.
-  var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
-  var returning = nav && nav.type === "back_forward";
-  var saved = null;
-  try { saved = sessionStorage.getItem("v4-home-y"); } catch (e) {}
-  var landing = /^#work-[\w-]+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
-  var place = null;
-  // Saved as the block at the top of the screen and how far down it sat, so
-  // the reader lands on the same thing even if the page above it changed
-  // (the toast, up as they left, is gone as they return).
-  var BLOCKS = ".v4-top, .v4-sky, .v4-label, .v4-project, .v4-about > *, .v4-process, .v4-experience, .v4-footer";
-  if (returning && saved && document.body.getAttribute("data-page") === "home") {
-    var at = saved.split(":"), blocks = document.querySelectorAll(BLOCKS), el = blocks[+at[0]];
-    if (el) place = function () {
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - +at[1], behavior: "instant" });
-    };
-  }
-  else if (landing) place = function () { landing.scrollIntoView({ behavior: "instant", block: "start" }); };
-  if (place) {
-    place();
-    window.addEventListener("load", place, { once: true });   // again, once images have their heights
-  }
-  // The homepage's place only: this script runs on the case studies too.
-  if (document.body.getAttribute("data-page") === "home") window.addEventListener("pagehide", function () {
-    var blocks = document.querySelectorAll(BLOCKS);
-    for (var i = 0; i < blocks.length; i++) {
-      var top = blocks[i].getBoundingClientRect();
-      if (top.bottom > 0) {
-        try { sessionStorage.setItem("v4-home-y", i + ":" + Math.round(top.top)); } catch (e) {}
-        return;
-      }
-    }
-  });
-
   Array.prototype.slice.call(document.querySelectorAll("[data-card-href]")).forEach(function (card) {
     var href = card.getAttribute("data-card-href");
     function open(e) {

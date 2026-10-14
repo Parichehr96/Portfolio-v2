@@ -16,7 +16,7 @@ module.exports = {
   slug: "connect2wow",
   name: "Connect2WOW",
   back: { label: "Back", href: "/#work" },
-  next: { label: "Next", href: "/work/onton/" },
+  next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover (1.C): the module index drives real prototype screens.
   hero: {

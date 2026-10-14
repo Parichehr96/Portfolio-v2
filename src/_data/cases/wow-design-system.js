@@ -19,7 +19,7 @@ module.exports = {
   slug: "wow-design-system",
   name: "WOW design system",
   back: { label: "Back", href: "/#work" },
-  next: { label: "Next", href: "/work/connect2wow/" },
+  next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover: the library wall, a mosaic of real components drifting past.
   hero: {

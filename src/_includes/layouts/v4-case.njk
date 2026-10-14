@@ -25,9 +25,20 @@ layout: layouts/v4.njk
   what lets Back and Next float there with no ground behind them.
 #}
 {%- set c = cases[caseKey] -%}
-{#- BACK goes to this case study's own card on the homepage (v4/project-row.njk
-    gives each card id="work-<id>"), so the reader lands where they left. -#}
-{%- set backHref = "/#work-" + caseKey -%}
+{#- BACK AND NEXT walk the case studies in the homepage's order
+    (home.work.projects; only ones that are live, with a page and not `soon`),
+    each the other's reverse. Back from the first goes to the top of the
+    homepage; Next from the last goes to Parichehr (/#about). -#}
+{%- set live = [] -%}
+{%- for p in home.work.projects -%}{%- if p.href and not p.soon -%}{%- set live = live.concat([p]) -%}{%- endif -%}{%- endfor -%}
+{%- set backHref = "/" -%}
+{%- set nextHref = "/#about" -%}
+{%- for p in live -%}
+  {%- if p.id == caseKey -%}
+    {%- if not loop.first -%}{%- set backHref = live[loop.index0 - 1].href -%}{%- endif -%}
+    {%- if not loop.last -%}{%- set nextHref = live[loop.index0 + 1].href -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
 
 <div class="v4-shell v4-shell--case">
   {#- The site menu on the left, this case's sections and progress on the
@@ -42,32 +53,16 @@ layout: layouts/v4.njk
         stays put and scrolls away with the name. -#}
     <div class="v4-case__bar">
       <div class="v4-case__bar-inner">
-        <a class="v4-case__back" href="{{ backHref }}" data-case-back>
+        <a class="v4-case__back" href="{{ backHref }}">
           <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
           {{ c.back.label }}
         </a>
-        <a class="v4-case__next" href="{{ c.next.href }}">
+        <a class="v4-case__next" href="{{ nextHref }}">
           {{ c.next.label }}
           <img src="/Assets/v4/case/next.svg" width="20" height="20" alt="" />
         </a>
       </div>
     </div>
-
-    {#- Back, when the reader came from the homepage: a step back in history,
-        so the browser returns them to exactly where they were. Otherwise
-        (a shared link, a new tab) the href takes them to this case's card. -#}
-    <script>
-      (function () {
-        var back = document.querySelector("[data-case-back]");
-        var ref = document.referrer && new URL(document.referrer);
-        if (!back || !ref || ref.origin !== location.origin || ref.pathname !== "/" || history.length < 2) return;
-        back.addEventListener("click", function (e) {
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
-          e.preventDefault();
-          history.back();
-        });
-      })();
-    </script>
 
     <div class="v4-case__title-row">
       <h1 class="v4-case__name">{{ c.name }}</h1>
