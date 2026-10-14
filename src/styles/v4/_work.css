@@ -229,7 +229,7 @@ a.v4-project__link:hover {
    `translate`, apart from its turn), not the button, so the hover still works.
    Still while hovered, and for reduced motion. */
 .v4-project__arrow svg {
-  animation: v4-arrow-nudge 3.2s ease-in-out infinite;
+  animation: v4-arrow-nudge 5s ease-in-out infinite;
 }
 
 .v4-project__arrow--prev svg {
@@ -246,11 +246,11 @@ a.v4-project__link:hover {
 }
 
 @keyframes v4-arrow-nudge {
-  0%, 62%, 100% { translate: 0 0; }
-  70% { translate: var(--nudge) 0; }
-  78% { translate: 0 0; }
-  85% { translate: calc(var(--nudge) * .6) 0; }
-  92% { translate: 0 0; }
+  0%, 76%, 100% { translate: 0 0; }   /* the tugs keep their pace; only the rest between is longer */
+  81% { translate: var(--nudge) 0; }
+  86% { translate: 0 0; }
+  91% { translate: calc(var(--nudge) * .6) 0; }
+  96% { translate: 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
