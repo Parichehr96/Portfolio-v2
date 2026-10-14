@@ -1,5 +1,5 @@
 /* ============================================================================
-   TOAST — Figma 1126:30853 (600 × 72, centred in the column, 16px from the top)
+   TOAST — Figma 1490:19024 (600 × 72, centred in the column, 16px from the top)
    ========================================================================== */
 
 /* STICKY, NOT FIXED. While it is up it takes its place in the page, 16 from the
@@ -120,32 +120,112 @@
   inset: 0;
 }
 
-/* The arc covers the left half, stopping 10.37% short of the bottom. */
+/* The fuse (1490:19024): a green arc from 12 o'clock running anticlockwise,
+   its length the part still to burn. --left (0..100) is set by the script;
+   the default is the end state, for no-JS and reduced motion. Drawn
+   clockwise from 3 o'clock, so turned to 12 and mirrored. */
 .v4-toast__ring-arc {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  transform: scaleX(-1) rotate(-90deg);
+}
+
+.v4-toast__ring-arc circle {
+  fill: none;
+  stroke: #008000;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-dasharray: var(--left, 20) 100;
+}
+
+/* The spark sits on the arc's tip, its rays trailing back along the burnt
+   part. The script places and turns it; its origin is the spark's head. */
+.v4-toast__spark {
   position: absolute;
   top: 0;
   left: 0;
-  width: 50%;
-  height: 89.63%;
+  width: 0;
+  height: 0;
+  transform: translate(1.77px, 14.08px) rotate(153deg);
 }
 
-/* logos:spark at the arc's lower tip, turned 82° as in the comp. */
-.v4-toast__ring-spark {
+.v4-toast__spark-glyph {
   position: absolute;
-  top: 38px;
-  left: 8px;
+  left: -0.9px;
+  top: -5.4px;
   width: 6.2px;
   height: 6.2px;
-  transform: rotate(82deg);
+  max-width: none;
+  transform-origin: 0.9px 5.4px;
+  animation: v4-spark-flicker 0.32s steps(4) infinite;
+}
+
+.v4-toast__spark-glow {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 190 90 / 0.9), rgb(255 166 77 / 0.35) 55%, transparent);
+  animation: v4-spark-glow 0.45s ease-in-out infinite alternate;
+}
+
+/* The bits fly out from the head along the rays (up and right, before the
+   turn), each its own way, and burn out. */
+.v4-toast__spark-bit {
+  position: absolute;
+  left: -0.6px;
+  top: -0.6px;
+  width: 1.2px;
+  height: 1.2px;
+  border-radius: 50%;
+  background: #ffc46b;
+  opacity: 0;
+  animation: v4-spark-bit var(--t, 0.6s) ease-out var(--d, 0s) infinite;
+}
+
+.v4-toast__spark-bit:nth-of-type(2) { --x: 7px; --y: -3px; --t: 0.55s; --d: 0s; }
+.v4-toast__spark-bit:nth-of-type(3) { --x: 4px; --y: -6px; --t: 0.7s; --d: 0.12s; }
+.v4-toast__spark-bit:nth-of-type(4) { --x: 8px; --y: -7px; --t: 0.5s; --d: 0.25s; }
+.v4-toast__spark-bit:nth-of-type(5) { --x: 2px; --y: -8px; --t: 0.65s; --d: 0.36s; }
+.v4-toast__spark-bit:nth-of-type(6) { --x: 9px; --y: -1px; --t: 0.6s; --d: 0.47s; }
+.v4-toast__spark-bit:nth-of-type(7) { --x: 6px; --y: -5px; --t: 0.45s; --d: 0.18s; background: #fff1c9; }
+
+@keyframes v4-spark-flicker {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  25% { transform: scale(1.18) rotate(-8deg); opacity: 0.85; }
+  50% { transform: scale(0.9) rotate(5deg); opacity: 1; }
+  75% { transform: scale(1.1) rotate(-3deg); opacity: 0.75; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes v4-spark-glow {
+  from { transform: scale(0.8); opacity: 0.7; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes v4-spark-bit {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) scale(0.3); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-toast__spark-glyph,
+  .v4-toast__spark-glow { animation: none; }
+  .v4-toast__spark-bit { display: none; }
 }
 
 .v4-toast__ring-value {
   position: absolute;
-  top: var(--v4-space-2);
-  left: var(--v4-space-3);
+  inset: 0;
+  display: grid;
+  place-items: center;
   font-size: var(--v4-text-ui);
   font-weight: var(--v4-weight-medium);
   line-height: var(--v4-leading-ui-loose);
+  font-variant-numeric: tabular-nums;
   color: var(--v4-text);
 }
 

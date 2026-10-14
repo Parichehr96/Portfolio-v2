@@ -53,6 +53,40 @@
     if (event.animationName === "v4-toast-timer") dismiss();
   });
 
+  // THE FUSE: the arc starts full at 0%; the spark burns it back as the
+  // number counts up to the progress value, over 2s. The spark keeps sparking.
+  var ring = toast.querySelector("[data-toast-ring]");
+  if (ring) {
+    var arc = ring.querySelector("circle");
+    var spark = ring.querySelector("[data-toast-spark]");
+    var value = ring.querySelector("[data-toast-value]");
+    var end = Math.max(0, Math.min(100, +ring.dataset.progress || 0));
+    var R = 19.17, BURN = 2000, DELAY = 400;
+
+    var draw = function (p) {               // p: percent done, 0..100
+      var left = 100 - p, a = (left / 100) * 2 * Math.PI;
+      arc.style.setProperty("--left", left);
+      // The tip, anticlockwise from 12; the rays trail back along the burnt part.
+      var x = 20 - R * Math.sin(a), y = 20 - R * Math.cos(a);
+      var rot = Math.atan2(Math.sin(a), -Math.cos(a)) * 180 / Math.PI + 45;
+      spark.style.transform = "translate(" + x.toFixed(2) + "px," + y.toFixed(2) + "px) rotate(" + rot.toFixed(1) + "deg)";
+      value.textContent = Math.round(p) + "%";
+    };
+
+    if (reduced) draw(end);
+    else {
+      draw(0);
+      var start = null;
+      var tick = function (now) {
+        if (start === null) start = now + DELAY;
+        var u = Math.max(0, Math.min(1, (now - start) / BURN));
+        draw(end * (1 - Math.pow(1 - u, 2)));  // eases into its stop
+        if (u < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+  }
+
   var close = toast.querySelector("[data-toast-close]");
   if (close) close.addEventListener("click", dismiss);
 })();
