@@ -10,7 +10,7 @@
   whatever the machine. The app's own transitions are switched off; every
   movement here is a function of t.
 
-  ?p=1  the main navigation: Home, HR, HSE, Courses, Engineering, the rail's
+  ?p=1  a quick zoom in on the rail, then the main navigation: Home, HR, HSE, Courses, Engineering, the rail's
         highlight gliding between them, each module's sidebar and page fading
         through as it arrives, on a loop.
   ?p=3  the top bar: the profile menu opens, the view zooms in on it, it
@@ -78,7 +78,25 @@ async function setup1() {
   Object.assign(pill.style, { position: "absolute", left: nav.querySelector(".ri").offsetLeft + "px", top: 0, width: "40px", height: "40px", borderRadius: "10px", background: "#E6EEFC", zIndex: 0 });
   nav.appendChild(pill);
 }
+// The loop opens on the rail: a quick zoom in on it, so the eye is there
+// when it moves, then back out, and the first glide follows straight away.
+const INTRO = 1.6, ZIN = [0.1, 0.6], ZOUT = [0.9, 1.4], SKIP = 2.0;   // SKIP: Home's hold, cut short
+const LOOP1 = INTRO + SEG * MODS.length - SKIP;
+function railZoom(t) {
+  const z = span(t, ...ZIN) - span(t, ...ZOUT);
+  if (z <= 0) { cam.style.transform = "none"; return; }
+  // Centred on the five module icons (Home to Engineering), all of them in view.
+  // (Measured from the window's own place, 40 / 40, not its zoomed one.)
+  const icons = [...d.querySelectorAll(".rail-nav .ri")];
+  const a = icons[0].getBoundingClientRect(), z2 = icons[icons.length - 1].getBoundingClientRect();
+  const cx = 40 + (a.left + a.width / 2) * S, cy = 40 + ((a.top + z2.bottom) / 2) * S, s = 1.5;
+  const tx = Math.max(812 * (1 - s), Math.min(0, 406 - s * cx)), ty = Math.max(520 * (1 - s), Math.min(0, 260 - s * cy));
+  cam.style.transform = "translate(" + tx * z + "px," + ty * z + "px) scale(" + lerp(1, s, z) + ")";
+}
 async function at1(t) {
+  t = ((t % LOOP1) + LOOP1) % LOOP1;
+  railZoom(t);
+  t = t < INTRO ? 0 : t - INTRO + SKIP;                  // the modules' own timeline, Home's hold shortened
   const n = MODS.length, L = SEG * n; t = ((t % L) + L) % L;
   const i = Math.floor(t / SEG), u = t - i * SEG, j = (i + 1) % n;
   await go(MODS[u < SWAP ? i : j][1]);
@@ -169,7 +187,7 @@ window.setT = async function (t) {
   if (P === "1") await at1(t); else await at3(t);
   await frame();
 };
-window.LOOP = P === "1" ? SEG * MODS.length : LOOP3;
+window.LOOP = P === "1" ? LOOP1 : LOOP3;
 
 ifr.addEventListener("load", async () => {
   d = ifr.contentDocument;
