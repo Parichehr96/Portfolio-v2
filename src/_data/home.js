@@ -70,8 +70,8 @@ module.exports = {
         verified: true,
         years: "2021-2022",
         desc: [
-          { style: "lead", text: "Designed how an ERP decides what deserves attention." },
-          { text: " Co-built a 40–50 component design system and the model that decides how every alert looks and behaves." },
+          { style: "lead", text: "Redesigned an oil and gas ERP end to end," },
+          { text: " from how its modules are organized to a working prototype, so office staff and field workers find what they need in one product." },
         ],
         panels: [
           // Thumbnail motion, played only on the thumbnail at the front
