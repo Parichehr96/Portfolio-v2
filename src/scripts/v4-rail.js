@@ -58,6 +58,8 @@
   if (arrival) {
     var go = function () { arrival.scrollIntoView({ behavior: "instant", block: "start" }); };
     go();
+    // In place: show the page (hidden till now on a Back, layouts/v4.njk).
+    requestAnimationFrame(function () { document.documentElement.classList.remove("is-landing"); });
     window.addEventListener("load", go, { once: true });
   }
 })();

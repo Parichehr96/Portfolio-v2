@@ -31,6 +31,18 @@
   {%- endif %}
 
 
+  {%- if (pageId or 'home') == 'home' %}
+  {#- Back from a case study (/#work-<id>): the page stays unseen until it has
+      jumped to that card (scripts/v4-rail.js), so the top never flashes
+      first. Shown regardless after 1.5s, should the jump never come. -#}
+  <script>
+    if (/^#work-/.test(location.hash)) {
+      document.documentElement.classList.add("is-landing");
+      setTimeout(function () { document.documentElement.classList.remove("is-landing"); }, 1500);
+    }
+  </script>
+  {%- endif %}
+
   {% include "partials/head-analytics.njk" %}
 </head>
 
