@@ -136,7 +136,7 @@
   stroke: #008000;
   stroke-width: 1.65;
   stroke-linecap: round;
-  stroke-dasharray: var(--left, 20) 100;
+  stroke-dasharray: var(--left, 25) 100;
 }
 
 /* The spark sits on the arc's tip, its rays trailing back along the burnt
@@ -147,7 +147,7 @@
   left: 0;
   width: 0;
   height: 0;
-  transform: translate(1.77px, 14.08px) rotate(153deg);
+  transform: translate(0.83px, 20px) rotate(135deg);
 }
 
 .v4-toast__spark-glyph {

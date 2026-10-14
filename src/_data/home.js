@@ -9,7 +9,7 @@ module.exports = {
   // ---- Toast — 1126:30853 ----------------------------------------------------
   // Shown on every load; closes itself after 10s or on the × (v4/toast.njk).
   toast: {
-    progress: 80,
+    progress: 75,
     title: "Portfolio 2026 is still in progress.",
     body: "Case studies, writings, and details are actively rolling in.",
   },
