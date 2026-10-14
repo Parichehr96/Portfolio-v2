@@ -145,7 +145,9 @@
     sky.style.setProperty("--c4", rgb(mix(cols[1], cols[0], .25)));   // the thin dark band at the foot
     // Glow: east on the left of the panel, west on the right; height from elevation.
     sky.style.setProperty("--sun-x", (8 + Math.min(1, Math.max(0, (s.az - 60) / 240)) * 84).toFixed(1) + "%");
-    sky.style.setProperty("--sun-y", (96 - Math.max(-12, Math.min(70, s.alt)) * 1.2).toFixed(1) + "%");
+    // Height: the horizon sits at 66%, just over the hour track (so a low winter sun clears it),
+    // up to 8% at 70° and down to 76% at 12° below.
+    sky.style.setProperty("--sun-y", (66 - Math.max(-12, Math.min(70, s.alt)) * .83).toFixed(1) + "%");
     sky.style.setProperty("--glow", Math.max(0, Math.min(.9, (s.alt + 5) / 11)).toFixed(2));
     sky.style.setProperty("--stars", Math.max(0, Math.min(1, (-s.alt - 6) / 8)).toFixed(2));
     timeEl.textContent = hhmm(date);
