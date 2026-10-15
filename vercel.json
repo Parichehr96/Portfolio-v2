@@ -14,7 +14,57 @@
     },
     {
       "source": "/ezam.html",
-      "destination": "/projects/",
+      "destination": "/#work",
+      "permanent": true
+    },
+    {
+      "source": "/work/ezam",
+      "destination": "/#work",
+      "permanent": true
+    },
+    {
+      "source": "/work/ezam/",
+      "destination": "/#work",
+      "permanent": true
+    },
+    {
+      "source": "/projects",
+      "destination": "/#work",
+      "permanent": true
+    },
+    {
+      "source": "/projects/",
+      "destination": "/#work",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/Assets/embeds/challenquiz/before-after.html",
+      "destination": "/work/challenquiz/",
+      "permanent": true
+    },
+    {
+      "source": "/Assets/embeds/challenquiz/prototype.html",
+      "destination": "/work/challenquiz/",
+      "permanent": true
+    },
+    {
+      "source": "/Assets/embeds/connect2wow/alert-routing.html",
+      "destination": "/work/connect2wow/",
+      "permanent": true
+    },
+    {
+      "source": "/Assets/embeds/connect2wow/attention-pyramid.html",
+      "destination": "/work/connect2wow/",
+      "permanent": true
+    },
+    {
+      "source": "/Assets/embeds/connect2wow/severity-matrix.html",
+      "destination": "/work/connect2wow/",
       "permanent": true
     }
   ]
