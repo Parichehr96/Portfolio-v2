@@ -73,6 +73,8 @@ module.exports = {
   // is dropped: one heading for the whole list is enough.
   //
   // `desc` is a list of runs so each can be set the way the comp sets it:
+  // `industry` is the small uppercase label over the name, joined by " · ".
+  //
   //   lead  the dark opening claim            (medium, near-black)
   //   stat  a number worth catching the eye   (bold, navy)
   //   anything else is plain muted body copy.
@@ -85,6 +87,7 @@ module.exports = {
         id: "connect2wow",
         label: "Selected project",
         name: "Connect2WOW",
+        industry: ["Enterprise", "Oil & gas"],   // the small label over the name
         href: "/work/connect2wow/",
         verified: true,
         years: "2021-2022",
@@ -124,6 +127,7 @@ module.exports = {
       {
         id: "onton",
         name: "Onton",
+        industry: ["Web3", "Events"],   // the small label over the name
         navLabel: "ONTON",
         href: "/work/onton/",
         verified: true,
@@ -147,6 +151,7 @@ module.exports = {
       {
         id: "challenquiz",
         name: "Challenquiz",
+        industry: ["Consumer", "Gaming"],   // the small label over the name
         href: "/work/challenquiz/",
         verified: true,
         years: "2023",
@@ -165,6 +170,7 @@ module.exports = {
       {
         id: "wow-design-system",
         name: "WOW design system",
+        industry: ["Enterprise", "Design system"],   // the small label over the name
         href: "/work/wow-design-system/",
         navLabel: "Connect2WOW (Design system)",
         verified: true,

@@ -92,6 +92,71 @@ a.v4-project__link:hover {
   height: var(--v4-icon-md);
 }
 
+/* The project's industry, small and uppercase over its name (home.js). */
+.v4-project__industry {
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--v4-text-soft);
+  margin-bottom: calc(-1 * var(--v4-space-1));
+}
+
+/* The arrow after a linked name: the card opens its case study. It slides
+   a little when the card is hovered. */
+.v4-project__go {
+  flex: none;
+  color: var(--v4-text);
+  transition: transform 0.25s var(--v4-strip-ease);
+}
+
+.v4-project--linked:hover .v4-project__go {
+  transform: translateX(4px);
+}
+
+/* And every 5s, the same two small tugs as the strip's arrows (by
+   `translate`, apart from the hover's slide), so it catches the eye. */
+.v4-project__go {
+  --nudge: 4px;
+  animation: v4-arrow-nudge 5s ease-in-out infinite;
+}
+
+.v4-project--linked:hover .v4-project__go {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-project__go { transition: none; animation: none; }
+}
+
+/* Over a linked card's thumbnails, the cursor carries a small dark label
+   (scripts/v4-strip.js; mouse only, and not while dragging). */
+.v4-cursor-pill {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 25;
+  padding: 6px 12px;
+  border-radius: var(--v4-radius-round);
+  background: var(--v4-text);
+  color: var(--v4-surface);
+  font-size: var(--v4-text-caption);
+  font-weight: var(--v4-weight-medium);
+  line-height: var(--v4-leading-caption);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  translate: var(--x, -999px) var(--y, -999px);   /* follows the pointer at once, never glides */
+  scale: 0.9;
+  transition: opacity 0.18s ease, scale 0.18s ease;
+}
+
+.v4-cursor-pill.is-on {
+  opacity: 1;
+  scale: 1;
+}
+
 .v4-project__years {
   flex: none;
   font-size: var(--v4-text-body);

@@ -217,6 +217,25 @@
     }
   });
 
+  // THE CURSOR LABEL. Over a linked card's thumbnails, with a mouse, a small
+  // "View case study" pill follows the pointer (_work.css). Not over the
+  // arrows, and not while the strip is being dragged, which browses instead.
+  var fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+  var pill = document.createElement("div");
+  pill.className = "v4-cursor-pill";
+  pill.setAttribute("aria-hidden", "true");
+  pill.textContent = "View case study";
+  document.body.appendChild(pill);
+  Array.prototype.slice.call(document.querySelectorAll("[data-card-href] .v4-project__strip")).forEach(function (s) {
+    s.addEventListener("pointermove", function (e) {
+      var off = e.pointerType !== "mouse" || !fine.matches || s.classList.contains("is-dragging") || e.target.closest("[data-strip-step]");
+      pill.style.setProperty("--x", (e.clientX + 16) + "px");
+      pill.style.setProperty("--y", (e.clientY + 16) + "px");
+      pill.classList.toggle("is-on", !off);
+    });
+    s.addEventListener("pointerleave", function () { pill.classList.remove("is-on"); });
+  });
+
   Array.prototype.slice.call(document.querySelectorAll("[data-card-href]")).forEach(function (card) {
     var href = card.getAttribute("data-card-href");
     function open(e) {
