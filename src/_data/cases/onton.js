@@ -57,7 +57,7 @@ module.exports = {
       title: "Metrics",
       nav: "Metrics",
       muted: true,
-      text: "Four steps became two, with advanced settings hidden by default and expandable on demand. With only 15% of organizers ever opening the expanded settings, the core bet held: almost no one needed what the old flow forced on everyone.",
+      text: "Four steps became one, with advanced settings hidden by default and expandable on demand. With only 15% of organizers ever opening the expanded settings, the core bet held: almost no one needed what the old flow forced on everyone.",
       blocks: [
         {
           type: "metrics",
@@ -197,11 +197,11 @@ module.exports = {
     {
       title: "What changed",
       nav: "What changed",
-      text: "Two steps instead of four, defaults that stick, and one final confirmation instead of a warning on every screen.",
+      text: "One step instead of four, defaults that stick, and one final confirmation instead of a warning on every screen.",
       blocks: [
         {
           type: "changes",
-          title: "From four steps to two",
+          title: "From four steps to one",
           subtitle: "Nothing critical was deleted, most of it was demoted.",
           legend: [
             { state: "kept", label: "Kept & surfaced" },
@@ -211,19 +211,18 @@ module.exports = {
           // Field state: kept (blue dot), moved (hollow ring), gone (hollow
           // ring, struck through: removed or automated).
           after: {
-            label: "After · 2 steps",
+            label: "After · 1 step",
             steps: [
-              { n: 1, title: "Essentials", fields: [["Name", "kept"], ["Date & time", "kept"], ["Location", "kept"], ["Cover image", "kept"]] },
               {
-                n: 2,
-                title: "Reward & review",
-                fields: [["SBT preset", "kept"], ["Free · default", "kept"], ["Capacity · default", "kept"]],
+                n: 1,
+                title: "New event",
+                fields: [["Cover image", "kept"], ["Name", "kept"], ["Date & time", "kept"], ["Location", "kept"], ["Ticket · free by default", "kept"], ["Reward · SBT preset", "kept"], ["Capacity · unlimited by default", "kept"]],
                 advanced: "Advanced — holds all 11 demoted fields",
-                action: "Preview → Publish",
+                action: "Create event",
               },
             ],
             summary: [
-              { from: "4", to: "2", label: "Steps" },
+              { from: "4", to: "1", label: "Steps" },
               { from: "22", to: "7", label: "Fields shown" },
               { from: "~7", to: "1", label: "Min to publish" },
             ],
