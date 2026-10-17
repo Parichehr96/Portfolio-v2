@@ -17,7 +17,7 @@
  * both reset, so they play again next time. Reduced motion: no slide, no
  * motion.
  *
- * BIG ON THE WAY IN. While a card's strip is still below 30% of the screen
+ * BIG ON THE WAY IN. While a card's strip is still below 10% of the screen
  * (--v4-strip-big-line) it is shown 1.7x and along the whole page
  * (.is-big on the card, _work.css); past that line it settles back to the
  * column. Wide screens only, not for reduced motion.
@@ -238,7 +238,7 @@
   var frame = 0;
   function sizeCards() {
     frame = 0;
-    var line = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v4-strip-big-line")) || 0.3);
+    var line = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v4-strip-big-line")) || 0.1);
     cards.forEach(function (c) {
       var top = c.querySelector(".v4-project__carousel").getBoundingClientRect().top;   // grown from its top, so this is the same either way
       c.classList.toggle("is-big", wide.matches && top > line);

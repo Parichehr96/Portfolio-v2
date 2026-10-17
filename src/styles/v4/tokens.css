@@ -183,7 +183,7 @@
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
   --v4-strip-dim: .4;                           /* the neighbours either side */
   --v4-strip-big: 1.7;                          /* a card's strip as it rises in from below (scripts/v4-strip.js) */
-  --v4-strip-big-line: .3;                      /* …until its top passes this far down the screen, under the clock and menu */
+  --v4-strip-big-line: .1;                      /* …until its top is this near the top of the screen, over the clock and menu */
   --v4-strip-grow: .8s;                         /* growing and settling back */
   --v4-strip-arrow: 34px;
   --v4-strip-arrow-out: 30px;                   /* each chevron's centre, outside the column's edge */

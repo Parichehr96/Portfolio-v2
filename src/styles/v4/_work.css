@@ -483,17 +483,27 @@ a.v4-project__link:hover {
 /* ---- Big on the way in --------------------------------------------------- */
 /* As a card rises in from the bottom of the screen its strip is 1.7x
    (--v4-strip-big), grown from its top edge, and runs along the whole page:
-   no clip at the column, no arrows, the front thumbnail playing. Once the
-   strip's top passes 30% down the screen (--v4-strip-big-line, under the
-   clock and menu) it settles back to the column with its arrows; scrolled
-   back down, it grows again (scripts/v4-strip.js sets .is-big). By transform
-   only, so nothing below moves while the page scrolls; the grown strip
-   reaches over the gap under it. Wide screens only, and not for reduced
-   motion. */
+   no clip at the column, no arrows, the front thumbnail playing, over the
+   sticky clock and menu (z-index 2 to their 1). Once the strip's top is 10%
+   from the top of the screen (--v4-strip-big-line) it settles back to the
+   column with its arrows; scrolled
+   back down, it grows again (scripts/v4-strip.js sets .is-big). It grows by
+   transform, and the room under it grows with it (margin), so the next card
+   always sits below it and follows it up as it settles. On a white band, so
+   the clock and menu it passes over don't show through the dimmed
+   neighbours. Wide screens only, and not for reduced motion. */
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .v4-work {
+    overflow-anchor: none;   /* the page must not hop to compensate as a strip settles */
+  }
+
   .v4-project__carousel {
     transform-origin: 50% 0;
-    transition: transform var(--v4-strip-grow) var(--v4-strip-ease);
+    transition: transform var(--v4-strip-grow) var(--v4-strip-ease), margin-bottom var(--v4-strip-grow) var(--v4-strip-ease);
+  }
+
+  .v4-project__track {
+    transition: background-color var(--v4-strip-grow) var(--v4-strip-ease);
   }
 
   .v4-project__strip.is-carousel {
@@ -509,6 +519,12 @@ a.v4-project__link:hover {
   .v4-project.is-big .v4-project__carousel {
     z-index: 2;
     transform: scale(var(--v4-strip-big));
+    /* the extra height of the grown strip: (1.7 - 1) x the panel's height (812 x 520) */
+    margin-bottom: calc((var(--v4-strip-big) - 1) * min(var(--v4-panel-width), 80vw) * 520 / 812);
+  }
+
+  .v4-project.is-big .v4-project__track {
+    background-color: var(--v4-surface);
   }
 
   /* Open to the page's edges (the page itself clips sideways overflow). */
