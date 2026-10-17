@@ -4,17 +4,19 @@
   Assets/v4/work/onton/flow.{webm,mp4,jpg}, played on the homepage strip.
 
   Built from the Figma frames, which are the source: the thumbnail's two
-  phones (1490:18484, as drawn there, zoomed in), the ticket flow in
-  ONTON_redesign (991:36672: 990:36177, 999:38765, 1004:39061, 1004:39218,
-  999:38917, 999:38809) and the event form and events list (980:34977,
-  1254:16250), exported to img/. Only the motion between them is added.
+  phones (1490:18484, as drawn there, zoomed in), the ticket sheets in
+  ONTON_redesign (991:36672: 990:36177, 999:38809) and the event form and
+  events list (980:34977, 1254:16250), exported to img/. Only the motion
+  between them is added.
 
-  The story, one loop: the phones start as the thumbnail draws them, then
-  zoom out to the centre of the card. The right one adds a ticket (Add
-  Ticket, a name and picture, currency, price, Save, Confirm) and lands on the
-  event form; the left one scrolls the form to its end, taps Create event and
-  lands on its events, the new one confirmed. Then both zoom back in, where
-  the loop began.
+  The story, one loop, in one phone: the two phones start as the thumbnail
+  draws them, zoom out and merge into one, the ticket sheet over the event
+  form. A close look: Add Ticket, and the new ticket opens into the list.
+  Back out: Confirm, the sheet slides down to the form, whose Create event
+  stays pinned to the bottom. A close look: Create event, the events list
+  arrives with its "created" toast, and the view moves to the new event's
+  card. Back out, and the phone splits into the two zoomed-in phones again,
+  where the loop began.
 
   window.setT(seconds) draws any moment, so record.mjs captures it frame by
   frame. Everything is in the thumbnail's own units (487.2 x 312), scaled up.
@@ -25,6 +27,15 @@ html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; backgroun
   transform: scale(1.66667); background: #F3F6F8; border-radius: 12px; overflow: hidden; }
 #card { position: absolute; left: 38.4px; top: 52.875px; width: 410.4px; height: 206.25px; background: #fff;
   border-radius: 8px; overflow: hidden; }
+#cam { position: absolute; left: 0; top: 0; width: 410.4px; height: 206.25px; transform-origin: 0 0; }
+/* The ticket sheet, from the two-ticket frame (s5-two, 402 x 422) in three
+   bands: its head and first ticket, the new ticket, its foot (Add Ticket,
+   Confirm). With the middle band shut it is the one-ticket sheet. */
+.band { position: absolute; left: 0; width: 402px; background: url(img/s5-two.png) no-repeat 0 0 / 402px 422px; }
+#sheet { position: absolute; left: 0; width: 402px; height: 422px; }
+/* Create event, pinned to the foot of the form while it scrolls. */
+#cta { position: absolute; left: 0; bottom: 0; width: 402px; height: 90px;
+  background: url(img/l0-form.png) no-repeat 0 100% / 402px auto; box-shadow: 0 -1px 4px rgb(0 0 0 / .04); }
 /* A phone, at the Figma screens' own size (402 x 901) inside an iPhone bezel,
    scaled into the card. */
 .phone { position: absolute; left: 0; top: 0; width: 440px; height: 939px; transform-origin: 0 0; }
@@ -43,25 +54,26 @@ html, body { margin: 0; width: 812px; height: 520px; overflow: hidden; backgroun
 .tap { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
   background: rgb(4 4 24 / .18); box-shadow: 0 0 0 2px rgb(255 255 255 / .7); opacity: 0; }
 </style></head><body>
-<div id="panel"><div id="card">
-  <div class="phone" id="L"><div class="bezel"></div><div class="screen" id="Ls">
-    <img class="layer" id="l-form" src="img/l0-form.png" style="height:auto">
-    <div class="head" id="l-head"><img class="layer" src="img/l0-form.png"></div>
-    <img class="layer" id="l-events" src="img/l1-events.png">
-    <span class="tap" id="l-tap"></span>
+<div id="panel"><div id="card"><div id="cam">
+  <div class="phone" id="L"><div class="bezel"></div><div class="screen">
+    <img class="layer" id="l-form" src="img/l0-form.png">
+    <div class="head"><img class="layer" id="l-head" src="img/l0-form.png"></div>
   </div><div class="island"></div></div>
-  <div class="phone" id="R"><div class="bezel"></div><div class="screen" id="Rs">
-    <img class="layer" id="r-base" src="img/r0-sheet-one.png">
-    <div class="dim" id="r-dim"></div>
-    <img class="layer" id="s1" src="img/s1-add.png">
-    <img class="layer" id="s2" src="img/s2-currency.png">
-    <img class="layer" id="s3" src="img/s3-amount.png">
-    <img class="layer" id="s4" src="img/s4-filled.png">
-    <img class="layer" id="s5" src="img/s5-two.png">
-    <img class="layer" id="r-form" src="img/l0-form.png">
-    <span class="tap" id="r-tap"></span>
+  <div class="phone" id="R"><div class="bezel"></div><div class="screen">
+    <img class="layer" id="form" src="img/l0-form.png">
+    <div class="head"><img class="layer" id="head" src="img/l0-form.png"></div>
+    <div id="cta"></div>
+    <div class="dim" id="dim"></div>
+    <div id="sheet">
+      <div class="band" id="b-head" style="top:0;height:177px;background-position:0 0"></div>
+      <div class="band" id="b-new" style="height:101px;background-position:0 -177px"></div>
+      <div class="band" id="b-foot" style="height:144px;background-position:0 -278px"></div>
+    </div>
+    <img class="layer" id="r0" src="img/r0-sheet-one.png">
+    <img class="layer" id="events" src="img/l1-events.png">
+    <span class="tap" id="tap"></span>
   </div><div class="island"></div></div>
-</div></div>
+</div></div></div>
 <script>
 const $ = id => document.getElementById(id);
 const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
@@ -70,78 +82,95 @@ const span = (t, a, b, f = ease) => f((t - a) / (b - a));
 const lerp = (a, b, u) => a + (b - a) * u;
 const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-// The two phones in the card's units: as the thumbnail draws them (zoomed
-// in, the right one higher), and centred at 65% (zoomed out).
-const W = 440, IN = 138 / W, OUTS = 89.8 / W;
+// The phones in the card's units: as the thumbnail draws them (zoomed in,
+// the right one higher), side by side zoomed out, and one, centred.
+const W = 440, IN = 138 / W, OUTS = 89.8 / W, CW = 410.4, CH = 206.25;
 const PL = { in: [53.4, 28.1], out: [77.6, 10.1] };
 const PR = { in: [221.4, -114.1], out: [245.1, 10.1] };
+const ONE = [(CW - 89.8) / 2, (CH - 939 * OUTS) / 2];
 
-// The screens are 402 wide; the form and the events list are stretched to it.
-const FORM_H = 1024 * 402 / 375, EVENTS_H = 895 * 402 / 388, SCROLL = FORM_H - 901;
+// The form, stretched to the 402 screen; r0's form sits scrolled this far.
+const FORM_H = 1024 * 402 / 375, EVENTS_H = 895 * 402 / 388, SCROLL = FORM_H - 901, AT = 188;
 
 // Timeline (seconds). One loop ends where it began.
 const T = {
-  zoomOut: [0.8, 2.0],
-  addTap: 2.4, s1: [2.65, 3.05],
-  s2: [3.6, 3.9], tonTap: 4.35, s3: [4.6, 4.9], s4: [5.5, 5.8],
-  saveTap: 6.3, s5: [6.55, 6.95],
-  okTap: 7.5, land: [7.75, 8.25],
-  scroll: [8.6, 10.0], createTap: 10.35, events: [10.6, 11.0],
-  zoomIn: [12.4, 13.6], LOOP: 14.4,
+  zoomOut: [0.8, 2.0], merge: [2.1, 2.9], swap: [2.0, 2.6],
+  addTap: 3.85, grow: [4.1, 4.6],
+  okTap: 6.05, down: [6.3, 6.85], scroll: [7.0, 7.6],
+  createTap: 9.15, events: [9.4, 9.85],
+  reset: [12.6, 13.0], split: [13.0, 13.8], zoomIn: [13.8, 15.0], LOOP: 15.8,
 };
-const SHEETS = { s1: 685, s2: 913, s3: 913, s4: 913, s5: 422 };
+// The close looks: [time, zoom, focus in the screen's units (402 x 901)].
+// A zoom of 1 is the plain view, whatever its focus.
+const CAM = [
+  [0, 1, [201, 450]], [2.9, 1, [201, 450]],
+  [3.5, 2.3, [201, 700]], [5.0, 2.3, [201, 700]],                  // the sheet: a new ticket
+  [5.6, 1, [201, 450]], [8.3, 1, [201, 450]],
+  [8.9, 2.7, [201, 830]], [9.7, 2.7, [201, 830]],                  // Create event
+  [10.4, 2.5, [200, 480]], [12.0, 2.5, [200, 480]],                // the new event's card
+  [12.6, 1, [201, 450]], [99, 1, [201, 450]],
+];
 
 function place(el, s, x, y) { el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
 function tap(el, t, at, x, y) {
   const u = (t - at) / 0.45;
-  if (u < 0 || u > 1) { el.style.opacity = 0; return; }
+  if (u < 0 || u > 1) return false;
   el.style.left = x + "px"; el.style.top = y + "px";
   el.style.opacity = u < .3 ? u / .3 : 1 - (u - .3) / .7;
   el.style.transform = `scale(${.6 + .5 * out(u)})`;
-}
-// A sheet rises in from the screen's foot (bottom-aligned, 901 tall screen).
-function sheet(id, t, from, to) {
-  const el = $(id), h = SHEETS[id], k = span(t, from[0], from[1], out), g = to ? span(t, to[0], to[1]) : 0;
-  const v = Math.max(0, k - g);
-  el.style.opacity = v;
-  el.style.top = (901 - h + (1 - k) * 24) + "px";
+  return true;
 }
 
 window.setT = async function (t) {
   t = ((t % T.LOOP) + T.LOOP) % T.LOOP;
-  // Zoom out, and back in at the end.
+  // Zoom out, merge into one phone; split and zoom back in at the end.
   const z = span(t, ...T.zoomOut) - span(t, ...T.zoomIn);
+  const m = span(t, ...T.merge) - span(t, ...T.split);
   const s = lerp(IN, OUTS, z);
-  place($("L"), s, lerp(PL.in[0], PL.out[0], z), lerp(PL.in[1], PL.out[1], z));
-  place($("R"), s, lerp(PR.in[0], PR.out[0], z), lerp(PR.in[1], PR.out[1], z));
-  const reset = span(t, ...T.zoomIn);            // both screens back to the start as it zooms in
+  const lx = lerp(PL.in[0], PL.out[0], z), ly = lerp(PL.in[1], PL.out[1], z);
+  const rx = lerp(PR.in[0], PR.out[0], z), ry = lerp(PR.in[1], PR.out[1], z);
+  place($("L"), s, lerp(lx, ONE[0], m), lerp(ly, ONE[1], m));
+  place($("R"), s, lerp(rx, ONE[0], m), lerp(ry, ONE[1], m));
+  $("L").style.opacity = 1 - m;
 
-  // RIGHT: the ticket sheet → add a ticket → two tickets → the event form.
-  // Its taps: Add Ticket, the TON currency, Save Ticket, Confirm.
-  const rt = [[T.addTap, 190, 784], [T.tonTap, 40, 901 - 913 + 678], [T.saveTap, 292, 901 - 913 + 793], [T.okTap, 201, 901 - 422 + 368]]
-    .find(([at]) => t >= at && t <= at + .45);
-  if (rt) tap($("r-tap"), t, ...rt); else $("r-tap").style.opacity = 0;
-  $("r-dim").style.opacity = 0;
-  sheet("s1", t, T.s1, T.s2);
-  sheet("s2", t, T.s2, T.s3);
-  sheet("s3", t, T.s3, T.s4);
-  sheet("s4", t, T.s4, T.s5);
-  // The two-ticket sheet drops away as the form comes up.
-  const s5 = $("s5"), k5 = span(t, T.s5[0], T.s5[1], out), d5 = span(t, T.land[0], T.land[1]);
-  s5.style.opacity = Math.min(k5, 1 - reset);
-  s5.style.top = (901 - 422 + (1 - k5) * 24 + d5 * 440) + "px";
-  const land = span(t, ...T.land) * (1 - reset);
-  const rf = $("r-form"); rf.style.height = FORM_H + "px"; rf.style.opacity = land;
-  $("r-base").style.opacity = 1 - land;
+  // The camera: the plain view, or a close look at a point on the phone.
+  let i = 0; while (i < CAM.length - 2 && t >= CAM[i + 1][0]) i++;
+  const [t0, z0, f0] = CAM[i], [t1, z1, f1] = CAM[i + 1], u = span(t, t0, t1);
+  const Z = lerp(z0, z1, u), fx = lerp(f0[0], f1[0], u), fy = lerp(f0[1], f1[1], u);
+  const px = ONE[0] + OUTS * (19 + fx), py = ONE[1] + OUTS * (19 + fy);   // the focus, in the card
+  const k = (Z - 1) / 1.3;                                               // 0 plain … 1 close: how much it centres
+  const cx = lerp(CW / 2, px, Math.min(1, k)), cy = lerp(CH / 2, py, Math.min(1, k));
+  $("cam").style.transform = `translate(${CW / 2 - Z * cx}px, ${CH / 2 - Z * cy}px) scale(${Z})`;
 
-  // LEFT: the form scrolls to its end, Create event, the events list.
-  const lf = $("l-form"); lf.style.height = FORM_H + "px";
-  document.querySelector("#l-head img").style.height = FORM_H + "px";
-  lf.style.top = (-SCROLL * span(t, ...T.scroll) * (1 - reset)) + "px";
-  tap($("l-tap"), t, T.createTap, 200, 1050 - SCROLL);
-  const le = $("l-events"); le.style.height = EVENTS_H + "px";
-  const ev = span(t, ...T.events) * (1 - reset);
-  le.style.opacity = ev; le.style.transform = `translateX(${(1 - ev) * 40}px)`;
+  // The right phone's screen. Figma's frame (r0) as the thumbnail draws it,
+  // swapped while the phones are small for the same moment built in layers.
+  const back = span(t, ...T.reset);                                     // everything back to the start, just before they split
+  $("r0").style.opacity = 1 - span(t, ...T.swap) + back;
+  const form = $("form"); form.style.height = FORM_H + "px";
+  $("head").style.height = FORM_H + "px";
+  form.style.top = -lerp(AT, SCROLL, span(t, ...T.scroll) * (1 - back)) + "px";
+
+  // The sheet: one ticket, then the new one opens into it; Confirm slides it away.
+  const g = span(t, ...T.grow) * (1 - back), dn = span(t, ...T.down, out) * (1 - back);
+  const H = 321 + 101 * g;
+  const sh = $("sheet"); sh.style.top = (901 - H + dn * (H + 30)) + "px"; sh.style.height = H + "px";
+  $("b-new").style.top = "177px"; $("b-new").style.opacity = g;
+  $("b-new").style.transform = `translateY(${(1 - g) * -18}px) scaleY(${.6 + .4 * g})`;
+  $("b-new").style.transformOrigin = "50% 0";
+  $("b-foot").style.top = (H - 144) + "px";
+  $("dim").style.background = `rgb(0 0 0 / ${.6 * (1 - dn)})`;
+
+  // The events list, with its "created" toast.
+  const ev = $("events"); ev.style.height = EVENTS_H + "px";
+  const e = span(t, ...T.events);
+  ev.style.opacity = e > 0 ? 1 - back : 0; ev.style.transform = `translateX(${(1 - span(t, ...T.events)) * 402}px)`;   // pushed in from the right
+
+  // Taps: Add Ticket, Confirm, Create event.
+  const el = $("tap");
+  if (!(tap(el, t, T.addTap, 190, 901 - 321 + 204) || tap(el, t, T.okTap, 201, 901 - 422 + 372) || tap(el, t, T.createTap, 201, 853))) el.style.opacity = 0;
+
+  // The left phone: the form at its top, as the thumbnail draws it.
+  $("l-form").style.height = FORM_H + "px"; $("l-head").style.height = FORM_H + "px";
   await frame();
 };
 window.LOOP = T.LOOP;
