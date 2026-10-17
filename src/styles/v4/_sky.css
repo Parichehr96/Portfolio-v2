@@ -2,7 +2,7 @@
    SKY — Figma 1497:23079, v4/sky.njk, scripts/v4-sky.js
    ============================================================================
 
-   Its own section, after the projects, a section gap (90) under them: the visitor's sky now (595 x
+   Its own section, last before the footer, a section gap (90) under Experience: the visitor's sky now (595 x
    242), then two lines 20 below it. The script sets the sky's colours
    (--c0..--c4), the sun glow (--sun-x/-y, --glow) and the stars; the
    defaults are a clear midday sky. Hovered, tapped or focused, the time and
