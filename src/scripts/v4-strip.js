@@ -260,23 +260,61 @@
     if (top >= L) return 1;                          // held, just below the clock and menu
     return ease(top / L);                            // past the line: shrinking to the top
   }
-  function sizeCards() {
-    frame = 0;
-    var L = line();
-    cards.forEach(function (c) {
-      var car = c.querySelector(".v4-project__carousel");
-      var g = wide.matches ? growAt(car.getBoundingClientRect().top, L, window.innerHeight) : 0;   // grown from its top, so the top is the same either way
-      g = Math.round(g * 1000) / 1000;
-      car.style.setProperty("--grow", g);
-      c.classList.toggle("is-big", g > 0);
+
+  // Each strip's size glides towards where the scroll says it should be
+  // (a mouse wheel moves the page in jumps; this smooths them), a frame at
+  // a time until it gets there. Positions are taken as if no strip above
+  // were grown, so a strip's own growing never moves another's target.
+  // While it moves, the strip is its own layer (will-change), drawn once and
+  // scaled smoothly; once it stops it is drawn again, sharp at its size.
+  var state = cards.map(function (c) {
+    return { card: c, car: c.querySelector(".v4-project__carousel"), strip: c.querySelector(".v4-project__strip"), cur: 0, target: 0, moving: false };
+  });
+  var BIG = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v4-strip-big")) || 1.7;
+  var SMOOTH = 0.16;   // share of the way it closes each 60th of a second
+  var last = 0;
+
+  function targets() {
+    var L = line(), H = window.innerHeight, above = 0;
+    state.forEach(function (st) {
+      var top = st.car.getBoundingClientRect().top - above;   // as if nothing above were grown
+      st.target = wide.matches ? growAt(top, L, H) : 0;
+      above += (BIG - 1) * st.cur * st.strip.offsetHeight;    // the room this one adds below itself now
     });
   }
-  function soon() { if (!frame) frame = requestAnimationFrame(sizeCards); }
+  function apply(st) {
+    st.car.style.setProperty("--grow", (Math.round(st.cur * 10000) / 10000).toString());
+    st.card.classList.toggle("is-big", st.cur > 0.001);
+  }
+  function tick(now) {
+    frame = 0;
+    targets();
+    var dt = last ? Math.min(64, now - last) : 16.7;
+    last = now;
+    var k = 1 - Math.pow(1 - SMOOTH, dt / 16.7), busy = false;
+    state.forEach(function (st) {
+      var d = st.target - st.cur;
+      if (Math.abs(d) < 0.0015) {
+        if (st.cur !== st.target) { st.cur = st.target; apply(st); }
+        if (st.moving) { st.moving = false; st.car.style.willChange = ""; }
+        return;
+      }
+      st.cur += d * k;
+      if (!st.moving) { st.moving = true; st.car.style.willChange = "transform"; }
+      apply(st);
+      busy = true;
+    });
+    if (busy) frame = requestAnimationFrame(tick);
+    else last = 0;
+  }
+  function soon() { if (!frame) frame = requestAnimationFrame(tick); }
   if (cards.length) {
     window.addEventListener("scroll", soon, { passive: true });
     window.addEventListener("resize", soon);
     if (wide.addEventListener) wide.addEventListener("change", soon);
-    sizeCards();
+    // Start where the page is, without gliding in on load.
+    targets();
+    state.forEach(function (st) { st.cur = st.target; apply(st); });
   }
 
   // THE CURSOR LABEL. Over a linked card's thumbnails, with a mouse, a small
