@@ -22,6 +22,12 @@ const name = "flow";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const OUT = join(ROOT, "Assets/v4/work/onton");
+// Size and quality, overridable: DPR (capture scale, 2), OUTH (encoded
+// height, 780) and CRF_VP9 / CRF_H264 (38 / 27). The thumbnails that show
+// screens are recorded at DPR=2.4 OUTH=1248 CRF_VP9=30 CRF_H264=22, sharp
+// at the homepage's 1.7x grown strip on a 2x display.
+const DPR = +process.env.DPR || 2, OUTH = +process.env.OUTH || 780;
+const CRF_VP9 = process.env.CRF_VP9 || "38", CRF_H264 = process.env.CRF_H264 || "27";
 const FPS = 60, HTTP = 8767, CDP = 9335;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -56,7 +62,7 @@ try {
   await send("Page.enable");
   // The exact frame: --window-size includes the window's own chrome, so the
   // page would be shorter than 520 without this.
-  await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 520, deviceScaleFactor: 2, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 520, deviceScaleFactor: DPR, mobile: false });
   await send("Page.navigate", { url: `http://127.0.0.1:${HTTP}/tools/onton-thumbs/stage.html` });
   for (let i = 0; i < 100 && (await evaluate("document.title")) !== "ready"; i++) await sleep(200);
   await sleep(500);                                       // fonts and images settled
@@ -80,10 +86,10 @@ try {
   }
   ws.close();
 
-  const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "%04d.png"), "-vf", "scale=-2:780:flags=lanczos"];
-  execFileSync("ffmpeg", [...input, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38", "-row-mt", "1", "-pix_fmt", "yuv420p", "-an", join(OUT, name + ".webm")]);
-  execFileSync("ffmpeg", [...input, "-c:v", "libx264", "-crf", "27", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", join(OUT, name + ".mp4")]);
-  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", join(frames, "0000.png"), "-vf", "scale=-2:780:flags=lanczos", "-q:v", "3", join(OUT, name + ".jpg")]);
+  const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "%04d.png"), "-vf", `scale=-2:${OUTH}:flags=lanczos`];
+  execFileSync("ffmpeg", [...input, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", CRF_VP9, "-row-mt", "1", "-pix_fmt", "yuv420p", "-an", join(OUT, name + ".webm")]);
+  execFileSync("ffmpeg", [...input, "-c:v", "libx264", "-crf", CRF_H264, "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", join(OUT, name + ".mp4")]);
+  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", join(frames, "0000.png"), "-vf", `scale=-2:${OUTH}:flags=lanczos`, "-q:v", "3", join(OUT, name + ".jpg")]);
   console.log(`${n} frames, ${loop}s → ${name}.webm / .mp4 / .jpg (frames kept in ${frames})`);
 } finally {
   cleanup();

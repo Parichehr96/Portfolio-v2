@@ -22,6 +22,12 @@ const [name, h, run, hold, src = "", w = "600", outDir = "Assets/v4/work/challen
 if (!name || !h) { console.error("usage: record.mjs <name> <h> <run s> <hold s>"); process.exit(1); }
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const OUT = join(ROOT, outDir);
+// Size and quality, overridable: DPR (capture scale, 2), OUTH (encoded
+// height, 780) and CRF_VP9 / CRF_H264 (38 / 27). The thumbnails that show
+// screens are recorded at DPR=2.4 OUTH=1248 CRF_VP9=30 CRF_H264=22, sharp
+// at the homepage's 1.7x grown strip on a 2x display.
+const DPR = +process.env.DPR || 2, OUTH = +process.env.OUTH || 780;
+const CRF_VP9 = process.env.CRF_VP9 || "38", CRF_H264 = process.env.CRF_H264 || "27";
 const FPS = 60, HTTP = 8770, CDP = 9337, FADE = 0.6;
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -46,7 +52,7 @@ try {
   const evaluate = async expr => { const m = await send("Runtime.evaluate", { expression: expr, awaitPromise: true, returnByValue: true });
     if (m.result?.exceptionDetails) throw new Error(JSON.stringify(m.result.exceptionDetails)); return m.result?.result?.value; };
   await send("Page.enable");
-  await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 520, deviceScaleFactor: 2, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: 812, height: 520, deviceScaleFactor: DPR, mobile: false });
   await send("Page.navigate", { url: `http://127.0.0.1:${HTTP}/tools/cq-showcase/stage.html?f=${name}&h=${h}&w=${w}${src ? "&src=" + encodeURIComponent(src) : ""}` });
   for (let i = 0; i < 100 && (await evaluate("document.title")) !== "ready"; i++) await sleep(200);
   await sleep(400);
@@ -77,10 +83,10 @@ for i in range(${fadeN}):
     u=(i+1)/${fadeN}; u=u*u*(3-2*u)
     Image.blend(a,b,u).save(${JSON.stringify(frames)}+"/%04d.png" % (${k}+i))
 `]);
-  const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "%04d.png"), "-vf", "scale=-2:780:flags=lanczos"];
+  const input = ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "%04d.png"), "-vf", `scale=-2:${OUTH}:flags=lanczos`];
   const base = join(OUT, prefix + name);
-  execFileSync("ffmpeg", [...input, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38", "-row-mt", "1", "-pix_fmt", "yuv420p", "-an", base + ".webm"]);
-  execFileSync("ffmpeg", [...input, "-c:v", "libx264", "-crf", "27", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", base + ".mp4"]);
-  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", first, "-vf", "scale=-2:780:flags=lanczos", "-q:v", "3", base + ".jpg"]);
+  execFileSync("ffmpeg", [...input, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", CRF_VP9, "-row-mt", "1", "-pix_fmt", "yuv420p", "-an", base + ".webm"]);
+  execFileSync("ffmpeg", [...input, "-c:v", "libx264", "-crf", CRF_H264, "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", base + ".mp4"]);
+  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", first, "-vf", `scale=-2:${OUTH}:flags=lanczos`, "-q:v", "3", base + ".jpg"]);
   console.log(`${name}: ${k + fadeN} frames → cq-${name}.webm / .mp4 / .jpg (frames in ${frames})`);
 } finally { cleanup(); }
