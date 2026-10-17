@@ -13,8 +13,8 @@
   scripts/v4-rail.js moves .is-active / aria-current to the item whose section
   is under the top of the viewport. Without JS the first item stays active.
 
-  WORK'S CASE STUDIES (v4/rail-work.njk) sit under Work on the homepage,
-  folded open while Work is the active item, none of them lit.
+  Work has no case-study list under it here; that list (v4/rail-work.njk)
+  is only on the case study pages, in v4/case-nav.njk.
 
   ITEMS. By default the homepage's (home.rail). A page can pass its own list
   as `railItems` ({ label, target }); the case studies pass their sections,
@@ -32,9 +32,6 @@
           <span class="v4-rail__mark" aria-hidden="true"></span>
           {{ item.label }}
         </a>
-        {%- if item.target == "work" and not railItems %}
-        {%- include "v4/rail-work.njk" %}
-        {%- endif %}
       </li>
       {%- endfor %}
     </ul>
