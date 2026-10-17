@@ -479,3 +479,45 @@ a.v4-project__link:hover {
 .v4-project--linked:hover .v4-project__link {
   border-bottom-style: solid;
 }
+
+/* ---- Big on the way in --------------------------------------------------- */
+/* As a card rises in from the bottom of the screen its strip is 1.7x
+   (--v4-strip-big), grown from its top edge, and runs along the whole page:
+   no clip at the column, no arrows, the front thumbnail playing. Once the
+   strip's top passes 30% down the screen (--v4-strip-big-line, under the
+   clock and menu) it settles back to the column with its arrows; scrolled
+   back down, it grows again (scripts/v4-strip.js sets .is-big). By transform
+   only, so nothing below moves while the page scrolls; the grown strip
+   reaches over the gap under it. Wide screens only, and not for reduced
+   motion. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .v4-project__carousel {
+    transform-origin: 50% 0;
+    transition: transform var(--v4-strip-grow) var(--v4-strip-ease);
+  }
+
+  .v4-project__strip.is-carousel {
+    overflow: visible;
+    clip-path: inset(0);
+    transition: clip-path var(--v4-strip-grow) var(--v4-strip-ease);
+  }
+
+  .v4-project__arrow {
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, opacity 0.4s ease;
+  }
+
+  .v4-project.is-big .v4-project__carousel {
+    z-index: 2;
+    transform: scale(var(--v4-strip-big));
+  }
+
+  /* Open to the page's edges (the page itself clips sideways overflow). */
+  .v4-project.is-big .v4-project__strip.is-carousel {
+    clip-path: inset(0 -100vw);
+  }
+
+  .v4-project.is-big .v4-project__arrow {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

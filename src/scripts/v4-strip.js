@@ -17,6 +17,11 @@
  * both reset, so they play again next time. Reduced motion: no slide, no
  * motion.
  *
+ * BIG ON THE WAY IN. While a card's strip is still below 30% of the screen
+ * (--v4-strip-big-line) it is shown 1.7x and along the whole page
+ * (.is-big on the card, _work.css); past that line it settles back to the
+ * column. Wide screens only, not for reduced motion.
+ *
  * THE WHOLE CARD IS A LINK. A click anywhere on a linked project (name,
  * text or strip; article[data-card-href]) opens its case study, Cmd/Ctrl or
  * middle click in a new tab. Not when the click ends a drag of the strip,
@@ -45,6 +50,13 @@
     if (!v || (v.paused && !v.currentTime)) return;
     v.pause();
     try { v.currentTime = 0; } catch (e) {}
+  }
+
+  // How much a strip is grown right now (1 unless its card is .is-big).
+  function scaleOf(strip) {
+    var c = strip.closest(".v4-project__carousel");
+    var m = c && getComputedStyle(c).transform;
+    return m && m !== "none" ? (parseFloat(m.split("(")[1]) || 1) : 1;
   }
 
   Array.prototype.slice.call(document.querySelectorAll("[data-strip]")).forEach(function (strip) {
@@ -165,7 +177,7 @@
         clearTimeout(timer);
       }
       moved = Math.abs(dx);
-      place(false, dx);
+      place(false, dx / scaleOf(strip));
     });
     function release(e) {
       if (!down) return;
@@ -207,15 +219,38 @@
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
-        onScreen = entries[0].intersectionRatio >= 0.35;
+        onScreen = entries[0].intersectionRatio >= 0.2;
         if (entries[0].isIntersecting) real.forEach(function (el) { var v = el.querySelector("video"); if (v && v.preload === "none") v.preload = "auto"; });
         update();
-      }, { threshold: [0, 0.35, 0.7] }).observe(strip);
+      }, { threshold: [0, 0.2, 0.7] }).observe(strip);
     } else {
       onScreen = true;
       update();
     }
   });
+
+  // BIG ON THE WAY IN: on every scroll (one frame at most), each card is big
+  // while its strip's top is below the line, normal once it is above.
+  var wide = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".v4-project")).filter(function (c) {
+    return c.querySelector(".v4-project__strip.is-carousel");
+  });
+  var frame = 0;
+  function sizeCards() {
+    frame = 0;
+    var line = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v4-strip-big-line")) || 0.3);
+    cards.forEach(function (c) {
+      var top = c.querySelector(".v4-project__carousel").getBoundingClientRect().top;   // grown from its top, so this is the same either way
+      c.classList.toggle("is-big", wide.matches && top > line);
+    });
+  }
+  function soon() { if (!frame) frame = requestAnimationFrame(sizeCards); }
+  if (cards.length) {
+    window.addEventListener("scroll", soon, { passive: true });
+    window.addEventListener("resize", soon);
+    if (wide.addEventListener) wide.addEventListener("change", soon);
+    sizeCards();
+  }
 
   // THE CURSOR LABEL. Over a linked card's thumbnails, with a mouse, a small
   // "View case study" pill follows the pointer (_work.css). Not over the
