@@ -184,8 +184,6 @@
   --v4-strip-dim: .4;                           /* the neighbours either side */
   --v4-strip-shade: .4;                         /* and the black laid over them */
   --v4-strip-big: 1.7;                          /* a card's strip as it rises in from below (scripts/v4-strip.js) */
-  --v4-strip-big-line: .1;                      /* …until its top is this near the top of the screen, over the clock and menu */
-  --v4-strip-grow: .8s;                         /* growing and settling back */
   --v4-strip-arrow: 34px;
   --v4-strip-arrow-out: 30px;                   /* each chevron's centre, outside the column's edge */
   --v4-strip-arrow-inset: 4px;                  /* narrow screens: from the strip's edges, over the neighbours */

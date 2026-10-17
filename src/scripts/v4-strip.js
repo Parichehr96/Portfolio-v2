@@ -17,10 +17,11 @@
  * both reset, so they play again next time. Reduced motion: no slide, no
  * motion.
  *
- * BIG ON THE WAY IN. While a card's strip is still below 10% of the screen
- * (--v4-strip-big-line) it is shown 1.7x and along the whole page
- * (.is-big on the card, _work.css); past that line it settles back to the
- * column. Wide screens only, not for reduced motion.
+ * BIG ON THE WAY IN. A card's strip is shown 1.7x and along the whole page
+ * while it is below the clock and menu; as its top moves from their bottom
+ * edge up to the top of the screen it shrinks with the scroll, back to the
+ * column (--grow on the carousel, 1 to 0; .is-big while above 0; _work.css).
+ * Wide screens only, not for reduced motion.
  *
  * THE WHOLE CARD IS A LINK. A click anywhere on a linked project (name,
  * text or strip; article[data-card-href]) opens its case study, Cmd/Ctrl or
@@ -229,19 +230,34 @@
     }
   });
 
-  // BIG ON THE WAY IN: on every scroll (one frame at most), each card is big
-  // while its strip's top is below the line, normal once it is above.
+  // BIG ON THE WAY IN: on every scroll (one frame at most), each strip's
+  // --grow from where its top is: 1 at or below the bottom of the sticky
+  // menu and clock, 0 at the top of the screen, in proportion between.
   var wide = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
   var cards = Array.prototype.slice.call(document.querySelectorAll(".v4-project")).filter(function (c) {
     return c.querySelector(".v4-project__strip.is-carousel");
   });
+  var rail = document.querySelector(".v4-rail"), clock = document.querySelector(".v4-status");
   var frame = 0;
+  function line() {
+    // The lower of the two bottoms, where each sits in the top half of the screen (stuck there).
+    var y = 0;
+    [rail, clock].forEach(function (el) {
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      if (r.top >= 0 && r.bottom < window.innerHeight / 2) y = Math.max(y, r.bottom);
+    });
+    return (y || window.innerHeight * 0.15) + 16;
+  }
   function sizeCards() {
     frame = 0;
-    var line = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v4-strip-big-line")) || 0.1);
+    var L = line();
     cards.forEach(function (c) {
-      var top = c.querySelector(".v4-project__carousel").getBoundingClientRect().top;   // grown from its top, so this is the same either way
-      c.classList.toggle("is-big", wide.matches && top > line);
+      var car = c.querySelector(".v4-project__carousel");
+      var g = wide.matches ? Math.max(0, Math.min(1, car.getBoundingClientRect().top / L)) : 0;   // grown from its top, so the top is the same either way
+      g = Math.round(g * 1000) / 1000;
+      car.style.setProperty("--grow", g);
+      c.classList.toggle("is-big", g > 0);
     });
   }
   function soon() { if (!frame) frame = requestAnimationFrame(sizeCards); }
