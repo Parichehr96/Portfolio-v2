@@ -34,7 +34,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const server = spawn("/usr/bin/python3", ["-m", "http.server", String(HTTP), "--bind", "127.0.0.1"], { cwd: ROOT, stdio: "ignore" });
 const profile = mkdtempSync(join(tmpdir(), "cq-chrome-"));
-const chrome = spawn("/bin/sh", ["-c", `exec "${CHROME}" --headless=new --disable-gpu --hide-scrollbars --remote-debugging-port=${CDP} --user-data-dir="${profile}" about:blank`], { stdio: "ignore" });
+// No --disable-gpu: without the GPU, Chrome does not clip a phone's live
+// screen (an iframe) to its rounded corners, and the screens spill over
+// their bezels.
+const chrome = spawn("/bin/sh", ["-c", `exec "${CHROME}" --headless=new --hide-scrollbars --remote-debugging-port=${CDP} --user-data-dir="${profile}" about:blank`], { stdio: "ignore" });
 const frames = mkdtempSync(join(tmpdir(), "cq-frames-"));
 function cleanup() { try { chrome.kill(); } catch {} try { server.kill(); } catch {} try { rmSync(profile, { recursive: true, force: true }); } catch {} }
 
