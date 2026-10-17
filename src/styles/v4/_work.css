@@ -506,8 +506,9 @@ a.v4-project__link:hover {
 }
 
 /* ---- Big on the way in --------------------------------------------------- */
-/* As a card rises in from the bottom of the screen its strip is 1.7x
-   (--v4-strip-big), grown from its top edge, and runs along the whole page:
+/* As a card rises in from the bottom of the screen its strip grows with
+   the scroll, from its column size to 1.7x (--v4-strip-big) just below the
+   clock and menu, grown from its top edge, and runs along the whole page:
    no clip at the column, no arrows, the front thumbnail playing, over the
    sticky clock and menu (z-index 2 to their 1) on a white band, so they
    don't show through the dimmed neighbours. Once its top passes the bottom
