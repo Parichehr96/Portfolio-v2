@@ -167,11 +167,11 @@
      blocks inside a section                40  (--v4-inner-gap)
      project rows, one to the next         100  (--v4-row-gap)
      section to section on the homepage     90  (--v4-section-gap)
-     the last section to the footer       160  (--v4-footer-gap) */
+     the last section to the footer        90  (--v4-footer-gap) */
   --v4-heading-gap: var(--v4-space-6);
   --v4-inner-gap: 40px;
   --v4-section-gap: 90px;
-  --v4-footer-gap: 160px;
+  --v4-footer-gap: 90px;
   --v4-row-gap: 100px;
   --v4-panel-width: 556px;     /* the front one, centred in the 600 column with 10 of each neighbour showing */
   --v4-panel-ratio: 812 / 520;

@@ -119,11 +119,10 @@
   }
 }
 
-/* The call to action sits low, close to its socials and the city under them,
-   leaving the sky above it room (the window is the section above). */
+/* The call to action sits close to its socials and the city under them,
+   90 under the window (the section above). */
 .v4-footer__content {
   position: relative;
-  padding-top: var(--v4-footer-cta-gap);
   width: min(var(--v4-column), 100%);
   display: flex;
   flex-direction: column;
