@@ -243,6 +243,31 @@ a.v4-project__link:hover {
   opacity: var(--v4-strip-dim);
 }
 
+/* …and a layer of black over them (--v4-strip-shade), fading with the
+   same slide. ::before, since an unfinished panel's white card is ::after. */
+.is-carousel .v4-project__panel {
+  position: relative;
+}
+
+.is-carousel .v4-project__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: rgb(0 0 0 / var(--v4-strip-shade));
+  pointer-events: none;
+  transition: opacity var(--v4-strip-slide) var(--v4-strip-ease);
+}
+
+.is-carousel .v4-project__panel.is-front::before {
+  opacity: 0;
+}
+
+.v4-project__track.is-jumping .v4-project__panel::before {
+  transition: none;
+}
+
 .v4-project__track.is-jumping .v4-project__panel {
   transition: none;
 }
