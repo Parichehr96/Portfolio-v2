@@ -69,7 +69,7 @@ module.exports = {
   // small "(Coming Soon)" follows it. Swap it for `href` once it is live.
   //
   // `label` is the small uppercase heading a row may carry above it; only the
-  // first has one ("Selected project"). The comp's "My works" over the rest
+  // first has one ("Selected projects"). The comp's "My works" over the rest
   // is dropped: one heading for the whole list is enough.
   //
   // `desc` is a list of runs so each can be set the way the comp sets it:
@@ -85,7 +85,7 @@ module.exports = {
     projects: [
       {
         id: "connect2wow",
-        label: "Selected project",
+        label: "Selected projects",
         name: "Connect2WOW",
         industry: ["Enterprise", "Oil & gas"],   // the small label over the name
         href: "/work/connect2wow/",
