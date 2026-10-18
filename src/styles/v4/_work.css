@@ -507,7 +507,7 @@ a.v4-project__link:hover {
 
 /* ---- Big on the way in --------------------------------------------------- */
 /* As a card rises in from the bottom of the screen its strip grows with
-   the scroll, from its column size to 1.7x (--v4-strip-big) just below the
+   the scroll, big from the start (1.35x, --v4-strip-big) up to just below the
    clock and menu, grown from its top edge, and runs along the whole page:
    no clip at the column, no arrows, the front thumbnail playing, over the
    sticky clock and menu (z-index 2 to their 1) on a white band, so they
@@ -527,7 +527,7 @@ a.v4-project__link:hover {
     --grow: 0;
     transform-origin: 50% 0;
     transform: scale(calc(1 + (var(--v4-strip-big) - 1) * var(--grow)));
-    /* the grown strip's extra height: (1.7 - 1) x the panel's height (812 x 520) */
+    /* the grown strip's extra height: (big - 1) x the panel's height (812 x 520) */
     margin-bottom: calc((var(--v4-strip-big) - 1) * var(--grow) * min(var(--v4-panel-width), 80vw) * 520 / 812);
   }
 

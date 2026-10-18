@@ -18,9 +18,9 @@
  * motion.
  *
  * BIG ON THE WAY IN, driven by the scroll. A card's strip comes up from the
- * bottom of the screen at its column size and grows as it rises, to 1.7x
- * and along the whole page just below the clock and menu; from their bottom
- * edge up to the top of the screen it shrinks back to the column
+ * bottom of the screen already big (1.35x, --v4-strip-big, along the whole
+ * page) and stays that size, never growing, until it reaches the bottom edge
+ * of the clock and menu; from there up to the top of the screen it shrinks back to the column
  * (--grow on the carousel, 0 to 1 to 0; .is-big while above 0; _work.css).
  * Wide screens only, not for reduced motion.
  *
@@ -232,11 +232,9 @@
   });
 
   // BIG ON THE WAY IN: on every scroll (one frame at most), each strip's
-  // --grow from where its top is. 0 at the bottom of the screen, rising to 1
-  // a little (HOLD of the screen) below the bottom of the sticky menu and
-  // clock, 1 down to that line, then back to 0 at the top of the screen;
-  // eased both ways.
-  var HOLD = 0.1;
+  // --grow from where its top is: 1 (big) from the bottom of the screen up to
+  // the bottom of the sticky menu and clock, then easing back to 0 at the top
+  // of the screen. It never grows on the way in; it only shrinks past the line.
   var wide = window.matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
   var cards = Array.prototype.slice.call(document.querySelectorAll(".v4-project")).filter(function (c) {
     return c.querySelector(".v4-project__strip.is-carousel");
@@ -255,9 +253,7 @@
   }
   function ease(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
   function growAt(top, L, H) {
-    var P = Math.min(H - 1, L + H * HOLD);          // full size from here up to the line
-    if (top >= P) return ease((H - top) / (H - P));  // rising in from the bottom
-    if (top >= L) return 1;                          // held, just below the clock and menu
+    if (top >= L) return 1;                          // big from the bottom of the screen up to the line
     return ease(top / L);                            // past the line: shrinking to the top
   }
 
