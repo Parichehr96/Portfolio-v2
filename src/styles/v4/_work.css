@@ -553,3 +553,20 @@ a.v4-project__link:hover {
     pointer-events: none;
   }
 }
+
+/* ---- Settling on a card ------------------------------------------------------
+   The page scrolls freely, but when it comes to rest near a project, it
+   settles that card into the middle of the screen, the point of attention:
+   a small stickiness, and the next card takes over as the scroll moves on.
+   "proximity", not "mandatory": it only takes hold close to a card, so the
+   rest of the page (the window, About, the footer) scrolls as it always has.
+   Wide screens, homepage only, not for reduced motion. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  html:has(.v4-project) {
+    scroll-snap-type: y proximity;
+  }
+
+  .v4-project {
+    scroll-snap-align: center;
+  }
+}
