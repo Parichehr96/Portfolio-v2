@@ -65,7 +65,10 @@
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+    // Not in a browser of mine (?me, partials/head-analytics.njk).
+    if (!window.__notrack) (function (s) { s.defer = true; s.src = "/_vercel/insights/script.js"; document.head.appendChild(s); })(document.createElement("script"));
+  </script>
   {%- endif %}
 </body>
 </html>

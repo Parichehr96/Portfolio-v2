@@ -11,6 +11,24 @@
     GA4 runs in Consent Mode: denied, it only sends cookieless pings; Clarity
     is not loaded at all until a yes. -#}
 <script>
+  // "THIS IS ME": no analytics at all in a browser of mine. Visiting the site
+  // with ?me once marks this browser (localStorage "v4-me"); ?me=off clears
+  // it. Localhost never counts. Then GA4, Clarity and Vercel Analytics never
+  // load here (below, and layouts/v4.njk), whatever the IP.
+  window.__notrack = (function () {
+    try {
+      var q = new URLSearchParams(location.search);
+      if (q.has("me")) {
+        if (q.get("me") === "off") localStorage.removeItem("v4-me");
+        else localStorage.setItem("v4-me", "1");
+        q.delete("me");
+        var rest = q.toString();
+        history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash);
+      }
+      if (/^(localhost|127\.0\.0\.1|\[::1\])$|\.local$/.test(location.hostname)) return true;
+      return localStorage.getItem("v4-me") === "1";
+    } catch (e) { return false; }
+  })();
   window.__consent = (function () { try { return localStorage.getItem("v4-consent") || ""; } catch (e) { return ""; } })();
   // A no closes the curtains on the visitor's sky too: the hero shows mine (v4/sky.njk).
   if (window.__consent === "denied") document.documentElement.classList.add("consent-denied");
@@ -18,8 +36,12 @@
   else if (window.__consent !== "granted") document.documentElement.classList.add("consent-pending");
 </script>
 {%- if site.analytics.ga4 %}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"></script>
 <script>
+  // The tag itself, unless this browser is mine (window.__notrack above). The
+  // consent calls below still queue harmlessly into dataLayer either way.
+  if (!window.__notrack) {
+    (function (s) { s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id={{ site.analytics.ga4 }}"; document.head.appendChild(s); })(document.createElement("script"));
+  }
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
@@ -48,7 +70,7 @@
 <script type="text/javascript">
   // Only after a yes: now if it was given before, or from the banner.
   window.__loadClarity = function () {
-    if (window.clarity) return;
+    if (window.clarity || window.__notrack) return;   // never in a browser of mine
     (function(c,l,a,r,i,t,y){
       c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
       t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
