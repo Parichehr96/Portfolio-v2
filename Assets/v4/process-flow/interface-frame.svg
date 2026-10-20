@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="72" height="32.4" viewBox="0 0 72 32.4" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Interface Frame">
+<g clip-path="url(#clip0_0_5)">
+<mask id="path-1-inside-1_0_5" fill="white">
+<path d="M0 0H72V32.4H0V0Z"/>
+</mask>
+<path id="Line 560" opacity="0.8" d="M0.0913811 32.1626L72.6624 -0.0911841" stroke-width="0.36" stroke-linecap="round" stroke="#64748B"/>
+<path id="Line 561" opacity="0.8" d="M0.0913811 0.237591L72.6624 32.4914" stroke-width="0.36" stroke-linecap="round" stroke="#64748B"/>
+<circle id="Ellipse 3846" cx="36" cy="16.2002" r="0.9" fill="#64748B"/>
+</g>
+<path d="M72 0H71.46V32.4H72H72.54V0H72ZM0 32.4H0.54V0H0H-0.54V32.4H0Z" fill="#94A3B8" mask="url(#path-1-inside-1_0_5)"/>
+</g>
+<defs>
+<clipPath id="clip0_0_5">
+<path d="M0 0H72V32.4H0V0Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

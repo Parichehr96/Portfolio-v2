@@ -31,7 +31,7 @@
     ".v4-about__photos",
     ".v4-about__text > p",
     ".v4-about__card",
-    ".v4-process__diagram",
+    ".v4-flow",
     ".v4-experience__role",
     ".v4-footer__title",
     ".v4-footer__body",

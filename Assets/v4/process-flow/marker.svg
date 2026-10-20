@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="2.7" height="72" viewBox="0 0 2.7 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Marker" clip-path="url(#clip0_0_14)">
+<path id="Line 560" d="M1.62078 71.3698L1.62079 0.629803" stroke-width="0.36" stroke-linecap="round" stroke="#64748B"/>
+<path id="Line 561" d="M2.56539 0.585L0.13539 0.585" stroke-width="0.27" stroke-linecap="round" stroke="#64748B"/>
+<path id="Line 562" d="M2.56539 71.685H0.13539" stroke-width="0.27" stroke-linecap="round" stroke="#64748B"/>
+<circle id="Ellipse 3846" cx="1.57539" cy="35.775" r="0.675" fill="#64748B"/>
+</g>
+<defs>
+<clipPath id="clip0_0_14">
+<rect width="2.7" height="72" fill="white"/>
+</clipPath>
+</defs>
+</svg>

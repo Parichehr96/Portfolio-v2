@@ -1,16 +1,12 @@
 /* ============================================================================
-   MY PROCESS — Figma 911:681
+   MY PROCESS — Figma 1631:1807 ("Process Flow", 600 x 349), v4/process.njk
    ============================================================================
 
-   The diagram is the comp's 600 × 122 box, and every piece is placed in % of
-   it, so it scales as one drawing when the column narrows. The step labels
-   scale with it through container-query units, floored at 12px.
-
-   Positions, from 911:683 (x, y, w, h in px of 600 × 122):
-     band      73.74, 34.36, 452.51 × 53.63
-     steps     0 / 159 / 318 / 478, 0, 122 × 122
-     bridges   108.94 / 268.16 / 427.37, 24.9 (top) and 87.15 (bottom), 64.11 × 10.11
-     loops     110.61 / 269.83 / 429.05, 12.57, 60.65 × 96.36
+   One drawing in a 600 x 349 box. Every piece is placed in % of the box, from
+   the frame's own numbers, and the preview and type are sized in container
+   units (1cqw = 6px at 600), so at the column's 600 it is the comp to the
+   pixel and narrower it scales as one. The SVGs fill their slots as Figma
+   draws them (the small negative insets are their stroke overhang).
    ========================================================================== */
 
 .v4-process {
@@ -20,82 +16,251 @@
   gap: var(--v4-space-6);
 }
 
-.v4-process__diagram {
+.v4-flow {
   position: relative;
-  aspect-ratio: 600 / 122;
+  aspect-ratio: 600 / 349;
   container-type: inline-size;
 }
 
-.v4-process__diagram > img {
-  position: absolute;
-  max-width: none;
-}
-
-.v4-process__band {
-  left: 12.29%;
-  top: 28.16%;
-  width: 75.42%;
-  height: 43.96%;
-}
-
-.v4-process__steps {
+.v4-flow__art {
   position: absolute;
   inset: 0;
 }
 
-.v4-process__step {
+.v4-flow__piece,
+.v4-flow__line {
   position: absolute;
-  top: 0;
-  width: 20.33%;
-  aspect-ratio: 1;
-  /* The comp's 3.35px ring (122 outer, 116 inner). Padding % resolves against
-     the diagram's width, not the circle's, so it is 3.352 / 600. */
-  padding: 0.559%;
-  border-radius: 50%;
-  background: var(--v4-surface-muted);
 }
 
-.v4-process__step:nth-child(1) { left: 0; }
-.v4-process__step:nth-child(2) { left: 26.5%; }
-.v4-process__step:nth-child(3) { left: 53%; }
-.v4-process__step:nth-child(4) { left: 79.67%; }
+/* Each drawing sits in a slot the size Figma gives it, overhanging by its
+   stroke (the inline inset), and fills it. */
+.v4-flow__piece i,
+.v4-flow__line i {
+  position: absolute;
+  display: block;
+}
 
-.v4-process__step span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.v4-flow__piece img,
+.v4-flow__line img {
+  display: block;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background: var(--v4-surface);
-  font-size: max(12px, 2.5cqi);
-  font-weight: var(--v4-weight-medium);
-  color: var(--v4-text);
+  max-width: none;
 }
 
-.v4-process__bridge {
-  width: 10.68%;
-  height: 8.28%;
+/* A gate: a horizontal hairline of its length, turned upright about its middle. */
+.v4-flow__line {
+  height: 0;
+  transform: rotate(90deg);
 }
 
-.v4-process__bridge--top { top: 20.41%; }
-/* The bottom bridges are the top ones mirrored (911:701 is flipped with
-   -scale-y-100 in the comp), so each join curves back into both circles. */
-.v4-process__bridge--bottom {
-  top: 71.43%;
-  transform: scaleY(-1);
+/* Hairlines are thinner than a pixel (--t, the SVG's own height), and a
+   browser skips an image that thin once it is turned. So each is drawn 1px
+   thick at --t of its strength: the same ink as a --t px line, and it shows. */
+.v4-flow__hair i {
+  top: -0.5px !important;
+  bottom: -0.5px !important;
+  opacity: var(--t);
 }
 
-.v4-process__bridge.v4-process__at-1 { left: 18.16%; }
-.v4-process__bridge.v4-process__at-2 { left: 44.69%; }
-.v4-process__bridge.v4-process__at-3 { left: 71.23%; }
+.v4-flow__ellipse-big { left: 19.8160%; top: 11.1742%; width: 5.1480%; height: 45.2734%; }
+.v4-flow__ellipse-small { left: 83.3730%; top: 29.8963%; width: 1.5840%; height: 7.8292%; }
+.v4-flow__cone-top { left: 22.4882%; top: 11.1748%; width: 61.6770%; height: 18.7221%; }
+.v4-flow__cone-bottom { left: 22.5882%; top: 37.7249%; width: 61.6770%; height: 18.7221%; transform: scaleY(-1); }
+.v4-flow__thread-1 { left: 3.5949%; top: 13.5646%; width: 79.8602%; height: 25.5699%; }
+.v4-flow__thread-2 { left: 0.6668%; top: 24.3390%; width: 82.8463%; height: 26.3135%; transform: scaleY(-1); }
+.v4-flow__thread-3 { left: 2.4273%; top: 24.9546%; width: 81.0920%; height: 28.7613%; transform: scaleY(-1); }
+.v4-flow__thread-4 { left: 3.5915%; top: 14.2458%; width: 80.0237%; height: 20.8665%; }
+.v4-flow__line-549 { left: 29.7500%; top: 33.6676%; width: 17.8333%; }
+.v4-flow__line-550 { left: 48.8333%; top: 33.8109%; width: 11.0000%; }
+.v4-flow__line-551 { left: 67.6667%; top: 33.8109%; width: 6.6667%; }
+.v4-flow__line-552a { left: 70.2530%; top: 24.9513%; width: 1.5840%; }
+.v4-flow__line-553 { left: 62.5833%; top: 56.3037%; width: 16.8333%; }
+.v4-flow__line-554 { left: 46.9167%; top: 58.0229%; width: 14.8333%; }
+.v4-flow__line-552b { left: 53.5347%; top: 21.5473%; width: 1.5840%; }
+.v4-flow__line-552c { left: 37.9430%; top: 15.4212%; width: 1.5840%; }
+.v4-flow__line-557 { left: 33.0000%; top: 61.0315%; width: 11.3333%; }
+.v4-flow__line-561 { left: 16.5000%; top: 65.0430%; width: 6.6667%; }
+.v4-flow__arrow { left: 77.67%; right: 13.83%; top: 34.0974%; transform: none; }
 
-.v4-process__loop {
-  top: 10.3%;
-  width: 10.11%;
-  height: 78.99%;
+/* The finished interface the cone delivers: 76.5 x 55.8 at (519, 86). */
+.v4-flow__preview {
+  position: absolute;
+  left: 86.5000%;
+  top: 24.6418%;
+  width: 12.7500cqw;
+  height: 9.3000cqw;
+  overflow: clip;
+  background: #fff;
 }
 
-.v4-process__loop.v4-process__at-1 { left: 18.44%; }
-.v4-process__loop.v4-process__at-2 { left: 44.97%; }
-.v4-process__loop.v4-process__at-3 { left: 71.51%; }
+.v4-flow__screen {
+  position: absolute;
+  left: 0;
+  top: 0.9000cqw;
+  width: 12.0000cqw;
+  height: 8.4000cqw;
+  background: #fff;
+}
+
+.v4-flow__bar,
+.v4-flow__controls {
+  position: absolute;
+  left: 0;
+  width: 12.0000cqw;
+  overflow: clip;
+  background: rgb(148 163 184 / 0.2);
+  border: 0.0900cqw solid #94a3b8;
+}
+
+.v4-flow__bar {
+  top: 0;
+  height: 1.0500cqw;
+}
+
+.v4-flow__bar i {
+  position: absolute;
+  left: 0.3600cqw;
+  top: 0.3600cqw;
+  width: 2.2500cqw;
+  height: 0.3000cqw;
+  border-radius: 0.0750cqw;
+  background: #94a3b8;
+}
+
+.v4-flow__frame {
+  position: absolute;
+  left: 0;
+  top: 1.0500cqw;
+  width: 12.0000cqw;
+  height: 5.4000cqw;
+}
+
+.v4-flow__controls {
+  top: 6.4500cqw;
+  height: 1.9500cqw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2000cqw;
+  padding-bottom: 0.1500cqw;
+}
+
+.v4-flow__controls span:nth-child(1) { width: 4.3500cqw; height: 0.7500cqw; }
+.v4-flow__controls span:nth-child(2) { width: 4.2000cqw; height: 0.7500cqw; }
+
+.v4-flow__frame img,
+.v4-flow__controls img,
+.v4-flow__marker img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.v4-flow__endpoint {
+  position: absolute;
+  left: 12.3000cqw;
+  top: 1.9500cqw;
+  width: 0.4500cqw;
+  height: 5.4000cqw;
+}
+
+.v4-flow__endpoint img {
+  display: block;
+  width: 100%;
+  height: calc(100% * 1.0083);
+  max-width: none;
+}
+
+/* The width marker over the screen: 2.7 x 72, turned flat along its top. */
+.v4-flow__marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12.0000cqw;
+  height: 0.4500cqw;
+  display: grid;
+  place-items: center;
+}
+
+.v4-flow__marker img {
+  width: 0.4500cqw;
+  height: 12.0000cqw;
+  transform: rotate(90deg);
+}
+
+/* ---- The four steps, under their gates -------------------------------------- */
+.v4-flow__steps {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.v4-flow__step {
+  position: absolute;
+  top: 65.9026%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6667cqw;
+  padding-inline: 0.6667cqw;
+}
+
+.v4-flow__step--1 { left: 19.8333%; width: 18.8333cqw; }
+.v4-flow__step--2 { left: 38.6667%; width: 15.6667cqw; }
+.v4-flow__step--3 { left: 54.3333%; width: 16.6667cqw; }
+.v4-flow__step--4 { left: 71.0000%; width: 16.8333cqw; }
+
+.v4-flow__title {
+  font-size: 2.5000cqw;
+  font-weight: var(--v4-weight-regular);
+  line-height: 1.5;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #000;
+}
+
+.v4-flow__n {
+  margin-right: 0.6667cqw;
+  font-family: var(--v4-font-num);
+  color: #4d6a93;
+  opacity: 0.4;
+}
+
+.v4-flow__text {
+  font-size: 1.8333cqw;
+  line-height: 1.5;
+  color: #475569;
+}
+
+/* Phones: the type would shrink past reading at the drawing's scale, so the
+   drawing keeps its shape and the steps leave it for a 2 x 2 grid below. */
+@media (max-width: 680px) {
+  .v4-flow {
+    aspect-ratio: auto;
+  }
+
+  .v4-flow__art {
+    position: relative;
+    aspect-ratio: 600 / 349;
+  }
+
+  .v4-flow__steps {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--v4-space-5) var(--v4-space-4);
+    margin-top: var(--v4-space-2);
+  }
+
+  .v4-flow__step {
+    position: static;
+    width: auto;
+    padding: 0;
+    gap: var(--v4-space-1);
+  }
+
+  .v4-flow__title { font-size: var(--v4-text-ui); }
+  .v4-flow__n { margin-right: var(--v4-space-1); }
+  .v4-flow__text { font-size: var(--v4-text-caption); }
+}

@@ -1,25 +1,56 @@
 {#
-  MY PROCESS — Figma 911:681. Four steps joined by a band, with a loop arrow
-  (forward on top, dashed back-arrow underneath) between each pair.
-
-  A LIST, DRAWN AS A DIAGRAM. The steps are a real <ol> so they read in order;
-  the band, the bridges and the arrows are decoration. Every piece is placed in
-  % of the comp's 600 × 122 box, so the whole diagram scales down as one on
-  narrow screens instead of wrapping.
+  MY PROCESS — Figma 1631:1807 ("Process Flow", 600 x 349). A tangle of
+  threads on the left pulls into a cone, four gates (Discover, Define,
+  Develop, Deliver) narrow it, and an arrow leaves the cone into a finished
+  interface. The steps are a real <ol> in reading order; the drawing is
+  decoration. Every piece is placed in % of the 600 x 349 box and sized in
+  container units, so the whole drawing scales as one; under 600 wide the
+  steps leave it for a 2 x 2 grid below. Built static, ready to animate
+  (each piece has its own class: threads, cone, gates, arrow, preview).
 #}
 <section class="v4-process" aria-labelledby="process-label">
   <h2 class="v4-label" id="process-label">{{ home.process.label }}</h2>
-  <div class="v4-process__diagram">
-    <img class="v4-process__band" src="/Assets/v4/process/band.svg" alt="" />
-    <ol class="v4-process__steps">
+  <div class="v4-flow">
+    <div class="v4-flow__art" aria-hidden="true">
+      <span class="v4-flow__piece v4-flow__ellipse-big"><i style="inset: 0"><img src="/Assets/v4/process-flow/ellipse-3844.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__ellipse-small"><i style="inset: 0"><img src="/Assets/v4/process-flow/ellipse-3845.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__cone-top"><i style="inset: -0.52% 0 -0.54% 0"><img src="/Assets/v4/process-flow/vector-8.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__cone-bottom"><i style="inset: -0.52% 0 -0.54% 0"><img src="/Assets/v4/process-flow/vector-8.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__thread-1"><i style="inset: -0.4% 0"><img src="/Assets/v4/process-flow/vector-10.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__thread-2"><i style="inset: -0.39% 0"><img src="/Assets/v4/process-flow/vector-11.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__thread-3"><i style="inset: -0.36% 0"><img src="/Assets/v4/process-flow/vector-13.svg" alt="" /></i></span>
+      <span class="v4-flow__piece v4-flow__thread-4"><i style="inset: -0.49% 0"><img src="/Assets/v4/process-flow/vector-12.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-549" style="--t: 0.7128"><i style="inset: -0.36px -0.33%"><img src="/Assets/v4/process-flow/line-549.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-550" style="--t: 0.7128"><i style="inset: -0.36px -0.54%"><img src="/Assets/v4/process-flow/line-550.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-551" style="--t: 0.7128"><i style="inset: -0.36px -0.89%"><img src="/Assets/v4/process-flow/line-551.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-552a" style="--t: 0.4752"><i style="inset: -0.24px -2.5%"><img src="/Assets/v4/process-flow/line-552.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-553" style="--t: 0.4752"><i style="inset: -0.24px -0.24%"><img src="/Assets/v4/process-flow/line-553.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-554" style="--t: 0.4752"><i style="inset: -0.24px -0.27%"><img src="/Assets/v4/process-flow/line-554.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-552b" style="--t: 0.4752"><i style="inset: -0.24px -2.5%"><img src="/Assets/v4/process-flow/line-552.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-552c" style="--t: 0.4752"><i style="inset: -0.24px -2.5%"><img src="/Assets/v4/process-flow/line-552.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-557" style="--t: 0.4752"><i style="inset: -0.24px -0.35%"><img src="/Assets/v4/process-flow/line-557.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__hair v4-flow__line-561" style="--t: 0.4752"><i style="inset: -0.24px -0.59%"><img src="/Assets/v4/process-flow/line-561.svg" alt="" /></i></span>
+      <span class="v4-flow__line v4-flow__arrow"><i style="inset: -2.89px 0 -2.89px -0.98%"><img src="/Assets/v4/process-flow/arrow.svg" alt="" /></i></span>
+      <div class="v4-flow__preview">
+        <div class="v4-flow__screen">
+          <div class="v4-flow__bar"><i></i></div>
+          <span class="v4-flow__frame"><img src="/Assets/v4/process-flow/interface-frame.svg" alt="" /></span>
+          <div class="v4-flow__controls">
+            <span><img src="/Assets/v4/process-flow/control-1.svg" alt="" /></span>
+            <span><img src="/Assets/v4/process-flow/control-2.svg" alt="" /></span>
+          </div>
+        </div>
+        <span class="v4-flow__endpoint"><img src="/Assets/v4/process-flow/endpoint.svg" alt="" /></span>
+        <span class="v4-flow__marker"><img src="/Assets/v4/process-flow/marker.svg" alt="" /></span>
+      </div>
+    </div>
+    <ol class="v4-flow__steps">
       {%- for step in home.process.steps %}
-      <li class="v4-process__step"><span>{{ step }}</span></li>
+      <li class="v4-flow__step v4-flow__step--{{ loop.index }}">
+        <p class="v4-flow__title"><span class="v4-flow__n">{{ step.n }}</span>{{ step.title }}</p>
+        <p class="v4-flow__text">{{ step.text }}</p>
+      </li>
       {%- endfor %}
     </ol>
-    {%- for i in [1, 2, 3] %}
-    <img class="v4-process__bridge v4-process__bridge--top v4-process__at-{{ i }}" src="/Assets/v4/process/arrow-top-{{ i }}.svg" alt="" />
-    <img class="v4-process__bridge v4-process__bridge--bottom v4-process__at-{{ i }}" src="/Assets/v4/process/arrow-bottom-{{ i }}.svg" alt="" />
-    <img class="v4-process__loop v4-process__at-{{ i }}" src="/Assets/v4/process/link-{{ i }}.svg" alt="" />
-    {%- endfor %}
   </div>
 </section>

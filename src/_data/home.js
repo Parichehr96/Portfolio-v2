@@ -306,7 +306,13 @@ module.exports = {
   // ---- My process — 911:681 ---------------------------------------------------
   process: {
     label: "My process",
-    steps: ["Define", "Research", "Design", "Validate"],
+    // Figma 1631:1807: number, name (set uppercase) and one line under each gate.
+    steps: [
+      { n: "01", title: "Discover", text: "Gather real user data and behavioral insights" },
+      { n: "02", title: "Define", text: "Map the system and align the stakeholders" },
+      { n: "03", title: "Develop", text: "Restructure information to simplify function" },
+      { n: "04", title: "Deliver", text: "Test interface to measure the success metrics" },
+    ],
   },
 
   // ---- Experience — 911:593 ---------------------------------------------------
