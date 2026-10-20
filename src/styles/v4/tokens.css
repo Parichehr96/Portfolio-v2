@@ -181,8 +181,8 @@
   /* The strip's carousel and its thumbnails' motion (scripts/v4-strip.js). */
   --v4-strip-slide: .55s;                       /* one thumbnail along */
   --v4-strip-ease: cubic-bezier(.22, .61, .36, 1);
-  --v4-strip-dim: .4;                           /* the neighbours either side */
-  --v4-strip-shade: .4;                         /* and the black laid over them */
+  --v4-strip-dim: 1;                            /* the neighbours either side: fully opaque, */
+  --v4-strip-shade: .25;                        /* with 25% black laid over them */
   --v4-strip-big: 1.35;                         /* a card's strip, from the bottom of the screen up to the clock and menu (scripts/v4-strip.js) */
   --v4-strip-arrow: 34px;
   --v4-strip-arrow-out: 30px;                   /* each chevron's centre, outside the column's edge */
