@@ -264,3 +264,25 @@
   .v4-flow__n { margin-right: var(--v4-space-1); }
   .v4-flow__text { font-size: var(--v4-text-caption); }
 }
+
+/* ---- The strings, drawn one at a time --------------------------------------
+   Each thread is traced like a pen stroke, from its start in the tangle to its
+   end, the next starting as the last finishes (--o: its turn, top string at
+   the right first). scripts/v4-process.js adds .is-drawing as the drawing
+   comes into view. Without the script, or with reduced motion, they are
+   simply there. */
+.v4-flow__piece svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.v4-flow.is-ready .v4-flow__string {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.v4-flow.is-drawing .v4-flow__string {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--v4-string-time, 1.6s) cubic-bezier(.45, 0, .25, 1) calc(var(--o) * var(--v4-string-time, 1.6s));
+}

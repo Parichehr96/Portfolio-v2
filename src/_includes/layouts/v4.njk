@@ -64,6 +64,9 @@
   <script defer src="/scripts/v4-sky.js"></script>
   <script defer src="/scripts/v4-wind.js"></script>
   <script defer src="/scripts/v4-analytics.js"></script>
+  {%- if (pageId or "home") == "home" %}
+  <script defer src="/scripts/v4-process.js"></script>
+  {%- endif %}
   <script defer src="/scripts/v4-consent.js"></script>
   {%- if pageId == "404" %}
   <script defer src="/scripts/v4-404.js"></script>
