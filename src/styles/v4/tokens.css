@@ -208,8 +208,8 @@
   --v4-footer-page: 1512px;      /* the comp's page, which places the windmill */
   --v4-footer-mill-w: 519px;     /* 1531:25886, 519 x 580 */
   --v4-mill-gust-time: 2.2s;     /* one gust down the wind line */
-  --v4-footer-art: 1600px;
-  --v4-footer-art-h: 397px;
+  --v4-footer-art: 1512px;
+  --v4-footer-art-h: 326px;
   --v4-footer-cta-gap: 32px;
   --v4-radius-button: 40px;
   --v4-radius-logo: 4px;

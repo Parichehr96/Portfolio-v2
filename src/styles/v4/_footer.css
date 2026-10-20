@@ -2,7 +2,7 @@
    FOOTER — Figma 1490:17162 (1512 × 534)
    ============================================================================
 
-   The content column sits at the footer's top. The illustration, 1600 x 397,
+   The content column sits at the footer's top. The illustration, 1512 x 326 (the page's width),
    is centred and anchored to the footer's bottom edge, behind the content,
    in full colour.
    ========================================================================== */
@@ -106,16 +106,16 @@
 }
 
 /* Phones: the whole street, scaled to the screen's width instead of its
-   middle cut out of the 1600; the windmill scales with it and keeps its
+   middle cut out of the 1512; the windmill scales with it and keeps its
    place in the city (the same 1512-page geometry, at the street's scale). */
 @media (max-width: 899px) {
   .v4-footer {
     --v4-footer-art: 100vw;
-    --v4-footer-art-h: calc(100vw * 397 / 1600);
-    --v4-footer-page: calc(100vw * 1512 / 1600);
-    --v4-footer-mill-w: calc(100vw * 519 / 1600);
+    --v4-footer-art-h: calc(100vw * 326 / 1512);
+    --v4-footer-page: 100vw;
+    --v4-footer-mill-w: calc(100vw * 519 / 1512);
     min-height: 0;
-    padding-bottom: calc(100vw * 580 / 1600 + var(--v4-space-4));   /* the windmill, the tallest thing, clears the words */
+    padding-bottom: calc(100vw * 580 / 1512 + var(--v4-space-4));   /* the windmill, the tallest thing, clears the words */
   }
 }
 

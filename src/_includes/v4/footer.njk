@@ -6,7 +6,7 @@
   Carries #contact, so any "Contact" link lands here. "Last updated" and the
   year come from _data/build.js, so they are true on every deploy.
 
-  The illustration is the comp's vector (1410:1331), 1600 x 397, centred and
+  The illustration is the comp's vector (1410:1331), 1512 x 326, the page's width, centred and
   anchored to the footer's bottom edge; it loads lazily, being last. Its
   tree crowns are tagged (class="tree", a pivot at each crown's base), and
   scripts/v4-wind.js swaps the image for the inline SVG so they can sway
@@ -17,7 +17,7 @@
   {% include "v4/windmill.njk" %}
   <div class="v4-mill-tip" role="tooltip" hidden data-mill-tip></div>
   <div class="v4-footer__sky" aria-hidden="true" data-wind-art>
-    <img src="/Assets/v4/footer/amsterdam.svg" width="1600" height="397" alt="" loading="lazy" decoding="async" />
+    <img src="/Assets/v4/footer/amsterdam.svg" width="1512" height="326" alt="" loading="lazy" decoding="async" />
   </div>
   <div class="v4-footer__content">
     <div class="v4-footer__cta">
