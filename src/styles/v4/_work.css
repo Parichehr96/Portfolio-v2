@@ -569,4 +569,12 @@ a.v4-project__link:hover {
   .v4-project {
     scroll-snap-align: center;
   }
+
+  /* The top and the bottom of the page are resting places too: without
+     them the first card's pull won out near the top, and the intro (and
+     "Home") could never be reached. */
+  html:has(.v4-project) body {
+    scroll-snap-align: start end;
+    scroll-margin-top: 16px;   /* the page's first 16 (the toast's edge), so the top rests at 0 */
+  }
 }
