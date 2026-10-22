@@ -210,3 +210,21 @@
     gap: var(--v4-space-5);
   }
 }
+
+/* ---- Over a dark section (.v5-on-dark, scripts/v4-grow.js) ----------------
+   Redesign 1669:9382: the labels light grey, the active one white and bold,
+   the marks light; the clock's face light too. Not the phones' top bar, which is white. */
+@media (min-width: 900px) {
+  .v5-on-dark .v4-rail__item { color: #edeff2; }
+  .v5-on-dark .v4-rail__item.is-active,
+  .v5-on-dark .v4-rail__item:not(.is-active):hover { color: #fff; }
+  .v5-on-dark .v4-rail__mark { background: rgb(237 239 242 / 0.45); }
+  .v5-on-dark .v4-rail__item.is-active .v4-rail__mark,
+  .v5-on-dark .v4-rail__item:not(.is-active):hover .v4-rail__mark { background: #fff; }
+  .v5-on-dark .v4-aside {
+    --v4-clock-tick: #edeff2;
+    --v4-clock-hand: #fff;
+  }
+  .v5-on-dark .v4-status__text { color: #edeff2; }
+  .v5-on-dark .v4-status__text strong { color: #fff; }
+}

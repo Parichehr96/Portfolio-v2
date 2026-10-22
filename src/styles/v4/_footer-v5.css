@@ -1,0 +1,37 @@
+/* ============================================================================
+   FOOTER, REDESIGN — 1669:9587 (the window) and 1669:6490 (the call), one
+   screen (v4/footer.njk with footerSky)
+   ============================================================================
+
+   The whole window with its note above it at the top, the call to action,
+   socials and stamp under it, the city with its windmill along the bottom;
+   the screen's height at least. Inside the shell, so the menu and clock stay.
+   ========================================================================== */
+
+.v5-footer {
+  --u: min(1px, 0.066138vw);
+  margin-top: 0;
+  min-height: 100svh;
+  padding-top: calc(65 * var(--u));
+  padding-bottom: calc(129 * var(--u));   /* the comp: the stamp 129 above the page's end, over the city's sky */
+}
+
+.v5-footer .v4-footer__content {
+  gap: var(--v4-footer-cta-gap);
+}
+
+.v5-footer .v4-sky {
+  width: min(var(--v4-sky-width), 100%);
+  margin: 0 0 calc(115 * var(--u) - var(--v4-footer-cta-gap));
+  gap: calc(20 * var(--u));
+  text-align: left;
+}
+
+.v5-footer .v4-sky__note {
+  order: -1;   /* above the window, as the comp; the markup keeps it after for its ~ rules */
+}
+
+@media (max-width: 899px) {
+  .v5-footer { padding-top: calc(var(--v4-bar-h) + var(--v4-space-6)); }
+  .v5-footer .v4-sky { width: 100%; margin-bottom: var(--v4-space-6); gap: var(--v4-space-4); }
+}

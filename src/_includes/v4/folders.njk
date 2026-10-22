@@ -1,0 +1,22 @@
+{#
+  TOOLS AND SERVICES — redesign 1669:9413 (the panel in the column) and
+  1669:9414 (grown). A cream panel holding the two folders (v4/folder.njk,
+  home.about.folders) grows with the scroll into the full-width section,
+  the folders growing with it to 1.817x (scripts/v4-grow.js sets --p, 0..1).
+  The folders keep their hover and click.
+#}
+<section class="v5-folders" aria-labelledby="folders-label" data-grow>
+  <div class="v5-folders__stage">
+    <div class="v5-folders__bg" aria-hidden="true"></div>
+    <div class="v5-folders__inner">
+      <p class="v5-folders__label" id="folders-label"><span class="v4-for-hover">{{ home.folders.label }}</span><span class="v4-for-touch">{{ home.folders.label | replace("Hover", "Tap") }}</span></p>
+      <div class="v5-folders__row v4-about__cards">
+        {%- for folder in home.about.folders %}
+        {% include "v4/folder.njk" %}
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{#- The Tools folder's component (v4/folder.njk). -#}
+<script type="module" src="/scripts/vendor/tool-folder.js"></script>

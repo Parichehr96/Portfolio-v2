@@ -93,6 +93,10 @@ module.exports = {
     projects: [
       {
         id: "connect2wow",
+        // Redesign card (1669:8786): its tab's logo, where and the tags.
+        logo: "/Assets/v5/logos/rdsysco.svg", logoActive: "/Assets/v5/logos/rdsysco-active.svg", logoAlt: "RDSysCo",
+        location: "Canada (Remote)",
+        tags: ["Modular enterprise", "Human resources", "Desktop"],
         label: "Selected projects",
         name: "Connect2WOW",
         industry: ["Enterprise", "Oil & gas"],   // the small label over the name
@@ -134,6 +138,10 @@ module.exports = {
       },
       {
         id: "onton",
+        // Redesign card (1669:8786): its tab's logo, where and the tags.
+        logo: "/Assets/v5/logos/onton.svg", logoActive: "/Assets/v5/logos/onton.svg", logoAlt: "ONTON",
+        location: "Finland (Remote)",
+        tags: ["Web3", "Events", "Mobile"],
         name: "Onton",
         industry: ["Web3", "Events"],   // the small label over the name
         navLabel: "ONTON",
@@ -158,6 +166,10 @@ module.exports = {
       },
       {
         id: "challenquiz",
+        // Redesign card (1669:8786): its tab's logo, where and the tags.
+        logo: "/Assets/v5/logos/challenquiz.svg", logoActive: "/Assets/v5/logos/challenquiz.svg", logoAlt: "Challenquiz",
+        location: "Finland (Remote)",
+        tags: ["Consumer", "Gaming", "Mobile"],
         name: "Challenquiz",
         industry: ["Consumer", "Gaming"],   // the small label over the name
         href: "/work/challenquiz/",
@@ -177,6 +189,10 @@ module.exports = {
       },
       {
         id: "wow-design-system",
+        // Redesign card (1669:8786): its tab's logo, where and the tags.
+        logo: "/Assets/v5/logos/rdsysco.svg", logoActive: "/Assets/v5/logos/rdsysco-active.svg", logoAlt: "RDSysCo",
+        location: "Canada (Remote)",
+        tags: ["Design system", "Enterprise", "Desktop"],
         name: "WOW design system",
         industry: ["Enterprise", "Design system"],   // the small label over the name
         href: "/work/wow-design-system/",
@@ -208,6 +224,11 @@ module.exports = {
     // After "Keep the curtains closed" (v4/consent.njk): my sky, not theirs; a click on the window asks again.
     leadMine: "You kept the curtains closed, so here’s my sky instead. Click the window if you change your mind.",
     lineMine: "This is my sky in Amsterdam, as it looks right now.",
+  },
+
+  // ---- Tools and services — redesign 1669:6580, over the two folders ------
+  folders: {
+    label: "Hover on folders to see my …",
   },
 
   about: {

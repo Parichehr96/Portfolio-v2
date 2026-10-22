@@ -1,0 +1,168 @@
+/* ============================================================================
+   PARICHEHR AS A PRODUCT DESIGNER — redesign 1669:6512 + photos (v4/photos.njk)
+   ============================================================================
+
+   The comp's 1082 x 1320 block. --u is one comp pixel: 1px at 1512, less
+   below, so the scatter keeps its proportion. Each photo sits at its comp
+   corner (--x, --y) and drifts up by --drift (0..1 across the section's pass,
+   scripts/v4-photo-drift.js) times its --speed in screens.
+   ========================================================================== */
+
+.v5-photos {
+  --u: min(1px, 0.066138vw);
+  --drift: 0;
+  position: relative;
+  width: var(--v5-col);
+  height: calc(1320 * var(--u));
+  margin: 0 auto;
+}
+
+.v5-photos__title {
+  position: absolute;
+  left: 50%;
+  top: calc(447 * var(--u));
+  width: max-content;
+  font-size: calc(60 * var(--u));
+  font-weight: var(--v4-weight-medium);
+  line-height: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #475569;
+  transform: translate(-50%, calc((var(--drift) - 0.5) * var(--speed) * -100svh));
+}
+
+.v5-photos__list {
+  position: absolute;
+  inset: 0;
+}
+
+.v5-photo {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(156.8 * var(--u));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(5 * var(--u));
+  transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -100svh));
+  will-change: transform;
+}
+
+/* The card turns over on hover, focus or a tap (.is-turned). */
+.v5-photo__card {
+  display: block;
+  width: 100%;
+  aspect-ratio: 156.8 / 189;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 900px;
+}
+
+.v5-photo__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s var(--v4-strip-ease);
+}
+
+.v5-photo__front,
+.v5-photo__back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: calc(22.4 * var(--u));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.v5-photo__front { background: #f3f6f8; }
+
+.v5-photo__front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+.v5-photo__back {
+  display: grid;
+  place-items: center;
+  padding: calc(16 * var(--u));
+  background: #0d1233;
+  font-size: max(11px, calc(13 * var(--u)));
+  font-weight: var(--v4-weight-medium);
+  line-height: 1.45;
+  text-align: center;
+  color: #fff;
+  transform: rotateY(180deg);
+}
+
+@media (hover: hover) {
+  .v5-photo__card:hover .v5-photo__inner { transform: rotateY(180deg); }
+}
+.v5-photo__card:focus-visible .v5-photo__inner,
+.v5-photo__card.is-turned .v5-photo__inner { transform: rotateY(180deg); }
+
+.v5-photo__card:focus-visible {
+  outline: 2px solid #0d1233;
+  outline-offset: 3px;
+  border-radius: calc(22.4 * var(--u));
+}
+
+.v5-photo__caption {
+  font-size: max(11px, calc(13 * var(--u)));
+  font-weight: var(--v4-weight-medium);
+  line-height: calc(22 * var(--u));
+  text-align: center;
+  color: #0d1233;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-photo, .v5-photos__title { transform: none; }
+  .v5-photos__title { transform: translateX(-50%); }
+  .v5-photo__inner { transition: none; }
+}
+
+/* Phones: the title, then the photos two by two, staggered; still drifting. */
+@media (max-width: 899px) {
+  .v5-photos {
+    height: auto;
+    padding-block: var(--v4-space-8);
+  }
+
+  .v5-photos__title {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    margin-bottom: var(--v4-space-6);
+    font-size: 32px;
+    transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -40svh));
+  }
+
+  .v5-photos__list {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 16px;
+  }
+
+  .v5-photo {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    gap: 6px;
+    transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -40svh));
+  }
+
+  .v5-photo:nth-child(even) { margin-top: 48px; }
+  .v5-photo__front, .v5-photo__back, .v5-photo__card:focus-visible { border-radius: 18px; }
+  .v5-photo__back { padding: 14px; font-size: 13px; }
+  .v5-photo__caption { font-size: 13px; line-height: 20px; }
+}

@@ -13,13 +13,17 @@
   with Amsterdam's wind right now. Behind it stands the windmill
   (v4/windmill.njk), turning in the same wind.
 #}
-<footer class="v4-footer" id="contact">
+<footer class="v4-footer{% if footerSky %} v5-footer{% endif %}" id="contact">
   {% include "v4/windmill.njk" %}
   <div class="v4-mill-tip" role="tooltip" hidden data-mill-tip></div>
   <div class="v4-footer__sky" aria-hidden="true" data-wind-art>
     <img src="/Assets/v4/footer/amsterdam.svg" width="1512" height="326" alt="" loading="lazy" decoding="async" />
   </div>
   <div class="v4-footer__content">
+    {%- if footerSky %}
+    {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
+    {% include "v4/sky.njk" %}
+    {%- endif %}
     <div class="v4-footer__cta">
       <div class="v4-footer__text">
         <h2 class="v4-footer__title">{{ home.footer.title }}</h2>

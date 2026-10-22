@@ -10,10 +10,10 @@ permalink: /
   markup, strings live in _data/home.js, values in styles/v4/tokens.css. V3's
   homepage is archived on the `V3` branch.
 
-  Top to bottom, in the comp's order (1490:17003): toast, the top band
-  (sticky rail, intro, the status clock at the top of the right panel), the
-  four project rows, About, My process, Experience, the visitor's sky as its own
-  section just above the footer, and the footer with the call to action.
+  The redesign (1669:6413), one screen per section: the hero (the sticky
+  menu and clock beside it), the selected projects, "Parichehr as a product
+  designer" with the photos, the tools and services folders, and the footer
+  with the visitor's sky, the call to action and the city.
 #}
 
 {#- The shell carries the sticky rail down the page; see v4/rail.njk. -#}
@@ -26,13 +26,12 @@ permalink: /
       {% include "v4/status.njk" %}
     </div>
   </div>
-  {% include "v4/work.njk" %}
-  {% include "v4/about.njk" %}
-  {% include "v4/process.njk" %}
-  {% include "v4/experience.njk" %}
-  {% include "v4/sky.njk" %}
+  {% include "v4/projects.njk" %}
+  {% include "v4/photos.njk" %}
+  {% include "v4/folders.njk" %}
+  {#- The footer is a screen of its own, with the visitor's sky at its top;
+      inside the shell, so the menu and clock stay all the way down. -#}
+  {%- set footerSky = true %}
+  {% include "v4/footer.njk" %}
 </div>
-
-{#- Outside the shell, so the sticky rail and clock stop before the skyline. -#}
-{% include "v4/footer.njk" %}
 

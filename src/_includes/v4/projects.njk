@@ -1,0 +1,94 @@
+{#
+  SELECTED PROJECTS — redesign 1669:8785 (the tip, under the hero) and
+  1669:8786 (grown). A dark navy card whose top shows under the hero; as the
+  page scrolls it grows, tied to the scroll, into the section's full-width
+  background (scripts/v4-projects.js sets --p, 0..1), the label, logo tabs and
+  project card rising in at the end. The section holds on screen a little,
+  then scrolls on to the white below.
+
+  One project at a time: its logo tab above picks it (no scrolling through
+  them). Each card: name, where · years, the line, tags, "Explore Case study",
+  and its thumbnails, one at a time with dots; each moves on 1s after its
+  animation ends, and can be dragged or swiped.
+#}
+<section class="v5-work" id="work" data-theme="dark" data-work>
+  <div class="v5-work__stage">
+    <div class="v5-work__bg" aria-hidden="true"></div>
+    <div class="v5-work__inner">
+      <h2 class="v5-work__label">{{ home.work.projects[0].label or "Selected projects" }}</h2>
+
+      <div class="v5-work__tabs" role="tablist" aria-label="Projects">
+        {%- for project in home.work.projects %}
+        <button class="v5-work__tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" id="tab-{{ project.id }}" aria-controls="card-{{ project.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" data-work-tab="{{ loop.index0 }}">
+          <span class="v5-work__tab-face">
+            <img class="v5-work__logo" src="{{ project.logo }}" alt="" />
+            <img class="v5-work__logo v5-work__logo--on" src="{{ project.logoActive }}" alt="" />
+          </span>
+          <span class="v4-sr-only">{{ project.name }}</span>
+        </button>
+        {%- endfor %}
+        <img class="v5-work__pointer" src="/Assets/v5/tab-pointer.svg" width="14" height="24" alt="" data-work-pointer />
+      </div>
+
+      <div class="v5-work__cards">
+        {%- for project in home.work.projects %}
+        {%- set linked = project.href and not project.soon %}
+        <article class="v5-card{% if loop.first %} is-active{% endif %}" id="card-{{ project.id }}" role="tabpanel" aria-labelledby="tab-{{ project.id }}"{% if not loop.first %} hidden{% endif %} data-work-card>
+          <div class="v5-card__info">
+            <div class="v5-card__head">
+              <h3 class="v5-card__name">{{ project.name }}</h3>
+              <p class="v5-card__meta">{{ project.location }} <span aria-hidden="true">·</span> {{ project.years }}</p>
+            </div>
+            <p class="v5-card__desc">
+              {%- for run in project.desc -%}
+              {%- if run.style -%}<strong class="v5-card__{{ run.style }}">{{ run.text }}</strong>{%- else -%}{{ run.text }}{%- endif -%}
+              {%- endfor -%}
+            </p>
+            <ul class="v5-card__tags">
+              {%- for tag in project.tags %}<li>{{ tag }}</li>{%- endfor %}
+            </ul>
+            {%- if linked %}
+            <a class="v5-card__link" href="{{ project.href }}">
+              Explore Case study
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41Z" fill="#0F172A"/></svg>
+            </a>
+            {%- endif %}
+          </div>
+          <div class="v5-card__media">
+            <div class="v5-card__frame" data-work-frame role="region" aria-label="{{ project.name }} screens">
+              <div class="v5-card__track" data-work-track>
+                {%- for panel in project.panels %}
+                <figure class="v4-project__panel v5-card__panel{% if panel.motion %} v4-project__panel--{{ panel.motion }}{% endif %}"{% if panel.bg %} style="background: {{ panel.bg }}"{% endif %} data-hold="{{ panel.hold or 5 }}">
+                  {%- if panel.svg %}
+                  <div class="v4-project__svg" role="img" aria-label="{{ panel.alt }}">{% include panel.svg %}</div>
+                  {%- elif panel.video %}
+                  <video class="v4-project__video" muted playsinline preload="none" disablepictureinpicture width="812" height="520" poster="{{ panel.video }}.jpg" role="img" aria-label="{{ panel.alt }}">
+                    <source src="{{ panel.video }}.webm" type="video/webm" />
+                    <source src="{{ panel.video }}.mp4" type="video/mp4" />
+                  </video>
+                  {%- elif panel.layers %}
+                  {%- if panel.box %}<span class="v4-project__box" style="inset: {{ panel.box }}"></span>{% endif %}
+                  <div class="v4-project__layers" role="img" aria-label="{{ panel.alt }}">
+                    {%- for layer in panel.layers %}
+                    <img class="v4-project__layer" style="--i: {{ loop.index0 }}" src="{{ layer }}" width="812" height="520" alt="" loading="lazy" decoding="async" />
+                    {%- endfor %}
+                  </div>
+                  {%- elif panel.src %}
+                  <img src="{{ panel.src }}" width="812" height="520" alt="{{ panel.alt }}" loading="lazy" decoding="async" />
+                  {%- endif %}
+                </figure>
+                {%- endfor %}
+              </div>
+            </div>
+            <div class="v5-card__dots">
+              {%- for panel in project.panels %}
+              <button class="v5-card__dot{% if loop.first %} is-on{% endif %}" type="button" aria-label="{{ project.name }} screen {{ loop.index }} of {{ project.panels | length }}" data-work-dot="{{ loop.index0 }}"></button>
+              {%- endfor %}
+            </div>
+          </div>
+        </article>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>

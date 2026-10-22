@@ -192,3 +192,25 @@
 .v4-shell:has(> .v5-hero) {
   margin-top: 0;
 }
+
+/* The footer is inside the shell now, so the tracks end with the page; and
+   on any screen wider than a phone the clock keeps to its top-right corner. */
+.v4-shell:has(> .v5-hero) > .v4-rail-track,
+.v4-shell:has(> .v5-hero) > .v4-aside-track {
+  bottom: 0;
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .v5-clock-track.v4-aside-track {
+    position: absolute;
+    width: var(--v4-aside-clear);
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .v5-clock-track .v4-aside {
+    position: sticky;
+    padding-right: 32px;
+    justify-content: flex-end;
+  }
+}

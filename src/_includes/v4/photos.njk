@@ -1,0 +1,47 @@
+{#
+  PARICHEHR AS A PRODUCT DESIGNER — redesign 1669:6512 (the title) and the
+  twelve photos around it (1669:6527 … 1669:6571), from home.about.photos.
+
+  The section is the comp's 1082 x 1320 block (2269 to 3589 at 1512), in
+  proportion. The photos lie where the comp puts them; as the page scrolls
+  each drifts up at its own pace, the title too, slower; halfway
+  through, each is exactly where the comp puts it
+  (scripts/v4-photo-drift.js sets --drift). Hover (tap on a phone, or focus)
+  turns a photo over to its back: photo.back, written later, or the caption.
+
+  `spots` are the comp's corners in px from the column's top-left, in the
+  order of its frames; `speed` how far each drifts, in screens.
+#}
+{%- set spots = [
+  { x: 47,  y: 926,  speed: 0.22, photo: 2 },
+  { x: 317, y: 765,  speed: 0.13, photo: 3 },
+  { x: 0,   y: 60,   speed: 0.19, photo: 4 },
+  { x: 787, y: 94,   speed: 0.10, photo: 5 },
+  { x: 655, y: 732,  speed: 0.17, photo: 6 },
+  { x: 449, y: 1036, speed: 0.26, photo: 7 },
+  { x: 424, y: 141,  speed: 0.14, photo: 8 },
+  { x: 924, y: 696,  speed: 0.20, photo: 9 },
+  { x: 819, y: 1007, speed: 0.23, photo: 10 },
+  { x: 4,   y: 601,  speed: 0.11, photo: 11 },
+  { x: 130, y: 296,  speed: 0.16, photo: 0 },
+  { x: 889, y: 392,  speed: 0.13, photo: 1 }
+] %}
+<section class="v5-photos" id="about" aria-labelledby="photos-title" data-drift>
+  <h2 class="v5-photos__title" id="photos-title" style="--speed: 0.07">Parichehr<br>as a<br>product designer</h2>
+  <ul class="v5-photos__list">
+    {%- for s in spots %}
+    {%- set photo = home.about.photos[s.photo] %}
+    <li class="v5-photo" style="--x: {{ s.x }}; --y: {{ s.y }}; --speed: {{ s.speed }}">
+      <button class="v5-photo__card" type="button" aria-pressed="false" aria-label="{{ photo.caption }}: turn over">
+        <span class="v5-photo__inner">
+          <span class="v5-photo__front">
+            <img src="{{ photo.src }}" alt="{{ photo.alt }}" width="224" height="270" loading="lazy" decoding="async" draggable="false" />
+          </span>
+          <span class="v5-photo__back">{{ photo.back or photo.caption }}</span>
+        </span>
+      </button>
+      <p class="v5-photo__caption">{{ photo.caption }}</p>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
