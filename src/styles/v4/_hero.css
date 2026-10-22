@@ -1,0 +1,194 @@
+/* ============================================================================
+   HERO — redesign 1669:6413 (v4/hero.njk)
+   ============================================================================
+
+   The redesign's column: 1082 wide at the comp's 1512, centred (215 either
+   side). Narrower screens keep its proportion: everything inside it scales
+   with the screen (vw), never past its 1512 size. Values below read as
+   "N px at 1512": min(Npx, N/15.12 vw).
+
+   The hero fills the first screen less the projects card's tip (80) under it.
+   ========================================================================== */
+
+:root {
+  --v5-col: min(1082px, 71.5608vw);
+  --v5-tip: 80px;
+}
+
+.v5-hero {
+  position: relative;
+  width: var(--v5-col);
+  min-height: calc(100svh - var(--v5-tip));
+  margin-inline: auto;
+  padding-top: min(52px, 3.4392vw);
+}
+
+/* Left: the words (453 wide at 1512). */
+.v5-hero__text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: min(16px, 1.0582vw);
+  width: min(453px, 29.96vw);
+}
+
+.v5-hero__title {
+  margin-bottom: max(-8px, -0.5291vw);   /* the comp's 8 between title and bio, out of its 16 */
+  font-size: min(60px, 3.9683vw);
+  font-weight: var(--v4-weight-semibold);
+  line-height: 1.5;
+  color: #0d1233;
+}
+
+.v5-hero__bio {
+  font-size: min(15px, 0.9921vw);
+  font-weight: var(--v4-weight-medium);
+  line-height: 1.4667;
+  color: #475569;
+}
+
+.v5-hero__bio strong {
+  font-weight: var(--v4-weight-bold);
+  color: #0f172a;
+}
+
+.v5-hero__location {
+  display: flex;
+  align-items: center;
+  gap: min(8px, 0.5291vw);
+  font-family: "Sora", var(--v4-font);
+  font-size: min(13px, 0.8598vw);
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.v5-hero__location img,
+.v5-hero__resume img {
+  flex: none;
+  width: min(16px, 1.0582vw);
+  height: auto;
+}
+
+.v5-hero__resume,
+.v5-hero__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: min(10px, 0.6614vw);
+  padding-bottom: 2px;
+  border-bottom: 0.5px dashed #0f172a;
+  font-size: min(16px, 1.0582vw);
+  line-height: 1.5;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.v5-hero__resume img,
+.v5-hero__scroll svg {
+  width: min(24px, 1.5873vw);
+  height: auto;
+}
+
+.v5-hero__resume:hover,
+.v5-hero__scroll:hover {
+  border-bottom-style: solid;
+}
+
+/* Right: the particles, 411 x 322 at (806, 72), 591 into the column. */
+.v5-hero__dots {
+  position: absolute;
+  left: min(591px, 39.0873vw);
+  top: min(72px, 4.7619vw);
+  width: min(411px, 27.1825vw);
+  aspect-ratio: 411 / 322;
+}
+
+.v5-hero__dots canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* "Scroll to see my work", centred at the foot of the screen. */
+.v5-hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: min(56px, 3.7037vw);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Phones: the words, then the particles, then the hint, in one column. */
+@media (max-width: 899px) {
+  :root {
+    --v5-col: calc(100vw - 2 * var(--v4-space-4));
+  }
+
+  .v5-hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v4-space-6);
+    padding-top: calc(var(--v4-bar-h) + var(--v4-space-6));
+    padding-bottom: var(--v4-space-8);
+  }
+
+  .v5-hero__text { width: 100%; gap: var(--v4-space-4); }
+  .v5-hero__title { font-size: 44px; margin-bottom: calc(-1 * var(--v4-space-2)); }
+  .v5-hero__bio { font-size: 15px; }
+  .v5-hero__location { font-size: 13px; gap: var(--v4-space-2); }
+  .v5-hero__location img { width: 16px; }
+  .v5-hero__resume, .v5-hero__scroll { font-size: 16px; gap: 10px; }
+  .v5-hero__resume img, .v5-hero__scroll svg { width: 24px; }
+
+  .v5-hero__dots {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+  }
+
+  .v5-hero__scroll {
+    position: static;
+    align-self: center;
+    transform: none;
+  }
+}
+
+/* ---- The clock: just the face; the words slide in on hover -------------------
+   Figma 1669:6516 (the face alone, 32 from the right, 52 down) and 1669:6474
+   (hovered: the face moves left, its words beside it). The words open to
+   their width and fade in; on leaving, they fold away again. */
+.v5-clock-track .v4-aside {
+  top: min(52px, 3.4392vw);
+  padding-right: 32px;
+}
+
+.v5-clock-track .v4-status__text {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(12px);
+  white-space: normal;
+  transition:
+    max-width 0.45s var(--v4-strip-ease),
+    opacity 0.3s ease,
+    transform 0.45s var(--v4-strip-ease);
+}
+
+.v5-clock-track .v4-status:hover .v4-status__text,
+.v5-clock-track .v4-status:focus-within .v4-status__text {
+  max-width: var(--v4-status-text);
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s, 0.1s, 0s;
+}
+
+@media (max-width: 899px) {
+  .v5-clock-track { display: none; }
+}
+
+/* No toast above any more: the page starts at the top (the hero's own 52). */
+.v4-shell:has(> .v5-hero) {
+  margin-top: 0;
+}

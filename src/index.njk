@@ -16,12 +16,16 @@ permalink: /
   section just above the footer, and the footer with the call to action.
 #}
 
-{% include "v4/toast.njk" %}
-
 {#- The shell carries the sticky rail down the page; see v4/rail.njk. -#}
 <div class="v4-shell">
   {% include "v4/rail.njk" %}
-  {% include "v4/top.njk" %}
+  {% include "v4/hero.njk" %}
+  {#- The clock, pinned top right; its words slide in on hover (_hero.css). -#}
+  <div class="v4-aside-track v5-clock-track">
+    <div class="v4-aside">
+      {% include "v4/status.njk" %}
+    </div>
+  </div>
   {% include "v4/work.njk" %}
   {% include "v4/about.njk" %}
   {% include "v4/process.njk" %}

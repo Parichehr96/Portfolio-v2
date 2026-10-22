@@ -38,11 +38,19 @@ module.exports = {
   rail: [
     { label: "Home", target: "top" },
     { label: "Works", target: "work", caseLabel: "Work" },
-    { label: "Parichehr", target: "about" },
+    { label: "Pari", target: "about" },
+    { label: "Contact", target: "contact" },
   ],
 
   // ---- Intro — 911:547 -------------------------------------------------------
   // The bio is three runs so the middle one can be set bold, as the comp does.
+  // ---- Hero — redesign 1669:6413 (the first screen) --------------------------
+  hero: {
+    title: ["Product", "Designer"],
+    resume: "Download my Resume",
+    scroll: "Scroll to see my work",
+  },
+
   intro: {
     bio: {
       before: "I make complex products simple to use. ",
