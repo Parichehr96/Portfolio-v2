@@ -6,10 +6,12 @@
   project card rising in at the end. The section holds on screen a little,
   then scrolls on to the white below.
 
-  One project at a time: its logo tab above picks it (no scrolling through
-  them). Each card: name, where · years, the line, tags, "Explore Case study",
+  One project at a time: its logo tab above picks it, on hover with a mouse
+  or a click/tap (no scrolling through them). The whole card opens its case
+  study. Each card: name, where · years, the line, tags, "Explore Case study",
   and its thumbnails, one at a time with dots; each moves on 1s after its
-  animation ends, and can be dragged or swiped.
+  animation ends, round and round, and can be dragged, swiped or scrolled
+  sideways.
 #}
 <section class="v5-work" id="work" data-theme="dark" data-work>
   <div class="v5-work__stage">
@@ -33,7 +35,7 @@
       <div class="v5-work__cards">
         {%- for project in home.work.projects %}
         {%- set linked = project.href and not project.soon %}
-        <article class="v5-card{% if loop.first %} is-active{% endif %}" id="card-{{ project.id }}" role="tabpanel" aria-labelledby="tab-{{ project.id }}"{% if not loop.first %} hidden{% endif %} data-work-card>
+        <article class="v5-card{% if loop.first %} is-active{% endif %}" id="card-{{ project.id }}" role="tabpanel" aria-labelledby="tab-{{ project.id }}"{% if not loop.first %} hidden{% endif %}{% if linked %} data-href="{{ project.href }}"{% endif %} data-work-card>
           <div class="v5-card__info">
             <div class="v5-card__head">
               <h3 class="v5-card__name">{{ project.name }}</h3>

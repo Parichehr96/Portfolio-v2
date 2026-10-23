@@ -225,8 +225,8 @@
     --v4-clock-tick: #edeff2;
     --v4-clock-hand: #fff;
   }
-  .v5-on-dark .v4-status__text { color: #edeff2; }
-  .v5-on-dark .v4-status__text strong { color: #fff; }
+  .v5-on-dark :is(.v4-status__time, .v4-status__line) { color: #a9b3c4; }
+  .v5-on-dark :is(.v4-status__time, .v4-status__line) strong { color: #fff; }
 }
 
 /* Home, lit: the logo instead of the line (redesign 1669:6418). */

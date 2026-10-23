@@ -7,13 +7,14 @@
  * taller than the screen (a short phone), it sticks by its bottom instead, so
  * nothing is cut off.
  *
- * THE TABS pick the project (click, or the arrow keys on a focused tab); the
- * white notch slides under the active one. No scroll switching.
+ * THE TABS pick the project: hovering a logo with a mouse, a click or tap, or
+ * the arrow keys on a focused tab; the white notch slides under the active
+ * one. No scroll switching. THE WHOLE CARD opens its case study.
  *
  * THE THUMBNAILS, one at a time. The one showing plays: a video from its
  * start, a layered one its layers, an animated one its keyframes. 1s after
- * that ends it slides on to the next, round and round. A drag or swipe, or a
- * dot, moves it by hand. Only the open card plays, and only while the section
+ * that ends it slides on to the next, round and round for ever (never
+ * rewinding). A drag or swipe, a sideways scroll, or a dot moves it by hand. Only the open card plays, and only while the section
  * is on screen. Reduced motion: no grow, no auto-advance, nothing plays.
  */
 (function () {
@@ -29,6 +30,8 @@
   var AFTER = 1000;         // ms after a thumbnail's animation, before the next
   var ANIM = 5003;          // one round of an animated (svg) thumbnail, v4/work/onton-link.njk
   var SWIPE = 40;           // px of drag for one step
+  var WHEEL = 24;           // px of sideways scroll for one step
+  var SLIDE = 560;          // ms, the track's slide (_projects.css)
 
   /* ---- The grow ---------------------------------------------------------- */
   var start = 1;
@@ -66,6 +69,32 @@
     var c = { card: card, i: 0, timer: 0, live: false };
     var N = panels.length;
 
+    // ENDLESS: a copy of the last before the first and of the first after the
+    // last; sliding onto a copy, it then jumps, unseen, to the real one, so
+    // the row only ever moves on, never rewinds. --i is the place in the track
+    // (the real thumbnail k sits at k + 1).
+    function copy(el) {
+      var x = el.cloneNode(true);
+      x.setAttribute("aria-hidden", "true");
+      x.inert = true;
+      Array.prototype.forEach.call(x.querySelectorAll("video"), function (v) { v.preload = "none"; });
+      return x;
+    }
+    var wrapTimer = 0;
+    if (N > 1) {
+      track.insertBefore(copy(panels[N - 1]), panels[0]);
+      track.appendChild(copy(panels[0]));
+      track.classList.add("is-jump");
+      track.style.setProperty("--i", 1);
+      void track.offsetWidth;
+      track.classList.remove("is-jump");
+    }
+    function place(v, slide) {
+      track.classList.toggle("is-jump", !slide);
+      track.style.setProperty("--i", v);
+      if (!slide) { void track.offsetWidth; track.classList.remove("is-jump"); }
+    }
+
     function reset(panel) {
       panel.classList.remove("is-play", "is-held");
       var v = panel.querySelector("video");
@@ -100,13 +129,23 @@
     }
 
     function go(k) {
+      if (N < 2) return;
+      clearTimeout(wrapTimer);
       c.i = ((k % N) + N) % N;
-      track.style.setProperty("--i", c.i);
       dots.forEach(function (d, j) {
         d.classList.toggle("is-on", j === c.i);
         d.setAttribute("aria-current", j === c.i ? "true" : "false");
       });
-      play();
+      if (k >= N || k < 0) {
+        // past an end: slide onto the copy, then swap to the real one and play
+        clearTimeout(c.timer);
+        panels.forEach(reset);
+        place(k < 0 ? 0 : N + 1, !reduce);
+        wrapTimer = setTimeout(function () { place(c.i + 1, false); play(); }, reduce ? 0 : SLIDE);
+      } else {
+        place(c.i + 1, true);
+        play();
+      }
     }
     c.go = go;
     c.setLive = function (on) {
@@ -153,6 +192,33 @@
       if (moved > 5) { e.stopPropagation(); e.preventDefault(); moved = 0; }
     }, true);
 
+    // Sideways scroll on a trackpad (or Shift + wheel): one step a gesture,
+    // its momentum included. Up and down stays the page's.
+    var acc = 0, locked = false, quiet = 0;
+    frame.addEventListener("wheel", function (e) {
+      var k = e.deltaMode === 1 ? 16 : 1, dx = e.deltaX * k, dy = e.deltaY * k;
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+      e.preventDefault();
+      clearTimeout(quiet);
+      quiet = setTimeout(function () { locked = false; acc = 0; }, 180);
+      if (locked) return;
+      acc += dx;
+      if (Math.abs(acc) >= WHEEL) { go(c.i + (acc > 0 ? 1 : -1)); locked = true; acc = 0; }
+    }, { passive: false });
+
+    // THE WHOLE CARD OPENS ITS CASE STUDY: a click anywhere on it (Cmd/Ctrl
+    // or the middle button for a new tab), but not on its own links and
+    // buttons, not the end of a drag, and not the end of a text selection.
+    var href = card.getAttribute("data-href");
+    function open(e, tab) {
+      if (!href || e.defaultPrevented || e.target.closest("a, button")) return;
+      var sel = window.getSelection && String(window.getSelection());
+      if (sel) return;
+      if (tab) window.open(href, "_blank", "noopener"); else window.location.href = href;
+    }
+    card.addEventListener("click", function (e) { open(e, e.metaKey || e.ctrlKey); });
+    card.addEventListener("auxclick", function (e) { if (e.button === 1) open(e, true); });
+
     return c;
   });
 
@@ -190,6 +256,8 @@
   tabs.forEach(function (t, k) {
     t.tabIndex = k === 0 ? 0 : -1;
     t.addEventListener("click", function () { pick(k); });
+    // With a mouse, pointing at a logo is enough.
+    t.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") pick(k); });
     t.addEventListener("keydown", function (e) {
       var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
       if (!d) return;
