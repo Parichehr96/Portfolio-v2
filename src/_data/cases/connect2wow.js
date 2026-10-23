@@ -19,7 +19,15 @@ module.exports = {
   next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover (1.C): the module index drives real prototype screens.
+  // The cover is the 2-minute story (Assets/embeds/connect2wow/story.html):
+  // the problem, what we did and how it ended, over the case's visuals and
+  // the working prototype. The cover animation it replaced is kept below.
   hero: {
+    type: "story",
+    src: "/Assets/embeds/connect2wow/story.html",
+    title: "Connect2WOW in two minutes: the problem, what I did and the outcome, with a transcript",
+  },
+  heroAnimation: {
     type: "animation",
     src: E + "hero.html",
     title: "Connect2WOW's modules one after another in the same shell: Home, Human resource, HSE, Courses and Engineering",

@@ -233,11 +233,11 @@
 
     var api = { at: at, tween: tween, cursor: cursor, get root() { return cur.scene; },
       after: function (s, fn) { at(t + s, fn); },
-      // Seconds into the current line at which a word is said (its first match).
-      word: function (w) {
+      // Seconds into the current line at which a word is said (its nth match, 1 by default).
+      word: function (w, nth) {
         var l = lines[cur.line]; if (!l) return 0;
-        var norm = function (x) { return x.toLowerCase().replace(/[^a-z0-9,’'-]/g, "").replace(/[,]/g, ""); };
-        for (var k = 0; k < l.words.length; k++) if (norm(l.words[k]) === norm(w)) return l.wordAt[k];
+        var norm = function (x) { return x.toLowerCase().replace(/[^a-z0-9’'-]/g, ""); }, n = nth || 1;
+        for (var k = 0; k < l.words.length; k++) if (norm(l.words[k]) === norm(w) && --n === 0) return l.wordAt[k];
         return 0;
       },
       count: function (el2, a, b, dur, fmt, delay) {
