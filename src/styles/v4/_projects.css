@@ -5,11 +5,12 @@
    The section is the screen's height plus a short hold. Its stage sticks to
    the screen; behind it a navy background grows with the scroll from the
    column-wide card whose tip shows under the hero (rounded 24) to the full
-   width (--p 0..1, scripts/v4-projects.js). The label, tabs and card rise in
-   over the last part of it. Sizes are the comp's at 1512, in proportion below.
+   width (--p 0..1, scripts/v4-projects.js). The label and tabs show in the
+   tip already; the card rises in over the last part. Sizes are the comp's at 1512, in proportion below.
    ========================================================================== */
 
 .v5-work {
+  --u: min(1px, 0.066138vw);
   --p: 0;
   position: relative;
 }
@@ -38,13 +39,11 @@
   position: relative;
   width: var(--v5-col);
   margin-inline: auto;
-  padding-block: min(60px, 3.9683vw);
-  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);
-  transform: translateY(calc((1 - clamp(0, (var(--p) - 0.55) / 0.45, 1)) * 40px));
+  padding-block: calc((48 + 12 * var(--p)) * var(--u)) min(60px, 3.9683vw);
 }
 
 .v5-work__label {
-  margin-left: 3px;
+  margin-left: calc((3 + 59 * (1 - var(--p))) * var(--u));   /* 62 into the tip (1669:8785), 3 grown */
   font-size: min(18px, 1.1905vw);
   font-weight: var(--v4-weight-medium);
   line-height: 1.2;
@@ -107,14 +106,19 @@
   left: 0;
   width: min(14px, 0.9259vw);
   height: min(24px, 1.5873vw);
+  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);   /* with the card it joins */
   transform: translateX(var(--x, 0));
   transition: transform 0.35s var(--v4-strip-ease);
 }
 
 /* ---- The card: 1079 x 468, 32 in, info 383 and the thumbnail 600 ----------- */
+/* The label and the logo tabs show from the start, in the tip, to make one
+   curious; the card rises in as the background reaches the edges. */
 .v5-work__cards {
   display: grid;
   margin-top: min(24px, 1.5873vw);
+  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);
+  transform: translateY(calc((1 - clamp(0, (var(--p) - 0.55) / 0.45, 1)) * 40px));
 }
 
 .v5-card {
@@ -293,7 +297,7 @@
 /* Phones: the card stacks, its text over its thumbnails, at reading sizes. */
 @media (max-width: 899px) {
   .v5-work__inner { padding-block: calc(var(--v4-bar-h) + var(--v4-space-6)) var(--v4-space-8); }
-  .v5-work__label { font-size: 16px; }
+  .v5-work__label { font-size: 16px; margin-left: 0; }
   .v5-work__tabs { gap: 12px; margin-top: var(--v4-space-6); }
   .v5-work__tab { padding: 4px; border-radius: 12px; }
   .v5-work__tab-face { width: 40px; height: 40px; border-radius: 8px; }

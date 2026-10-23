@@ -10,8 +10,10 @@
  *   7–8s  LOOSENING  back out to their scattered spots, black again.
  * and round again. All the while, in both states, the whole cloud turns
  * slowly about its centre in 3D (round z, rocking on x and y, nearer dots
- * larger), and each dot tumbles about its own x, y and z. The dots are drawn here, not images. Only while on
- * screen; reduced motion shows the tidy system, still.
+ * larger). Each dot is a lit sphere, turning about its own x, y and z (its
+ * lava-lamp lobes roll round it), and in the system each slides in and out
+ * along its line, so the lines grow and shrink. The dots are drawn here, not
+ * images. Only while on screen; reduced motion shows the tidy system, still.
  */
 (function () {
   "use strict";
@@ -50,7 +52,8 @@
       r: r, a: a, d: d,
       sx: sx, sy: sy,
       sz: (rand() - 0.5) * 160,                                 // depth when scattered
-      tz: (rand() - 0.5) * 40,                                  // and in the system, nearly flat
+      tz: (rand() - 0.5) * 120,                                 // and in the system: a burst in depth too
+      dd: 0.7 + rand() * 1.1, dp: rand() * 6.28,                // sliding in and out along its line
       // its own tumble: a pace about each of x, y and z
       rx: 0.6 + rand() * 1.2, ry: 0.6 + rand() * 1.2, rz: (rand() - 0.5) * 2, r0: rand() * 6.28,
       colour: COLOURS[Math.floor(rand() * COLOURS.length)],
@@ -63,20 +66,21 @@
   function ease(x) { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
   function mix(a, b, k) { return a + (b - a) * k; }
   function hex(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
-  function mixColour(a, b, k) {
-    var x = hex(a), y = hex(b);
-    return "rgb(" + Math.round(mix(x[0], y[0], k)) + "," + Math.round(mix(x[1], y[1], k)) + "," + Math.round(mix(x[2], y[2], k)) + ")";
-  }
 
   // A soft blob: a ring of points pushed in and out by slow waves, joined
   // with smooth curves. wob 0 is a plain circle.
-  // Tumbling: turned by its own z, then squashed by its turn about x and y
-  // (a disc seen edge-on gets thin; never thinner than a third).
-  function blob(x, y, r, t, dot, wob) {
+  // A sphere, lit from the top left: a soft highlight, its own colour, a
+  // darker rim. Its turn about z rolls the lobes of the wobble round it; the
+  // turns about x and y swell them in and out, as a turning lumpy ball does.
+  function shade(rgb, k) {   // k > 0 towards white, < 0 towards black
+    var to = k > 0 ? 255 : 0, a = Math.abs(k);
+    return "rgb(" + rgb.map(function (c) { return Math.round(c + (to - c) * a); }).join(",") + ")";
+  }
+  function blob(x, y, r, t, dot, wob, rgb) {
     var n = 24, pts = [];
     var rz = dot.r0 + t * dot.rz;
-    var fx = 0.34 + 0.66 * Math.abs(Math.cos(dot.r0 + t * dot.ry));
-    var fy = 0.34 + 0.66 * Math.abs(Math.cos(dot.r0 * 1.7 + t * dot.rx));
+    var fx = 0.92 + 0.08 * Math.cos(dot.r0 + t * dot.ry);
+    var fy = 0.92 + 0.08 * Math.cos(dot.r0 * 1.7 + t * dot.rx);
     var cz = Math.cos(rz), sz = Math.sin(rz);
     for (var k = 0; k < n; k++) {
       var th = (k / n) * Math.PI * 2;
@@ -92,6 +96,13 @@
       ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2);
     }
     ctx.closePath();
+    if (r > 1.6) {
+      var g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r * 1.08);
+      g.addColorStop(0, shade(rgb, 0.55));
+      g.addColorStop(0.55, shade(rgb, 0));
+      g.addColorStop(1, shade(rgb, -0.35));
+      ctx.fillStyle = g;
+    } else ctx.fillStyle = shade(rgb, 0);
     ctx.fill();
   }
 
@@ -133,7 +144,8 @@
     ctx.clearRect(0, 0, BW, BH);
     var pos = dots.map(function (d, i) {
       var ang = d.a + p.turn;
-      var tx = Math.cos(ang) * d.d, ty = Math.sin(ang) * d.d;
+      var dd = d.d * (1 + 0.22 * Math.sin(t * d.dd + d.dp));             // in and out along its line
+      var tx = Math.cos(ang) * dd, ty = Math.sin(ang) * dd;
       var fx = d.sx - CX + Math.sin(t * d.fs + d.fp) * d.fx, fy = d.sy - CY + Math.cos(t * d.fs * 0.8 + d.fp) * d.fy;
       var q = turn3(mix(fx, tx, p.k), mix(fy, ty, p.k), mix(d.sz, d.tz, p.k), a);
       var f = FOCAL / (FOCAL + q[2]);                                     // nearer, larger
@@ -151,8 +163,9 @@
     }
     pos.slice().sort(function (m, n) { return n.z - m.z; }).forEach(function (q) {   // far ones first
       var d = dots[q.i];
-      ctx.fillStyle = p.k > 0 ? mixColour(INK, d.colour, p.k) : INK;
-      blob(q.x, q.y, d.r * q.f, t, d, 1 - p.k);
+      var ink = hex(INK), c = hex(d.colour);
+      var rgb = [0, 1, 2].map(function (j) { return mix(ink[j], c[j], p.k); });
+      blob(q.x, q.y, d.r * q.f, t, d, 1 - p.k, rgb);
     });
   }
 

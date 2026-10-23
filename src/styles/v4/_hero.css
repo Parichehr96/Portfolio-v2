@@ -140,8 +140,18 @@
    Figma 1669:6516 (the face alone, 32 from the right, 52 down) and 1669:6474
    (hovered: the face moves left, its words beside it). The words open to
    their width and fade in; on leaving, they fold away again. */
+/* The menu, the title and the clock share one top line: the top of
+   "Product"'s capitals, 76 down at 1512 (52 in, plus the line's own space). */
+.v4-shell:has(> .v5-hero) {
+  --v5-top: min(76px, 5.0265vw);
+}
+
+.v4-shell:has(> .v5-hero) .v4-rail {
+  top: var(--v5-top);
+}
+
 .v5-clock-track .v4-aside {
-  top: min(52px, 3.4392vw);
+  top: var(--v5-top);
   padding-right: 32px;
 }
 
