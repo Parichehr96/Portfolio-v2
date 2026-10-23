@@ -11,31 +11,30 @@
   turns a photo over to its back: photo.back, written later, or the caption.
 
   `spots` are the comp's corners in px from the column's top-left, in the
-  order of its frames; `dx` how far it also slides sideways over the pass, in comp px (the upper
-  ones most, where the rise alone is hard to feel); `speed` how far each
-  drifts up, in screens: no two alike, so they move
-  like separate things; all faster than the title (0.24).
+  order of its frames; `speed` how far each
+  drifts up, in screens: neighbours far apart (a fast one
+  beside a slow one), so the difference shows; all faster than the title (0.24).
 #}
 {%- set spots = [
-  { x: 47,  y: 926,  speed: 0.68, dx: -30, photo: 2 },
-  { x: 317, y: 765,  speed: 0.50, dx: 25, photo: 3 },
-  { x: 0,   y: 60,   speed: 0.60, dx: -90, photo: 4 },
-  { x: 787, y: 94,   speed: 0.30, dx: -100, photo: 5 },
-  { x: 655, y: 732,  speed: 0.56, dx: 40, photo: 6 },
-  { x: 449, y: 1036, speed: 0.76, dx: -20, photo: 7 },
-  { x: 424, y: 141,  speed: 0.80, dx: -110, photo: 8 },
-  { x: 924, y: 696,  speed: 0.64, dx: 35, photo: 9 },
-  { x: 819, y: 1007, speed: 0.72, dx: -35, photo: 10 },
-  { x: 4,   y: 601,  speed: 0.38, dx: 20, photo: 11 },
-  { x: 130, y: 296,  speed: 0.35, dx: 90, photo: 0 },
-  { x: 889, y: 392,  speed: 0.70, dx: 80, photo: 1 }
+  { x: 47,  y: 926,  speed: 0.58, photo: 2 },
+  { x: 317, y: 765,  speed: 0.28, photo: 3 },
+  { x: 17,  y: 119,  speed: 0.80, photo: 4 },
+  { x: 724, y: 97,   speed: 0.34, photo: 5 },
+  { x: 655, y: 732,  speed: 0.55, photo: 6 },
+  { x: 491, y: 1034, speed: 0.82, photo: 7 },
+  { x: 489, y: 163,  speed: 0.74, photo: 8 },
+  { x: 924, y: 696,  speed: 0.30, photo: 9 },
+  { x: 819, y: 1007, speed: 0.62, photo: 10 },
+  { x: 4,   y: 601,  speed: 0.70, photo: 11 },
+  { x: 208, y: 271,  speed: 0.30, photo: 0 },
+  { x: 889, y: 392,  speed: 0.78, photo: 1 }
 ] %}
 <section class="v5-photos" id="about" aria-labelledby="photos-title" data-drift>
   <h2 class="v5-photos__title" id="photos-title" style="--speed: 0.24">Parichehr<br>as a<br>product designer</h2>
   <ul class="v5-photos__list">
     {%- for s in spots %}
     {%- set photo = home.about.photos[s.photo] %}
-    <li class="v5-photo" style="--x: {{ s.x }}; --y: {{ s.y }}; --speed: {{ s.speed }}; --dx: {{ s.dx }}">
+    <li class="v5-photo" style="--x: {{ s.x }}; --y: {{ s.y }}; --speed: {{ s.speed }}">
       <button class="v5-photo__card" type="button" aria-pressed="false" aria-label="{{ photo.caption }}: turn over">
         <span class="v5-photo__inner">
           <span class="v5-photo__front">

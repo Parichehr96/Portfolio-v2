@@ -86,3 +86,10 @@
     zoom: var(--kp, 1);   /* Services is 385 wide; smaller on a narrow phone */
   }
 }
+
+/* Here what a folder holds comes out in front of it, over the frosted flap
+   and the closed render (scripts/v4-folder-physics.js, data-float-front);
+   it drops back behind once home. */
+[data-float-front] .v4-folder--physics.is-open .v4-folder__items {
+  z-index: 7;
+}

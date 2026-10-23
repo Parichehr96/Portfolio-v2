@@ -29,6 +29,7 @@
   var D_OUT = 0.06;                  // s between cards going out
   var GRAVITY_IN = 6000;             // the drop home: quick, so leaving feels instant
   var FLOAT_GAP = 12;                // px between the lowest card and the folder
+  var HOME = { k: 120, c: 16 };      // in front: the spring back home
 
   function spring(pos, vel, target, s, dt) {
     return vel + (s.k * (target - pos) - s.c * vel) * dt;
@@ -62,8 +63,12 @@
 
     // Open, the cards float above the folder: their open layout as drawn,
     // lifted so the lowest one ends FLOAT_GAP above the folder's top edge.
+    // In a [data-float-front] section (v4/folders.njk) they come out in front
+    // of the folder instead, centred on its face, and spring back home.
+    var front = !!folder.closest("[data-float-front]");
     var lowest = Math.max.apply(null, cards.map(function (c) { return c.ty + c.h; }));
-    var lift = -lowest - FLOAT_GAP;
+    var highest = Math.min.apply(null, cards.map(function (c) { return c.ty; }));
+    var lift = front ? (folder.offsetHeight - (lowest - highest)) / 2 - highest : -lowest - FLOAT_GAP;
     cards.forEach(function (c) {
       c.dy += lift;
     });
@@ -99,6 +104,7 @@
     }
 
     function drop(c) {
+      if (front) { c.mode = "home"; return; }
       c.mode = "fall";
       c.vy = Math.max(c.vy, 0);               // no hop: straight down
       var tHit = (-c.vy + Math.sqrt(c.vy * c.vy - 2 * GRAVITY_IN * Math.min(c.y, -1))) / GRAVITY_IN;
@@ -139,6 +145,15 @@
         }
       } else if (c.mode === "land") {
         c.vr = spring(c.r, c.vr, 0, SPIN, dt);
+      } else if (c.mode === "home") {
+        c.vx = spring(c.x, c.vx, 0, HOME, dt);
+        c.vy = spring(c.y, c.vy, 0, HOME, dt);
+        c.vr = spring(c.r, c.vr, 0, SPIN, dt);
+        if (Math.hypot(c.x, c.y) < 0.6 && Math.hypot(c.vx, c.vy) < 8) {
+          c.x = c.y = c.vx = c.vy = c.r = c.vr = c.q = c.vq = 0;
+          c.mode = "rest";
+          return false;
+        }
       }
       c.x += c.vx * dt; c.y += c.vy * dt; c.r += c.vr * dt;
       c.vq = spring(c.q, c.vq, 0, SQUASH, dt); c.q += c.vq * dt;
