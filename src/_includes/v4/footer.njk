@@ -24,7 +24,7 @@
     {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
     {% include "v4/sky.njk" %}
     {#- Then its own line, the call as a dashed link, three socials, the
-        stamp and the year. #}
+        stamp, the year and the cookie settings. #}
     <div class="v4-footer__cta">
       <div class="v4-footer__text">
         <h2 class="v4-footer__title">{{ home.footer.title }}</h2>
@@ -41,7 +41,7 @@
         {%- endfor %}
       </ul>
       <p class="v4-footer__updated">Last updated: {{ build.updated }}</p>
-      <p class="v4-footer__copy">&copy;{{ build.year }} {{ home.footer.owner }}</p>
+      <p class="v4-footer__copy">&copy;{{ build.year }} {{ home.footer.owner }} · <button class="v4-footer__consent" type="button" data-consent-open>{{ home.consent.settings }}</button></p>
     </div>
     {%- else %}
     <div class="v4-footer__cta">
