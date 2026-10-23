@@ -3,14 +3,14 @@
  * A live loop, drawn on a canvas:
  *   0–3s  SCATTERED  black dots float around their own spots, each
  *                    morphing like a lava lamp (a soft, wobbling blob).
- *   3–4s  TIDYING    they travel into the radial system (Figma 1677:9917):
+ *   3–4.5s TIDYING   they travel into the radial system (Figma 1677:9917):
  *                    each on a thin line to the centre, in its own colour
  *                    (orange, gold, olive or black).
- *   4–7s  TIDY       the system revolves around its centre.
- *   7–8s  LOOSENING  back out to their scattered spots, black again.
+ *   4.5–7.5s TIDY    the system revolves around its centre.
+ *   7.5–9s LOOSENING back out to their scattered spots, black again.
  * and round again. All the while, in both states, the whole cloud turns
  * slowly about its centre in 3D (round z, rocking on x and y, nearer dots
- * larger). Each dot is a ball in one even colour, turning about its own x, y and z (its
+ * larger). Each dot is a ball, evenly coloured and gently rounded, turning about its own x, y and z (its
  * lava-lamp lobes roll round it), and in the system each slides in and out
  * along its line, so the lines grow and shrink. The dots are drawn here, not
  * images. Only while on screen; reduced motion shows the tidy system, still.
@@ -28,7 +28,7 @@
   var COLOURS = ["#F88050", "#D8A818", "#A89828", "#1A1A1A"];   // sampled from 1677:9917 on white
   var INK = "#111111";                                          // the scattered dots
   var LINE = "rgba(34, 34, 34, 0.32)";
-  var T_FLOAT = 3.0, T_GATHER = 1.0, T_TURN = 3.0, T_RELEASE = 1.0;
+  var T_FLOAT = 3.0, T_GATHER = 1.5, T_TURN = 3.0, T_RELEASE = 1.5;
   var FOCAL = 520;                                              // perspective, in box units
   var LOOP = T_FLOAT + T_GATHER + T_TURN + T_RELEASE;
   var TURN = Math.PI / 3;                                       // one sixth of a turn per loop
@@ -55,21 +55,21 @@
       tz: (rand() - 0.5) * 120,                                 // and in the system: a burst in depth too
       dd: 0.25 + rand() * 0.35, dp: rand() * 6.28,              // sliding in and out along its line, slowly
       // its own tumble: a pace about each of x, y and z
-      rx: 0.6 + rand() * 1.2, ry: 0.6 + rand() * 1.2, rz: (rand() - 0.5) * 2, r0: rand() * 6.28,
+      rx: 0.2 + rand() * 0.4, ry: 0.2 + rand() * 0.4, rz: (rand() - 0.5) * 0.7, r0: rand() * 6.28,
       colour: COLOURS[Math.floor(rand() * COLOURS.length)],
       // the float and the lava-lamp wobble, each its own pace
-      fx: 4 + rand() * 6, fy: 4 + rand() * 6, fp: rand() * 6.28, fs: 0.6 + rand() * 0.8,
-      wp: rand() * 6.28, ws: 1.2 + rand() * 1.6, wk: 2 + Math.floor(rand() * 2)
+      fx: 4 + rand() * 6, fy: 4 + rand() * 6, fp: rand() * 6.28, fs: 0.25 + rand() * 0.3,
+      wp: rand() * 6.28, ws: 0.5 + rand() * 0.6, wk: 2 + Math.floor(rand() * 2)
     });
   }
 
-  function ease(x) { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function ease(x) { x = Math.max(0, Math.min(1, x)); return 0.5 - 0.5 * Math.cos(Math.PI * x); }   // a soft in-and-out
   function mix(a, b, k) { return a + (b - a) * k; }
   function hex(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
 
   // A soft blob: a ring of points pushed in and out by slow waves, joined
   // with smooth curves. wob 0 is a plain circle.
-  // A ball in one even colour. Its turn about z rolls the lobes of the wobble
+  // A ball, evenly coloured and gently rounded (no shine). Its turn about z rolls the lobes of the wobble
   // round it; the turns about x and y swell them in and out, as a turning
   // lumpy ball does.
   function shade(rgb, k) {   // k > 0 towards white, < 0 towards black
@@ -84,7 +84,7 @@
     var cz = Math.cos(rz), sz = Math.sin(rz);
     for (var k = 0; k < n; k++) {
       var th = (k / n) * Math.PI * 2;
-      var push = wob * (0.14 * Math.sin(dot.wk * th + dot.wp + t * dot.ws) + 0.06 * Math.sin((dot.wk + 1) * th - t * dot.ws * 0.7));
+      var push = wob * (0.09 * Math.sin(dot.wk * th + dot.wp + t * dot.ws) + 0.04 * Math.sin((dot.wk + 1) * th - t * dot.ws * 0.7));
       var px = Math.cos(th) * r * (1 + push) * fx, py = Math.sin(th) * r * (1 + push) * fy;
       pts.push([x + px * cz - py * sz, y + px * sz + py * cz]);
     }
@@ -96,7 +96,15 @@
       ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2);
     }
     ctx.closePath();
-    ctx.fillStyle = shade(rgb, 0);   // flat, one even colour
+    // Round, not shiny: its own colour across the face, deepening smoothly
+    // towards the rim, so it reads as a ball without a highlight.
+    if (r > 1.4) {
+      var g = ctx.createRadialGradient(x - r * 0.18, y - r * 0.22, 0, x, y, r * 1.05);
+      g.addColorStop(0, shade(rgb, 0.12));
+      g.addColorStop(0.6, shade(rgb, 0));
+      g.addColorStop(1, shade(rgb, -0.28));
+      ctx.fillStyle = g;
+    } else ctx.fillStyle = shade(rgb, 0);
     ctx.fill();
   }
 
@@ -122,7 +130,7 @@
   // The cloud's own turn about its centre: round z all the time, rocking
   // gently on x and y.
   function spin(t) {
-    return { x: 0.38 * Math.sin(t * 0.45), y: 0.5 * Math.sin(t * 0.33 + 1), z: t * 0.12 };
+    return { x: 0.32 * Math.sin(t * 0.22), y: 0.42 * Math.sin(t * 0.16 + 1), z: t * 0.06 };
   }
   function turn3(x, y, z, a) {
     var c = Math.cos(a.z), s = Math.sin(a.z), X = x * c - y * s, Y = x * s + y * c;
@@ -134,8 +142,11 @@
   function draw(t) {
     var p = reduced ? { k: 1, turn: 0 } : phase(t);
     var a = reduced ? { x: 0, y: 0, z: 0 } : spin(t);
+    // Clear the whole buffer in device pixels: the scaled box can fall a hair
+    // short of it, and dots passing the bottom edge left a line there.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
-    ctx.clearRect(0, 0, BW, BH);
     var pos = dots.map(function (d, i) {
       var ang = d.a + p.turn;
       var dd = d.d * (1 + 0.22 * Math.sin(t * d.dd + d.dp));             // in and out along its line

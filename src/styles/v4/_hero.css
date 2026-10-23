@@ -18,7 +18,9 @@
   --u: min(1px, 0.066138vw);
   position: relative;
   width: var(--v5-col);
-  min-height: calc(653 * var(--u));   /* the projects card's top at 653, in the first screen */
+  /* The projects card's top just inside the first screen: its label shows,
+     its logos not yet (653 in the comp at 1512 x 764). */
+  min-height: max(calc(653 * var(--u)), calc(100svh - 112px));
   margin-inline: auto;
   padding-top: calc(52 * var(--u));
 }
@@ -60,7 +62,6 @@
 .v5-hero__scroll svg {
   width: min(20px, 1.3228vw);
   height: auto;
-  transition: transform 0.2s ease;
 }
 
 .v5-hero__scroll:hover {
@@ -68,7 +69,17 @@
   border-color: #0f172a;
 }
 
-.v5-hero__scroll:hover svg { transform: translateY(2px); }
+.v5-hero__scroll svg { animation: v5-bob 1.8s ease-in-out infinite; }
+.v5-hero__scroll:hover svg { animation-play-state: paused; }
+
+@keyframes v5-bob {   /* a gentle up and down, to draw the eye */
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-hero__scroll svg { animation: none; }
+}
 
 /* Left: the words (453 wide at 1512). */
 .v5-hero__text {
