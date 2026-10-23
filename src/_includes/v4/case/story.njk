@@ -1,0 +1,15 @@
+{#- Case story — the 2-minute film as the case's cover, the column's width
+    (Assets/embeds/story/ player, the case's own Assets/embeds/<case>/story.html).
+    The film, its chapter bar and its transcript live in the frame; the frame
+    takes the height the page reports (postMessage), so nothing scrolls inside. -#}
+<figure class="v4-case__story">
+  <iframe src="{{ part.src }}" title="{{ part.title }}" scrolling="no" allow="autoplay" data-story-frame></iframe>
+</figure>
+<script>
+  addEventListener("message", function (e) {
+    if (!e.data || !e.data.story) return;
+    document.querySelectorAll("[data-story-frame]").forEach(function (f) {
+      if (f.contentWindow === e.source) f.style.height = e.data.height + "px";
+    });
+  });
+</script>

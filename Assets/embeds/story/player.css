@@ -23,17 +23,23 @@
 html, body { background: #fff; color: var(--ink); font-family: "Figtree", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 
 .story { max-width: 1200px; margin: 0 auto; padding: 16px; }
+/* On a case page (in its frame): flush with the column. */
+.embedded .story { padding: 0 0 4px; }
+.embedded, .embedded body { background: transparent; }
 
 /* ---- The film ------------------------------------------------------------- */
-.film { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 20px; background: var(--mist); cursor: pointer; }
+.film { position: relative; container-type: inline-size; width: min(100%, calc((100svh - 150px) * 16 / 9)); margin-inline: auto; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 20px; background: var(--mist); cursor: pointer; }
 .stage { position: absolute; left: 0; top: 0; width: 1200px; height: 675px; transform-origin: 0 0; }
 .scene { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; pointer-events: none; }
 .scene.on { opacity: 1; }
 .scene iframe { position: absolute; border: 0; background: transparent; border-radius: 16px; }
 
 /* Captions over the film's foot; on when the sound is off. */
-.caption { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); max-width: 860px; padding: 8px 14px; border-radius: 10px;
-  background: rgba(13, 18, 51, .82); color: #fff; font: 500 19px/1.45 "Figtree"; text-align: center; opacity: 0; transition: opacity .3s; pointer-events: none; }
+/* Two lines at most, the words appearing as they're said. */
+.caption { position: absolute; left: 50%; bottom: 3.2cqw; transform: translateX(-50%); width: max-content; max-width: 78cqw; padding: .7cqw 1.4cqw; border-radius: 1cqw;
+  background: rgba(13, 18, 51, .82); color: #fff; font: 500 clamp(12px, 1.75cqw, 20px)/1.45 "Figtree"; text-align: center; opacity: 0; transition: opacity .3s; pointer-events: none; }
+.caption span { opacity: 0; transition: opacity .12s; }
+.caption span.on { opacity: 1; }
 .film.cc.started .caption.has { opacity: 1; }
 
 /* The big play button before the first start. */
@@ -63,6 +69,11 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 .chapter i b { display: block; height: 100%; width: calc(var(--fill, 0) * 100%); background: var(--ink); }
 .chapter span { display: block; margin-top: 7px; font: 600 12px/1 "Figtree"; letter-spacing: .02em; text-transform: uppercase; color: var(--faint); }
 .chapter.on span { color: var(--ink); }
+.sound { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--mist); color: var(--ink);
+  font: 600 14px/1 "Figtree"; cursor: pointer; }
+.sound:hover { background: var(--mist-2); }
+.sound[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .time { flex: none; min-width: 74px; font: 500 13px/1 "Figtree"; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 
 .transcript { margin-top: 26px; display: grid; gap: 18px; }
@@ -70,8 +81,8 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 .transcript p { font: 400 16px/1.6 "Figtree"; color: var(--faint); }
 .line { display: inline; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; transition: color .25s; }
 .line:hover { color: var(--muted); }
-.line.said { color: var(--muted); }
-.line.now { color: var(--ink); }
+.line span { transition: color .15s; }
+.line.said span, .line span.on { color: var(--ink); }
 
 @media (max-width: 700px) {
   .story { padding: 12px; }

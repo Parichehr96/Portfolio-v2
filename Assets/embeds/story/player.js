@@ -54,6 +54,18 @@
       t = l.start + l.dur;
     });
     lines.forEach(function (l, i) { if (lines[i + 1] && lines[i + 1].at != null) l.dur = lines[i + 1].start - l.start; });
+    // Each word's moment within its line: spread over the spoken part (the
+    // line less its breath and hold), weighted by length.
+    lines.forEach(function (l) {
+      l.words = l.text.split(/\s+/);
+      var speak = Math.max(0.5, l.dur - BREATH - (l.hold || 0)), wsum = 0, acc = 0, pos = 0;
+      l.words.forEach(function (w) { wsum += w.length + 2; });
+      l.wordAt = l.words.map(function (w) { var a = acc / wsum * speak; acc += w.length + 2; return a; });
+      l.wordChar = l.words.map(function (w) { var c = l.text.indexOf(w, pos); pos = c + w.length; return c; });
+      // Captions in pieces of two lines at most (about twelve words).
+      var n = Math.ceil(l.words.length / 12), per = Math.ceil(l.words.length / n);
+      l.chunkOf = l.words.map(function (w, k) { return Math.floor(k / per); });
+    });
     var TOTAL = t;
     t = 0;
 
@@ -72,10 +84,13 @@
 
     var bar = h("div", "bar");
     var playBtn = h("button", "btn"); playBtn.type = "button";
-    var soundBtn = h("button", "btn"); soundBtn.type = "button";
+    var soundBtn = h("button", "sound"); soundBtn.type = "button";
     soundBtn.setAttribute("aria-pressed", "false");
-    soundBtn.setAttribute("aria-label", "Sound");
-    soundBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path class="w" d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9"/></svg>';
+    function paintSound() {
+      soundBtn.innerHTML = voice.on
+        ? '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9"/></svg><span>Sound on</span>'
+        : '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path d="M12.5 7l4 4M16.5 7l-4 4"/></svg><span>Turn sound on</span>';
+    }
     var chapWrap = h("div", "chapters");
     var timeEl = h("span", "time");
     bar.append(playBtn, chapWrap, soundBtn, timeEl);
@@ -101,7 +116,8 @@
       sec.appendChild(h("h3", null, c.label));
       var p = h("p");
       lines.filter(function (l) { return l.chapter === c.id; }).forEach(function (l) {
-        var b = h("button", "line", l.text);
+        var b = h("button", "line", l.words.map(function (w) { return "<span>" + w + "</span>"; }).join(" "));
+        b.setAttribute("aria-label", l.text);
         b.type = "button";
         b.addEventListener("click", function () { seek(l.start + 0.01); play(); });
         lineBtns[l.i] = b;
@@ -231,10 +247,10 @@
       var saved = t; t = lines[i].start;
       lines[i].cue && lines[i].cue(api);
       t = saved;
-      caption.textContent = lines[i].text;
-      caption.classList.add("has");
       lineBtns.forEach(function (b, k) { b.classList.toggle("now", k === i); b.classList.toggle("said", k < i); });
+      word.line = -1;
       say(i);
+      follow();
     }
 
     function step(dt) {
@@ -254,7 +270,32 @@
       if (t >= TOTAL) pause(true);
     }
 
+    // The word being said: from the stand-in voice when it speaks, else the clock.
+    var word = { line: -1, k: -1, chunk: -1, voiced: -1 };
+    function follow() {
+      var l = lines[cur.line]; if (!l) return;
+      var k;
+      if (voice.on && voice.said === cur.line && word.voiced >= 0) k = word.voiced;
+      else { var e = t - l.start; k = 0; while (k + 1 < l.wordAt.length && l.wordAt[k + 1] <= e) k++; }
+      if (t === 0 && !playing) k = -1;   // nothing said yet
+      if (word.line === cur.line && word.k === k) return;
+      if (word.line !== cur.line) { word.chunk = -1; }
+      word.line = cur.line; word.k = k;
+      // Transcript: the words said so far, dark.
+      var spans = lineBtns[cur.line].children;
+      for (var j = 0; j < spans.length; j++) spans[j].classList.toggle("on", j <= k);
+      // Caption: the current piece, its words appearing as they're said.
+      var c = l.chunkOf[k];
+      if (c !== word.chunk) {
+        word.chunk = c;
+        caption.innerHTML = l.words.map(function (w, j) { return l.chunkOf[j] === c ? '<span data-k="' + j + '">' + w + "</span>" : ""; }).filter(Boolean).join(" ");
+        caption.classList.add("has");
+      }
+      Array.prototype.forEach.call(caption.children, function (sp) { sp.classList.toggle("on", +sp.dataset.k <= k); });
+    }
+
     function draw() {
+      follow();
       timeEl.textContent = fmtTime(t) + " / " + fmtTime(TOTAL);
       chapters.forEach(function (c) {
         var f = Math.max(0, Math.min(1, (t - c.start) / (c.end - c.start)));
@@ -317,6 +358,13 @@
         var u = new SpeechSynthesisUtterance(lines[i].text), self = this;
         u.voice = this.pick() || null; u.rate = 0.98;
         u.onend = u.onerror = function () { if (self.said === i) self.busy = false; };
+        u.onboundary = function (e) {
+          if (self.said !== i || e.name === "sentence") return;
+          var wc = lines[i].wordChar, k = 0;
+          while (k + 1 < wc.length && wc[k + 1] <= e.charIndex) k++;
+          word.voiced = k; follow();
+        };
+        word.voiced = -1;
         this.busy = true; this.said = i;
         synth.speak(u);
       },
@@ -329,10 +377,12 @@
     soundBtn.addEventListener("click", function () {
       voice.on = !voice.on;
       soundBtn.setAttribute("aria-pressed", voice.on ? "true" : "false");
+      paintSound();
       film.classList.toggle("cc", !voice.on);
       if (voice.on && playing) voice.speak(cur.line); else voice.stop();
     });
     if (!synth) soundBtn.hidden = true;
+    paintSound();
 
     playBtn.addEventListener("click", function () { playing ? pause() : play(); });
     film.addEventListener("click", function () { playing ? pause() : play(); });
@@ -343,6 +393,13 @@
 
     // Stop when it leaves the screen.
     new IntersectionObserver(function (es) { if (!es[0].isIntersecting && playing) pause(); }, { threshold: 0.25 }).observe(film);
+
+    if (window.parent !== window) {
+      document.documentElement.classList.add("embedded");
+      var tell = function () { parent.postMessage({ story: true, height: document.documentElement.scrollHeight }, "*"); };
+      new ResizeObserver(tell).observe(document.body);
+      tell();
+    }
 
     enter(0, true);
     draw();
