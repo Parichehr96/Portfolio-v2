@@ -1,13 +1,20 @@
 {#- Case story — the 2-minute film as the case's cover, the column's width
     (Assets/embeds/story/ player, the case's own Assets/embeds/<case>/story.html).
     The film, its chapter bar and its transcript live in the frame; the frame
-    takes the height the page reports (postMessage), so nothing scrolls inside. -#}
+    takes the height the page reports (postMessage), so nothing scrolls inside. Its "Read full case study" button
+    asks this page to scroll on to the hook. -#}
 <figure class="v4-case__story">
   <iframe src="{{ part.src }}" title="{{ part.title }}" scrolling="no" allow="autoplay" data-story-frame></iframe>
 </figure>
 <script>
   addEventListener("message", function (e) {
     if (!e.data || !e.data.story) return;
+    // "Read full case study": on to the hook, just past the overview.
+    if (e.data.read) {
+      var hook = document.querySelector(".v4-case__hook");
+      if (hook) window.scrollTo({ top: hook.getBoundingClientRect().top + window.scrollY - 40, behavior: "smooth" });
+      return;
+    }
     document.querySelectorAll("[data-story-frame]").forEach(function (f) {
       if (f.contentWindow === e.source) f.style.height = e.data.height + "px";
     });

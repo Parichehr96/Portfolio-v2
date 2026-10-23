@@ -44,7 +44,24 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 
 /* The big play button before the first start. */
 .start { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(243, 246, 248, .55); transition: opacity .3s; }
-.start span { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 17px/1 "Figtree"; }
+.start__actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.start__play { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 17px/1 "Figtree"; }
+.start__play b { font-weight: inherit; }
+/* Secondary: the homepage's dashed "Scroll Down" pill (_hero.css .v5-hero__scroll). */
+.start__read { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border: 1px dashed #64748b; border-radius: 999px; background: rgba(255, 255, 255, .72);
+  font: 500 16px/1.5 "Figtree"; color: var(--ink); text-decoration: none; transition: border-color .2s, background-color .2s; }
+.start__read:hover { border-style: solid; border-color: var(--ink); background: #fff; }
+.start__read svg { width: 20px; height: 20px; animation: start-bob 1.8s ease-in-out infinite; }
+.start__read:hover svg { animation-play-state: paused; }
+.start__read:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@keyframes start-bob { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { .start__read svg { animation: none; } }
+@media (max-width: 700px) {
+  .start__actions { gap: 8px; }
+  .start__play { padding: 10px 16px; font-size: 14px; }
+  .start__read { padding: 7px 14px; font-size: 13px; }
+  .start__read svg { width: 16px; height: 16px; }
+}
 .film.started .start { opacity: 0; pointer-events: none; }
 
 /* ---- The cursor: the designer's hand ------------------------------------- */
