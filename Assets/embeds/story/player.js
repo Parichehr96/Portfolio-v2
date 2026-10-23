@@ -89,7 +89,7 @@
     function paintSound() {
       soundBtn.innerHTML = voice.on
         ? '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9"/></svg><span>Sound on</span>'
-        : '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path d="M12.5 7l4 4M16.5 7l-4 4"/></svg><span>Turn sound on</span>';
+        : '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7v4h3l4 3.5v-11L5.5 7z"/><path d="M12.5 7l4 4M16.5 7l-4 4"/></svg><span class="long">Turn sound on</span><span class="short">Sound</span>';
     }
     var chapWrap = h("div", "chapters");
     var timeEl = h("span", "time");
@@ -116,10 +116,13 @@
       sec.appendChild(h("h3", null, c.label));
       var p = h("p");
       lines.filter(function (l) { return l.chapter === c.id; }).forEach(function (l) {
-        var b = h("button", "line", l.words.map(function (w) { return "<span>" + w + "</span>"; }).join(" "));
-        b.setAttribute("aria-label", l.text);
-        b.type = "button";
+        // A span, not a button, so the sentences flow on as one paragraph.
+        var b = h("span", "line", l.words.map(function (w) { return "<span>" + w + "</span>"; }).join(" "));
+        b.setAttribute("role", "button");
+        b.tabIndex = 0;
+        b.setAttribute("aria-label", "Play from: " + l.text);
         b.addEventListener("click", function () { seek(l.start + 0.01); play(); });
+        b.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); seek(l.start + 0.01); play(); } });
         lineBtns[l.i] = b;
         p.append(b, " ");
       });

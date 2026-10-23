@@ -40,30 +40,18 @@
   padding-right: var(--v4-edge);
 }
 
-/* The open menu is wider than the homepage's rail ("Connect2WOW (Design
-   system)" with its indent), and the right holds only the contents, so the
-   reading column, with Back and Next in its margins, is placed against those
-   instead: centred at 1512 (x=456, the comp), sliding over on narrower
-   screens without touching either. */
+/* The column is the redesign's (--v5-col, 1082 at 1512), centred; Back and
+   the breadcrumb sit in the left margin, the contents in the right. */
 @media (min-width: 1280px) {
   .v4-shell--case {
-    --v4-rail-width: var(--v4-rail-width-case);
-    --v4-status-width: var(--v4-rail-width-case-right);
-    /* Back and Next sit in the margins beside the column, so each side
-       also keeps room for them. */
-    --v4-rail-clear: calc(var(--v4-edge) + var(--v4-rail-width) + var(--v4-space-6) + var(--v4-case-pager) + var(--v4-space-4));
-    --v4-aside-clear: calc(var(--v4-status-width) + var(--v4-edge) + var(--v4-space-6) + var(--v4-case-pager));
-    --v4-column-inset: clamp(
-      var(--v4-rail-clear),
-      (100% - var(--v4-column)) / 2,
-      100% - var(--v4-aside-clear) - var(--v4-space-4) - var(--v4-column)
-    );
+    --v4-column: var(--v5-col);
+    --v4-column-inset: calc((100% - var(--v4-column)) / 2);
+    --v4-rail-clear: calc((100% - var(--v4-column)) / 2);
   }
 }
 
-/* Below 1280 the menu, Back, the column, Next and the contents no longer fit
-   side by side: the menu keeps its top level only, and the contents and
-   progress step aside (_rail.css folds the case studies away). */
+/* Below 1280 the contents and progress step aside; Back and the breadcrumb
+   stay in the left margin (above 900) or the top bar (phones). */
 @media (max-width: 1279px) {
   .v4-rail-track--right {
     display: none;
@@ -79,7 +67,7 @@
 
 /* Sections stay page-wide; their children, and everything else in the
    article, take the column. */
-.v4-case > :not(.v4-case__section):not(.v4-case__bar),
+.v4-case > :not(.v4-case__section),
 .v4-case__section > * {
   width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
   margin-inline: var(--v4-column-inset) auto;
@@ -105,65 +93,57 @@
   margin-bottom: calc(var(--v4-case-head-gap) - var(--v4-case-gap));
 }
 
-/* ---- Bar --------------------------------------------------------------- */
-/* A see-through layer the height of the article. Its row is the name's row
-   (40 down, one line of the name tall) and sticks there, so Back and Next,
-   hanging either side of the column 24 off it, stay put while everything
-   scrolls past between them. No ground: nothing enters the margins. */
-.v4-case__bar {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.v4-case__bar-inner {
-  position: sticky;
-  top: var(--v4-edge);
-  height: calc(var(--v4-text-lead) * 1.45);
-  margin-top: var(--v4-edge);
-  width: min(var(--v4-column), calc(100% - 2 * var(--v4-space-4)));
-  margin-inline: var(--v4-column-inset) auto;
-}
-
-.v4-case__back,
-.v4-case__next {
-  pointer-events: auto;
-}
-
 /* The name's row, in the page: 40 from the top, 24 above the cover. */
 .v4-case__title-row {
   padding-top: var(--v4-edge);
   margin-bottom: calc(var(--v4-space-6) - var(--v4-case-gap));
 }
 
-.v4-case__back,
-.v4-case__next {
-  position: absolute;
-  top: 50%;
-  padding-block: 12px;   /* a finger-sized touch; centred, so it moves nothing */
-  display: flex;
-  align-items: center;
-  gap: var(--v4-space-1);
-  width: var(--v4-case-pager);
-  font-size: var(--v4-text-lead);
-  font-style: italic;
-  color: var(--v4-text);
-  transform: translateY(-50%);
-  transition: opacity 0.2s ease;
-}
-
-.v4-case__back:hover,
-.v4-case__next:hover {
-  opacity: 0.6;
+/* ---- Back and the breadcrumb (v4/case-nav.njk) ----------------------------
+   At the top of the left column, on the name's line: Back, and under it where
+   you are. */
+.v4-case__crumbs {
+  gap: var(--v4-space-3);
 }
 
 .v4-case__back {
-  right: calc(100% + var(--v4-space-6));
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--v4-space-1);
+  padding-block: 4px;
+  font-size: var(--v4-text-lead);
+  font-style: italic;
+  color: var(--v4-text);
+  transition: opacity 0.2s ease;
 }
 
-.v4-case__next {
-  left: calc(100% + var(--v4-space-6));
+.v4-case__back:hover { opacity: 0.6; }
+
+.v4-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: calc((100vw - var(--v5-col)) / 2 - var(--v4-edge) - var(--v4-space-4));
+  padding: 0;
+  list-style: none;
+  font-size: var(--v4-text-caption);
+  line-height: 1.5;
+  color: var(--v4-text-muted);
+}
+
+.v4-crumbs li { display: inline-flex; align-items: center; }
+.v4-crumbs li + li::before { content: "/"; margin-inline: 6px; color: var(--v4-text-faint, rgba(71, 85, 105, .5)); }
+.v4-crumbs a { color: var(--v4-text-muted); }
+.v4-crumbs a:hover { color: var(--v4-text); }
+.v4-crumbs [aria-current] { color: var(--v4-text); font-weight: var(--v4-weight-medium); }
+
+@media (max-width: 899px) {
+  /* In the white top bar: Back on the left, the breadcrumb beside it. */
+  .v4-case__crumbs { flex-direction: row; justify-content: flex-start; align-items: center; gap: var(--v4-space-4); }
+  .v4-case__back { align-self: center; font-size: 15px; }
+  .v4-shell--case .v4-case__title-row { padding-top: 0; }
+  .v4-crumbs { max-width: none; flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
 }
 
 /* ---- Header -------------------------------------------------------------- */
@@ -871,27 +851,10 @@
 /* No room for three columns: after, then the tallies in a row, then before. */
 /* ---- Narrower screens ---------------------------------------------------- */
 @media (max-width: 1199px) {
-  /* No room either side of the column: Back · name · Next share the name's
-     row, and it scrolls away with the page. */
-  .v4-case__bar-inner {
-    position: relative;
-    top: 0;
-  }
-
-  .v4-case__back {
-    right: auto;
-    left: 0;
-    width: auto;
-  }
-
-  .v4-case__next {
-    left: auto;
-    right: 0;
-    width: auto;
-  }
-
-  .v4-case__title-row {
-    padding-inline: calc(var(--v4-case-pager) + var(--v4-space-4));
+  /* Back and the breadcrumb keep the left margin; the column takes the rest. */
+  .v4-shell--case {
+    --v4-column: min(var(--v5-col), calc(100% - 2 * var(--v4-space-4)));
+    --v4-column-inset: calc((100% - var(--v4-column)) / 2);
   }
 }
 

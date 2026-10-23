@@ -7,62 +7,30 @@ layout: layouts/v4.njk
   The page sets `caseKey` in front matter; everything it shows comes from
   _data/cases/<caseKey>.js. This file decides only structure:
 
-    menu (left, sticky)        the site menu, always open, Work listing
-                               every case study (this one lit)
+    left (sticky)              Back, and the breadcrumb under it
     contents (right, sticky)   reading progress and this case's sections,
                                the one being read lit
-    bar (sticky, see-through)  Back and Next, pinned either side of the
-                               column; the name below them scrolls away
-                               with the page, and the reading progress
-                               sits at the top of the rail
-    header                     cover, facts table
+    header                     the name, the cover (the 2-minute story),
+                               facts table
     hook                       the one-line claim, in a bar
     sections                   numbered automatically, each with optional blocks
     footer                     the shared V4 footer
 
-  Wide blocks (metrics, competitors, what changed) stay in the 600px column
-  and scroll sideways; see _case.css. Nothing enters the margins, which is
-  what lets Back and Next float there with no ground behind them.
+  The column is the homepage redesign's: 1082 at 1512, in proportion below
+  (--v5-col). Everything sits in it.
 #}
 {%- set c = cases[caseKey] -%}
-{#- BACK goes to this case study's card on the homepage (/#work-<id>, the id
-    on v4/project-row.njk; scripts/v4-rail.js makes the jump). NEXT goes to the
-    next case study in the homepage's order (home.work.projects; live ones, with
-    a page and not `soon`); the last has none. -#}
-{%- set live = [] -%}
-{%- for p in home.work.projects -%}{%- if p.href and not p.soon -%}{%- set live = live.concat([p]) -%}{%- endif -%}{%- endfor -%}
+{#- BACK goes to this case study's card on the homepage (/#work-<id>;
+    scripts/v4-rail.js makes the jump). It sits at the top of the left column,
+    with the breadcrumb under it (v4/case-nav.njk). -#}
 {%- set backHref = "/#work-" + caseKey -%}
-{%- set nextHref = "" -%}
-{%- for p in live -%}
-  {%- if p.id == caseKey and not loop.last -%}{%- set nextHref = live[loop.index0 + 1].href -%}{%- endif -%}
-{%- endfor -%}
 
 <div class="v4-shell v4-shell--case">
-  {#- The site menu on the left, this case's sections and progress on the
-      right (v4/case-nav.njk). -#}
+  {#- Back and the breadcrumb on the left, this case's sections and progress
+      on the right (v4/case-nav.njk). -#}
   {% include "v4/case-nav.njk" %}
 
   <article class="v4-case" data-read-article>
-    {#- THE BAR: Back and Next, either side of the name's row. A see-through
-        layer over the whole article whose row sticks at the top, so on wide
-        screens the two stay in the margins while the page, the name included,
-        scrolls past between them. Below 1200 there are no margins: the row
-        stays put and scrolls away with the name. -#}
-    <div class="v4-case__bar">
-      <div class="v4-case__bar-inner">
-        <a class="v4-case__back" href="{{ backHref }}">
-          <img src="/Assets/v4/case/back.svg" width="20" height="20" alt="" />
-          {{ c.back.label }}
-        </a>
-        {%- if nextHref %}
-        <a class="v4-case__next" href="{{ nextHref }}">
-          {{ c.next.label }}
-          <img src="/Assets/v4/case/next.svg" width="20" height="20" alt="" />
-        </a>
-        {%- endif %}
-      </div>
-    </div>
-
     <div class="v4-case__title-row">
       <h1 class="v4-case__name">{{ c.name }}</h1>
     </div>

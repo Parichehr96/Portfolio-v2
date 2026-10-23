@@ -72,6 +72,8 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 .sound { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--mist); color: var(--ink);
   font: 600 14px/1 "Figtree"; cursor: pointer; }
 .sound:hover { background: var(--mist-2); }
+.sound .short { display: none; }
+@media (max-width: 700px) { .sound .short { display: inline; } }
 .sound[aria-pressed="true"] { background: var(--ink); color: #fff; }
 .sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .time { flex: none; min-width: 74px; font: 500 13px/1 "Figtree"; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
@@ -85,6 +87,9 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 .line.said span, .line span.on { color: var(--ink); }
 
 @media (max-width: 700px) {
+  .sound { padding: 0 12px; }
+  .sound .long { display: none; }
+  .time { display: none; }
   .story { padding: 12px; }
   .film { border-radius: 14px; }
   .caption { font-size: 26px; bottom: 26px; max-width: 1100px; }
@@ -125,3 +130,6 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 .scene .claim { width: 860px; font: 600 44px/1.25 "Figtree"; color: var(--faint); text-align: center; }
 .scene .claim span { transition: color .5s; }
 .scene .claim span.lit { color: var(--ink); }
+
+/* Before the first play the opening scene shows whole, as the film's poster. */
+.film:not(.started) .scene .rise { opacity: 1; transform: none; }
