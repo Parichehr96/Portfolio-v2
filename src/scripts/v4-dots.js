@@ -10,7 +10,7 @@
  *   7.5–9s LOOSENING back out to their scattered spots, black again.
  * and round again. All the while, in both states, the whole cloud turns
  * slowly about its centre in 3D (round z, rocking on x and y, nearer dots
- * larger). Each dot is a ball, evenly coloured and gently rounded, turning about its own x, y and z (its
+ * larger). Each dot is a ball in one even colour, turning about its own x, y and z (its
  * lava-lamp lobes roll round it), and in the system each slides in and out
  * along its line, so the lines grow and shrink. The dots are drawn here, not
  * images. Only while on screen; reduced motion shows the tidy system, still.
@@ -31,7 +31,7 @@
   var T_FLOAT = 3.0, T_GATHER = 1.5, T_TURN = 3.0, T_RELEASE = 1.5;
   var FOCAL = 520;                                              // perspective, in box units
   var LOOP = T_FLOAT + T_GATHER + T_TURN + T_RELEASE;
-  var TURN = Math.PI / 3;                                       // one sixth of a turn per loop
+  var TURN = Math.PI / 8;                                       // a sixteenth of a turn per loop: casual
 
   // A seeded random, so the system looks the same on every visit.
   var seed = 7;
@@ -69,7 +69,7 @@
 
   // A soft blob: a ring of points pushed in and out by slow waves, joined
   // with smooth curves. wob 0 is a plain circle.
-  // A ball, evenly coloured and gently rounded (no shine). Its turn about z rolls the lobes of the wobble
+  // A ball in one even colour. Its turn about z rolls the lobes of the wobble
   // round it; the turns about x and y swell them in and out, as a turning
   // lumpy ball does.
   function shade(rgb, k) {   // k > 0 towards white, < 0 towards black
@@ -96,15 +96,7 @@
       ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2);
     }
     ctx.closePath();
-    // Round, not shiny: its own colour across the face, deepening smoothly
-    // towards the rim, so it reads as a ball without a highlight.
-    if (r > 1.4) {
-      var g = ctx.createRadialGradient(x - r * 0.18, y - r * 0.22, 0, x, y, r * 1.05);
-      g.addColorStop(0, shade(rgb, 0.12));
-      g.addColorStop(0.6, shade(rgb, 0));
-      g.addColorStop(1, shade(rgb, -0.28));
-      ctx.fillStyle = g;
-    } else ctx.fillStyle = shade(rgb, 0);
+    ctx.fillStyle = shade(rgb, 0);   // one even colour: the depth comes from the motion
     ctx.fill();
   }
 
@@ -130,7 +122,7 @@
   // The cloud's own turn about its centre: round z all the time, rocking
   // gently on x and y.
   function spin(t) {
-    return { x: 0.32 * Math.sin(t * 0.22), y: 0.42 * Math.sin(t * 0.16 + 1), z: t * 0.06 };
+    return { x: 0.3 * Math.sin(t * 0.12), y: 0.4 * Math.sin(t * 0.09 + 1), z: t * 0.03 };
   }
   function turn3(x, y, z, a) {
     var c = Math.cos(a.z), s = Math.sin(a.z), X = x * c - y * s, Y = x * s + y * c;
@@ -142,6 +134,10 @@
   function draw(t) {
     var p = reduced ? { k: 1, turn: 0 } : phase(t);
     var a = reduced ? { x: 0, y: 0, z: 0 } : spin(t);
+    // The cursor: the cloud leans towards it, eased.
+    hand.tx += ((hand.on ? (hand.y - CY) / BH * 0.7 : 0) - hand.tx) * 0.06;
+    hand.ty += ((hand.on ? -(hand.x - CX) / BW * 0.9 : 0) - hand.ty) * 0.06;
+    a.x += hand.tx; a.y += hand.ty;
     // Clear the whole buffer in device pixels: the scaled box can fall a hair
     // short of it, and dots passing the bottom edge left a line there.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -154,7 +150,15 @@
       var fx = d.sx - CX + Math.sin(t * d.fs + d.fp) * d.fx, fy = d.sy - CY + Math.cos(t * d.fs * 0.8 + d.fp) * d.fy;
       var q = turn3(mix(fx, tx, p.k), mix(fy, ty, p.k), mix(d.sz, d.tz, p.k), a);
       var f = FOCAL / (FOCAL + q[2]);                                     // nearer, larger
-      return { x: CX + q[0] * f, y: CY + q[1] * f, f: f, z: q[2], i: i };
+      var x = CX + q[0] * f, y = CY + q[1] * f;
+      // ...and the balls near it drift out of its way, then settle back.
+      var px = 0, py = 0;
+      if (hand.on) {
+        var dx = x - hand.x, dy = y - hand.y, dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < REACH) { var push = Math.pow(1 - dist / REACH, 2) * PUSH; px = dx / dist * push; py = dy / dist * push; }
+      }
+      d.ox += (px - d.ox) * 0.08; d.oy += (py - d.oy) * 0.08;
+      return { x: x + d.ox, y: y + d.oy, f: f, z: q[2], i: i };
     });
     // the lines to the centre, only as the system forms
     if (p.k > 0.01) {
@@ -172,6 +176,28 @@
       var rgb = [0, 1, 2].map(function (j) { return mix(ink[j], c[j], p.k); });
       blob(q.x, q.y, d.r * q.f, t, d, 1 - p.k, rgb);
     });
+  }
+
+  /* PLAY. Over the particles, the cursor tilts the cloud towards itself and
+     nudges the nearest balls aside; leave, and all eases back. A touch does
+     the same where the finger is, for a moment. */
+  var REACH = 80, PUSH = 34;                                    // box units
+  var hand = { on: false, x: CX, y: CY, tx: 0, ty: 0 };
+  dots.forEach(function (d) { d.ox = 0; d.oy = 0; });
+  var box = canvas.parentElement, letGo = 0;
+  function point(e) {
+    var r = canvas.getBoundingClientRect();
+    hand.x = (e.clientX - r.left) / r.width * BW;
+    hand.y = (e.clientY - r.top) / r.height * BH;
+    hand.on = true;
+  }
+  if (!reduced) {
+    box.addEventListener("pointermove", point);
+    box.addEventListener("pointerdown", function (e) {
+      point(e);
+      if (e.pointerType !== "mouse") { clearTimeout(letGo); letGo = setTimeout(function () { hand.on = false; }, 1200); }
+    });
+    box.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") hand.on = false; });
   }
 
   var running = false, start = 0, raf = 0, visible = true;
