@@ -48,7 +48,6 @@ module.exports = {
   hero: {
     title: ["Product", "Designer"],
     resume: "Download my Resume",
-    scroll: "Scroll to see my work",
   },
 
   intro: {

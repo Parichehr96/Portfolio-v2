@@ -228,3 +228,9 @@
   .v5-on-dark .v4-status__text { color: #edeff2; }
   .v5-on-dark .v4-status__text strong { color: #fff; }
 }
+
+/* Home, lit: the logo instead of the line (redesign 1669:6418). */
+.v4-rail__logo { display: none; width: 20px; height: 20px; }
+.v4-rail__item.is-active:has(.v4-rail__logo) .v4-rail__mark { display: none; }
+.v4-rail__item.is-active .v4-rail__logo { display: block; }
+.v4-rail__logo { object-fit: contain; }

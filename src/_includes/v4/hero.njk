@@ -3,9 +3,9 @@
   where I'm based and the resume on the left; on the right, the particles
   (scripts/v4-dots.js): black dots floating and morphing like a lava lamp,
   tidying into a coloured radial system (Figma 1677:9917), turning once
-  around its centre, then loosening again, on a loop. "Scroll to see my work"
-  at the foot, with the tip of the projects card showing below it.
-  Phones: the text, then the particles, then the scroll hint.
+  around its centre, then loosening again, on a loop. The projects card
+  follows close under it (1669:8785, 147 below the words).
+  Phones: the text, then the particles.
 #}
 <header class="v5-hero" id="hero">
   <div class="v5-hero__text">
@@ -21,14 +21,10 @@
     </p>
     <a class="v5-hero__resume" href="{{ site.resume.url }}" download="{{ site.resume.filename }}">
       {{ home.hero.resume }}
-      <img src="/Assets/v5/download.svg" width="24" height="24" alt="" />
+      <img src="/Assets/v5/download.svg" width="16" height="16" alt="" />
     </a>
   </div>
   <div class="v5-hero__dots" aria-hidden="true">
     <canvas data-dots></canvas>
   </div>
-  <a class="v5-hero__scroll" href="#work">
-    {{ home.hero.scroll }}
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41Z" fill="#0F172A"/></svg>
-  </a>
 </header>

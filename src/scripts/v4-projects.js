@@ -1,7 +1,7 @@
 /* V5 selected projects — v4/projects.njk, _projects.css.
  *
  * THE GROW, tied to the scroll. --p on the section goes 0 to 1 as its top
- * travels from where it peeks under the hero up to the top of the screen:
+ * travels from where it sits under the hero up to the top of the screen:
  * the navy card widens to the full width and the content rises in. Then the
  * stage holds (the section's 60svh tail) and scrolls on. When the stage is
  * taller than the screen (a short phone), it sticks by its bottom instead, so
@@ -31,14 +31,14 @@
   var SWIPE = 40;           // px of drag for one step
 
   /* ---- The grow ---------------------------------------------------------- */
-  var tip = 0;
+  var start = 1;
   function measure() {
-    tip = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--v5-tip")) || 80;
+    // Where its top sits at the top of the page: under the hero, on screen.
+    start = Math.max(1, Math.min(section.getBoundingClientRect().top + window.scrollY, window.innerHeight - 40));
     stage.style.top = Math.min(0, window.innerHeight - stage.offsetHeight) + "px";
   }
   function grow() {
     if (reduce) { section.style.setProperty("--p", 1); return; }
-    var start = window.innerHeight - tip;             // where the top peeks in, under the hero
     var p = 1 - section.getBoundingClientRect().top / start;
     section.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(4));
   }

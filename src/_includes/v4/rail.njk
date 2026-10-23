@@ -30,6 +30,10 @@
         {%- set on = (item.target == railActive) if railActive else loop.first %}
         <a class="v4-rail__item{% if on %} is-active{% endif %}" href="{{ railBase or '' }}#{{ item.target }}"{% if not railBase %} data-rail-target="{{ item.target }}"{% endif %}{% if on %} aria-current="{{ 'page' if railBase else 'true' }}"{% endif %}>
           <span class="v4-rail__mark" aria-hidden="true"></span>
+          {%- if item.target == "top" and not railItems %}
+          {#- Redesign 1669:6418: Home, when lit, shows the logo in the line's place. -#}
+          <img class="v4-rail__logo" src="/Assets/v4/icons/logo.svg" width="20" height="20" alt="" aria-hidden="true" />
+          {%- endif %}
           {{ item.label }}
         </a>
       </li>
