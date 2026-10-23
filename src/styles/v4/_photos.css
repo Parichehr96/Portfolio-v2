@@ -45,7 +45,10 @@
   flex-direction: column;
   align-items: center;
   gap: calc(5 * var(--u));
-  transform: translateY(calc(var(--drift) * var(--speed) * -100svh));
+  transform: translate(
+    calc(var(--drift) * var(--dx, 0) * var(--u)),
+    calc(var(--drift) * var(--speed) * -100svh)
+  );
   will-change: transform;
 }
 
@@ -159,7 +162,10 @@
     top: auto;
     width: 100%;
     gap: 6px;
-    transform: translateY(calc(var(--drift) * var(--speed) * -40svh));
+    transform: translate(
+      calc(var(--drift) * var(--dx, 0) * 0.15px),
+      calc(var(--drift) * var(--speed) * -40svh)
+    );
   }
 
   .v5-photo:nth-child(even) { margin-top: 48px; }
