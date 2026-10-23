@@ -414,5 +414,12 @@ module.exports = {
       { name: "Behance", url: "https://behance.net/pariuxd", icon: "/Assets/v4/footer/behance.svg" },
     ],
     owner: "Pari’s portfolio",
+    // The redesign's footer (one screen with the window): its own line, the
+    // call as a link, and the socials it shows, in its order.
+    v5: {
+      body: "I’m looking for a team in the Netherlands building ambitious products, If that sounds like what you’re working on, I’d love to hear about it.",
+      cta: "Book a call",
+      socials: ["Dribbble", "Behance", "LinkedIn"],
+    },
   },
 };

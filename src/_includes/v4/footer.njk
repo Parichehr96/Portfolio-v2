@@ -23,7 +23,27 @@
     {%- if footerSky %}
     {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
     {% include "v4/sky.njk" %}
-    {%- endif %}
+    {#- Then its own line, the call as a dashed link, three socials, the
+        stamp and the year. #}
+    <div class="v4-footer__cta">
+      <div class="v4-footer__text">
+        <h2 class="v4-footer__title">{{ home.footer.title }}</h2>
+        <p class="v4-footer__body">{{ home.footer.v5.body }}</p>
+      </div>
+      <a class="v5-footer__call" href="{{ home.footer.cta.url }}" target="_blank" rel="noopener">{{ home.footer.v5.cta }}</a>
+    </div>
+    <div class="v4-footer__meta">
+      <ul class="v4-footer__socials">
+        {%- for name in home.footer.v5.socials %}
+        {%- for s in home.footer.socials %}{% if s.name == name %}
+        <li><a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}"><img src="{{ s.icon }}" alt="" /></a></li>
+        {%- endif %}{% endfor %}
+        {%- endfor %}
+      </ul>
+      <p class="v4-footer__updated">Last updated: {{ build.updated }}</p>
+      <p class="v4-footer__copy">&copy;{{ build.year }} {{ home.footer.owner }}</p>
+    </div>
+    {%- else %}
     <div class="v4-footer__cta">
       <div class="v4-footer__text">
         <h2 class="v4-footer__title">{{ home.footer.title }}</h2>
@@ -44,5 +64,6 @@
       <p class="v4-footer__updated">Last updated: {{ build.updated }}</p>
       <p class="v4-footer__copy">&copy;{{ build.year }} {{ home.footer.owner }} · <button class="v4-footer__consent" type="button" data-consent-open>{{ home.consent.settings }}</button></p>
     </div>
+    {%- endif %}
   </div>
 </footer>

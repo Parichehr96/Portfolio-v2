@@ -1,37 +1,76 @@
 /* ============================================================================
-   FOOTER, REDESIGN — 1669:9587 (the window) and 1669:6490 (the call), one
-   screen (v4/footer.njk with footerSky)
+   FOOTER, REDESIGN — the window and the call in one screen (v4/footer.njk
+   with footerSky)
    ============================================================================
 
-   The whole window with its note above it at the top, the call to action,
-   socials and stamp under it, the city with its windmill along the bottom;
-   the screen's height at least. Inside the shell, so the menu and clock stay.
+   Top to bottom, as the comp cuts it (801 tall at 1512): the window's one-line
+   note, the window, the title and its line, "Book a call" as a dashed link,
+   three socials, the stamp and the year; the city with its windmill along the
+   bottom, behind. Exactly the screen's height. Inside the shell, so the menu
+   and clock stay. --u is one comp pixel.
    ========================================================================== */
 
 .v5-footer {
   --u: min(1px, 0.066138vw);
   margin-top: 0;
-  min-height: 100svh;
-  padding-top: calc(65 * var(--u));
-  padding-bottom: calc(129 * var(--u));   /* the comp: the stamp 129 above the page's end, over the city's sky */
+  height: 100svh;
+  min-height: 0;
+  padding-top: calc(46 * var(--u));
 }
 
 .v5-footer .v4-footer__content {
-  gap: var(--v4-footer-cta-gap);
+  gap: 0;
 }
 
 .v5-footer .v4-sky {
   width: min(var(--v4-sky-width), 100%);
-  margin: 0 0 calc(115 * var(--u) - var(--v4-footer-cta-gap));
-  gap: calc(20 * var(--u));
-  text-align: left;
+  margin: 0 0 calc(60 * var(--u));
+  gap: calc(22 * var(--u));
+  text-align: center;
 }
 
+/* The note: one line, above the window; open, its other line takes its place. */
 .v5-footer .v4-sky__note {
-  order: -1;   /* above the window, as the comp; the markup keeps it after for its ~ rules */
+  order: -1;   /* the markup keeps it after the window for its ~ rules */
+  justify-items: center;
+  font-size: min(15px, 0.9921vw);
+  color: #475569;
+}
+
+.v5-footer .v4-sky__line:not(.v4-sky__line-open, .v4-sky__mine) { display: none; }
+
+.v5-footer .v4-footer__cta { gap: calc(20 * var(--u)); }
+.v5-footer .v4-footer__text { gap: calc(4 * var(--u)); }
+
+.v5-footer .v4-footer__body {
+  max-width: calc(600 * var(--u));
+  font-size: min(15px, 0.9921vw);
+  line-height: 1.4667;
+}
+
+/* "Book a call": a dashed link, like "Download my Resume". */
+.v5-footer__call {
+  padding-bottom: 2px;
+  border-bottom: 0.5px dashed #0f172a;
+  font-size: min(16px, 1.0582vw);
+  line-height: 1.5;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.v5-footer__call:hover { border-bottom-style: solid; }
+
+.v5-footer .v4-footer__meta {
+  margin-top: calc(16 * var(--u));
+  gap: calc(12 * var(--u));
 }
 
 @media (max-width: 899px) {
-  .v5-footer { padding-top: calc(var(--v4-bar-h) + var(--v4-space-6)); }
-  .v5-footer .v4-sky { width: 100%; margin-bottom: var(--v4-space-6); gap: var(--v4-space-4); }
+  .v5-footer { height: auto; min-height: 100svh; padding-top: calc(var(--v4-bar-h) + var(--v4-space-6)); padding-bottom: calc(var(--v4-footer-art-h) * 0.6); }
+  .v5-footer .v4-sky { width: 100%; margin-bottom: var(--v4-space-8); gap: var(--v4-space-3); }
+  .v5-footer .v4-sky__note, .v5-footer .v4-footer__body { font-size: 15px; }
+  .v5-footer .v4-footer__body { max-width: none; }
+  .v5-footer .v4-footer__cta { gap: 16px; }
+  .v5-footer__call { font-size: 16px; }
+  .v5-footer .v4-footer__meta { margin-top: 16px; gap: 12px; }
 }
