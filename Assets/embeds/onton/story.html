@@ -36,9 +36,13 @@
   .steps4 i.gone { opacity: .35; }
 
   /* What I heard: five people, two quotes, the cursor marking what matters. */
-  .people { display: flex; gap: 12px; }
-  .person { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: #fff; font: 600 18px/1 "Figtree"; color: var(--muted);
-    box-shadow: inset 0 0 0 1.5px var(--line); }
+  .people { display: flex; gap: 22px; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 92px; }
+  .person img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; background: var(--mist-2); box-shadow: 0 0 0 3px #fff; transition: box-shadow .35s; }
+  .person span { font: 600 15px/1 "Figtree"; color: var(--muted); }
+  .person.lit img { box-shadow: 0 0 0 3px var(--on-blue); }
+  .person.lit span { color: var(--ink); }
+  .note { font: 500 12px/1 "Figtree"; color: var(--faint); }
   .quote { width: 500px; padding: 28px 30px; }
   .quote p { font: 500 27px/1.4 "Figtree"; color: var(--ink); }
   .quote small { display: block; margin-top: 16px; font: 500 16px/1 "Figtree"; color: var(--faint); }
@@ -157,10 +161,14 @@
       frame(root, "v4/race.html?play", 270, 170, 660, 300);
     },
     heard: function (root, api) {
-      put(root, '<p class="kicker">Five organizers, interviewed</p><div class="people" style="margin-top:16px">' +
-        [0, 1, 2, 3, 4].map(function () { return '<span class="person rise"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6" stroke-linecap="round"/></svg></span>'; }).join("") + "</div>", 80, 70);
-      put(root, '<div class="card quote rise" id="q1"><p>“I didn’t even know what I was <span class="mark">being asked to decide</span>.”</p><small>Isabel · organizer</small></div>', 80, 230);
-      put(root, '<div class="card quote rise" id="q2"><p>“I rebuild the same event from scratch <span class="mark">every week</span>.”</p><small>Malena · organizer</small></div>', 620, 300);
+      // Five organizers, interviewed. Isabel and Malena are the case study's
+      // own; all names are changed and the portraits are AI illustrations.
+      var who = [["isabel", "Isabel"], ["malena", "Malena"], ["kenji", "Kenji"], ["omar", "Omar"], ["sofie", "Sofie"]];
+      put(root, '<p class="kicker">Five organizers, interviewed</p><div class="people" style="margin-top:18px">' +
+        who.map(function (w) { return '<span class="person rise" data-who="' + w[0] + '"><img src="story-img/' + w[0] + '.jpg" alt="" width="84" height="84"><span>' + w[1] + '</span></span>'; }).join("") +
+        '</div><p class="note rise" style="margin-top:14px">Names changed · portraits are illustrations</p>', 80, 46, 620);
+      put(root, '<div class="card quote rise" id="q1"><p>“I didn’t even know what I was <span class="mark">being asked to decide</span>.”</p><small>Isabel · first-time organizer</small></div>', 80, 250);
+      put(root, '<div class="card quote rise" id="q2"><p>“I rebuild the same event from scratch <span class="mark">every week</span>.”</p><small>Malena · weekly organizer</small></div>', 620, 250);
       put(root, '<p class="sub rise" id="halves">Over-asked, then asked all over again.</p>', 80, 470, 500);
     },
     team: function (root, api) {
@@ -230,11 +238,16 @@
       } },
     { chapter: "problem", scene: "race", text: "Elsewhere, the same job takes under a minute." },
     { chapter: "problem", scene: "heard", text: "I interviewed five organizers, and they told me the same story in two halves:",
-      cue: function (api) { $$(api.root, ".person").forEach(function (p, i) { rise(api, p, .2 + i * .25); }); } },
+      cue: function (api) {
+        $$(api.root, ".person").forEach(function (p, i) { rise(api, p, .2 + i * .25); });
+        rise(api, $(api.root, ".note"), 1.6);
+      } },
     { chapter: "problem", text: "they were asked for things they didn’t need, and then asked again, every single week, because nothing carried over.", hold: .8,
       cue: function (api) {
         var q1 = $(api.root, "#q1"), q2 = $(api.root, "#q2"), m = $$(api.root, ".mark");
         rise(api, q1, .1);
+        api.after(.1, function () { $(api.root, '[data-who="isabel"]').classList.add("lit"); });
+        api.after(3.0, function () { $(api.root, '[data-who="isabel"]').classList.remove("lit"); $(api.root, '[data-who="malena"]').classList.add("lit"); });
         api.cursor.show();
         var a = centre(m[0], 0, .7), b = centre(m[0], 1, .7);
         api.cursor.to(a[0], a[1], .8, .6);
