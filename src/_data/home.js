@@ -168,7 +168,7 @@ module.exports = {
       {
         id: "challenquiz",
         // Redesign card (1669:8786): its tab's logo, where and the tags.
-        logo: "/Assets/v5/logos/challenquiz.svg", logoActive: "/Assets/v5/logos/challenquiz.svg", logoAlt: "Challenquiz",
+        logo: "/Assets/v5/logos/challenquiz.svg", logoActive: "/Assets/v5/logos/challenquiz-active.svg", logoAlt: "Challenquiz",
         location: "Finland (Remote)",
         tags: ["Consumer", "Gaming", "Mobile"],
         name: "Challenquiz",

@@ -211,22 +211,24 @@
   }
 }
 
-/* ---- Over a dark section (.v5-on-dark, scripts/v4-grow.js) ----------------
+/* ---- Over a dark surface (.is-on-dark, scripts/v4-grow.js) ---------------
    Redesign 1669:9382: the labels light grey, the active one white and bold,
-   the marks light; the clock's face light too. Not the phones' top bar, which is white. */
+   the marks light; the clock's face and words light too. Item by item, as
+   the dark reaches each. Not the phones' top bar, which is white. */
 @media (min-width: 900px) {
-  .v5-on-dark .v4-rail__item { color: #edeff2; }
-  .v5-on-dark .v4-rail__item.is-active,
-  .v5-on-dark .v4-rail__item:not(.is-active):hover { color: #fff; }
-  .v5-on-dark .v4-rail__mark { background: rgb(237 239 242 / 0.45); }
-  .v5-on-dark .v4-rail__item.is-active .v4-rail__mark,
-  .v5-on-dark .v4-rail__item:not(.is-active):hover .v4-rail__mark { background: #fff; }
-  .v5-on-dark .v4-aside {
+  .v4-rail__item.is-on-dark { color: #edeff2; }
+  .v4-rail__item.is-on-dark.is-active,
+  .v4-rail__item.is-on-dark:not(.is-active):hover { color: #fff; }
+  .v4-rail__item.is-on-dark .v4-rail__mark { background: rgb(237 239 242 / 0.45); }
+  .v4-rail__item.is-on-dark.is-active .v4-rail__mark,
+  .v4-rail__item.is-on-dark:not(.is-active):hover .v4-rail__mark { background: #fff; }
+  .v4-aside.is-on-dark {
     --v4-clock-tick: #edeff2;
     --v4-clock-hand: #fff;
   }
-  .v5-on-dark :is(.v4-status__time, .v4-status__line) { color: #a9b3c4; }
-  .v5-on-dark :is(.v4-status__time, .v4-status__line) strong { color: #fff; }
+  .v4-aside.is-on-dark :is(.v4-status__time, .v4-status__line) { color: #a9b3c4; }
+  .v4-aside.is-on-dark :is(.v4-status__time, .v4-status__line) strong { color: #fff; }
+  .v4-rail__item.is-on-dark .v4-rail__logo { filter: invert(1); }
 }
 
 /* Home, lit: the logo instead of the line (redesign 1669:6418). */

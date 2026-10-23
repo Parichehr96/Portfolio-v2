@@ -6,18 +6,18 @@
  * comp's 1512, for what is drawn in px; --kp
  * what fits the wider folder on a phone. Reduced motion: grown from the start.
  *
- * DARK (_rail.css). While a [data-theme=dark] section's background lies under
- * the menu and clock (for the projects, once grown nearly to the edges), the
- * page gets .v5-on-dark and they turn light.
+ * DARK (_rail.css). Each menu item, and the clock, turns light (.is-on-dark)
+ * while a dark surface ([data-dark]) is drawn right under it: item by item,
+ * so a panel growing past them lights each in turn.
  */
 (function () {
   "use strict";
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var grows = Array.prototype.slice.call(document.querySelectorAll("[data-grow]"));
-  var darks = Array.prototype.slice.call(document.querySelectorAll("[data-theme=dark]"));
-  var root = document.documentElement;
-  var LINE = 100;   // px from the top: the line the menu and clock sit on
+  // What turns light over a dark surface: each menu item, and the clock.
+  var marks = Array.prototype.slice.call(document.querySelectorAll(".v4-rail__item, .v5-clock-track .v4-aside"));
+  var pinned = ".v4-rail-track, .v4-aside-track";
 
   function update() {
     ticking = false;
@@ -30,12 +30,14 @@
       s.style.setProperty("--k", k.toFixed(4));
       s.style.setProperty("--kp", kp.toFixed(4));
     });
-    var dark = darks.some(function (s) {
-      var r = (s.firstElementChild || s).getBoundingClientRect();   // its stage, where it sticks
-      var p = parseFloat(s.style.getPropertyValue("--p"));
-      return r.top <= LINE && r.bottom >= LINE && (isNaN(p) || p > 0.96);
+    // What lies under each one, itself aside: a dark surface ([data-dark],
+    // as drawn: a growing panel's clipped-off part does not count)?
+    marks.forEach(function (m) {
+      var r = m.getBoundingClientRect();
+      var x = m.matches(".v4-aside") ? r.right - 50 : r.left + 10, y = r.top + Math.min(r.height / 2, 50);
+      var under = document.elementsFromPoint(x, y).filter(function (e) { return !e.closest(pinned); })[0];
+      m.classList.toggle("is-on-dark", !!(under && under.closest("[data-dark]")));
     });
-    root.classList.toggle("v5-on-dark", dark);
   }
 
   var ticking = false;

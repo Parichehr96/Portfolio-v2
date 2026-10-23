@@ -110,12 +110,12 @@
 
 /* ---- The card: 1079 x 468, 32 in, info 383 and the thumbnail 600 ----------- */
 /* The label and the logo tabs show from the start, in the tip, to make one
-   curious; the card rises in as the background reaches the edges. */
+   curious; the card and its notch fade in together as the background reaches the
+   edges, joined from the start. */
 .v5-work__cards {
   display: grid;
   margin-top: min(24px, 1.5873vw);
-  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);
-  transform: translateY(calc((1 - clamp(0, (var(--p) - 0.55) / 0.45, 1)) * 40px));
+  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);   /* fades only: it never moves off its notch */
 }
 
 .v5-card {
@@ -133,8 +133,8 @@
 /* The whole card opens its case study (scripts/v4-projects.js). */
 .v5-card[data-href] { cursor: pointer; }
 
-@keyframes v5-card-in {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes v5-card-in {   /* a fade, in place: the card stays on its notch */
+  from { opacity: 0; }
 }
 
 .v5-card__info {
