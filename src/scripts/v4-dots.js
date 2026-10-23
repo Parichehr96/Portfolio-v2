@@ -3,9 +3,9 @@
  * A live loop, drawn on a canvas:
  *   0–3s  SCATTERED  black dots float around their own spots, each
  *                    morphing like a lava lamp (a soft, wobbling blob).
- *   3–4.5s TIDYING   they travel into the radial system (Figma 1677:9917):
- *                    each on a thin line to the centre, in its own colour
- *                    (orange, gold, olive or black).
+ *   3–4.5s TIDYING   they travel into the system (after Figma 1677:9917):
+ *                    each in its own colour (orange, gold, olive or black),
+ *                    joined by faint branching links, ball to ball.
  *   4.5–7.5s TIDY    the system revolves around its centre.
  *   7.5–9s LOOSENING back out to their scattered spots, black again.
  * and round again. All the while, in both states, the whole cloud turns
@@ -27,7 +27,7 @@
   var BW = 411, BH = 322, CX = BW / 2, CY = BH / 2;
   var COLOURS = ["#F88050", "#D8A818", "#A89828", "#1A1A1A"];   // sampled from 1677:9917 on white
   var INK = "#111111";                                          // the scattered dots
-  var LINE = "rgba(34, 34, 34, 0.32)";
+  var LINE = "rgba(34, 34, 34, 0.13)";                         // faint: the system shows, it does not shout
   var T_FLOAT = 3.0, T_GATHER = 1.5, T_TURN = 3.0, T_RELEASE = 1.5;
   var FOCAL = 520;                                              // perspective, in box units
   var LOOP = T_FLOAT + T_GATHER + T_TURN + T_RELEASE;
@@ -62,6 +62,26 @@
       wp: rand() * 6.28, ws: 0.5 + rand() * 0.6, wk: 2 + Math.floor(rand() * 2)
     });
   }
+
+  // THE SYSTEM'S LINKS, worked out once from the tidy layout. Each ball links
+  // to the nearest ball nearer the centre than itself, so paths branch out
+  // and run on through other balls; only the innermost few reach the centre
+  // (-1); about one in six also takes a second, cross link.
+  var links = (function () {
+    var at = dots.map(function (d) { return [Math.cos(d.a) * d.d, Math.sin(d.a) * d.d]; });
+    var order = dots.map(function (d, i) { return i; }).sort(function (i, j) { return dots[i].d - dots[j].d; });
+    var out = [];
+    order.forEach(function (i, n) {
+      if (n < 5) { out.push([i, -1]); return; }
+      var near = order.slice(0, n).map(function (j) {
+        var dx = at[i][0] - at[j][0], dy = at[i][1] - at[j][1];
+        return { j: j, d: dx * dx + dy * dy };
+      }).sort(function (a, b) { return a.d - b.d; });
+      out.push([i, near[0].j]);
+      if (near[1] && rand() < 0.17) out.push([i, near[1].j]);
+    });
+    return out;
+  })();
 
   function ease(x) { x = Math.max(0, Math.min(1, x)); return 0.5 - 0.5 * Math.cos(Math.PI * x); }   // a soft in-and-out
   function mix(a, b, k) { return a + (b - a) * k; }
@@ -160,13 +180,16 @@
       d.ox += (px - d.ox) * 0.08; d.oy += (py - d.oy) * 0.08;
       return { x: x + d.ox, y: y + d.oy, f: f, z: q[2], i: i };
     });
-    // the lines to the centre, only as the system forms
+    // the system's links, only as it forms
     if (p.k > 0.01) {
       ctx.strokeStyle = LINE;
-      ctx.lineWidth = 0.6;
+      ctx.lineWidth = 0.5;
       ctx.globalAlpha = p.k;
       ctx.beginPath();
-      pos.forEach(function (q) { ctx.moveTo(CX, CY); ctx.lineTo(q.x, q.y); });
+      links.forEach(function (l) {
+        var m = pos[l[0]], n = l[1] < 0 ? { x: CX, y: CY } : pos[l[1]];
+        ctx.moveTo(n.x, n.y); ctx.lineTo(m.x, m.y);
+      });
       ctx.stroke();
       ctx.globalAlpha = 1;
     }
