@@ -14,7 +14,7 @@
   position: relative;
   width: var(--v5-col);
   height: calc(1320 * var(--u));
-  margin: 0 auto;
+  margin: 0 auto -25svh;   /* what the rise frees at the foot, taken back */
 }
 
 .v5-photos__title {
@@ -28,7 +28,7 @@
   text-align: center;
   text-transform: uppercase;
   color: #475569;
-  transform: translate(-50%, calc((var(--drift) - 0.5) * var(--speed) * -100svh));
+  transform: translate(-50%, calc(var(--drift) * var(--speed) * -100svh));
 }
 
 .v5-photos__list {
@@ -45,7 +45,7 @@
   flex-direction: column;
   align-items: center;
   gap: calc(5 * var(--u));
-  transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -100svh));
+  transform: translateY(calc(var(--drift) * var(--speed) * -100svh));
   will-change: transform;
 }
 
@@ -132,6 +132,7 @@
 @media (max-width: 899px) {
   .v5-photos {
     height: auto;
+    margin-bottom: -15svh;
     padding-block: var(--v4-space-8);
   }
 
@@ -142,7 +143,7 @@
     width: auto;
     margin-bottom: var(--v4-space-6);
     font-size: 32px;
-    transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -40svh));
+    transform: translateY(calc(var(--drift) * var(--speed) * -40svh));
   }
 
   .v5-photos__list {
@@ -158,7 +159,7 @@
     top: auto;
     width: 100%;
     gap: 6px;
-    transform: translateY(calc((var(--drift) - 0.5) * var(--speed) * -40svh));
+    transform: translateY(calc(var(--drift) * var(--speed) * -40svh));
   }
 
   .v5-photo:nth-child(even) { margin-top: 48px; }
