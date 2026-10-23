@@ -1153,7 +1153,7 @@
       let t0 = null;
       const tick = (now) => {
         if (t0 === null) t0 = now;
-        const p = Math.min(1, (now - t0) / ms);
+        const p = Math.max(0, Math.min(1, (now - t0) / ms));
         step(ease(p));
         if (p < 1) requestAnimationFrame(tick); else done();
       };

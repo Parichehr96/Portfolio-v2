@@ -259,7 +259,7 @@
     const n = document.getElementById('amtn'), amt = document.getElementById('amt'); if (!n) return;
     const t0 = performance.now(), dur = 900;
     (function step(now) {
-      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      const k = Math.max(0, Math.min(1, (now - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
       n.textContent = Math.round(from + (to - from) * e);
       if (k < 1) return requestAnimationFrame(step);
       amt.classList.add('land');

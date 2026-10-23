@@ -931,3 +931,22 @@
   height: 560px;   /* until the film reports its own height */
   border: 0;
 }
+
+/* ---- Visuals at their own size ---------------------------------------------
+   The column is 1082 (the redesign's); text, the facts and the wide blocks
+   (metrics, competitors, what changed) take all of it, so those no longer
+   scroll. The animated visuals and images keep the 600 they were drawn for,
+   centred in the column. */
+.v4-case__section > .v4-case__animation,
+.v4-case__section > .v4-case__image {
+  --vis: min(600px, calc(100% - 2 * var(--v4-space-4)));
+  width: var(--vis);
+  margin-inline: calc(var(--v4-column-inset) + (min(var(--v4-column), 100% - 2 * var(--v4-space-4)) - var(--vis)) / 2) auto;
+}
+
+/* The wide blocks fill the 1082 column when there's room (and keep their
+   drawn sizes as a floor, scrolling only on a narrower screen). */
+.v4-metrics__card { flex: 1 1 var(--v4-metrics-card); min-width: var(--v4-metrics-card); }
+.v4-compare__market { flex: 1 1 var(--v4-compare-market); min-width: var(--v4-compare-market); }
+.v4-compare__table { width: 100%; }
+.v4-changes__grid { grid-template-columns: minmax(var(--col), 1fr) var(--v4-changes-divider) minmax(var(--col), 1fr); }

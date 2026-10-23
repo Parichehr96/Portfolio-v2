@@ -35,7 +35,7 @@
     if (window.reduced || !ms) { el.textContent = fmt(to); return Promise.resolve(); }
     return new Promise(function (r) {
       var t0 = performance.now();
-      (function f(now) { var t = Math.min(1, (now - t0) / ms); el.textContent = fmt(from + (to - from) * ease(t)); t < 1 ? requestAnimationFrame(f) : r(); })(t0);
+      (function f(now) { var t = Math.max(0, Math.min(1, (now - t0) / ms)); /* never before the start */ el.textContent = fmt(from + (to - from) * ease(t)); t < 1 ? requestAnimationFrame(f) : r(); })(t0);
     });
   };
   window.stagger = function (els, ms, cls) {

@@ -324,7 +324,7 @@
     // ---- Play, pause, sound ------------------------------------------------
     var playing = false, raf = 0, last = 0;
     function frame(now) {
-      var dt = Math.min(0.1, (now - last) / 1000); last = now;
+      var dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now;
       if (playing) step(dt);
       if (playing) raf = requestAnimationFrame(frame);
     }

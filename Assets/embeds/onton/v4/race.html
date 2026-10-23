@@ -67,7 +67,7 @@
     if (END || reduced) { end(); return; }
     var t0 = performance.now(), fastDone = false;
     (function f(now) {
-      var p = Math.min(1, (now - t0) / RUN), t = p * MAX; set(t);
+      var p = Math.max(0, Math.min(1, (now - t0) / RUN)), t = p * MAX; set(t);
       if (!fastDone && t >= FAST) { fastDone = true; finish(1, FAST, "Published · <1 min"); setTimeout(function () { finish(2, FAST, "Published · <1 min"); }, 120); }
       if (p < 1) requestAnimationFrame(f); else setTimeout(end, 200);
     })(t0);
