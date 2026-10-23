@@ -14,7 +14,7 @@
   position: relative;
   width: var(--v5-col);
   height: calc(1320 * var(--u));
-  margin: 0 auto -25svh;   /* what the rise frees at the foot, taken back */
+  margin: 0 auto -50svh;   /* what the rise frees at the foot, taken back */
 }
 
 .v5-photos__title {
@@ -132,7 +132,7 @@
 @media (max-width: 899px) {
   .v5-photos {
     height: auto;
-    margin-bottom: -15svh;
+    margin-bottom: -30svh;
     padding-block: var(--v4-space-8);
   }
 

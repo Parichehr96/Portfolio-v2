@@ -12,24 +12,24 @@
 
   `spots` are the comp's corners in px from the column's top-left, in the
   order of its frames; `speed` how far each drifts, in screens: no two alike, so they move
-  like separate things; all faster than the title (0.12).
+  like separate things; all faster than the title (0.24).
 #}
 {%- set spots = [
-  { x: 47,  y: 926,  speed: 0.34, photo: 2 },
-  { x: 317, y: 765,  speed: 0.25, photo: 3 },
-  { x: 0,   y: 60,   speed: 0.30, photo: 4 },
-  { x: 787, y: 94,   speed: 0.21, photo: 5 },
-  { x: 655, y: 732,  speed: 0.28, photo: 6 },
-  { x: 449, y: 1036, speed: 0.38, photo: 7 },
-  { x: 424, y: 141,  speed: 0.23, photo: 8 },
-  { x: 924, y: 696,  speed: 0.32, photo: 9 },
-  { x: 819, y: 1007, speed: 0.36, photo: 10 },
-  { x: 4,   y: 601,  speed: 0.19, photo: 11 },
-  { x: 130, y: 296,  speed: 0.27, photo: 0 },
-  { x: 889, y: 392,  speed: 0.24, photo: 1 }
+  { x: 47,  y: 926,  speed: 0.68, photo: 2 },
+  { x: 317, y: 765,  speed: 0.50, photo: 3 },
+  { x: 0,   y: 60,   speed: 0.60, photo: 4 },
+  { x: 787, y: 94,   speed: 0.42, photo: 5 },
+  { x: 655, y: 732,  speed: 0.56, photo: 6 },
+  { x: 449, y: 1036, speed: 0.76, photo: 7 },
+  { x: 424, y: 141,  speed: 0.46, photo: 8 },
+  { x: 924, y: 696,  speed: 0.64, photo: 9 },
+  { x: 819, y: 1007, speed: 0.72, photo: 10 },
+  { x: 4,   y: 601,  speed: 0.38, photo: 11 },
+  { x: 130, y: 296,  speed: 0.54, photo: 0 },
+  { x: 889, y: 392,  speed: 0.48, photo: 1 }
 ] %}
 <section class="v5-photos" id="about" aria-labelledby="photos-title" data-drift>
-  <h2 class="v5-photos__title" id="photos-title" style="--speed: 0.12">Parichehr<br>as a<br>product designer</h2>
+  <h2 class="v5-photos__title" id="photos-title" style="--speed: 0.24">Parichehr<br>as a<br>product designer</h2>
   <ul class="v5-photos__list">
     {%- for s in spots %}
     {%- set photo = home.about.photos[s.photo] %}
