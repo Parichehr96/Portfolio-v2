@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The ONTON case study in two minutes: the problem, what I did and the impact, told over the case's own visuals with the designer's cursor at work.">
+<title>ONTON story</title>
+<link rel="stylesheet" href="../story/player.css?v=3">
+<style>
+  /* ONTON's scenes, on the 1200 x 675 stage. Product colours as the case's
+     visuals use them (v4/case.css); everything else is the page's. */
+  :root { --on-blue: #007AFF; --on-blue-bg: #E5F1FF; --neg: #D53434; --pos: #008000; }
+
+  .kicker { font: 600 14px/1 "Figtree"; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
+  .title { font: 600 46px/1.15 "Figtree"; letter-spacing: -.01em; color: var(--ink); }
+  .sub { font: 500 22px/1.4 "Figtree"; color: var(--muted); }
+  .abs { position: absolute; }
+  .rise { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s var(--e-out); }
+  .rise.in { opacity: 1; transform: none; }
+  .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 0 rgba(13,18,51,.04), 0 8px 24px rgba(13,18,51,.06); }
+  .frame { background: #fff; border-radius: 16px; box-shadow: 0 8px 24px rgba(13,18,51,.06); overflow: hidden; }
+  .frame iframe { position: static; display: block; width: 100%; height: 100%; border: 0; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; font: 600 14px/1 "Figtree"; }
+  .tag.neg { background: rgba(213,52,52,.1); color: var(--neg); }
+  .tag.pos { background: rgba(0,128,0,.1); color: var(--pos); }
+
+  /* Old flow: what was wrong, one fact at a time beside the form. */
+  .facts { display: grid; gap: 14px; }
+  .fact { display: flex; align-items: baseline; gap: 14px; }
+  .fact b { font: 700 40px/1 "Figtree"; color: var(--ink); min-width: 120px; }
+  .fact span { font: 500 19px/1.35 "Figtree"; color: var(--muted); }
+  .steps4 { display: flex; gap: 8px; }
+  .steps4 i { flex: 1; height: 44px; border-radius: 10px; background: #fff; display: grid; place-items: center; font: 600 15px/1 "Figtree"; font-style: normal; color: var(--muted);
+    transition: background .4s, color .4s, opacity .4s; }
+  .steps4 i.drop { background: rgba(213,52,52,.12); color: var(--neg); }
+  .steps4 i.gone { opacity: .35; }
+
+  /* What I heard: five people, two quotes, the cursor marking what matters. */
+  .people { display: flex; gap: 12px; }
+  .person { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: #fff; font: 600 18px/1 "Figtree"; color: var(--muted);
+    box-shadow: inset 0 0 0 1.5px var(--line); }
+  .quote { width: 500px; padding: 28px 30px; }
+  .quote p { font: 500 27px/1.4 "Figtree"; color: var(--ink); }
+  .quote small { display: block; margin-top: 16px; font: 500 16px/1 "Figtree"; color: var(--faint); }
+  .mark { background: linear-gradient(rgba(255, 214, 10, .55), rgba(255, 214, 10, .55)) 0 85% / calc(var(--m, 0) * 100%) 40% no-repeat; }
+
+  /* Team. */
+  .roles { display: flex; gap: 14px; }
+  .role { padding: 18px 22px; font: 600 20px/1.2 "Figtree"; color: var(--muted); transition: box-shadow .3s, color .3s; }
+  .role.me { color: var(--ink); }
+  .role.me.lit { box-shadow: inset 0 0 0 2px var(--on-blue), 0 8px 24px rgba(13,18,51,.06); }
+  .role small { display: block; margin-top: 6px; font: 500 15px/1 "Figtree"; color: var(--faint); }
+
+  /* The 22 fields, sorted. */
+  .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 1040px; transition: gap .6s var(--e-out); }
+  .col { min-height: 196px; padding: 12px; border-radius: 14px; background: #fff; transition: background .4s; }
+  .col h4 { font: 600 14px/1 "Figtree"; color: var(--muted); margin-bottom: 10px; transition: opacity .4s; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border-radius: 8px; background: var(--mist); font: 500 14px/1 "Figtree";
+    color: var(--ink); white-space: nowrap; transition: background .3s, color .3s, box-shadow .3s, opacity .3s; }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px #94A3B8; }
+  .chip.kept { background: var(--on-blue-bg); } .chip.kept i { background: var(--on-blue); box-shadow: none; }
+  .chip.moved { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+  .chip.gone { background: transparent; color: var(--faint); text-decoration: line-through; box-shadow: inset 0 0 0 1px var(--line); }
+  .chip.held { box-shadow: 0 10px 24px rgba(13,18,51,.18); background: #fff; }
+  .bins { display: grid; grid-template-columns: 1.1fr 1.3fr .8fr; gap: 12px; width: 1040px; }
+  .bin { min-height: 200px; padding: 14px; border-radius: 14px; background: #fff; }
+  .bin h4 { display: flex; justify-content: space-between; font: 600 16px/1 "Figtree"; color: var(--ink); margin-bottom: 12px; }
+  .bin h4 span { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .steps-pill { font: 600 18px/1 "Figtree"; color: var(--ink); }
+  .steps-pill s { color: var(--faint); }
+
+  /* The new flow: three changes, and an event duplicated by hand. */
+  .changes { display: grid; gap: 14px; }
+  .change { display: flex; align-items: center; gap: 12px; font: 600 24px/1.2 "Figtree"; color: var(--ink); }
+  .change i { width: 28px; height: 28px; border-radius: 50%; background: var(--on-blue-bg); display: grid; place-items: center; color: var(--on-blue); font: 700 15px/1 "Figtree"; font-style: normal; }
+  .event { width: 420px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: transform .6s var(--e-out), opacity .4s; }
+  .event .poster { width: 52px; height: 52px; border-radius: 10px; background: linear-gradient(135deg, #5AC8FA, #007AFF); flex: none; }
+  .event b { display: block; font: 600 18px/1.2 "Figtree"; color: var(--ink); }
+  .event small { font: 500 14px/1.3 "Figtree"; color: var(--faint); }
+  .dup { margin-left: auto; height: 34px; padding: 0 14px; border-radius: 9px; background: var(--on-blue-bg); color: var(--on-blue); font: 600 14px/34px "Figtree"; }
+
+  /* Impact. */
+  .metric { width: 330px; padding: 22px 24px; }
+  .metric .num { font: 700 54px/1 "Figtree"; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .metric .lbl { margin-top: 10px; font: 500 17px/1.3 "Figtree"; color: var(--muted); }
+  .metric .from { margin-top: 12px; }
+  .dots { display: grid; grid-template-columns: repeat(20, 14px); gap: 6px; }
+  .dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--mist-2); transition: background .3s; }
+  .dots i.lit { background: var(--on-blue); }
+  .dau { font: 700 84px/1 "Figtree"; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+
+  /* Close. */
+  .claim { width: 860px; font: 600 44px/1.25 "Figtree"; color: var(--faint); text-align: center; }
+  .claim span { transition: color .5s; }
+  .claim span.lit { color: var(--ink); }
+  .publish { height: 54px; padding: 0 28px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 19px/54px "Figtree"; transition: background .3s; }
+  .publish.done { background: var(--pos); }
+</style>
+</head>
+<body>
+<div id="story"></div>
+<script src="../story/player.js?v=3"></script>
+<script>
+(function () {
+  "use strict";
+
+  // Stage coordinates of an element (for the cursor).
+  function at(el) {
+    var s = document.querySelector(".stage").getBoundingClientRect(), r = el.getBoundingClientRect(), k = 1200 / s.width;
+    return { x: (r.left - s.left) * k, y: (r.top - s.top) * k, w: r.width * k, h: r.height * k };
+  }
+  function centre(el, dx, dy) { var p = at(el); return [p.x + p.w * (dx == null ? .5 : dx), p.y + p.h * (dy == null ? .5 : dy)]; }
+  function put(root, html, x, y, w, h) {
+    var d = document.createElement("div");
+    d.className = "abs";
+    d.style.left = x + "px"; d.style.top = y + "px";
+    if (w) d.style.width = w + "px";
+    if (h) d.style.height = h + "px";
+    d.innerHTML = html;
+    root.appendChild(d);
+    return d;
+  }
+  function frame(root, src, x, y, w, h) { return put(root, '<div class="frame" style="width:' + w + 'px;height:' + h + 'px"><iframe src="' + src + '" title="" tabindex="-1" loading="eager"></iframe></div>', x, y); }
+  function rise(api, el, delay) { api.after(delay || 0, function () { el.classList.add("in"); }); }
+  function $(root, q) { return root.querySelector(q); }
+  function $$(root, q) { return Array.prototype.slice.call(root.querySelectorAll(q)); }
+
+  // The old flow's 22 fields (v4/sorted.html), and where each ended up.
+  var FIELDS = [
+    ["General", [["Name", "kept"], ["TON Hub", "moved"], ["Description", "moved"], ["Cover image", "kept"], ["Category", "moved"], ["Subtitle (mandatory)", "gone"]]],
+    ["Time / Location", [["Date & time", "kept"], ["Country / City / Map", "kept"], ["Timezone (auto)", "gone"], ["In-person / Online", "kept"], ["Duration", "moved"]]],
+    ["Registration", [["Capacity", "kept"], ["Registration form", "moved"], ["Ticket details", "moved"], ["Free / Paid", "kept"], ["Approval", "moved"], ["Recipient wallet", "moved"]]],
+    ["Reward", [["SBT preset", "kept"], ["Custom SBT", "moved"], ["Reward video", "moved"], ["Reward image", "kept"], ["Event password", "moved"]]]
+  ];
+
+  var scenes = {
+    // ONTON, and the promise it makes.
+    hook: function (root, api) {
+      put(root, '<p class="kicker rise">ONTON · Telegram Mini App</p><h2 class="title rise" style="margin-top:18px">Events for crypto communities, with an on-chain badge for showing up.</h2><p class="sub rise" style="margin-top:22px">But organizers kept giving up before they ever published one.</p>', 80, 150, 500);
+      frame(root, "v4/promise.html?play", 620, 200, 520, 232);
+      $$(root, ".rise").slice(0, 2).forEach(function (e, i) { rise(api, e, .2 + i * .35); });
+    },
+    // The old form filling up beside the facts.
+    old: function (root, api) {
+      frame(root, "v4/oldflow.html?play", 60, 70, 560, 430);
+      put(root, '<p class="kicker">Creating one event, before</p>' +
+        '<div class="facts" style="margin-top:22px">' +
+        '<div class="fact rise"><b>4</b><span>dense steps</span></div>' +
+        '<div class="fact rise"><b>20+</b><span>fields</span></div>' +
+        '<div class="fact rise"><b style="font-size:30px">⚠︎</b><span>“Cannot be changed after creation”, on almost every screen</span></div>' +
+        '<div class="fact rise"><b>~7</b><span>minutes</span></div></div>' +
+        '<div class="rise" style="margin-top:30px"><p class="kicker" style="margin-bottom:12px">Where organizers left</p><div class="steps4"><i>Step 1</i><i>Step 2</i><i>Step 3</i><i>Step 4</i></div></div>', 680, 90, 460);
+    },
+    race: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">Publishing one event</p>', 300, 130, 600);
+      frame(root, "v4/race.html?play", 270, 170, 660, 300);
+    },
+    heard: function (root, api) {
+      put(root, '<p class="kicker">Five organizers, interviewed</p><div class="people" style="margin-top:16px">' +
+        [0, 1, 2, 3, 4].map(function () { return '<span class="person rise"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6" stroke-linecap="round"/></svg></span>'; }).join("") + "</div>", 80, 70);
+      put(root, '<div class="card quote rise" id="q1"><p>“I didn’t even know what I was <span class="mark">being asked to decide</span>.”</p><small>Isabel · organizer</small></div>', 80, 230);
+      put(root, '<div class="card quote rise" id="q2"><p>“I rebuild the same event from scratch <span class="mark">every week</span>.”</p><small>Malena · organizer</small></div>', 620, 300);
+      put(root, '<p class="sub rise" id="halves">Over-asked, then asked all over again.</p>', 80, 470, 500);
+    },
+    team: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">The team</p>', 300, 200, 600);
+      put(root, '<div class="roles"><div class="card role me rise">Me<small>Sole product designer</small></div><div class="card role rise">The founder<small>Product owner</small></div><div class="card role rise">4 engineers<small>Mini App &amp; backend</small></div></div>', 0, 260, 1200)
+        .firstChild.style.justifyContent = "center";
+    },
+    sort: function (root, api) {
+      var cols = FIELDS.map(function (g, i) {
+        return '<div class="col"><h4>Step ' + (i + 1) + ' · ' + g[0] + '</h4><div class="chips">' +
+          g[1].map(function (f) { return '<span class="chip" data-st="' + f[1] + '"><i></i>' + f[0] + '</span>'; }).join("") + "</div></div>";
+      }).join("");
+      put(root, '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><p class="kicker">The old flow’s 22 fields</p><p class="steps-pill" id="pill"><s>4 steps</s></p></div><div class="cols">' + cols + "</div>", 80, 40, 1040);
+      put(root, '<div class="bins"><div class="bin" data-bin="kept"><h4>Up front <span>0</span></h4><div class="chips"></div></div>' +
+        '<div class="bin" data-bin="moved"><h4>Advanced <span>0</span></h4><div class="chips"></div></div>' +
+        '<div class="bin" data-bin="gone"><h4>Removed or automated <span>0</span></h4><div class="chips"></div></div></div>', 80, 380, 1040);
+    },
+    newflow: function (root, api) {
+      put(root, '<p class="kicker">The new flow</p><div class="changes" style="margin-top:22px">' +
+        '<div class="change rise"><i>1</i>Defaults that stick</div><div class="change rise"><i>2</i>Duplicate any event</div><div class="change rise"><i>3</i>One confirmation, at the end</div></div>', 80, 90, 470);
+      put(root, '<div class="card event" id="ev1"><span class="poster"></span><div><b>Weekly TON meetup</b><small>Thu · 19:00 · Berlin</small></div><span class="dup">Duplicate</span></div>' +
+        '<div class="card event" id="ev2" style="margin-top:12px;opacity:0;transform:translateY(-20px)"><span class="poster"></span><div><b>Weekly TON meetup</b><small>Next Thu · 19:00 · Berlin</small></div></div>', 80, 360);
+      frame(root, "hero-animation.html", 600, 120, 540, 354);
+    },
+    loop: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">How I worked</p>', 300, 150, 600);
+      frame(root, "v4/loop.html?play", 270, 190, 660, 290);
+    },
+    impact: function (root, api) {
+      put(root, '<div style="display:flex;gap:20px">' +
+        '<div class="card metric rise" id="m1"><div class="num">20%</div><div class="lbl">Event-creation completion</div><div class="from"><span class="tag pos">from 20% to 81%</span></div></div>' +
+        '<div class="card metric rise" id="m2"><div class="num">~7 min</div><div class="lbl">Time to create an event</div><div class="from"><span class="tag pos">−86%</span></div></div>' +
+        '<div class="card metric rise" id="m3"><div class="num">0%</div><div class="lbl">Events made by duplicating or repeating</div><div class="from"><span class="tag pos">not possible before</span></div></div></div>', 80, 60);
+      var dots = ""; for (var i = 0; i < 100; i++) dots += "<i></i>";
+      put(root, '<div class="card rise" id="m4" style="padding:22px 24px;width:450px"><div class="dots">' + dots + '</div><p class="lbl" style="margin-top:14px;font:500 17px/1.3 Figtree;color:var(--muted)"><b style="color:var(--ink)">15%</b> ever opened Advanced</p></div>', 80, 330);
+      put(root, '<div class="rise" id="m5"><p class="kicker">Daily active users</p><p class="dau" style="margin-top:12px"><span id="dau">87</span></p><p class="sub" style="margin-top:8px">from 87</p></div>', 600, 360, 520);
+    },
+    close: function (root, api) {
+      put(root, '<p class="claim"><span>I find the step everyone’s tripping on,</span> <span>cut it down to what people actually need,</span> <span>and stay with it until the numbers move.</span></p>', 170, 170);
+      put(root, '<button class="publish" type="button" tabindex="-1">Publish event</button>', 0, 400, 1200).style.textAlign = "center";
+    }
+  };
+
+  var lines = [
+    // ---- The problem
+    { chapter: "problem", scene: "hook", text: "ONTON lets crypto communities run events on Telegram and reward the people who show up with an on-chain badge." },
+    { chapter: "problem", text: "But a badge only matters if there’s an event to attend, and organizers kept giving up before they ever published one.",
+      cue: function (api) {
+        rise(api, $$(api.root, ".rise")[2], .4);
+        api.cursor.show(); api.cursor.to(700, 330, .9, .6); api.cursor.click(1.7);
+      } },
+    { chapter: "problem", scene: "old", text: "Creating a simple event took four dense steps, more than twenty fields, and a warning on almost every screen that your choices were permanent.",
+      cue: function (api) {
+        var f = $$(api.root, ".fact");
+        rise(api, f[0], .3); rise(api, f[1], 2.0); rise(api, f[2], 3.6);
+        // A hesitant hand over the form.
+        api.cursor.to(330, 260, 1.0, .2); api.cursor.to(260, 330, .8, 1.6); api.cursor.to(420, 300, 1.0, 2.8); api.cursor.to(300, 420, 1.1, 4.4);
+      } },
+    { chapter: "problem", text: "It took about seven minutes.", cue: function (api) { rise(api, $$(api.root, ".fact")[3], .2); api.cursor.to(450, 480, 1.2, .2); } },
+    { chapter: "problem", text: "Most organizers dropped at step two or three.",
+      cue: function (api) {
+        var box = $$(api.root, ".rise")[4], s = $$(api.root, ".steps4 i");
+        rise(api, box, .1);
+        api.after(.9, function () { s[1].classList.add("drop"); s[2].classList.add("drop"); });
+        api.after(1.6, function () { s[3].classList.add("gone"); });
+        api.cursor.hide();
+      } },
+    { chapter: "problem", scene: "race", text: "Elsewhere, the same job takes under a minute." },
+    { chapter: "problem", scene: "heard", text: "I interviewed five organizers, and they told me the same story in two halves:",
+      cue: function (api) { $$(api.root, ".person").forEach(function (p, i) { rise(api, p, .2 + i * .25); }); } },
+    { chapter: "problem", text: "they were asked for things they didn’t need, and then asked again, every single week, because nothing carried over.", hold: .8,
+      cue: function (api) {
+        var q1 = $(api.root, "#q1"), q2 = $(api.root, "#q2"), m = $$(api.root, ".mark");
+        rise(api, q1, .1);
+        api.cursor.show();
+        var a = centre(m[0], 0, .7), b = centre(m[0], 1, .7);
+        api.cursor.to(a[0], a[1], .8, .6);
+        api.tween(1.1, function (p) { m[0].style.setProperty("--m", p); }, 1.5);
+        api.cursor.to(b[0], b[1], 1.1, 1.5);
+        rise(api, q2, 3.0);
+        var c = centre(m[1], 0, .7), d = centre(m[1], 1, .7);
+        api.cursor.to(c[0], c[1], .9, 3.5);
+        api.tween(.8, function (p) { m[1].style.setProperty("--m", p); }, 4.5);
+        api.cursor.to(d[0], d[1], .8, 4.5);
+        rise(api, $(api.root, "#halves"), 5.6);
+      } },
+
+    // ---- What I did
+    { chapter: "did", scene: "team", text: "I was the only designer, working with the founder and four engineers.",
+      cue: function (api) {
+        var r = $$(api.root, ".role");
+        r.forEach(function (e, i) { rise(api, e, .2 + i * .3); });
+        var p = centre(r[0], .5, .6);
+        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.3); api.cursor.click(2.3);
+        api.after(2.35, function () { r[0].classList.add("lit"); });
+      } },
+    { chapter: "did", scene: "sort", text: "I didn’t delete what mattered; I demoted it.",
+      cue: function (api) {
+        // Two fields carried into Advanced by hand.
+        var bin = $(api.root, '[data-bin="moved"] .chips');
+        function carry(name, d) {
+          var chip = $$(api.root, ".cols .chip").filter(function (c) { return c.textContent === name; })[0];
+          var from = centre(chip, .3, .5), to = centre(bin, .2, .3);
+          api.cursor.to(from[0], from[1], .7, d);
+          api.cursor.grab(chip, d + .75);
+          api.cursor.to(to[0] + 40, to[1] + 6, .9, d + .8);
+          api.cursor.drop(d + 1.75, function () { chip.classList.add("moved"); bin.appendChild(chip); count(api); });
+        }
+        api.cursor.show();
+        carry("Description", .2);
+        carry("Ticket details", 2.0);
+      } },
+    { chapter: "did", text: "Four steps became one.",
+      cue: function (api) {
+        api.after(.3, function () { $(api.root, "#pill").innerHTML = "<s>4 steps</s> → 1 step"; });
+        api.after(.6, function () { $$(api.root, ".col h4").forEach(function (h) { h.style.opacity = ".35"; }); });
+        api.cursor.to(1000, 60, .8, .2);
+      } },
+    { chapter: "did", text: "Nine fields stayed up front, eleven moved into Advanced, two were automated away.", hold: .6,
+      cue: function (api) {
+        var gone = $(api.root, '[data-bin="gone"] .chips');
+        var sub = $$(api.root, ".cols .chip").filter(function (c) { return /Subtitle/.test(c.textContent); })[0];
+        var from = centre(sub, .3, .5), to = centre(gone, .3, .4);
+        api.cursor.to(from[0], from[1], .6, .1);
+        api.cursor.grab(sub, .75);
+        api.cursor.to(to[0] + 30, to[1] + 6, .9, .8);
+        api.cursor.drop(1.75, function () { sub.classList.add("gone"); gone.appendChild(sub); count(api); });
+        // The rest find their place.
+        api.after(2.0, function () { api.cursor.hide(); });
+        var rest = $$(api.root, ".cols .chip").filter(function (c) { return c !== sub; });
+        rest.forEach(function (c, i) {
+          api.after(2.0 + i * .14, function () {
+            c.classList.add(c.dataset.st);
+            $(api.root, '[data-bin="' + c.dataset.st + '"] .chips').appendChild(c);
+            count(api);
+          });
+        });
+      } },
+    { chapter: "did", scene: "newflow", text: "Defaults now stick, events can be duplicated, and there’s one confirmation at the end instead of a warning on every screen.",
+      cue: function (api) {
+        var c = $$(api.root, ".change");
+        rise(api, c[0], .2); rise(api, c[1], 1.6); rise(api, c[2], 3.4);
+        var dup = $(api.root, ".dup"), p = centre(dup);
+        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.7); api.cursor.click(2.7);
+        api.after(2.8, function () { var e = $(api.root, "#ev2"); e.style.opacity = "1"; e.style.transform = "none"; });
+        api.cursor.to(560, 600, 1, 3.6);
+      } },
+    { chapter: "did", scene: "loop", text: "I built the components it runs on, and kept iterating on live analytics after launch.", cue: function (api) { api.cursor.hide(); } },
+
+    // ---- The impact
+    { chapter: "impact", scene: "impact", text: "Completion went from twenty percent to eighty-one.",
+      cue: function (api) { var m = $(api.root, "#m1"); rise(api, m, .1); api.count($(m, ".num"), 20, 81, 1.6, function (v) { return Math.round(v) + "%"; }, .5); } },
+    { chapter: "impact", text: "Seven minutes became one.",
+      cue: function (api) { var m = $(api.root, "#m2"); rise(api, m, .1); api.count($(m, ".num"), 7, 1, 1.2, function (v) { return "~" + Math.round(v) + " min"; }, .4); } },
+    { chapter: "impact", text: "Four in ten events are now made by duplicating or repeating one.",
+      cue: function (api) { var m = $(api.root, "#m3"); rise(api, m, .1); api.count($(m, ".num"), 0, 42, 1.4, function (v) { return Math.round(v) + "%"; }, .4); } },
+    { chapter: "impact", text: "And only fifteen percent of organizers ever opened Advanced, proof that almost no one needed what the old flow forced on everyone.",
+      cue: function (api) {
+        rise(api, $(api.root, "#m4"), .1);
+        var d = $$(api.root, ".dots i"), lit = [3, 11, 18, 24, 30, 37, 45, 52, 58, 63, 71, 77, 84, 90, 97];
+        lit.forEach(function (n, i) { api.after(.8 + i * .12, function () { d[n].classList.add("lit"); }); });
+      } },
+    { chapter: "impact", text: "The product grew from 87 to over 1,500 daily users.", hold: .6,
+      cue: function (api) {
+        rise(api, $(api.root, "#m5"), .1);
+        api.count($(api.root, "#dau"), 87, 1500, 2.2, function (v) { var n = Math.round(v); return n >= 1500 ? "1,500+" : n.toLocaleString("en"); }, .5);
+      } },
+    { chapter: "impact", scene: "close", text: "I find the step everyone’s tripping on, cut it down to what people actually need, and stay with it until the numbers move.", hold: 1.6,
+      cue: function (api) {
+        var s = $$(api.root, ".claim span");
+        s.forEach(function (e, i) { api.after(.3 + i * 2.1, function () { e.classList.add("lit"); }); });
+        var b = $(api.root, ".publish"), p = centre(b, .5, .6);
+        api.cursor.show(); api.cursor.to(p[0], p[1], 1, 5.6); api.cursor.click(6.7);
+        api.after(6.75, function () { b.classList.add("done"); b.textContent = "Published ✓"; });
+      } }
+  ];
+
+  // Bin counters: 9 / 11 / 2 when all are in.
+  function count(api) {
+    $$(api.root, ".bin").forEach(function (b) { $(b, "h4 span").textContent = $$(b, ".chip").length; });
+  }
+
+  Story(document.getElementById("story"), {
+    title: "ONTON in two minutes",
+    chapters: [{ id: "problem", label: "The problem" }, { id: "did", label: "What I did" }, { id: "impact", label: "The impact" }],
+    lines: lines,
+    scenes: scenes
+  });
+})();
+</script>
+</body>
+</html>
