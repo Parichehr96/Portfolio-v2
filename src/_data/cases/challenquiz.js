@@ -23,7 +23,15 @@ module.exports = {
   next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover (B): Lena's four verbs light up while the real prototype shows the moment that answers each.
+  // The cover is the 2-minute story (Assets/embeds/challenquiz/story.html):
+  // the problem, what I did and the impact, over the case's visuals and the
+  // real prototype. The cover animation it replaced is kept below.
   hero: {
+    type: "story",
+    src: E + "story.html",
+    title: "Challenquiz in two minutes: the problem, what I did and the impact, with a transcript",
+  },
+  heroAnimation: {
     type: "animation",
     src: E + "v4/hero.html",
     title: "Lena's four verbs, Open, Play, Learn and Enjoy, light up in turn while the real game shows the moment that answers each",

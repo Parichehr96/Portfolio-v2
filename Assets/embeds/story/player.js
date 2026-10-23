@@ -220,6 +220,13 @@
 
     var api = { at: at, tween: tween, cursor: cursor, get root() { return cur.scene; },
       after: function (s, fn) { at(t + s, fn); },
+      // Seconds into the current line at which a word is said (its first match).
+      word: function (w) {
+        var l = lines[cur.line]; if (!l) return 0;
+        var norm = function (x) { return x.toLowerCase().replace(/[^a-z0-9,’'-]/g, "").replace(/[,]/g, ""); };
+        for (var k = 0; k < l.words.length; k++) if (norm(l.words[k]) === norm(w)) return l.wordAt[k];
+        return 0;
+      },
       count: function (el2, a, b, dur, fmt, delay) {
         fmt = fmt || function (v) { return Math.round(v).toLocaleString("en"); };
         el2.textContent = fmt(a);
@@ -396,7 +403,7 @@
 
     if (window.parent !== window) {
       document.documentElement.classList.add("embedded");
-      var tell = function () { parent.postMessage({ story: true, height: document.documentElement.scrollHeight }, "*"); };
+      var tell = function () { parent.postMessage({ story: true, height: Math.ceil(document.body.getBoundingClientRect().height) + 2 }, "*"); };
       new ResizeObserver(tell).observe(document.body);
       tell();
     }
@@ -409,4 +416,36 @@
     function advance(sec) { var was = playing; playing = true; for (var k = 0; k < sec * 30; k++) step(1 / 30); playing = was; paint(); }
     window.story = { seek: seek, play: play, pause: pause, advance: advance, get t() { return t; }, total: TOTAL, lines: lines };
   };
+})();
+
+/* Scene helpers, shared by the stories: place things on the 1200 x 675 stage
+ * and find where they are, for the cursor. */
+(function () {
+  "use strict";
+  function stageRect() { return document.querySelector(".stage").getBoundingClientRect(); }
+  var kit = {
+    $: function (root, q) { return root.querySelector(q); },
+    $$: function (root, q) { return Array.prototype.slice.call(root.querySelectorAll(q)); },
+    // Stage coordinates of an element.
+    at: function (el) {
+      var s = stageRect(), r = el.getBoundingClientRect(), k = 1200 / s.width;
+      return { x: (r.left - s.left) * k, y: (r.top - s.top) * k, w: r.width * k, h: r.height * k };
+    },
+    centre: function (el, dx, dy) { var p = kit.at(el); return [p.x + p.w * (dx == null ? .5 : dx), p.y + p.h * (dy == null ? .5 : dy)]; },
+    put: function (root, html, x, y, w, h) {
+      var d = document.createElement("div");
+      d.className = "abs";
+      d.style.left = x + "px"; d.style.top = y + "px";
+      if (w) d.style.width = w + "px";
+      if (h) d.style.height = h + "px";
+      d.innerHTML = html;
+      root.appendChild(d);
+      return d;
+    },
+    frame: function (root, src, x, y, w, h) {
+      return kit.put(root, '<div class="frame" style="width:' + w + 'px;height:' + h + 'px"><iframe src="' + src + '" title="" tabindex="-1" loading="eager"></iframe></div>', x, y);
+    },
+    rise: function (api, el, delay) { api.after(delay || 0, function () { el.classList.add("in"); }); }
+  };
+  window.Story.kit = kit;
 })();
