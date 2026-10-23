@@ -3,12 +3,14 @@
   where I'm based and the resume on the left; on the right, the particles
   (scripts/v4-dots.js): black dots floating and morphing like a lava lamp,
   tidying into a coloured radial system (Figma 1677:9917), turning once
-  around its centre, then loosening again, on a loop. The projects card
-  follows close under it (1669:8785, 147 below the words).
-  Phones: the text, then the particles.
+  around its centre, then loosening again, on a loop. Over the title, one
+  line of hello, on the menu and clock's top line. "Scroll Down", a dashed
+  pill, centred under it all, and the projects card's top already in view.
+  Phones: the text, then the particles, then the pill.
 #}
 <header class="v5-hero" id="hero">
   <div class="v5-hero__text">
+    <p class="v5-hero__hello">{{ home.hero.hello.before }}<strong>{{ home.hero.hello.name }}</strong>{{ home.hero.hello.after }}</p>
     <h1 class="v5-hero__title">{{ home.hero.title[0] }}<br>{{ home.hero.title[1] }}</h1>
     <p class="v5-hero__bio">
       {{- home.intro.bio.before | trim -}}<br>
@@ -27,4 +29,8 @@
   <div class="v5-hero__dots" aria-hidden="true">
     <canvas data-dots></canvas>
   </div>
+  <a class="v5-hero__scroll" href="#work">
+    {{ home.hero.scroll }}
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3.75v12.5M4.75 11 10 16.25 15.25 11" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
 </header>

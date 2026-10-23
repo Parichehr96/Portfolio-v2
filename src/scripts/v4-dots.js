@@ -10,7 +10,7 @@
  *   7–8s  LOOSENING  back out to their scattered spots, black again.
  * and round again. All the while, in both states, the whole cloud turns
  * slowly about its centre in 3D (round z, rocking on x and y, nearer dots
- * larger). Each dot is a lit sphere, turning about its own x, y and z (its
+ * larger). Each dot is a ball in one even colour, turning about its own x, y and z (its
  * lava-lamp lobes roll round it), and in the system each slides in and out
  * along its line, so the lines grow and shrink. The dots are drawn here, not
  * images. Only while on screen; reduced motion shows the tidy system, still.
@@ -53,7 +53,7 @@
       sx: sx, sy: sy,
       sz: (rand() - 0.5) * 160,                                 // depth when scattered
       tz: (rand() - 0.5) * 120,                                 // and in the system: a burst in depth too
-      dd: 0.7 + rand() * 1.1, dp: rand() * 6.28,                // sliding in and out along its line
+      dd: 0.25 + rand() * 0.35, dp: rand() * 6.28,              // sliding in and out along its line, slowly
       // its own tumble: a pace about each of x, y and z
       rx: 0.6 + rand() * 1.2, ry: 0.6 + rand() * 1.2, rz: (rand() - 0.5) * 2, r0: rand() * 6.28,
       colour: COLOURS[Math.floor(rand() * COLOURS.length)],
@@ -69,9 +69,9 @@
 
   // A soft blob: a ring of points pushed in and out by slow waves, joined
   // with smooth curves. wob 0 is a plain circle.
-  // A sphere, lit from the top left: a soft highlight, its own colour, a
-  // darker rim. Its turn about z rolls the lobes of the wobble round it; the
-  // turns about x and y swell them in and out, as a turning lumpy ball does.
+  // A ball in one even colour. Its turn about z rolls the lobes of the wobble
+  // round it; the turns about x and y swell them in and out, as a turning
+  // lumpy ball does.
   function shade(rgb, k) {   // k > 0 towards white, < 0 towards black
     var to = k > 0 ? 255 : 0, a = Math.abs(k);
     return "rgb(" + rgb.map(function (c) { return Math.round(c + (to - c) * a); }).join(",") + ")";
@@ -96,13 +96,7 @@
       ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2);
     }
     ctx.closePath();
-    if (r > 1.6) {
-      var g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r * 1.08);
-      g.addColorStop(0, shade(rgb, 0.55));
-      g.addColorStop(0.55, shade(rgb, 0));
-      g.addColorStop(1, shade(rgb, -0.35));
-      ctx.fillStyle = g;
-    } else ctx.fillStyle = shade(rgb, 0);
+    ctx.fillStyle = shade(rgb, 0);   // flat, one even colour
     ctx.fill();
   }
 

@@ -15,11 +15,60 @@
 }
 
 .v5-hero {
+  --u: min(1px, 0.066138vw);
   position: relative;
   width: var(--v5-col);
+  min-height: calc(653 * var(--u));   /* the projects card's top at 653, in the first screen */
   margin-inline: auto;
-  padding-block: min(52px, 3.4392vw) min(147px, 9.7222vw);   /* the projects card 147 under the words (y 549) */
+  padding-top: calc(52 * var(--u));
 }
+
+/* The hello over the title, on the menu and clock's top line. */
+.v5-hero__hello {
+  margin-bottom: max(-8px, -0.5291vw);   /* 8 to the title, out of the column's 16 */
+  font-size: min(15px, 0.9921vw);
+  font-weight: var(--v4-weight-medium);
+  line-height: 1.4667;
+  color: #475569;
+}
+
+.v5-hero__hello strong {
+  font-weight: var(--v4-weight-bold);
+  color: #0f172a;
+}
+
+/* "Scroll Down": a dashed pill, centred, 51 above the projects card. */
+.v5-hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: calc(51 * var(--u));
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  padding: calc(12 * var(--u)) calc(20 * var(--u));
+  border: 1px dashed #64748b;
+  border-radius: 999px;
+  font-size: min(16px, 1.0582vw);
+  line-height: 1.5;
+  color: #0f172a;
+  text-decoration: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.v5-hero__scroll svg {
+  width: min(20px, 1.3228vw);
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.v5-hero__scroll:hover {
+  border-style: solid;
+  border-color: #0f172a;
+}
+
+.v5-hero__scroll:hover svg { transform: translateY(2px); }
 
 /* Left: the words (453 wide at 1512). */
 .v5-hero__text {
@@ -120,7 +169,11 @@
   }
 
   .v5-hero__text { width: 100%; gap: var(--v4-space-4); }
+  .v5-hero { min-height: 0; }
+  .v5-hero__hello { font-size: 15px; margin-bottom: calc(-1 * var(--v4-space-2)); }
   .v5-hero__title { font-size: 44px; margin-bottom: calc(-1 * var(--v4-space-2)); }
+  .v5-hero__scroll { position: static; align-self: center; transform: none; padding: 10px 18px; gap: 8px; font-size: 16px; }
+  .v5-hero__scroll svg { width: 20px; }
   .v5-hero__bio { font-size: 15px; }
   .v5-hero__location { font-size: 13px; gap: var(--v4-space-2); }
   .v5-hero__location img { width: 16px; }
@@ -140,10 +193,10 @@
    Figma 1669:6516 (the face alone, 32 from the right, 52 down) and 1669:6474
    (hovered: the face moves left, its words beside it). The words open to
    their width and fade in; on leaving, they fold away again. */
-/* The menu, the title and the clock share one top line: the top of
-   "Product"'s capitals, 76 down at 1512 (52 in, plus the line's own space). */
+/* The menu, the hello and the clock share one top line: the top of the
+   hello line over the title, 52 down at 1512. */
 .v4-shell:has(> .v5-hero) {
-  --v5-top: min(76px, 5.0265vw);
+  --v5-top: min(52px, 3.4392vw);
 }
 
 .v4-shell:has(> .v5-hero) .v4-rail {

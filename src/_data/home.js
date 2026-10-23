@@ -46,7 +46,9 @@ module.exports = {
   // The bio is three runs so the middle one can be set bold, as the comp does.
   // ---- Hero — redesign 1669:6413 (the first screen) --------------------------
   hero: {
+    hello: { before: "Hi, I’m ", name: "Pari", after: ", I’m a" },
     title: ["Product", "Designer"],
+    scroll: "Scroll Down",
     resume: "Download my Resume",
   },
 
