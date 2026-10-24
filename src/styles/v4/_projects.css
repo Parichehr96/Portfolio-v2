@@ -160,7 +160,7 @@
 }
 
 .v5-card__name {
-  font-size: min(32px, 2.1164vw);
+  font-size: min(40px, 2.6455vw);
   font-weight: var(--v4-weight-semibold);
   line-height: 1.5;
   color: #0f172a;
@@ -321,7 +321,7 @@
   .v5-work__cards { margin-top: 24px; }
   .v5-card { flex-direction: column-reverse; gap: 20px; padding: 16px; border-radius: 16px; }
   .v5-card__info { gap: 12px; }
-  .v5-card__name { font-size: 24px; }
+  .v5-card__name { font-size: 30px; }
   .v5-card__meta { font-size: 15px; }
   .v5-card__desc, .v5-card__tags li { font-size: 14px; }
   .v5-card__tags { gap: 8px; }
