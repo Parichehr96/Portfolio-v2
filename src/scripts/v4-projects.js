@@ -233,6 +233,23 @@
     pointer.style.setProperty("--x", x + "px");
   }
 
+  // To another tab: the neck pinches in the middle, then bubbles up under
+  // the new one (_projects.css .is-pinch / .is-bubble).
+  var hop = 0;
+  function movePointer() {
+    if (!pointer) return;
+    if (reduce) { placePointer(); return; }
+    clearTimeout(hop);
+    pointer.classList.remove("is-bubble");
+    pointer.classList.add("is-pinch");
+    hop = setTimeout(function () {
+      pointer.classList.remove("is-pinch");
+      placePointer();
+      void pointer.offsetWidth;
+      pointer.classList.add("is-bubble");
+    }, 180);
+  }
+
   function live() {
     carousels.forEach(function (c, k) { c.setLive(onScreen && k === active); });
   }
@@ -247,7 +264,7 @@
     });
     cards.forEach(function (c, j) { c.hidden = j !== k; c.classList.toggle("is-active", j === k); });
     carousels[k].go(0);
-    placePointer();
+    movePointer();
     measure();
     live();
     if (focus) tabs[k].focus();

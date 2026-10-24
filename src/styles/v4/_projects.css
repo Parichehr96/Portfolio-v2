@@ -51,18 +51,21 @@
   color: #fff;
 }
 
-/* The logo tabs, centred (1669:9812): white rounds of 52, 16 apart; the
-   active one's face is navy. A white notch (1669:9839) joins it to the card. */
+/* The logo tabs, centred (1669:9812): white rounds of 60, 16 apart; the
+   active one's face is navy. A white neck (Connector, 1704:1848) joins it to
+   the card. */
 .v5-work__tabs {
   position: relative;
   display: flex;
   justify-content: center;
   gap: min(16px, 1.0582vw);
-  margin-top: min(64px, 4.2328vw);
+  margin-top: min(56px, 3.7037vw);
 }
 
+/* 1669:9786: a white round of 60, 8 in, its face 44 (navy when picked, 4 in
+   to the 36 logo). */
 .v5-work__tab {
-  padding: min(4px, 0.2646vw);
+  padding: min(8px, 0.5291vw);
   border: 0;
   border-radius: min(12px, 0.7937vw);
   background: #fff;
@@ -101,11 +104,34 @@
   position: absolute;
   top: 100%;
   left: 0;
-  width: min(14px, 0.9259vw);
+  width: min(27px, 1.7857vw);
   height: min(24px, 1.5873vw);
   opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);   /* with the card it joins */
-  transform: translateX(var(--x, 0));
-  transition: transform 0.35s var(--v4-strip-ease);
+  translate: var(--x, 0) 0;
+  transform-origin: 50% 50%;
+}
+
+/* Moving to another tab: the neck pinches in the middle and is gone, then
+   bubbles up under the new one (scripts/v4-projects.js). */
+.v5-work__pointer.is-pinch {
+  transform: scale(0.08, 0.7);
+  transition: transform 0.18s cubic-bezier(.5, 0, .75, .3);
+}
+
+.v5-work__pointer.is-bubble {
+  animation: v5-bubble 0.42s cubic-bezier(.2, .8, .3, 1);
+}
+
+@keyframes v5-bubble {
+  0% { transform: scale(0.1, 0.6); }
+  55% { transform: scale(1.18, 1.06); }
+  80% { transform: scale(0.94, 1); }
+  100% { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-work__pointer.is-pinch { transform: none; transition: none; }
+  .v5-work__pointer.is-bubble { animation: none; }
 }
 
 /* ---- The card: 1079 x 468, 32 in, info 383 and the thumbnail 600 ----------- */
@@ -300,10 +326,10 @@
   .v5-work__inner { padding-block: calc(var(--v4-bar-h) + var(--v4-space-6)) var(--v4-space-8); }
   .v5-work__label { font-size: 16px; margin-left: 0; }
   .v5-work__tabs { gap: 12px; margin-top: var(--v4-space-6); }
-  .v5-work__tab { padding: 4px; border-radius: 12px; }
+  .v5-work__tab { padding: 6px; border-radius: 12px; }
   .v5-work__tab-face { width: 40px; height: 40px; border-radius: 8px; }
   .v5-work__logo { width: 32px; height: 32px; }
-  .v5-work__pointer { width: 14px; height: 24px; }
+  .v5-work__pointer { width: 27px; height: 24px; }
   .v5-work__cards { margin-top: 24px; }
   .v5-card { flex-direction: column-reverse; gap: 20px; padding: 16px; border-radius: 16px; }
   .v5-card__info { gap: 12px; }
