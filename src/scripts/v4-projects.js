@@ -276,7 +276,7 @@
     goo.setAttribute("viewBox", "0 0 " + row.offsetWidth / k + " 24");
     goo.style.width = row.offsetWidth + "px";
     goo.style.height = pointer.offsetHeight + "px";
-    var a = tabX(from) / k, b = tabX(active) / k, t0 = performance.now(), T = 900;
+    var a = tabX(from) / k, b = tabX(active) / k, t0 = performance.now(), T = 450;
     var e = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
     pointer.style.visibility = "hidden";
     goo.style.display = "block";
@@ -292,7 +292,7 @@
           var top = 14 * e((t - 0.3) / 0.4), bot = 10 * e((t - 0.5) / 0.22);
           d += drop(b, top, 1) + drop(b, bot, -1);
         } else {
-          var q = (t - 0.72) / 0.28, n = 0.8 + 2.2 * e(q) + Math.sin(Math.min(1, q) * Math.PI) * 0.6;
+          var q = (t - 0.72) / 0.28, n = 0.8 + 2.2 * e(q) + Math.sin(Math.min(1, q) * Math.PI) * 1.2;
           d += neck(b, n);
         }
       }
