@@ -63,12 +63,14 @@
 
     // Open, the cards float above the folder: their open layout as drawn,
     // lifted so the lowest one ends FLOAT_GAP above the folder's top edge.
-    // In a [data-float-front] section (v4/folders.njk) they come out in front
-    // of the folder instead, centred on its face, and spring back home.
+    // In a [data-float-front] section (v4/folders.njk) they come out over the
+    // folder instead, and spring back home.
     var front = !!folder.closest("[data-float-front]");
     var lowest = Math.max.apply(null, cards.map(function (c) { return c.ty + c.h; }));
     var highest = Math.min.apply(null, cards.map(function (c) { return c.ty; }));
-    var lift = front ? (folder.offsetHeight - (lowest - highest)) / 2 - highest : -lowest - FLOAT_GAP;
+    // In front, they rise half their own height above centring on the face,
+    // so they sit between floating clear above it and covering it.
+    var lift = front ? (folder.offsetHeight - (lowest - highest)) / 2 - highest - (lowest - highest) / 2 : -lowest - FLOAT_GAP;
     cards.forEach(function (c) {
       c.dy += lift;
     });

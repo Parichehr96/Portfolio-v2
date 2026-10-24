@@ -3,7 +3,7 @@
    update, copy dist/tool-folder.js again from the repo and add it back. Used
    by v4/folder.njk for the Tools folder.
 
-   FRONT: inside a [data-float-front] section (v4/folders.njk) the icons come
+   FRONT: inside a [data-float-front~="tools"] section the icons come
    out in front of the folder instead of above it: lifted onto its face, over
    the frosted flap (moved into an .over layer while out), and they spring
    back home on leave instead of falling, so none leave the screen. */
@@ -219,7 +219,7 @@ export class ToolFolder extends HTMLElement {
     });
   }
 
-  get #front() { return !!this.closest('[data-float-front]'); }
+  get #front() { var h = this.closest('[data-float-front]'); return !!h && /\btools\b/.test(h.getAttribute('data-float-front') || ''); }
 
   connectedCallback() {
     if (this.#front && !this.#over) {                 // FRONT: a layer over the flap for the icons while out

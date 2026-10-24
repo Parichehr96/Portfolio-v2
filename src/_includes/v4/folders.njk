@@ -3,10 +3,11 @@
   1669:9414 (grown). A cream panel holding the two folders (v4/folder.njk,
   home.about.folders) grows with the scroll into the full-width section,
   the folders growing with it to 1.817x (scripts/v4-grow.js sets --p, 0..1).
-  The folders keep their hover and click; here what they hold comes out in
-  front of them (data-float-front), so nothing leaves the screen.
+  The folders keep their hover and click. Tools tosses its icons up above
+  it, as everywhere; Services' cards come out partly over its face
+  (data-float-front="services"), so they stay on screen.
 #}
-<section class="v5-folders" aria-labelledby="folders-label" data-grow data-float-front>
+<section class="v5-folders" aria-labelledby="folders-label" data-grow data-float-front="services">
   <div class="v5-folders__stage">
     <div class="v5-folders__bg" aria-hidden="true"></div>
     <div class="v5-folders__inner">
