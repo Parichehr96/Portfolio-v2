@@ -48,17 +48,21 @@
   line-height: 1.4667;
 }
 
-/* "Book a call": a dashed link, like "Download my Resume". */
+/* "Book a call": the hero's dashed "Scroll Down" pill (_hero.css), no icon. */
 .v5-footer__call {
-  padding-bottom: 2px;
-  border-bottom: 0.5px dashed #0f172a;
+  display: inline-flex;
+  align-items: center;
+  padding: calc(12 * var(--u)) calc(20 * var(--u));
+  border: 1px dashed #64748b;
+  border-radius: 999px;
   font-size: min(16px, 1.0582vw);
   line-height: 1.5;
   color: #0f172a;
   text-decoration: none;
+  transition: border-color 0.2s ease;
 }
 
-.v5-footer__call:hover { border-bottom-style: solid; }
+.v5-footer__call:hover { border-style: solid; border-color: #0f172a; }
 
 .v5-footer .v4-footer__meta {
   margin-top: calc(16 * var(--u));
@@ -71,6 +75,6 @@
   .v5-footer .v4-sky__note, .v5-footer .v4-footer__body { font-size: 15px; }
   .v5-footer .v4-footer__body { max-width: none; }
   .v5-footer .v4-footer__cta { gap: 16px; }
-  .v5-footer__call { font-size: 16px; }
+  .v5-footer__call { padding: 10px 18px; font-size: 16px; }
   .v5-footer .v4-footer__meta { margin-top: 16px; gap: 12px; }
 }
