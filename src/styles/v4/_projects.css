@@ -111,27 +111,15 @@
   transform-origin: 50% 50%;
 }
 
-/* Moving to another tab: the neck pinches in the middle and is gone, then
-   bubbles up under the new one (scripts/v4-projects.js). */
-.v5-work__pointer.is-pinch {
-  transform: scale(0.08, 0.7);
-  transition: transform 0.18s cubic-bezier(.5, 0, .75, .3);
-}
-
-.v5-work__pointer.is-bubble {
-  animation: v5-bubble 0.42s cubic-bezier(.2, .8, .3, 1);
-}
-
-@keyframes v5-bubble {
-  0% { transform: scale(0.1, 0.6); }
-  55% { transform: scale(1.18, 1.06); }
-  80% { transform: scale(0.94, 1); }
-  100% { transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v5-work__pointer.is-pinch { transform: none; transition: none; }
-  .v5-work__pointer.is-bubble { animation: none; }
+/* Moving to another tab, like water (scripts/v4-projects.js draws it). */
+.v5-work__goo {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  overflow: visible;
+  pointer-events: none;
+  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);
 }
 
 /* ---- The card: 1079 x 468, 32 in, info 383 and the thumbnail 600 ----------- */

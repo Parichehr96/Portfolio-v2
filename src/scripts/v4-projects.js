@@ -233,21 +233,73 @@
     pointer.style.setProperty("--x", x + "px");
   }
 
-  // To another tab: the neck pinches in the middle, then bubbles up under
-  // the new one (_projects.css .is-pinch / .is-bubble).
-  var hop = 0;
-  function movePointer() {
+  // To another tab, like water. The old neck thins at the middle and parts;
+  // its halves draw back as drops, up into the tab and down into the card.
+  // Then a drop pours from the new tab while the card raises a bead to meet
+  // it; when they touch, the neck fills out to the connector (1704:1848).
+  // Drawn as a path in the connector's own units (27 x 24 per neck) on an
+  // SVG over the tab row; at rest the connector image shows instead.
+  var goo = null, gooPath = null, flow = 0;
+  if (pointer && !reduce) {
+    goo = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    goo.setAttribute("class", "v5-work__goo");
+    goo.setAttribute("aria-hidden", "true");
+    gooPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    gooPath.setAttribute("fill", "#fff");
+    goo.appendChild(gooPath);
+    pointer.parentElement.appendChild(goo);
+  }
+  function tabX(k) { var t = tabs[k]; return t.offsetLeft + t.offsetWidth / 2; }
+  // One drop hanging from the top edge (dir 1) or rising from the bottom
+  // edge (dir -1), L long, in units; flares into the edge like the connector.
+  function drop(cx, L, dir) {
+    if (L <= 0.2) return "";
+    var y0 = dir > 0 ? 0 : 24, Y = function (v) { return y0 + dir * v; };
+    var hw = Math.min(3.2, 1 + L * 0.22), body = Math.min(7, 3 + L * 0.5), tip = Math.max(L - hw, 0.4);
+    var sw = dir > 0 ? 0 : 1;
+    return "M" + (cx - 13.5) + " " + Y(0) + " Q" + (cx - body) + " " + Y(0) + " " + (cx - body) + " " + Y(Math.min(2, L * .3)) +
+      " C" + (cx - body) + " " + Y(L * .45) + " " + (cx - hw) + " " + Y(L * .6) + " " + (cx - hw) + " " + Y(tip) +
+      " A" + hw + " " + hw + " 0 0 " + sw + " " + (cx + hw) + " " + Y(tip) +
+      " C" + (cx + hw) + " " + Y(L * .6) + " " + (cx + body) + " " + Y(L * .45) + " " + (cx + body) + " " + Y(Math.min(2, L * .3)) +
+      " Q" + (cx + body) + " " + Y(0) + " " + (cx + 13.5) + " " + Y(0) + "Z";
+  }
+  // The whole neck, its middle n wide either side (3 is the connector's).
+  function neck(cx, n) {
+    return "M" + (cx - 13.5) + " 0 Q" + (cx - 7) + " 0 " + (cx - 7) + " 2 C" + (cx - 7) + " 7 " + (cx - n) + " 9 " + (cx - n) + " 12 C" + (cx - n) + " 15 " + (cx - 7) + " 17 " + (cx - 7) + " 22 Q" + (cx - 7) + " 24 " + (cx - 13.5) + " 24" +
+      " L" + (cx + 13.5) + " 24 Q" + (cx + 7) + " 24 " + (cx + 7) + " 22 C" + (cx + 7) + " 17 " + (cx + n) + " 15 " + (cx + n) + " 12 C" + (cx + n) + " 9 " + (cx + 7) + " 7 " + (cx + 7) + " 2 Q" + (cx + 7) + " 0 " + (cx + 13.5) + " 0Z";
+  }
+  function movePointer(from) {
     if (!pointer) return;
-    if (reduce) { placePointer(); return; }
-    clearTimeout(hop);
-    pointer.classList.remove("is-bubble");
-    pointer.classList.add("is-pinch");
-    hop = setTimeout(function () {
-      pointer.classList.remove("is-pinch");
-      placePointer();
-      void pointer.offsetWidth;
-      pointer.classList.add("is-bubble");
-    }, 180);
+    if (!goo || from == null || from === active) { placePointer(); return; }
+    cancelAnimationFrame(flow);
+    var row = pointer.parentElement, k = pointer.offsetWidth / 27;   // px per unit
+    goo.setAttribute("viewBox", "0 0 " + row.offsetWidth / k + " 24");
+    goo.style.width = row.offsetWidth + "px";
+    goo.style.height = pointer.offsetHeight + "px";
+    var a = tabX(from) / k, b = tabX(active) / k, t0 = performance.now(), T = 900;
+    var e = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    pointer.style.visibility = "hidden";
+    goo.style.display = "block";
+    (function frame(now) {
+      var t = (now - t0) / T, d = "";
+      // The old neck: thins (0–.15), parts and its halves draw back (.15–.45).
+      if (t < 0.15) d += neck(a, 3 * (1 - e(t / 0.15)) + 0.25);
+      else { var r = 12 * (1 - e((t - 0.15) / 0.3)); d += drop(a, r, 1) + drop(a, r, -1); }
+      // The new one: a drop pours down (.3–.7), a bead rises (.5–.72); when
+      // they meet the neck fills out, a touch past and back (.72–1).
+      if (t >= 0.3) {
+        if (t < 0.72) {
+          var top = 14 * e((t - 0.3) / 0.4), bot = 10 * e((t - 0.5) / 0.22);
+          d += drop(b, top, 1) + drop(b, bot, -1);
+        } else {
+          var q = (t - 0.72) / 0.28, n = 0.8 + 2.2 * e(q) + Math.sin(Math.min(1, q) * Math.PI) * 0.6;
+          d += neck(b, n);
+        }
+      }
+      gooPath.setAttribute("d", d);
+      if (t < 1) flow = requestAnimationFrame(frame);
+      else { goo.style.display = "none"; placePointer(); pointer.style.visibility = ""; }
+    })(t0);
   }
 
   function live() {
@@ -256,6 +308,7 @@
 
   function pick(k, focus) {
     if (k === active) return;
+    var from = active;
     active = k;
     tabs.forEach(function (t, j) {
       t.classList.toggle("is-active", j === k);
@@ -264,7 +317,7 @@
     });
     cards.forEach(function (c, j) { c.hidden = j !== k; c.classList.toggle("is-active", j === k); });
     carousels[k].go(0);
-    movePointer();
+    movePointer(from);
     measure();
     live();
     if (focus) tabs[k].focus();
