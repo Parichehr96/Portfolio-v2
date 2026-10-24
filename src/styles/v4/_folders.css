@@ -5,15 +5,17 @@
    Like the projects: a stage that sticks for the screen and a short hold,
    its cream panel growing from the comp's 1082 x 478 in the column to the
    whole screen as --p goes 0 to 1 (scripts/v4-grow.js). The folders, drawn
-   at their own px size, grow with it to 1.817x; --k shrinks them with the
-   screen below 1512 so the row keeps the comp's proportion.
+   at their own px size, grow with it to 1.454x (1669:9414: Tools 285 wide,
+   14 apart); --k shrinks them with the screen below 1512 so the row keeps the
+   comp's proportion. Grown, the label sits 60 from the top and the folders
+   low in the screen, 133 off its foot.
    ========================================================================== */
 
 .v5-folders {
   --u: min(1px, 0.066138vw);
   --p: 0;
   --k: 1;
-  --s: calc(var(--k) * (1 + 0.817 * var(--p)));
+  --s: calc(var(--k) * (1 + 0.454 * var(--p)));
   position: relative;
 }
 
@@ -28,6 +30,7 @@
   top: 0;
   height: 100svh;
   display: grid;
+  grid-template-rows: 100%;   /* a definite row, so the inner's % height holds */
   place-items: center;
   overflow: hidden;
 }
@@ -45,11 +48,16 @@
 
 .v5-folders__inner {
   position: relative;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc((32 + 88 * var(--p)) * var(--u));
+  justify-content: space-between;
+  height: calc(478 * var(--u) + (100% - 478 * var(--u)) * var(--p));
+  padding-top: calc((98.5 - 38.5 * var(--p)) * var(--u));
+  padding-bottom: calc((98.5 + 34 * var(--p)) * var(--u));
 }
+
 
 .v5-folders__label {
   width: calc(602 * var(--u));
@@ -57,24 +65,34 @@
   font-weight: var(--v4-weight-medium);
   line-height: 1.4667;
   text-align: center;
-  color: #475569;
+  color: #0f172a;
 }
 
 .v5-folders__row.v4-about__cards {
-  width: 602px;
-  margin: 0 0 calc(227px * (var(--s) - 1));
-  justify-content: space-between;
-  gap: 0;
+  width: calc(196.3px + 13.75px + 384.7px);   /* the two folders, 14 apart grown */
+  margin: 0 0 calc((200px + 30px / var(--s)) * (var(--s) - 1));
+  justify-content: flex-start;
+  gap: 13.75px;
   transform: scale(var(--s));
   transform-origin: top center;
+}
+
+/* Their names: 20 bold at any scale (1669:9514), 7 under the folder. */
+.v5-folders .v4-about__card { gap: 5px; }
+.v5-folders .v4-about__card figcaption {
+  font-size: calc(20px / var(--s));
+  font-weight: var(--v4-weight-bold);
+  line-height: 1.5;
+  text-transform: capitalize;
+  color: #0f172a;
 }
 
 /* Phones: one folder over the other, at their own size. */
 @media (max-width: 899px) {
   .v5-folders { --s: 1; }
-  .v5-folders__stage { height: auto; min-height: 100svh; padding-block: var(--v4-space-8); }
+  .v5-folders__stage { height: auto; min-height: 100svh; grid-template-rows: auto; padding-block: var(--v4-space-8); }
   .v5-folders__bg { clip-path: inset(0 calc((100% - var(--v5-col)) / 2 * (1 - var(--p))) round calc(20px * (1 - var(--p)))); }
-  .v5-folders__inner { gap: var(--v4-space-6); }
+  .v5-folders__inner { height: auto; padding-block: 0; justify-content: flex-start; gap: var(--v4-space-6); }
   .v5-folders__label { width: auto; font-size: 15px; }
   .v5-folders__row.v4-about__cards {
     width: auto;
