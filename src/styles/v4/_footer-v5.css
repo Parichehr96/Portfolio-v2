@@ -72,12 +72,8 @@
   gap: calc(8 * var(--u));
 }
 
-/* Case studies: no window, so no full screen; the call sits over the city's
-   open sky, the year still clear of the lamps. */
-.v5-footer--plain {
-  min-height: 0;
-  padding-top: calc(120 * var(--u));
-}
+/* Case studies: the same screen, the window's place left empty. */
+.v5-footer--plain .v4-sky { visibility: hidden; }
 
 @media (max-width: 899px) {
   .v5-footer { height: auto; min-height: 100svh; padding-top: calc(var(--v4-bar-h) + var(--v4-space-6)); padding-bottom: calc(var(--v4-footer-art-h) * 0.6); }
@@ -87,5 +83,4 @@
   .v5-footer .v4-footer__cta { gap: 16px; }
   .v5-footer__call { padding: 10px 18px; font-size: 16px; }
   .v5-footer .v4-footer__meta { margin-top: 16px; gap: 12px; }
-  .v5-footer--plain { min-height: 0; padding-top: var(--v4-space-12, 64px); }
 }

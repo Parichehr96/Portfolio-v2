@@ -22,6 +22,12 @@
   z-index: 4;
 }
 
+/* The redesign's footer follows with no gap, so the tracks reach through the
+   footer only, not past the page's end (_top.css). */
+@media (min-width: 1200px) {
+  .v4-shell--case .v4-rail-track { bottom: calc(-1 * var(--v4-footer-height)); }
+}
+
 /* ---- The menus (v4/case-nav.njk) -------------------------------------------
    Left: the site menu, open, with the case studies under Work (_rail.css).
    Right: the reading progress and this case's sections, in the column the
@@ -944,7 +950,7 @@
   margin-inline: calc(var(--v4-column-inset) + (min(var(--v4-column), 100% - 2 * var(--v4-space-4)) - var(--vis)) / 2) auto;
 }
 
-/* Under each visual, what it shows: 14 light, the disabled colour, 8 under
+/* Under each visual, what it shows: 14 light, slate-500, 8 under
    it (the section's 16 gap less 8). Under a 600 visual it takes the visual's
    width; under a wide block, the column's. */
 .v4-case__caption {
@@ -952,7 +958,7 @@
   font-size: 14px;
   font-weight: 300;
   line-height: 20px;
-  color: var(--v4-text-disabled);
+  color: var(--v4-text-caption-visual);
 }
 
 .v4-case__section > .v4-case__caption--visual {

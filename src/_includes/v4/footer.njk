@@ -22,10 +22,8 @@
   <div class="v4-footer__content">
     {%- if footerSky %}
     {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
-    {#- Case studies (footerNoWindow) go straight to the call. #}
-    {%- if not footerNoWindow %}
+    {#- Case studies (footerNoWindow) keep the window's place, empty (CSS). #}
     {% include "v4/sky.njk" %}
-    {%- endif %}
     {#- Then its own line, the call as a dashed link, the socials (email first), the
         stamp, the year and the cookie settings. #}
     <div class="v4-footer__cta">
