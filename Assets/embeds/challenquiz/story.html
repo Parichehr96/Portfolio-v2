@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="The Challenquiz case study in two minutes: the problem, what I did and the impact, told over the case's own visuals and the real prototype, with the designer's cursor at work.">
 <title>Challenquiz story</title>
-<link rel="stylesheet" href="../story/player.css?v=12">
+<link rel="stylesheet" href="../story/player.css?v=13">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   /* Challenquiz's scenes on the 1200 x 675 stage; its purple only where the
@@ -33,6 +33,15 @@
   .verb.lit { background: var(--cq-100); box-shadow: inset 0 0 0 2px var(--cq-500); }
 
   .bars { display: flex; align-items: flex-end; gap: 28px; height: 300px; }
+  .loop { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .node { width: 250px; min-height: 120px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .node b { font: 600 21px/1.3 "Figtree"; color: var(--ink); }
+  .mini-btn { align-self: flex-start; height: 36px; padding: 0 14px; border-radius: 10px; background: var(--cq-500); color: #fff; font: 700 16px/36px "Baloo 2", "Figtree"; transition: background .3s; }
+  .mini-btn.done { background: #008000; }
+  .arr { width: 44px; height: 2px; background: var(--cq-500); position: relative; }
+  .arr::after { content: ""; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid var(--cq-500); border-right: 0; }
+  .olds { display: flex; justify-content: center; gap: 56px; }
+  .oldph { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 0; }
   .colbar { width: 120px; border-radius: 14px 14px 6px 6px; background: var(--cq-200); height: 0; transition: height 1.2s var(--e-out); }
   .colbar.after { background: var(--cq-500); }
   .bars figcaption { text-align: center; margin-top: 10px; font: 500 16px/1.2 "Figtree"; color: var(--muted); }
@@ -44,7 +53,7 @@
 </head>
 <body>
 <div id="story"></div>
-<script src="../story/player.js?v=12"></script>
+<script src="../story/player.js?v=13"></script>
 <script>
 (function () {
   "use strict";
@@ -71,44 +80,37 @@
 
   var scenes = {
     hook: function (root, api) {
-      put(root, '<p class="kicker rise">Challenquiz · Telegram Mini App</p><h2 class="title rise" style="margin-top:18px">Live trivia, with something at stake.</h2>' +
-        '<p class="sub rise" style="margin-top:22px">Built as a multiplayer game. On screen, everyone played alone.</p>', 80, 190, 560);
-      phone(root, "old-1", 780, 50, 220, "ph");
-      put(root, '<span class="tag neg rise" id="alone">1 player on screen</span>', 1010, 120).classList.add("badge");
-      $$(root, ".rise").slice(0, 2).forEach(function (e, i) { rise(api, e, .2 + i * .35); });
+      put(root, '<p class="kicker rise">Challenquiz · Telegram Mini App</p><h2 class="title rise" style="margin-top:18px">A quiz game where you play other people, for tokens.</h2>', 80, 210, 560);
+      phone(root, "home", 780, 50, 220, "ph");
+      $$(root, ".rise").forEach(function (e, i) { rise(api, e, .2 + i * .35); });
     },
-    old: function (root, api) {
-      frame(root, "v4/oldflow.html?play", 60, 80, 600, 393);
-      put(root, '<p class="kicker">The old game, step by step</p><div class="facts" style="margin-top:22px">' +
-        ["A stack of identical cards", "A six-point rulebook", "An empty lobby", "No opponent in sight", "“Please wait until other players answer”"].map(function (f, i) { return '<div class="fact rise"><i>' + (i + 1) + "</i>" + f + "</div>"; }).join("") +
-        "</div>", 720, 110, 440);
+    // Why the first match matters.
+    growth: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">How Challenquiz grows</p>', 300, 110, 600);
+      put(root, '<div class="loop">' +
+        '<div class="card node rise"><b>A new player joins a room</b><span class="mini-btn">Take a seat</span></div><i class="arr rise"></i>' +
+        '<div class="card node rise"><b>Finishes their first match</b></div><i class="arr rise"></i>' +
+        '<div class="card node rise"><b>Wants another one</b></div></div>', 0, 210, 1200);
+      put(root, '<svg class="rise" id="ret" width="840" height="120" viewBox="0 0 840 120" fill="none"><path d="M760 6 C760 96 80 96 80 6" stroke="#865BEE" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/><path d="M70 18 80 4 92 16" stroke="#865BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>', 180, 360, 840);
+    },
+    // Never anyone else: three moments of the old game.
+    alone: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">The old game</p>', 300, 40, 600);
+      put(root, '<div class="olds">' + [["old-1", "Identical matches"], ["old-5", "Answering alone"], ["old-6", "“Please wait”"]].map(function (o) {
+        return '<figure class="oldph rise"><div class="phone"><div class="scr" style="width:200px;height:434px"><img src="v4/img/' + o[0] + '.png" alt=""></div></div><figcaption class="tag neg">' + o[1] + "</figcaption></figure>";
+      }).join("") + "</div>", 0, 80, 1200);
     },
     wait: function (root, api) {
       put(root, '<p class="kicker" style="text-align:center">The end of every game</p>', 300, 50, 600);
       phone(root, "old-6", 490, 80, 220, "ph");
       put(root, '<p class="sub rise" id="gone" style="text-align:center">The best moment arrived after most people had left.</p>', 250, 300, 700);
     },
-    heard: function (root, api) {
-      put(root, '<p class="kicker rise">Five players, tested on the old game</p>', 80, 80);
-      var Q = [
-        ["Sam", "First-time Web3 player", "“It just looked like <span class=\"mark\">the same game listed over and over</span>.”"],
-        ["Iris", "Competitive quizzer", "“It said two players, but <span class=\"mark\">I never saw the other one</span>.”"],
-        ["Ravi", "Skeptical and cautious", "“I answered everything and it just said wait. <span class=\"mark\">I closed it</span>.”"]
-      ];
-      put(root, '<div style="display:flex;gap:20px">' + Q.map(function (q) {
-        return '<div class="card quote rise"><p>' + q[2] + "</p><small>" + q[0] + " · " + q[1] + "</small></div>";
-      }).join("") + "</div>", 80, 140);
-    },
-    insight: function (root, api) {
-      put(root, '<p class="kicker" style="text-align:center">The other players, hidden at every step</p>', 300, 40, 600);
-      frame(root, "v4/insight.html?play", 280, 80, 640, 448);
-    },
     team: function (root, api) {
       put(root, '<p class="kicker" style="text-align:center">The team</p>', 300, 200, 600);
       put(root, '<div class="roles"><div class="card role me rise">Me<small>Sole product designer</small></div><div class="card role rise">The founder<small>Product owner</small></div><div class="card role rise">2 developers<small>Mini App &amp; backend</small></div></div>', 0, 260, 1200);
     },
     lena: function (root, api) {
-      put(root, '<div class="card lena rise"><p class="kicker">The player I designed for</p><b style="display:block;margin-top:12px">Lena</b><p>Loves quiz games, isn’t Web3-savvy, plays on her phone in the gaps of her day.</p></div>', 80, 150);
+      put(root, '<div class="card lena rise"><p class="kicker">Tested with five players · designed for</p><b style="display:block;margin-top:12px">Lena</b><p>Loves quiz games, isn’t Web3-savvy, plays on her phone in the gaps of her day.</p></div>', 80, 150);
       put(root, '<div class="verbs">' + [["Open", "into a game, fast"], ["Play", "against someone"], ["Learn", "something new"], ["Enjoy", "how it ended"]].map(function (v) {
         return '<div class="card verb rise"><b>' + v[0] + "</b><span>" + v[1] + "</span></div>";
       }).join("") + "</div>", 560, 150);
@@ -125,120 +127,95 @@
       put(root, '<p class="kicker" style="text-align:center">At the result</p>', 300, 40, 600);
       frame(root, "v4/reward.html?play", 270, 80, 660, 473);
     },
+    // The results as cards with their change in green (as ONTON's), the
+    // month's number large with its two bars.
     impact: function (root, api) {
-      put(root, '<p class="kicker rise">New players who finished a game, in one month</p><p class="bigcount rise" style="margin-top:14px"><span id="n">535</span></p><p class="sub rise" style="margin-top:6px">from 535</p>', 80, 90, 520);
+      put(root, '<p class="kicker rise">New players who finished a game, in one month</p><p class="bigcount rise" style="margin-top:14px"><span id="n">535</span></p><div class="from rise" style="margin-top:12px"><span class="tag pos">from 535 · almost tripled</span></div>', 80, 80, 600);
       put(root, '<div class="bars rise" id="bars"><figure><div class="colbar" id="b1"></div><figcaption>Before</figcaption></figure><figure><div class="colbar after" id="b2"></div><figcaption>After</figcaption></figure></div>', 760, 40);
       put(root, '<div style="display:flex;gap:20px">' +
-        '<div class="card metric rise" id="m1"><div class="num">~127s</div><div class="lbl">Time to start a game</div><div class="from"><span class="tag pos">halved</span></div></div>' +
-        '<div class="card metric rise" id="m2"><div class="num">60%</div><div class="lbl">Games finished cleanly</div><div class="from"><span class="tag pos">every one</span></div></div>' +
-        '<div class="card metric rise" id="m3"><div class="num">1.6/5</div><div class="lbl">Post-game satisfaction</div><div class="from"><span class="tag pos">more than doubled</span></div></div></div>', 80, 380);
-    },
-    close: function (root, api) {
-      put(root, '<p class="claim"><span>I design for the moment people come back for,</span> <span>and I put it back on screen.</span></p>', 170, 190);
-      put(root, '<div style="text-align:center"><button class="play-again" type="button" tabindex="-1">Play again</button></div>', 0, 400, 1200);
+        '<div class="card metric rise" id="m1"><div class="num">~127s</div><div class="lbl">Time to start a game</div><div class="from"><span class="tag pos">halved, from ~127s</span></div></div>' +
+        '<div class="card metric rise" id="m2"><div class="num">60%</div><div class="lbl">Games finished cleanly</div><div class="from"><span class="tag pos">from 60%</span></div></div></div>', 80, 380);
     }
   };
 
-  // The cursor marks a quote's key words.
-  function markQuote(api, card, d) {
-    var m = $(card, ".mark"), a = centre(m, 0, .75), b = centre(m, 1, .75);
-    api.cursor.to(a[0], a[1], .7, d);
-    api.tween(1, function (p) { m.style.setProperty("--m", p); }, d + .8);
-    api.cursor.to(b[0], b[1], 1, d + .8);
-  }
-
   var lines = [
     // ---- The problem
-    { chapter: "problem", scene: "hook", text: "Challenquiz is live trivia on Telegram with something at stake: you pay to take a seat, answer ten questions, and the best players in the room win the most." },
-    { chapter: "problem", text: "It was built as a multiplayer game." },
-    { chapter: "problem", text: "On screen, everyone played alone.",
+    { chapter: "problem", scene: "hook", text: "Challenquiz is a quiz game on Telegram where you play against other people for tokens.", hold: .3 },
+    { chapter: "problem", scene: "growth", text: "The game only grows if new players finish their first match and want another.", hold: .4,
       cue: function (api) {
-        rise(api, $$(api.root, ".rise")[2], .1);
-        api.after(.3, function () { swap($(api.root, "#ph"), "old-5"); });
-        rise(api, $(api.root, "#alone"), .9);
+        var n = $$(api.root, ".node"), a = $$(api.root, ".arr"), btn = $(api.root, ".mini-btn"), p = centre(btn);
+        rise(api, n[0], .1);
+        api.cursor.show(); api.cursor.to(p[0], p[1], .7, .3); api.cursor.click(1.1);
+        api.after(1.15, function () { btn.classList.add("done"); btn.textContent = "Seat taken ✓"; });
+        rise(api, a[0], api.word("finish") - .3); rise(api, n[1], api.word("finish"));
+        rise(api, a[1], api.word("want") - .3); rise(api, n[2], api.word("want")); rise(api, $(api.root, "#ret"), api.word("another."));
+        api.after(2.2, function () { api.cursor.hide(); });
       } },
-    { chapter: "problem", scene: "old", text: "You picked a match from a stack of identical cards, read a six-point rulebook, waited in an empty lobby, answered with no opponent in sight, and finished on “please wait until other players answer”.",
-      cue: function (api) { var w = ["identical", "rulebook,", "lobby,", "opponent", "finished"]; $$(api.root, ".fact").forEach(function (f, i) { rise(api, f, api.word(w[i])); }); } },
-    { chapter: "problem", scene: "wait", text: "The best moment of the game, finding out whether you won, arrived after most people had already closed the app.", hold: .4,
+    { chapter: "problem", scene: "alone", text: "But on screen you never saw anyone else: the matches looked identical, you answered alone, and the game ended on “please wait”.",
+      cue: function (api) {
+        var o = $$(api.root, ".oldph");
+        rise(api, o[0], api.word("identical,") - .3); rise(api, o[1], api.word("alone,") - .4); rise(api, o[2], api.word("ended") - .2);
+      } },
+    { chapter: "problem", scene: "wait", text: "Most players left before finding out if they’d won.", hold: .8,
       cue: function (api) {
         var ph = $(api.root, "#ph"), p = centre(ph, .5, .02);
         api.cursor.show();
-        // A swipe down to close the Mini App, as a player gives up waiting.
-        api.cursor.to(p[0], p[1] + 20, .9, 1.4);
-        api.after(2.4, function () { api.cursor.grab(ph); });
-        api.cursor.to(p[0], p[1] + 260, .8, 2.45);
-        api.after(3.0, function () { ph.style.opacity = "0"; });
-        api.cursor.drop(3.3);
-        rise(api, $(api.root, "#gone"), 3.4);
+        api.cursor.to(p[0], p[1] + 20, .7, .3);
+        api.after(1.05, function () { api.cursor.grab(ph); });
+        api.cursor.to(p[0], p[1] + 260, .7, 1.1);
+        api.after(1.6, function () { ph.style.opacity = "0"; });
+        api.cursor.drop(1.9);
+        rise(api, $(api.root, "#gone"), 2.0);
       } },
-    { chapter: "problem", scene: "heard", text: "I tested it with five players.", cue: function (api) { api.cursor.hide(); rise(api, $(api.root, ".kicker"), .1); } },
-    { chapter: "problem", text: "They couldn’t tell the matches apart, never saw who they were playing against, and left before the result.", hold: .6,
-      cue: function (api) {
-        var q = $$(api.root, ".quote");
-        api.cursor.show();
-        rise(api, q[0], .1); markQuote(api, q[0], .4);
-        rise(api, q[1], 2.0); markQuote(api, q[1], 2.3);
-        rise(api, q[2], 4.0); markQuote(api, q[2], 4.3);
-      } },
-    { chapter: "problem", scene: "insight", text: "The other players were the whole point of the product, and the interface hid them at every step.", hold: 1.2, cue: function (api) { api.cursor.hide(); } },
 
     // ---- What I did
-    { chapter: "did", scene: "team", text: "I was the only designer, with the founder and two developers.",
+    { chapter: "did", scene: "team", text: "I was the only designer.", hold: .6,
       cue: function (api) {
         var r = $$(api.root, ".role");
-        r.forEach(function (e, i) { rise(api, e, .2 + i * .3); });
+        r.forEach(function (e, i) { rise(api, e, .1 + i * .15); });
         var p = centre(r[0], .5, .6);
-        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.2); api.cursor.click(2.2);
-        api.after(2.25, function () { r[0].classList.add("lit"); });
+        api.cursor.to(p[0], p[1], .6, .4); api.cursor.click(1.0);
+        api.after(1.05, function () { r[0].classList.add("lit"); });
       } },
-    { chapter: "did", scene: "lena", text: "I designed the game around one player, Lena, and four things she wanted: to open it and play fast, to play against someone, to learn something, and to enjoy the result.",
+    { chapter: "did", scene: "lena", text: "I tested the game with five players and redesigned it around one player, Lena, and what she wanted: to start fast, play against someone, learn something, and enjoy the result.",
       cue: function (api) {
-        rise(api, $(api.root, ".lena"), .2);
+        rise(api, $(api.root, ".lena"), api.word("Lena,") - .4);
         var v = $$(api.root, ".verb");
-        v.forEach(function (e) { rise(api, e, api.word("four")); });
-        ["open", "against", "learn", "enjoy"].map(api.word).forEach(function (d, i) {
+        v.forEach(function (e) { rise(api, e, api.word("wanted:")); });
+        ["start", "against", "learn", "enjoy"].map(function (w) { return api.word(w); }).forEach(function (d, i) {
           var p = centre(v[i], .25, .4);
-          api.cursor.to(p[0], p[1], .6, d - .6); api.cursor.click(d);
+          api.cursor.to(p[0], p[1], .5, d - .5); api.cursor.click(d);
           api.after(d + .05, function () { v[i].classList.add("lit"); });
         });
       } },
-    { chapter: "did", scene: "rooms", text: "Rooms now feel live without making anyone wait.", hold: 1.4, cue: function (api) { api.cursor.hide(); } },
-    { chapter: "did", scene: "play", text: "After every answer you see how the room answered.", hold: 1.2,
+    { chapter: "did", scene: "rooms", text: "Rooms now feel live without anyone waiting.", hold: 1, cue: function (api) { api.cursor.hide(); } },
+    { chapter: "did", scene: "play", text: "After every answer you see how the room answered and learn a fact.", hold: .8,
       cue: function (api) {
         var ph = $(api.root, "#ph"), p = centre(ph, .5, .62);
         $$(api.root, ".rise").forEach(function (e, i) { rise(api, e, .2 + i * .3); });
-        api.cursor.show(); api.cursor.to(p[0], p[1], .9, .4); api.cursor.click(1.4);
-        api.after(1.5, function () { swap(ph, "correct"); });
+        api.cursor.show(); api.cursor.to(p[0], p[1], .7, .3); api.cursor.click(1.0);
+        api.after(1.1, function () { swap(ph, "correct"); });
       } },
-    { chapter: "did", scene: "result", text: "And the result lands the moment you finish, with a breakdown of exactly what you earned and why.", hold: 2.2, cue: function (api) { api.cursor.hide(); } },
+    { chapter: "did", scene: "result", text: "And your result lands the moment you finish, with exactly what you earned and why.", hold: 1.4, cue: function (api) { api.cursor.hide(); } },
 
     // ---- The impact
-    { chapter: "impact", scene: "impact", text: "In one month, new players who finished a game nearly tripled, from 535 to 1,451.", hold: .6,
+    { chapter: "impact", scene: "impact", text: "In the next month, new players finishing a game almost tripled, from 535 to 1,451.", hold: .6,
       cue: function (api) {
         $$(api.root, ".rise").slice(0, 4).forEach(function (e) { rise(api, e, .1); });
         api.after(.4, function () { $(api.root, "#b1").style.height = "100px"; });
-        api.after(1.4, function () { $(api.root, "#b2").style.height = "271px"; });
-        api.count($(api.root, "#n"), 535, 1451, 2.4, null, 1.2);
+        api.after(api.word("tripled,"), function () { $(api.root, "#b2").style.height = "271px"; });
+        api.count($(api.root, "#n"), 535, 1451, 1.8, null, api.word("tripled,"));
       } },
-    { chapter: "impact", text: "In testing with five more players, time to start halved, every game finished cleanly, and satisfaction more than doubled.", hold: 1,
+    { chapter: "impact", text: "In testing, time to start halved and every game finished cleanly.", hold: 1.6,
       cue: function (api) {
-        var m1 = $(api.root, "#m1"), m2 = $(api.root, "#m2"), m3 = $(api.root, "#m3");
-        rise(api, m1, .6); api.count($(m1, ".num"), 127, 62, 1.2, function (v) { return "~" + Math.round(v) + "s"; }, 1.0);
-        rise(api, m2, 2.6); api.count($(m2, ".num"), 60, 100, 1.2, function (v) { return Math.round(v) + "%"; }, 3.0);
-        rise(api, m3, 4.4); api.count($(m3, ".num"), 1.6, 4.0, 1.2, function (v) { return v.toFixed(1) + "/5"; }, 4.8);
-      } },
-    { chapter: "impact", scene: "close", text: "I design for the moment people come back for, and I put it back on screen.", hold: 1.8,
-      cue: function (api) {
-        var s = $$(api.root, ".claim span");
-        s.forEach(function (e, i) { api.after(.3 + i * 2.2, function () { e.classList.add("lit"); }); });
-        var b = $(api.root, ".play-again"), p = centre(b, .5, .6);
-        api.cursor.show(); api.cursor.to(p[0], p[1], 1, 3.6); api.cursor.click(4.7);
-        api.after(4.75, function () { b.classList.add("done"); b.textContent = "Seat taken ✓"; });
+        var m1 = $(api.root, "#m1"), m2 = $(api.root, "#m2"), a = api.word("time"), b = api.word("every");
+        rise(api, m1, a - .3); api.count($(m1, ".num"), 127, 62, 1, function (v) { return "~" + Math.round(v) + "s"; }, a);
+        rise(api, m2, b - .3); api.count($(m2, ".num"), 60, 100, 1, function (v) { return Math.round(v) + "%"; }, b);
       } }
   ];
 
   Story(document.getElementById("story"), {
-    title: "Challenquiz in two minutes",
+    title: "Challenquiz in about a minute",
     chapters: [{ id: "problem", label: "The problem" }, { id: "did", label: "What I did" }, { id: "impact", label: "The impact" }],
     lines: lines,
     scenes: scenes
