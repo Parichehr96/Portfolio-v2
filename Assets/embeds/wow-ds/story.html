@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The WOW design system case study in about a minute: what shaped it, how it was built and what it changed, over the case's own visuals, with the designer's cursor at work.">
+<title>WOW design system story</title>
+<link rel="stylesheet" href="../story/player.css?v=13">
+<style>
+  /* WOW's scenes on the 1200 x 675 stage; the system's blue where it appears. */
+  :root { --wow: #1F6FEB; --wow-bg: #E8F0FE; --accent: #1F6FEB; }
+
+  /* What shaped it, flowing into what it is. */
+  .inputs { display: flex; flex-direction: column; gap: 12px; }
+  .input { padding: 14px 18px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); font: 600 19px/1.2 "Figtree"; color: var(--muted); transition: background .3s, box-shadow .3s, color .3s; }
+  .input.lit { background: var(--wow-bg); box-shadow: inset 0 0 0 1.5px rgba(31,111,235,.4); color: #0B3D91; }
+  .into { width: 120px; height: 2px; background: var(--wow); position: relative; opacity: .5; }
+  .into::after { content: ""; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid var(--wow); border-right: 0; }
+  .what { width: 380px; padding: 26px; }
+  .what h4 { font: 600 14px/1 "Figtree"; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
+  .what p { margin-top: 14px; font: 600 32px/1.25 "Figtree"; color: var(--faint); }
+  .what p span { transition: color .4s; }
+  .what p span.lit { color: var(--ink); }
+
+  /* Fifteen months, the first six the system. */
+  .months { display: grid; grid-template-columns: repeat(15, 1fr); gap: 6px; width: 1000px; }
+  .month { height: 64px; border-radius: 10px; background: var(--mist-2); transition: background .35s; }
+  .month.ds { background: var(--wow); }
+  .month.pr { background: #8FB4F5; }
+  .legend { display: flex; justify-content: space-between; width: 1000px; margin-top: 12px; font: 500 16px/1 "Figtree"; color: var(--muted); }
+  .phase { display: flex; gap: 26px; margin-top: 26px; }
+  .phase span { display: inline-flex; align-items: center; gap: 10px; font: 600 19px/1 "Figtree"; color: var(--ink); }
+  .phase i { width: 18px; height: 18px; border-radius: 5px; }
+
+  /* The four rules. */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 900px; }
+  .rule { padding: 24px 26px; display: flex; gap: 16px; align-items: flex-start; transition: box-shadow .35s; }
+  .rule i { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--wow-bg); color: var(--wow); font: 700 16px/1 "Figtree"; font-style: normal; transition: background .35s, color .35s; }
+  .rule b { font: 600 24px/1.25 "Figtree"; color: var(--ink); }
+  .rule.lit { box-shadow: inset 0 0 0 2px var(--wow), 0 8px 24px rgba(13,18,51,.06); }
+  .rule.lit i { background: var(--wow); color: #fff; }
+</style>
+</head>
+<body>
+<div id="story"></div>
+<script src="../story/player.js?v=13"></script>
+<script>
+(function () {
+  "use strict";
+  var K = Story.kit, $ = K.$, $$ = K.$$, put = K.put, frame = K.frame, rise = K.rise, centre = K.centre;
+
+  function months(root) {
+    var m = ""; for (var i = 0; i < 15; i++) m += '<i class="month"></i>';
+    put(root, '<p class="kicker">The project, May 2021 – Sep 2022</p><div class="months" style="margin-top:18px">' + m + '</div><div class="legend"><span>Month 1</span><span>Month 6</span><span>Month 15</span></div>' +
+      '<div class="phase"><span class="rise" id="ph1"><i style="background:var(--wow)"></i>The design system</span><span class="rise" id="ph2"><i style="background:#8FB4F5"></i>The rest of the product, built on it</span></div>', 100, 200, 1000);
+  }
+
+  var scenes = {
+    hook: function (root, api) {
+      put(root, '<p class="kicker rise">WOW · the design system behind Connect2WOW</p><h2 class="title rise" style="margin-top:18px">One library, so the product feels like one.</h2>', 80, 200, 470);
+      frame(root, "hero.html?play", 590, 140, 560, 367);
+      $$(root, ".rise").forEach(function (e, i) { rise(api, e, .2 + i * .35); });
+    },
+    shaped: function (root, api) {
+      put(root, '<div style="display:flex;align-items:center;gap:26px">' +
+        '<div class="inputs">' + [["brand", "The company’s brand"], ["tone", "Its tone of voice"], ["nature", "An industrial product"], ["people", "The people using it"]].map(function (x) {
+          return '<span class="input" data-in="' + x[0] + '">' + x[1] + "</span>"; }).join("") + "</div>" +
+        '<i class="into"></i><div class="card what"><h4>What WOW is</h4><p><span data-w="components">Components,</span> <span data-w="variants">their variants</span> <span data-w="patterns">and the patterns they form</span></p></div></div>', 150, 170, 900);
+    },
+    consistent: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">Learn it once, know what to expect</p>', 300, 50, 600);
+      frame(root, "patterns.html?play", 280, 90, 640, 405);
+    },
+    timeline: function (root, api) { months(root); },
+    research: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">Before designing anything</p>', 300, 50, 600);
+      frame(root, "research.html?play", 280, 90, 640, 427);
+    },
+    rules: function (root, api) {
+      put(root, '<p class="kicker">Four rules</p><div class="rules" style="margin-top:16px">' +
+        ["Structure decides, not taste", "Colour carries meaning or nothing", "Every component ships with every state", "One name, one thing"].map(function (r, i) {
+          return '<div class="card rule rise"><i>' + (i + 1) + "</i><b>" + r + "</b></div>"; }).join("") + "</div>", 150, 130, 900);
+    },
+    product: function (root, api) { months(root); },
+    impact: function (root, api) {
+      put(root, '<p class="kicker rise">Measured across sprints</p>', 80, 130);
+      put(root, '<div style="display:flex;gap:20px">' +
+        '<div class="card metric rise" id="m1"><div class="num">0%</div><div class="lbl">Faster to design</div><div class="from"><span class="tag pos">sprint over sprint</span></div></div>' +
+        '<div class="card metric rise" id="m2"><div class="num">Less</div><div class="lbl">Time to make decisions</div><div class="from"><span class="tag pos">down</span></div></div>' +
+        '<div class="card metric rise" id="m3"><div class="num">More</div><div class="lbl">Solutions explored per problem</div><div class="from"><span class="tag pos">up</span></div></div></div>', 80, 180);
+    }
+  };
+
+  var lines = [
+    // ---- What it is
+    { chapter: "what", scene: "hook", text: "WOW is the design system behind Connect2WOW.", hold: .6 },
+    { chapter: "what", scene: "shaped", text: "It’s more than colours and buttons: components, their variants and the patterns they form, all shaped by the company’s brand, its tone of voice, the nature of an industrial product and the people using it.", hold: .4,
+      cue: function (api) {
+        ["components,", "variants", "patterns"].forEach(function (w, i) {
+          var k = ["components", "variants", "patterns"][i];
+          api.after(api.word(w), function () { $(api.root, '[data-w="' + k + '"]').classList.add("lit"); });
+        });
+        api.cursor.show();
+        [["brand", "brand,"], ["tone", "tone"], ["nature", "nature"], ["people", "people"]].forEach(function (x) {
+          var el = $(api.root, '[data-in="' + x[0] + '"]'), p = centre(el, .5, .5), t = api.word(x[1]);
+          api.cursor.to(p[0], p[1], .45, t - .45); api.cursor.click(t);
+          api.after(t + .05, function () { el.classList.add("lit"); });
+        });
+      } },
+    { chapter: "what", scene: "consistent", text: "Its job was to keep the product consistent, so users could learn it once and always know what to expect.", hold: 1, cue: function (api) { api.cursor.hide(); } },
+
+    // ---- How we built it
+    { chapter: "how", scene: "timeline", text: "We built it in the first six months of the project.", hold: .6,
+      cue: function (api) {
+        var m = $$(api.root, ".month");
+        m.slice(0, 6).forEach(function (e, i) { api.after(api.word("first") + i * .12, function () { e.classList.add("ds"); }); });
+        rise(api, $(api.root, "#ph1"), api.word("six"));
+      } },
+    { chapter: "how", scene: "research", text: "Before designing anything, we studied how mature systems like IBM’s Carbon, Google’s Material, Shopify’s Polaris and Atlassian’s handle the same problems.", hold: .6 },
+    { chapter: "how", scene: "rules", text: "Then we set four rules: structure decides, not taste; colour carries meaning or nothing; every component ships with every state; and one name means one thing.", hold: .8,
+      cue: function (api) {
+        var r = $$(api.root, ".rule");
+        api.cursor.show();
+        [["structure", 1], ["colour", 1], ["every", 1], ["name", 1]].forEach(function (x, i) {
+          var t = api.word(x[0], x[1]), p = centre(r[i], .1, .5);
+          rise(api, r[i], t - .3);
+          api.cursor.to(p[0], p[1], .45, t - .4); api.cursor.click(t + .05);
+          api.after(t + .1, function () { r[i].classList.add("lit"); });
+        });
+      } },
+
+    // ---- What it changed
+    { chapter: "changed", scene: "product", text: "Then we designed the rest of the product on top of it.", hold: .6,
+      cue: function (api) {
+        api.cursor.hide();
+        var m = $$(api.root, ".month");
+        m.slice(0, 6).forEach(function (e) { e.classList.add("ds"); });
+        $(api.root, "#ph1").classList.add("in");
+        m.slice(6).forEach(function (e, i) { api.after(api.word("rest") + i * .12, function () { e.classList.add("pr"); }); });
+        rise(api, $(api.root, "#ph2"), api.word("product"));
+      } },
+    { chapter: "changed", scene: "impact", text: "Measured across sprints, we designed 50% faster, made decisions in less time, and explored more solutions for each problem.", hold: 1.6,
+      cue: function (api) {
+        rise(api, $$(api.root, ".rise")[0], .1);
+        var m1 = $(api.root, "#m1"), a = api.word("50%");
+        rise(api, m1, a - .3); api.count($(m1, ".num"), 0, 50, 1, function (v) { return Math.round(v) + "%"; }, a);
+        rise(api, $(api.root, "#m2"), api.word("decisions") - .2);
+        rise(api, $(api.root, "#m3"), api.word("explored") - .2);
+      } }
+  ];
+
+  Story(document.getElementById("story"), {
+    title: "WOW design system in about a minute",
+    chapters: [{ id: "what", label: "What it is" }, { id: "how", label: "How we built it" }, { id: "changed", label: "What it changed" }],
+    lines: lines,
+    scenes: scenes
+  });
+})();
+</script>
+</body>
+</html>

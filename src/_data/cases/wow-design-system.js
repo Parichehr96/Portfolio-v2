@@ -3,7 +3,7 @@
  * /work/wow-design-system/ lives here.
  *
  * Confirmed with Pari (2026-10-12): shown in the redesigned look (the
- * prototype's tokens); built July 2021 – September 2022; light and dark themes;
+ * prototype's tokens); built in the first six months of the May 2021 – September 2022 project; light and dark themes;
  * the 2026 documentation pass is told as "revisited"; weekly handover; each
  * designer researched their own components and decided together daily.
  * Visuals live in Assets/embeds/wow-ds/, built from tools/wow-ds-visuals
@@ -22,7 +22,15 @@ module.exports = {
   next: { label: "Next" },   // the href comes from home.work.projects (layouts/v4-case.njk)
 
   // Cover: the library wall, a mosaic of real components drifting past.
+  // The cover is the one-minute story (Assets/embeds/wow-ds/story.html):
+  // what shaped it, how it was built and what it changed. The cover animation
+  // it replaced is kept below.
   hero: {
+    type: "story",
+    src: "/Assets/embeds/wow-ds/story.html",
+    title: "WOW design system in about a minute: what it is, how we built it and what it changed, with a transcript",
+  },
+  heroAnimation: {
     type: "animation",
     src: E + "hero.html",
     title: "A wall of real WOW components (buttons, fields, chips, a request card, a table) drifting slowly past; hover a tile for its name and variant count",
@@ -33,7 +41,7 @@ module.exports = {
     { label: "Craft", values: ["Design system,", "tokens,", "component architecture"] },
     { label: "Role", values: ["Co-owner, one of three product designers"] },
     { label: "Team", values: ["3 product designers, design director"] },
-    { label: "Timeline", values: ["Jul 2021 – Sep 2022,", "revisited 2026"] },
+    { label: "Timeline", values: ["The first 6 of 15 months, 2021 – 2022,", "revisited 2026"] },
     { label: "Outcome", values: ["65 component sets,", "370 icons,", "light and dark themes"] },
   ],
 
@@ -54,7 +62,7 @@ module.exports = {
       title: "At a glance",
       nav: "At a glance",
       muted: true,
-      text: "Fifteen months, three designers, one library in Figma.",
+      text: "Six months, at the start of a fifteen-month project: three designers, one library in Figma.",
       blocks: [{ type: "animation", src: E + "glance.html", ratio: "600 / 393",
           title: "The system as an exploded stack: tokens, components, patterns and a finished screen floating apart in four planes" }],
     },

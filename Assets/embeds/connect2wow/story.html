@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="The Connect2WOW case study in two minutes: the problem, what we did and how it ended, told over the case's own visuals and the working prototype, with the designer's cursor at work.">
 <title>Connect2WOW story</title>
-<link rel="stylesheet" href="../story/player.css?v=12">
+<link rel="stylesheet" href="../story/player.css?v=13">
 <style>
   /* Connect2WOW's scenes on the 1200 x 675 stage; its blue only where the
      product appears (v4/case.css). */
@@ -40,6 +40,9 @@
   .home p { margin-top: 4px; font: 500 14px/1.3 "Figtree"; color: var(--faint); }
   .home .slot { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 
+  .flows { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .flow { align-self: flex-start; padding: 10px 14px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); font: 600 17px/1.2 "Figtree"; color: var(--muted); transition: background .3s, box-shadow .3s, color .3s; }
+  .flow.lit { background: var(--c2w-bg); box-shadow: inset 0 0 0 1.5px rgba(31,111,235,.4); color: #0B3D91; }
   .q { padding: 22px 26px; font: 600 26px/1.3 "Figtree"; color: var(--ink); }
   .q i { font-style: normal; color: var(--c2w); }
   .count { font: 700 64px/1 "Figtree"; color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -50,7 +53,7 @@
 </head>
 <body>
 <div id="story"></div>
-<script src="../story/player.js?v=12"></script>
+<script src="../story/player.js?v=13"></script>
 <script>
 (function () {
   "use strict";
@@ -78,18 +81,6 @@
       put(root, '<p class="kicker" style="text-align:center">Six tools, none talking to the rest</p>', 300, 50, 600);
       frame(root, "v4/problem.html?play", 270, 90, 660, 418);
     },
-    three: function (root, api) {
-      put(root, '<p class="kicker" style="text-align:center">Three designers, one approval card</p>', 300, 120, 600);
-      var cards = [
-        ['border-radius:6px', '<span style="background:#1F6FEB;color:#fff;border-radius:4px">Approve</span><span style="box-shadow:inset 0 0 0 1px #CBD5E1;border-radius:4px">Decline</span>', "Designer A"],
-        ['border-radius:18px', '<span style="background:#0F9D58;color:#fff;border-radius:18px">Accept</span><span style="color:#D53434">Reject</span>', "Designer B"],
-        ['border-radius:10px', '<span style="background:#0D1233;color:#fff;border-radius:8px">OK</span><span style="background:#F1F5F9;border-radius:8px">Cancel</span>', "Designer C"]
-      ];
-      put(root, '<div class="three">' + cards.map(function (c) {
-        return '<div><div class="card mini rise" style="' + c[0] + '"><h4>Offboarding request</h4><p>Mark Rushmore · welder</p><div class="acts">' + c[1] + '</div></div><p class="who rise">' + c[2] + "</p></div>";
-      }).join("") + "</div>", 102, 190);
-      put(root, '<p class="sub rise" id="three" style="text-align:center">Without a system, three products.</p>', 250, 470, 700);
-    },
     team: function (root, api) {
       put(root, '<p class="kicker" style="text-align:center">The team</p>', 300, 200, 600);
       put(root, '<div class="roles"><div class="card role me rise">Me<small>Product designer</small></div><div class="card role rise">Niloufar Davoudi<small>Product designer</small></div><div class="card role rise">Mobina Hosseini<small>Product designer</small></div><div class="card role rise">Amir Tavakoli<small>Design director</small></div></div>', 0, 260, 1200);
@@ -108,114 +99,111 @@
         '<div class="home" data-home="hr"><h4>Inside HR, and the admin console</h4><p>Partners · Administration</p><div class="slot"></div></div></div>', 80, 270, 1040);
     },
     components: function (root, api) {
-      frame(root, "v4/components.html?play", 60, 90, 640, 418);
-      put(root, '<div class="rise" id="c1"><p class="count">65</p><p class="sub">component sets</p></div><div class="rise" id="c2" style="margin-top:22px"><p class="count">370</p><p class="sub">icons</p></div><div class="rise" id="c3" style="margin-top:22px"><p class="sub" style="color:var(--ink)">One rule for every alert</p></div>', 780, 130, 360);
+      put(root, '<p class="kicker" style="text-align:center">The shared design system underneath</p>', 300, 50, 600);
+      frame(root, "v4/components.html?play", 280, 90, 640, 418);
     },
-    proto: function (root, api) {
-      win(root, "home?as=sarah", 180, 60, 840, "w");
+    // My flows, in the real prototype: the cursor opens each as it's named.
+    mine: function (root, api) {
+      put(root, '<p class="kicker">My part</p><div class="flows">' +
+        [["chat", "Chat & messaging"], ["life", "Onboarding & offboarding"], ["reviews", "Performance reviews"], ["org", "Org chart"], ["hiring", "Job posting"], ["profile", "Profile"], ["public", "How others see you"]].map(function (f) {
+          return '<span class="flow rise" data-f="' + f[0] + '">' + f[1] + "</span>";
+        }).join("") + "</div>", 70, 80, 280);
+      win(root, "home?as=sarah", 380, 70, 760, "w");
     },
-    lesson: function (root, api) {
-      put(root, '<p class="claim" style="width:900px"><span>Agreement in the team</span> <span>isn’t validation.</span></p>', 150, 210);
-      put(root, '<p class="sub rise" id="first" style="text-align:center">Put it in front of a real operator first.</p>', 250, 380, 700);
-    },
-    close: function (root, api) {
-      put(root, '<p class="claim"><span>When a product is too big for one person to hold in their head,</span> <span>I find its structure,</span> <span>and I build the system that keeps a whole team designing it as one.</span></p>', 170, 130);
-      put(root, '<div style="text-align:center"><button class="approve" type="button" tabindex="-1">Approve</button></div>', 0, 440, 1200);
+    // Three designers' cards, made one.
+    together: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">Three designers, one product</p>', 300, 120, 600);
+      var cards = [
+        ['border-radius:6px', '<span style="background:#1F6FEB;color:#fff;border-radius:4px">Approve</span><span style="box-shadow:inset 0 0 0 1px #CBD5E1;border-radius:4px">Decline</span>', "Designer A"],
+        ['border-radius:18px', '<span style="background:#0F9D58;color:#fff;border-radius:18px">Accept</span><span style="color:#D53434">Reject</span>', "Designer B"],
+        ['border-radius:10px', '<span style="background:#0D1233;color:#fff;border-radius:8px">OK</span><span style="background:#F1F5F9;border-radius:8px">Cancel</span>', "Designer C"]
+      ];
+      put(root, '<div class="three">' + cards.map(function (c) {
+        return '<div><div class="card mini" style="' + c[0] + ';transition:border-radius .5s"><h4>Offboarding request</h4><p>Mark Rushmore · welder</p><div class="acts">' + c[1] + '</div></div><p class="who">' + c[2] + "</p></div>";
+      }).join("") + "</div>", 102, 190);
+      put(root, '<p class="sub rise" id="one" style="text-align:center;color:var(--ink)">One consistent product.</p>', 250, 470, 700);
     }
   };
 
+  // The one card all three became (WOW's request card, as in the prototype).
+  var ONE = '<span style="background:#1F6FEB;color:#fff;border-radius:8px">Approve</span><span style="box-shadow:inset 0 0 0 1px #CBD5E1;border-radius:8px">Decline</span>';
+
   var lines = [
     // ---- The problem
-    { chapter: "problem", scene: "hook", text: "Connect2WOW was an ERP for Canada’s oil and gas industry, used by an HR manager at a desk in Calgary and a welder two weeks into a rotation on a remote site." },
-    { chapter: "problem", scene: "audiences", text: "One product had to make sense at both ends of that line.", hold: 1.4 },
-    { chapter: "problem", scene: "problem", text: "Payroll lived in spreadsheets, incidents on paper, certificates in a shared drive, approvals in email and the crew in a group chat." },
-    { chapter: "problem", text: "None of it talked to the rest, and the people furthest from the office were the most cut off.", hold: .6 },
-    { chapter: "problem", scene: "three", text: "And with three designers on one product, without a system it would become three products.", hold: .8,
-      cue: function (api) {
-        $$(api.root, ".mini").forEach(function (c, i) { rise(api, c, .2 + i * .5); rise(api, $$(api.root, ".who")[i], .4 + i * .5); });
-        rise(api, $(api.root, "#three"), api.word("three", 2) || 3.6);
-      } },
+    { chapter: "problem", scene: "hook", text: "Connect2WOW was a work platform for Canada’s oil and gas industry, used by an HR manager in a Calgary office and a welder on a remote site alike.", hold: .3 },
+    { chapter: "problem", scene: "problem", text: "Each team ran on its own tools: spreadsheets, paper forms, email and group chats.", hold: .6 },
+    { chapter: "problem", scene: "audiences", text: "Nothing connected, and the people furthest from the office were the most cut off.", hold: .8 },
 
     // ---- What I did
-    { chapter: "did", scene: "team", text: "I was one of three product designers, under a design director.",
+    { chapter: "did", scene: "team", text: "I was one of three product designers.", hold: .4,
       cue: function (api) {
         var r = $$(api.root, ".role");
-        r.forEach(function (e, i) { rise(api, e, .2 + i * .25); });
+        r.forEach(function (e, i) { rise(api, e, .1 + i * .15); });
         var p = centre(r[0], .5, .6);
-        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.2); api.cursor.click(2.2);
-        api.after(2.25, function () { r[0].classList.add("lit"); });
+        api.cursor.show(); api.cursor.to(p[0], p[1], .7, .6); api.cursor.click(1.4);
+        api.after(1.45, function () { r[0].classList.add("lit"); });
       } },
-    { chapter: "did", scene: "research", text: "We started from research, built personas from head office to remote site, and tested every module against one question: does it own its own records and work?",
+    { chapter: "did", scene: "research", text: "We started from research and tested every possible section against one question: does it own its own records and work?", hold: .4,
       cue: function (api) {
         api.cursor.hide();
         var r = $$(api.root, ".rise");
         rise(api, r[0], api.word("tested")); rise(api, r[1], api.word("question:"));
       } },
-    { chapter: "did", scene: "modules", text: "Seven candidates became four modules: HR, safety, training and engineering, with everything personal moved into one workspace.", hold: 1.2,
+    { chapter: "did", scene: "modules", text: "Seven candidates became four clear modules: HR, safety, training and engineering.", hold: 4.2,
       cue: function (api) {
         var homes = { mod: $(api.root, '[data-home="mod"] .slot'), ws: $(api.root, '[data-home="ws"] .slot'), hr: $(api.root, '[data-home="hr"] .slot') };
         function chip(k) { return $(api.root, '[data-k="' + k + '"]'); }
         function carry(k, to, d, label) {
           var el = chip(k), a = centre(el, .3, .5), b = centre(homes[to], .25, .5);
-          api.cursor.to(a[0], a[1], .6, d);
-          api.cursor.grab(el, d + .65);
-          api.cursor.to(b[0] + 30, b[1] + 10, .8, d + .7);
-          api.cursor.drop(d + 1.55, function () { if (label) el.innerHTML = el.dataset.k + " <small>" + label + "</small>"; homes[to].appendChild(el); });
+          api.cursor.to(a[0], a[1], .5, d);
+          api.cursor.grab(el, d + .55);
+          api.cursor.to(b[0] + 30, b[1] + 10, .7, d + .6);
+          api.cursor.drop(d + 1.35, function () { if (label) el.innerHTML = el.dataset.k + " <small>" + label + "</small>"; homes[to].appendChild(el); });
         }
         api.cursor.show();
-        carry("Profile", "ws", .3);
-        carry("Connection", "hr", 2.3, "→ Partners");
-        carry("Administration", "hr", 4.3, "→ admin console");
+        carry("Profile", "ws", .2);
+        carry("Connection", "hr", 1.8, "→ Partners");
+        carry("Administration", "hr", 3.4, "→ admin console");
         ["HR", "HSE", "Courses", "Engineering"].forEach(function (k, i) {
-          api.after(6.4 + i * .25, function () { var el = chip(k); el.classList.add("mod"); homes.mod.appendChild(el); });
+          api.after(5.1 + i * .2, function () { var el = chip(k); el.classList.add("mod"); homes.mod.appendChild(el); });
         });
       } },
-    { chapter: "did", scene: "components", text: "Underneath, we built the system together: 65 component sets, 370 icons, and one rule for every alert, so an expired certificate looks the same everywhere it appears.", hold: .8,
+    { chapter: "did", scene: "mine", text: "My part covered several flows: the whole chat and messaging inside the product, key parts of HR (onboarding, offboarding, performance reviews, the org chart and job posting), and the profile section, including how a person looks to others.", hold: 1,
       cue: function (api) {
-        api.cursor.hide();
-        var c1 = $(api.root, "#c1"), c2 = $(api.root, "#c2"), c3 = $(api.root, "#c3");
-        rise(api, c1, api.word("65")); api.count($(c1, ".count"), 0, 65, 1, null, api.word("65"));
-        rise(api, c2, api.word("370")); api.count($(c2, ".count"), 0, 370, 1, null, api.word("370"));
-        rise(api, c3, api.word("rule"));
+        var w = $(api.root, "#w"), f = function (k) { return $(api.root, '[data-f="' + k + '"]'); };
+        function frameDoc() { try { return $(w, "iframe").contentDocument; } catch (e) { return null; } }
+        var steps = [
+          ["chat", "chat", function () { var d = frameDoc(); var b = d && d.querySelector('[data-a="chat"]'); if (b) b.click(); }],
+          ["onboarding,", "life", function () { go(w, "hr/lifecycle?as=sarah"); }],
+          ["performance", "reviews", function () { go(w, "hr/reviews?as=sarah"); }],
+          ["org", "org", function () { go(w, "hr/org?as=sarah"); }],
+          ["job", "hiring", function () { go(w, "hr/hiring?as=sarah"); }],
+          ["profile", "profile", function () { go(w, "profile?as=sarah"); }],
+          ["looks", "public", function () { go(w, "hr/people/mark?as=sarah"); }]
+        ];
+        $$(api.root, ".flow").forEach(function (e) { rise(api, e, .2); });
+        api.cursor.show();
+        steps.forEach(function (st, i) {
+          var t = api.word(st[0]), el = f(st[1]), p = centre(el, .5, .5);
+          api.cursor.to(p[0], p[1], .45, Math.max(0, t - .5)); api.cursor.click(t);
+          api.after(t + .05, function () { $$(api.root, ".flow").forEach(function (x) { x.classList.remove("lit"); }); el.classList.add("lit"); st[2](); });
+        });
       } },
+    { chapter: "did", scene: "components", text: "I also helped build the shared design system underneath.", hold: 1.2, cue: function (api) { api.cursor.hide(); } },
 
     // ---- The outcome
-    { chapter: "outcome", scene: "proto", text: "The product shut down before it launched, so there’s no adoption to show.",
+    { chapter: "outcome", scene: "together", text: "We each led our own areas but made every structural decision together, so three designers built one consistent product.", hold: 1.8,
       cue: function (api) {
-        var w = $(api.root, "#w");
-        api.cursor.show();
-        var p = centre(w, .5, .5);
-        api.cursor.to(p[0], p[1], 1, .4);
-      } },
-    { chapter: "outcome", text: "What there is, is a working system, and a lesson I now bring to every project: agreement in the team isn’t validation.",
-      cue: function (api) {
-        // The system at work: the same product, seen as other people.
-        var w = $(api.root, "#w");
-        [["hse/incidents?as=mark", .6], ["eng/work-orders?as=ryan", 2.4], ["courses/certificates?as=mark", 4.2]].forEach(function (s) {
-          var p = centre(w, .03, .3 + s[1] / 20);
-          api.cursor.to(p[0], p[1], .5, s[1] - .5); api.cursor.click(s[1]);
-          api.after(s[1] + .05, function () { go(w, s[0]); });
+        var m = $$(api.root, ".mini"), t = api.word("three");
+        m.forEach(function (c, i) {
+          api.after(t + i * .25, function () { c.style.borderRadius = "12px"; $(c, ".acts").innerHTML = ONE; });
         });
-      } },
-    { chapter: "outcome", scene: "lesson", text: "Put it in front of a real operator first.", hold: 1.4,
-      cue: function (api) {
-        api.cursor.hide();
-        var s = $$(api.root, ".claim span");
-        s.forEach(function (e, i) { api.after(i * .3, function () { e.classList.add("lit"); }); });
-        rise(api, $(api.root, "#first"), .3);
-      } },
-    { chapter: "outcome", scene: "close", text: "When a product is too big for one person to hold in their head, I find its structure, and I build the system that keeps a whole team designing it as one.", hold: 1.8,
-      cue: function (api) {
-        var s = $$(api.root, ".claim span");
-        [0, api.word("find"), api.word("build")].forEach(function (d, i) { api.after(d, function () { s[i].classList.add("lit"); }); });
-        var b = $(api.root, ".approve"), p = centre(b, .5, .6), d = api.word("one", 2) + .4;
-        api.cursor.show(); api.cursor.to(p[0], p[1], 1, d - 1.1); api.cursor.click(d);
-        api.after(d + .05, function () { b.classList.add("done"); b.textContent = "Approved ✓"; });
+        rise(api, $(api.root, "#one"), api.word("consistent") - .2);
       } }
   ];
 
   Story(document.getElementById("story"), {
-    title: "Connect2WOW in two minutes",
+    title: "Connect2WOW in about a minute",
     chapters: [{ id: "problem", label: "The problem" }, { id: "did", label: "What I did" }, { id: "outcome", label: "The outcome" }],
     lines: lines,
     scenes: scenes
