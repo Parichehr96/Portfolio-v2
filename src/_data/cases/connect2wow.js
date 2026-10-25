@@ -56,28 +56,28 @@ module.exports = {
       nav: "At a glance",
       muted: true,
       text: "Four modules on one shell, one consistent product from three designers, and a working prototype.",
-      blocks: [{ type: "animation", src: E + "glance.html", ratio: "600 / 380",
+      blocks: [{ type: "animation", caption: "The project in four counts.", src: E + "glance.html", ratio: "600 / 380",
         title: "Four counts drawn as what they count: 4 module icons, 45 component blocks, a grid of 370 icons, and 6 notification types" }],
     },
     {
       title: "Problem",
       nav: "Problem",
       text: "Payroll lived in spreadsheets, incidents on paper forms, certificates in a shared drive, approvals in email threads, shifts in a calendar app and the crew in a group chat. None of it talked to the rest, and the people furthest from the office were the most cut off. Inside the team there was a second problem: three designers on one product, which without a system becomes three products.",
-      blocks: [{ type: "animation", src: E + "problem.html", ratio: "600 / 380",
+      blocks: [{ type: "animation", caption: "Six loose tools finding their place in one product.", interact: "replay", src: E + "problem.html", ratio: "600 / 380",
         title: "Six loose tools drift apart, then each flies to its home in the product: HR, HSE, Courses and Engineering on the rail, calendar and chat in the top bar" }],
     },
     {
       title: "Who it's for",
       nav: "Audiences",
       text: "Six kinds of people, spread from head office to the far end of a rotation. An HR manager and an administrator who never leave Calgary, an operations manager who visits, a project manager and an HSE lead who live between site and office, and a welder who works two weeks on, two off. The same product had to make sense at both ends of that line.",
-      blocks: [{ type: "animation", src: E + "audiences.html", ratio: "600 / 340",
+      blocks: [{ type: "animation", caption: "Six personas, from head office to remote site.", interact: "hover a persona", src: E + "audiences.html", ratio: "600 / 340",
         title: "Six personas placed on a line from head office to remote site, each with the modules they use and a line in their own words" }],
     },
     {
       title: "Persona",
       nav: "Persona",
       text: "Sarah, our anchor persona, came from the research: ten years of HR in oil and gas, a mixed office and field workforce, and documents from contracts to engineering diagrams. Four of her notes became design decisions. Data that didn't connect became one record per person. Inconsistent progress became one step pattern for every HR flow. Re-typing the same data became search and pre-filled fields. Worry about the rollout became familiar patterns, nothing exotic to learn.",
-      blocks: [{ type: "animation", src: E + "persona.html", ratio: "600 / 430",
+      blocks: [{ type: "animation", caption: "Sarah's empathy map, with the notes that became decisions.", src: E + "persona.html", ratio: "600 / 430",
         title: "Sarah's empathy map: what she thinks and feels, sees, hears, says and does, with the four notes that became design decisions marked" }],
     },
     {
@@ -86,7 +86,7 @@ module.exports = {
       text: "HR platforms were polished but generic. None was built for an industry where HR, safety and field work are one problem.",
       blocks: [
         {
-          type: "competitors",
+          type: "competitors", caption: "Connect2WOW beside the tools it replaced.",
           self: {
             name: "Connect2WOW",
             logo: "/Assets/images/connect2wow/logos/connect2wow-eyebrow.png",
@@ -123,7 +123,7 @@ module.exports = {
       title: "Structure",
       nav: "Structure",
       text: "The first map put seven items at the top level. Tested against what a module is (it owns its records and workflows, a role works there all day, it could stand on its own) only four held up: HR, HSE, Courses and Engineering. Profile became your own page in a personal workspace, next to Home, notifications, calendar and chat. Connection became Partners inside HR. Administration moved to an admin console, because nobody works there; they set up everyone else. And every sidebar item is a kind of record its module owns: filters became chips, actions became buttons.",
-      blocks: [{ type: "animation", src: E + "structure.html", ratio: "600 / 460",
+      blocks: [{ type: "animation", caption: "The product's four layers.", interact: "click a layer to open it", src: E + "structure.html", ratio: "600 / 460",
         title: "The product's four layers stacked: workspace, modules, admin console and design system. Clicking a layer opens what it holds." }],
     },
     {
@@ -136,9 +136,9 @@ module.exports = {
       nav: "Foundations",
       text: "Small on purpose. One blue, a quiet grey ramp, Inter in six roles, and icons from six sets drawn to a single 1.5 px stroke. In a data-dense product the content should be the loudest thing on screen, so colour is spent only where it means something: a selection, a risk, an all-clear.",
       blocks: [
-        { type: "animation", src: E + "foundations.html", ratio: "600 / 520",
+        { type: "animation", caption: "The system's foundations on one sheet.", src: E + "foundations.html", ratio: "600 / 520",
           title: "The foundations on one sheet: colour ramp, status pills, type roles, an icon wall, spacing, radius and motion" },
-        { type: "animation", src: E + "colour.html", ratio: "600 / 404",
+        { type: "animation", caption: "Colour kept for status and actions only.", interact: "drag the divider", src: E + "colour.html", ratio: "600 / 404",
           title: "A greyscale screen of the HSE incidents list with colour wiped in, showing colour only on status and actions" },
       ],
     },
@@ -146,7 +146,7 @@ module.exports = {
       title: "Components",
       nav: "Components",
       text: "40–50 components, built from the bottom up: 65 sets in the Figma library once the 15 icon sets are counted, from buttons, inputs and mega-selects to org charts, steppers and a chat system. A status pill goes into a crew row, the row into a crew card, the card into a work order. Because every module is assembled from the same parts, an expired certificate looks the same in HSE, Courses and Engineering, and nobody can tell which of us designed which screen.",
-      blocks: [{ type: "animation", src: E + "components.html", ratio: "600 / 392",
+      blocks: [{ type: "animation", caption: "From one status pill out to a whole work order.", src: E + "components.html", ratio: "600 / 392",
         title: "A camera over the live prototype pulls back from one status pill to a crew row, the crew card, and the whole work order" },
         { type: "related", href: "/work/wow-design-system/", eyebrow: "The library behind it", title: "WOW design system",
           text: "65 component sets, 370 icons and the rules that kept three designers drawing like one.", cta: "Read the design system case study" }],
@@ -155,7 +155,7 @@ module.exports = {
       title: "The stress test: notifications",
       nav: "Notifications",
       text: "An ERP never stops talking: approvals, errors, safety events. We replaced design-by-screen with four questions every alert answers (is it actionable, what's its priority, where is it from, what's its status) and let the answers choose its home: a modal, banner, toast, inline message, badge or panel. Six types, no one-offs.",
-      blocks: [{ type: "animation", src: E + "alerts.html", ratio: "600 / 432",
+      blocks: [{ type: "animation", caption: "How each alert is read and which component it becomes.", interact: "pick an alert", src: E + "alerts.html", ratio: "600 / 432",
         title: "Pick an alert, or watch them run: its four axes are read off one by one and the component it becomes appears in the product — toast, inline, modal, banner, badge or panel" }],
     },
     {
@@ -163,7 +163,7 @@ module.exports = {
       nav: "The product",
       text: "This is the working prototype, not a picture of it. Switch persona to see the product change with the role, or pick a flow: report an incident as Mark, raise a work order as Ryan, then approve it as Graham. Open it full screen to use it at its real size.",
       blocks: [
-        { type: "animation", src: E + "prototype.html", ratio: "600 / 419", interactive: true,
+        { type: "animation", caption: "The Connect2WOW prototype.", interact: "choose a persona or a flow", src: E + "prototype.html", ratio: "600 / 419", interactive: true,
           title: "The Connect2WOW prototype, interactive: choose a persona or a flow, or open it full screen" },
       ],
     },

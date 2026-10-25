@@ -55,7 +55,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/promise.html",
+        caption: "ONTON's promise in three beats.", src: "/Assets/embeds/onton/v4/promise.html",
         ratio: "600 / 250",
         title: "The promise in three beats: create the event, show up, get the on-chain badge; this story is about the first",
       },
@@ -68,7 +68,7 @@ module.exports = {
       text: "Four steps became one, with advanced settings hidden by default and expandable on demand. With only 15% of organizers ever opening the expanded settings, the core bet held: almost no one needed what the old flow forced on everyone.",
       blocks: [
         {
-          type: "metrics",
+          type: "metrics", caption: "The redesign's results at a glance.",
           items: [
             { value: "81%", change: "+305%", trend: "up", label: "Event-creation completion", from: "From 20%" },
             { value: "~1 min", change: "−86%", trend: "up", label: "Time to create an event", from: "From ~7 min" },
@@ -78,7 +78,7 @@ module.exports = {
         },
         {
           type: "animation",
-          src: "/Assets/embeds/onton/v4/metrics.html",
+          caption: "The four results, drawn as what they measure.", src: "/Assets/embeds/onton/v4/metrics.html",
           ratio: "600 / 392",
           title: "The four results drawn as what they measure: completion, time, duplicated events, returning organizers",
         },
@@ -91,7 +91,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/warnings.html",
+        caption: "The old form filling up to 22 fields.", interact: "replay", src: "/Assets/embeds/onton/v4/warnings.html",
         ratio: "600 / 380",
         title: "The old form filling up: 22 fields across four steps, warnings that choices are permanent, about 7 minutes",
       },
@@ -104,7 +104,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/race.html",
+        caption: "Publishing one event: ONTON against Luma and Partiful.", src: "/Assets/embeds/onton/v4/race.html",
         ratio: "600 / 300",
         title: "A race to publish one event: Luma and Partiful under a minute, ONTON about 7 minutes across four steps and a review",
       },
@@ -117,7 +117,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/loop.html",
+        caption: "How we worked: build, ship, read the data, iterate.", src: "/Assets/embeds/onton/v4/loop.html",
         ratio: "600 / 250",
         title: "The working loop: build components, ship, read live analytics, iterate, with the founder and four developers",
       },
@@ -129,7 +129,7 @@ module.exports = {
       text: "Before redesigning, I benchmarked where ONTON stood on the thing that was breaking; the moment of creating an event.",
       blocks: [
         {
-          type: "competitors",
+          type: "competitors", caption: "ONTON beside the market before the redesign.",
           self: {
             name: "ONTON",
             logo: "/Assets/v4/case/onton/logo.svg",
@@ -164,7 +164,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/oldflow.html",
+        caption: "The old flow, step by step.", interact: "pick a step or pause", src: "/Assets/embeds/onton/v4/oldflow.html",
         ratio: "600 / 440",
         title: "The old flow, step by step: fields pile up to 22 and the clock runs to about 7 minutes",
       },
@@ -196,7 +196,7 @@ module.exports = {
         },
         {
           type: "animation",
-          src: "/Assets/embeds/onton/v4/interviews.html",
+          caption: "Two organizers' problems, and the fix for the second.", src: "/Assets/embeds/onton/v4/interviews.html",
           ratio: "600 / 326",
           title: "Isabel stuck on a mandatory subtitle; Malena rebuilding the same event every week, then one tap with Duplicate",
         },
@@ -208,7 +208,7 @@ module.exports = {
       text: "One step instead of four, defaults that stick, and one final confirmation instead of a warning on every screen.",
       blocks: [
         {
-          type: "changes",
+          type: "changes", caption: "Every field, after and before.",
           title: "From four steps to one",
           subtitle: "Nothing critical was deleted, most of it was demoted.",
           legend: [
@@ -262,7 +262,7 @@ module.exports = {
         },
         {
           type: "animation",
-          src: "/Assets/embeds/onton/v4/sorted.html",
+          caption: "Where the 22 old fields went.", src: "/Assets/embeds/onton/v4/sorted.html",
           ratio: "600 / 478",
           title: "The 22 old fields sorted: 9 kept and surfaced, 11 moved to Advanced, 2 removed or automated",
         },
@@ -276,7 +276,7 @@ module.exports = {
           type: "animation",
           // Built from Figma 1316:24717 in Portfolio-v2 (onton-hero-animation).
           // A self-contained page; it starts when half of it is on screen.
-          src: "/Assets/embeds/onton/hero-animation.html",
+          caption: "The new flow: one card, four fields.", src: "/Assets/embeds/onton/hero-animation.html",
           title: "The new event-creation flow: a poster, a name, a start time and a venue fill one event card, which lands in the organizer's events",
         },
       ],
@@ -289,7 +289,7 @@ module.exports = {
         {
           type: "animation",
           // Figma 991:36672 (ONTON_redesign), built as a working prototype.
-          src: "/Assets/embeds/onton/v4/app/index.html",
+          caption: "The redesigned ONTON app.", interact: "create an event and check in", src: "/Assets/embeds/onton/v4/app/index.html",
           viewport: true,
           title: "A working prototype of the redesigned ONTON app: create an event, see it in your events, open its ticket and check in",
         },
@@ -305,7 +305,7 @@ module.exports = {
       blocks: [
       {
         type: "animation",
-        src: "/Assets/embeds/onton/v4/fifteen.html",
+        caption: "Out of 100 organizers, about 15 opened Advanced.", src: "/Assets/embeds/onton/v4/fifteen.html",
         ratio: "600 / 290",
         title: "A hundred organizers, one dot each: about 15 opened Advanced, 85 published on the essentials alone",
       },

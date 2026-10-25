@@ -72,6 +72,11 @@ layout: layouts/v4.njk
       {%- endif %}
       {%- for part in section.blocks %}
       {% include "v4/case/" + part.type + ".njk" %}
+      {#- Every visual says, under it, what it shows, and how to use it if it
+          can be used (`interact`). -#}
+      {%- if part.caption %}
+      <p class="v4-case__caption{% if part.type == 'animation' or part.type == 'image' %} v4-case__caption--visual{% endif %}">{{ part.caption }}{% if part.interact %} <span class="v4-case__caption-do">Interactive: {{ part.interact }}.</span>{% endif %}</p>
+      {%- endif %}
       {%- endfor %}
     </section>
     {%- endfor %}

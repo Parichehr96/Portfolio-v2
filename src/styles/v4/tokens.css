@@ -43,6 +43,7 @@
   --v4-ios-blue: #007AFF;
   --v4-sand-300: #D1C7BD;                 /* the before/after divider */
   --v4-indigo-600: #3F3DB6; /* clock second hand and hub */
+  --v4-slate-400: #94A3B8;                /* disabled text, visual captions */
 
   /* ---- 2. SEMANTICS ------------------------------------------------------ */
   --v4-surface: var(--v4-white);
@@ -55,6 +56,7 @@
   --v4-text-soft: var(--v4-ink-soft);
   --v4-text-heading: var(--v4-ink-950);
   --v4-text-faint: var(--v4-slate-600-60);
+  --v4-text-disabled: var(--v4-slate-400);
   --v4-action: var(--v4-button);
   --v4-action-text: var(--v4-button-text);
   --v4-logo-tile: var(--v4-black);

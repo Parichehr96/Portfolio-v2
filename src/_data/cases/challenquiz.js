@@ -62,7 +62,7 @@ module.exports = {
       text: "New players who finished at least one game, over one month, almost tripled. The other three numbers come from a usability study with five players on each version, so I read them as direction, not proof.",
       blocks: [
         {
-          type: "metrics",
+          type: "metrics", caption: "The redesign's results at a glance.",
           items: [
             { value: "1,451", change: "+171%", trend: "up", label: "New players who finished a game, in one month", from: "From 535" },
             { value: "~62s", change: "−51%", trend: "up", label: "Time to start a game", from: "From ~127s" },
@@ -81,7 +81,7 @@ module.exports = {
       title: "Who it's for",
       nav: "The player",
       text: "Lena (not her real name) is the player I designed for. She loves quiz games, isn't Web3-savvy and plays on her phone in the gaps of her day. She wants four things, in this order: to open the app and be playing fast, to play against someone, to learn something, and to enjoy the moment she finds out how she did. Those four verbs became the brief, and every decision below answers one of them.",
-      blocks: [{ type: "animation", src: E + "v4/player.html", ratio: "600 / 440",
+      blocks: [{ type: "animation", caption: "Lena, the player we designed for, and what she wants from a game.", src: E + "v4/player.html", ratio: "600 / 440",
         title: "Lena, and her four verbs: what she wants from a game, what stopped her in the old one, and what she gets now" }],
     },
     {
@@ -93,7 +93,7 @@ module.exports = {
       title: "How players used to play",
       nav: "The old flow",
       text: "Six steps, four points of friction, and the emotional peak of the whole game, the result, deferred to a loading message.",
-      blocks: [{ type: "animation", src: E + "v4/oldflow.html", ratio: "600 / 393",
+      blocks: [{ type: "animation", caption: "The old game, step by step, with its friction points counted.", interact: "pick a step or pause", src: E + "v4/oldflow.html", ratio: "600 / 393",
         title: "The real old game, step by step: find a match, filter, join, read the rulebook, answer, and finish on 'please wait', with a count of the friction points" }],
     },
     {
@@ -134,9 +134,9 @@ module.exports = {
       nav: "Insight",
       text: "The other players were the whole point of the product, and the interface hid them at every step: in the list, in the match and at the result. Every change that followed puts them back on screen.",
       blocks: [
-        { type: "animation", src: E + "v4/insight.html", ratio: "600 / 420",
+        { type: "animation", caption: "Three moments of the old game turning into the redesign.", interact: "replay", src: E + "v4/insight.html", ratio: "600 / 420",
           title: "The list, the match and the result in the old game, with no other players on screen, each turning into the redesign where they are" },
-        { type: "animation", src: E + "v4/insight-text.html", ratio: "600 / 222", plain: true,
+        { type: "animation", caption: "The same moments, before and after, in words.", src: E + "v4/insight-text.html", ratio: "600 / 222", plain: true,
           title: "Before and after at each moment: identical cards became seats and friends, an empty match became the room's answers, 'please wait' became your rank" },
       ],
     },
@@ -144,7 +144,7 @@ module.exports = {
       title: "Live rooms, or rooms that feel live",
       nav: "Async rooms",
       text: "The obvious fix was a live match where everyone answers at once. But with a few hundred players spread across topics, rooms rarely filled at the same moment, so a live match brings back the empty lobby that lost people in the first place, and a phone call or a bad connection costs you the round. I chose asynchronous rooms that feel live: you take a seat and start straight away, each answer shows how the room answered before you, your rank appears the moment you finish, and the bot messages you in Telegram when the last player is done.",
-      blocks: [{ type: "animation", src: E + "v4/rooms.html", ratio: "600 / 404",
+      blocks: [{ type: "animation", caption: "Three ways a room could work, compared.", src: E + "v4/rooms.html", ratio: "600 / 404",
         title: "Three ways a room could work, compared on start, end, how real opponents feel, a small player base, interruptions and fairness; rooms that feel live were chosen" }],
     },
     {
@@ -152,9 +152,9 @@ module.exports = {
       nav: "Fairness",
       text: "Players learn more when they see the right answer straight away; feedback after a multiple-choice question measurably improves what people remember (Butler & Roediger, 2008). But in a game played for tokens, a revealed answer can be passed to a friend who is still playing. The old build hid results to stay fair, and threw the learning away. I didn't hide the answers; I made leaking them pointless. Every player gets the questions in a different order with the options shuffled, the 20-second timer and speed in the ranking make looking things up expensive, and each room draws from a large question bank. Lena sees the right answer, and the fact behind it, the moment she answers.",
       blocks: [
-        { type: "animation", src: E + "v4/fairness.html", ratio: "600 / 400",
+        { type: "animation", caption: "The feedback screen and the four guards that keep it fair.", src: E + "v4/fairness.html", ratio: "600 / 400",
           title: "The feedback screen beside the four guards that make showing the answer safe: own question order, shuffled options, the 20-second timer, a large question bank" },
-        { type: "animation", src: E + "v4/fairness-text.html", ratio: "600 / 420", plain: true,
+        { type: "animation", caption: "Learning and fairness, balanced by the guards.", interact: "replay", src: E + "v4/fairness-text.html", ratio: "600 / 420", plain: true,
           title: "A balance tipped towards learning levels out as the four guards are added on the side of fairness" },
       ],
     },
@@ -162,7 +162,7 @@ module.exports = {
       title: "One component carries the game",
       nav: "The answer row",
       text: "The design system is small on purpose: Baloo 2, one purple, and colour spent only on right, wrong and out of time. Its centre is the answer row, with six states, so a player always knows which option was hers, which was right, and which a hint took away. An unchosen wrong answer stays neutral, never red; red only ever means your own mistake. Each row's height never changes, so nothing jumps when the results come in.",
-      blocks: [{ type: "animation", src: E + "v4/states.html", ratio: "600 / 300",
+      blocks: [{ type: "animation", caption: "One answer row through its six states, always 56px tall.", src: E + "v4/states.html", ratio: "600 / 300",
         title: "One answer row moving through its six states in place, with a ruler showing it stays 56 pixels tall" }],
     },
     {
@@ -175,7 +175,7 @@ module.exports = {
         "Learn: the verdict, what you earned and one fact sit together after every question, and the whole game can be reviewed at the end, mistakes first.",
         "Enjoy: the result lands. What's already yours shows the moment you finish; only the placement bonus waits for the room.",
       ],
-      blocks: [{ type: "animation", src: E + "v4/moves.html", ratio: "600 / 430",
+      blocks: [{ type: "animation", caption: "Each old screen and the new one that replaced it.", interact: "replay", src: E + "v4/moves.html", ratio: "600 / 430",
         title: "Four pairs, one per verb: each old screen shows first, then steps back as the new screen that replaced it slides over; replayable" }],
     },
     {
@@ -183,9 +183,9 @@ module.exports = {
       nav: "The result",
       text: "The old ending said “please wait”. Now answers and hints are counted the moment Lena finishes, and only the placement bonus waits for the rest of the room. When it settles, the amount counts up and a breakdown answers the question every winner asks: why 294 and not 396? Losing is just as honest: the screen states the loss plainly, then points to the facts worth reviewing.",
       blocks: [
-        { type: "animation", src: E + "v4/reward.html", ratio: "600 / 430",
+        { type: "animation", caption: "The result screen, counting up to the payout.", interact: "replay", src: E + "v4/reward.html", ratio: "600 / 430",
           title: "The real result screen while the room plays, then settling: the amount counts up to 294 and confetti bursts over the coins" },
-        { type: "animation", src: E + "v4/reward-text.html", ratio: "600 / 344", plain: true,
+        { type: "animation", caption: "How Lena's payout adds up.", interact: "hover a bar", src: E + "v4/reward-text.html", ratio: "600 / 344", plain: true,
           title: "Lena's payout as a waterfall: plus 288 for answers, minus 6 for a hint, plus 12 for third place makes 294, minus the 200 entry leaves plus 94, against a 396 maximum" },
       ],
     },
@@ -194,7 +194,7 @@ module.exports = {
       nav: "The product",
       text: "This is the working prototype, not a picture of it. Play a full game, use a hint, let the timer run out, or leave halfway. The buttons underneath switch to a low balance or to being first in the room.",
       blocks: [
-        { type: "animation", src: E + "v2/index.html", viewport: true, interactive: true,
+        { type: "animation", caption: "The Challenquiz prototype.", interact: "play a full game", src: E + "v2/index.html", viewport: true, interactive: true,
           title: "The Challenquiz prototype, interactive: play a full game of ten Nature questions" },
       ],
     },
@@ -202,7 +202,7 @@ module.exports = {
       title: "Results",
       nav: "Results",
       text: "New players who finished at least one game, over one month, went from 535 to 1,451. In the usability study, with five players on each version, the time to start a game halved, every player finished cleanly, and findability and post-game satisfaction more than doubled. Five people is a small sample; I read the study as direction, and the month's numbers as the proof.",
-      blocks: [{ type: "animation", src: E + "v4/results.html", ratio: "600 / 500",
+      blocks: [{ type: "animation", caption: "New players before and after, and the usability study's measures.", src: E + "v4/results.html", ratio: "600 / 500",
         title: "New players who finished at least one game over one month, 535 before and 1,451 after, above the usability study's four before-and-after measures" }],
     },
     {
