@@ -24,6 +24,9 @@
   var section = document.querySelector("[data-work]");
   if (!section) return;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Phones: no grow, and the logos are a strip swiped sideways; the one in
+  // the middle, over the fixed connector, is the project shown.
+  var phoneQ = window.matchMedia("(max-width: 899px)");
   var stage = section.querySelector(".v5-work__stage");
   var tabs = Array.prototype.slice.call(section.querySelectorAll("[data-work-tab]"));
   var cards = Array.prototype.slice.call(section.querySelectorAll("[data-work-card]"));
@@ -39,10 +42,10 @@
   function measure() {
     // Where its top sits at the top of the page: under the hero, on screen.
     start = Math.max(1, Math.min(section.getBoundingClientRect().top + window.scrollY, window.innerHeight - 40));
-    stage.style.top = Math.min(0, window.innerHeight - stage.offsetHeight) + "px";
+    stage.style.top = phoneQ.matches ? "" : Math.min(0, window.innerHeight - stage.offsetHeight) + "px";
   }
   function grow() {
-    if (reduce) { section.style.setProperty("--p", 1); return; }
+    if (reduce || phoneQ.matches) { section.style.setProperty("--p", 1); return; }
     var p = 1 - section.getBoundingClientRect().top / start;
     section.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(4));
   }
@@ -229,6 +232,10 @@
   function placePointer() {
     if (!pointer || !tabs[active]) return;
     var t = tabs[active], row = t.parentElement;
+    if (phoneQ.matches) {   // the middle of the strip, wherever it is scrolled
+      pointer.style.setProperty("--x", row.scrollLeft + row.clientWidth / 2 - pointer.offsetWidth / 2 + "px");
+      return;
+    }
     var x = t.offsetLeft + t.offsetWidth / 2 - pointer.offsetWidth / 2;
     if (row.offsetParent !== t.offsetParent) x -= row.offsetLeft;
     pointer.style.setProperty("--x", x + "px");
@@ -271,7 +278,7 @@
   }
   function movePointer(from) {
     if (!pointer) return;
-    if (!goo || from == null || from === active) { placePointer(); return; }
+    if (!goo || from == null || from === active || phoneQ.matches) { placePointer(); return; }
     cancelAnimationFrame(flow);
     var row = pointer.parentElement, k = pointer.offsetWidth / 27;   // px per unit
     goo.setAttribute("viewBox", "0 0 " + row.offsetWidth / k + " 24");
@@ -326,16 +333,37 @@
 
   tabs.forEach(function (t, k) {
     t.tabIndex = k === 0 ? 0 : -1;
-    t.addEventListener("click", function () { pick(k); });
+    t.addEventListener("click", function () { if (phoneQ.matches) centre(k); else pick(k); });
     // With a mouse, pointing at a logo is enough.
     t.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") pick(k); });
     t.addEventListener("keydown", function (e) {
       var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
       if (!d) return;
       e.preventDefault();
-      pick((k + d + tabs.length) % tabs.length, true);
+      var to = (k + d + tabs.length) % tabs.length;
+      pick(to, true);
+      if (phoneQ.matches) centre(to);
     });
   });
+
+  // The strip on a phone: a tapped logo slides to the middle; whichever logo
+  // rests in the middle is picked.
+  var row = tabs.length && tabs[0].parentElement, settle = 0;
+  function centre(k) {
+    var t = tabs[k];
+    row.scrollTo({ left: t.offsetLeft + t.offsetWidth / 2 - row.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
+  }
+  function middle() {
+    var mid = row.scrollLeft + row.clientWidth / 2, best = 0, d = Infinity;
+    tabs.forEach(function (t, j) { var e = Math.abs(t.offsetLeft + t.offsetWidth / 2 - mid); if (e < d) { d = e; best = j; } });
+    return best;
+  }
+  if (row) row.addEventListener("scroll", function () {
+    if (!phoneQ.matches) return;
+    placePointer();
+    clearTimeout(settle);
+    settle = setTimeout(function () { pick(middle(), false, true); }, 90);
+  }, { passive: true });
 
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; live(); }, { threshold: 0.35 }).observe(stage);

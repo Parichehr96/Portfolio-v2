@@ -195,11 +195,28 @@
   .v5-hero__resume { font-size: 16px; gap: 8px; }
   .v5-hero__resume img { width: 16px; }
 
+  /* One screen down to the "Scroll Down" pill: the particles take what the
+     words leave, at their own shape, centred. */
+  .v5-hero { height: 100svh; }
+
   .v5-hero__dots {
     position: relative;
     left: auto;
     top: auto;
+    flex: 1 1 0;
+    min-height: 96px;
     width: 100%;
+    aspect-ratio: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    container-type: size;
+  }
+
+  .v5-hero__dots canvas {
+    width: min(100cqw, 100cqh * 411 / 322);
+    height: auto;
+    aspect-ratio: 411 / 322;
   }
 
 }

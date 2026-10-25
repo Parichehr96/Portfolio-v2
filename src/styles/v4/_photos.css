@@ -146,7 +146,9 @@
 @media (max-width: 899px) {
   .v5-photos {
     height: auto;
-    margin-bottom: -30svh;
+    /* No pull-up into the folders: the last row (a slow photo beside a fast
+       one) would end up under them. */
+    margin-bottom: 0;
     padding-block: var(--v4-space-8);
   }
 

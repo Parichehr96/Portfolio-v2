@@ -219,7 +219,8 @@ export class ToolFolder extends HTMLElement {
     });
   }
 
-  get #front() { var h = this.closest('[data-float-front]'); return !!h && /\btools\b/.test(h.getAttribute('data-float-front') || ''); }
+  // On a phone the icons always come out in front: tossed up, they'd leave the screen.
+  get #front() { var h = this.closest('[data-float-front]'); return !!h && (/\btools\b/.test(h.getAttribute('data-float-front') || '') || matchMedia('(max-width: 899px)').matches); }
 
   connectedCallback() {
     if (this.#front && !this.#over) {                 // FRONT: a layer over the flap for the icons while out

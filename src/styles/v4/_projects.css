@@ -320,25 +320,48 @@
 
 /* Phones: the card stacks, its text over its thumbnails, at reading sizes. */
 @media (max-width: 899px) {
-  .v5-work__inner { padding-block: calc(var(--v4-bar-h) + var(--v4-space-6)) var(--v4-space-8); }
+  /* No grow and no hold: one screen, the card and its dots in it. */
+  .v5-work::after { display: none; }
+  .v5-work__stage { position: relative; min-height: 100svh; }
+  .v5-work__inner { padding-block: calc(var(--v4-bar-h) + var(--v4-space-3, 12px)) var(--v4-space-4); }
   .v5-work__label { font-size: 16px; margin-left: 0; }
-  .v5-work__tabs { gap: 12px; margin-top: var(--v4-space-6); }
+  /* The logos: a strip swiped sideways, each one snapping to the middle, where
+     the connector stays (scripts/v4-projects.js picks the one resting there). */
+  .v5-work__tabs {
+    justify-content: flex-start;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 0 calc(50% - 26px) 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .v5-work__tabs::-webkit-scrollbar { display: none; }
+  .v5-work__tab { flex: none; scroll-snap-align: center; }
+  .v5-work__pointer { top: auto; bottom: 0; }
   .v5-work__tab { padding: 6px; border-radius: 12px; }
   .v5-work__tab-face { width: 40px; height: 40px; border-radius: 8px; }
   .v5-work__logo { width: 32px; height: 32px; }
   .v5-work__pointer { width: 27px; height: 24px; }
-  .v5-work__cards { margin-top: 24px; }
-  .v5-card { flex-direction: column-reverse; gap: 20px; padding: 16px; border-radius: 16px; }
-  .v5-card__info { gap: 12px; }
-  .v5-card__name { font-size: 30px; }
+  .v5-work__cards { margin-top: 0; }
+  .v5-card { flex-direction: column-reverse; gap: 14px; padding: 12px 12px 16px; border-radius: 16px; }
+  .v5-card__info { gap: 10px; padding-inline: 4px; }
+  .v5-card__name { font-size: 28px; }
+  /* Three lines of the line, the tags in one row swiped sideways. */
+  .v5-card__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .v5-card__tags { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -4px; padding-inline: 4px; }
+  .v5-card__tags::-webkit-scrollbar { display: none; }
+  .v5-card__tags li { flex: none; white-space: nowrap; }
   .v5-card__meta { font-size: 15px; }
   .v5-card__desc, .v5-card__tags li { font-size: 14px; }
   .v5-card__tags { gap: 8px; }
   .v5-card__tags li { padding: 4px 10px; }
   .v5-card__link { font-size: 15px; margin-top: 4px; padding: 10px 14px 10px 18px; gap: 6px; }
   .v5-card__link svg { width: 18px; }
-  .v5-card__media { width: 100%; gap: 10px; }
+  .v5-card__media { position: relative; width: 100%; gap: 0; }
   .v5-card__frame { border-radius: 12px; }
-  .v5-card__dots { gap: 8px; }
+  /* The dots sit on the thumbnail, on a white pill. */
+  .v5-card__dots { position: absolute; bottom: 8px; left: 50%; translate: -50% 0; gap: 8px; padding: 6px 10px; border-radius: 999px; background: rgb(255 255 255 / .9); }
   .v5-card__dot { width: 8px; height: 8px; }
 }
