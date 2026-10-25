@@ -237,7 +237,7 @@
       return;
     }
     var x = t.offsetLeft + t.offsetWidth / 2 - pointer.offsetWidth / 2;
-    if (row.offsetParent !== t.offsetParent) x -= row.offsetLeft;
+    if (t.offsetParent !== row) x -= row.offsetLeft;   // the tabs measured from further out
     pointer.style.setProperty("--x", x + "px");
   }
 
@@ -343,6 +343,14 @@
       var to = (k + d + tabs.length) % tabs.length;
       pick(to, true);
       if (phoneQ.matches) centre(to);
+    });
+  });
+
+  // The arrows, round: left of the first is the last, right of the last the first.
+  Array.prototype.forEach.call(section.querySelectorAll("[data-work-step]"), function (b) {
+    b.addEventListener("click", function () {
+      var to = (active + +b.getAttribute("data-work-step") + tabs.length) % tabs.length;
+      if (phoneQ.matches) centre(to); else pick(to);
     });
   });
 

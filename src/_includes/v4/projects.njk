@@ -7,7 +7,8 @@
   then scrolls on to the white below.
 
   One project at a time: its logo tab above picks it, on hover with a mouse
-  or a click/tap (no scrolling through them). The whole card opens its case
+  or a click/tap (no scrolling through them), or the arrows either side,
+  which go round: left of the first is the last. The whole card opens its case
   study. Each card: name, where · years, the line, tags, "Explore Case study",
   and its thumbnails, one at a time with dots; each moves on 1s after its
   animation ends, round and round, and can be dragged, swiped or scrolled
@@ -19,6 +20,10 @@
     <div class="v5-work__inner" data-dark>
       <h2 class="v5-work__label">{{ home.work.projects[0].label or "Selected projects" }}</h2>
 
+      <div class="v5-work__nav">
+      <button class="v5-work__arrow v5-work__arrow--prev" type="button" aria-label="Previous project" data-work-step="-1">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div class="v5-work__tabs" role="tablist" aria-label="Projects">
         {%- for project in home.work.projects %}
         <button class="v5-work__tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" id="tab-{{ project.id }}" aria-controls="card-{{ project.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" data-work-tab="{{ loop.index0 }}">
@@ -30,6 +35,10 @@
         </button>
         {%- endfor %}
         <img class="v5-work__pointer" src="/Assets/v5/connector.svg" width="27" height="24" alt="" data-work-pointer />
+      </div>
+      <button class="v5-work__arrow v5-work__arrow--next" type="button" aria-label="Next project" data-work-step="1">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       </div>
 
       <div class="v5-work__cards">

@@ -54,12 +54,44 @@
 /* The logo tabs, centred (1669:9812): white rounds of 60, 16 apart; the
    active one's face is navy. A white neck (Connector, 1704:1848) joins it to
    the card. */
+/* The tabs between two arrows, which nudge outward now and then: there are
+   more projects, left and right (round: left of the first is the last). */
+.v5-work__nav {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: min(24px, 1.5873vw);
+  margin-top: min(56px, 3.7037vw);
+}
+
+.v5-work__arrow {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: min(40px, 2.6455vw);
+  height: min(60px, 3.9683vw);   /* the tabs' height, so it sits level with them */
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+  opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);
+}
+
+.v5-work__arrow svg { width: min(24px, 1.5873vw); height: auto; }
+.v5-work__arrow--prev svg { animation: v5-nudge-prev 3.2s ease-in-out infinite; }
+.v5-work__arrow--next svg { animation: v5-nudge-next 3.2s ease-in-out infinite; }
+.v5-work__arrow:hover svg, .v5-work__arrow:focus-visible svg { animation-play-state: paused; }
+.v5-work__arrow:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 8px; }
+
+@keyframes v5-nudge-prev { 0%, 60%, 100% { translate: 0 0; } 70% { translate: -5px 0; } 80% { translate: 0 0; } 90% { translate: -3px 0; } }
+@keyframes v5-nudge-next { 0%, 60%, 100% { translate: 0 0; } 70% { translate: 5px 0; } 80% { translate: 0 0; } 90% { translate: 3px 0; } }
+
 .v5-work__tabs {
   position: relative;
   display: flex;
   justify-content: center;
   gap: min(16px, 1.0582vw);
-  margin-top: min(56px, 3.7037vw);
 }
 
 /* 1669:9786: a white round of 60, 8 in, its face 44 (navy when picked, 4 in
@@ -314,6 +346,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .v5-work__arrow svg { animation: none; }
   .v5-card__track, .v5-work__pointer { transition: none; }
   .v5-card { animation: none; }
 }
@@ -327,11 +360,15 @@
   .v5-work__label { font-size: 16px; margin-left: 0; }
   /* The logos: a strip swiped sideways, each one snapping to the middle, where
      the connector stays (scripts/v4-projects.js picks the one resting there). */
+  .v5-work__nav { gap: 4px; margin-top: 12px; }
+  .v5-work__arrow { width: 32px; height: 52px; }
+  .v5-work__arrow svg { width: 22px; }
   .v5-work__tabs {
+    flex: 1;
+    min-width: 0;
     justify-content: flex-start;
     gap: 12px;
-    margin-top: 12px;
-    padding: 0 calc(50% - 26px) 24px;
+    padding: 0 calc((100% - 72px) / 2 - 26px) 24px;   /* % of the nav row: less the arrows (2 × 32) and gaps (2 × 4), half, less half a tab */
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
