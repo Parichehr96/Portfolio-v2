@@ -21,13 +21,13 @@ module.exports = {
 
   // The cover: the Discover screen, animated. Built from Figma 1329:26318 in
   // Portfolio-v2 (tools/onton-animation/build_hero.py); starts when in view.
-  // The cover is the 2-minute story (Assets/embeds/onton/story.html): the
+  // The cover is the one-minute story (Assets/embeds/onton/story.html): the
   // problem, what I did and the impact, over the case's own visuals. The
   // Discover-screen animation it replaced is kept below for going back.
   hero: {
     type: "story",
     src: "/Assets/embeds/onton/story.html",
-    title: "ONTON in two minutes: the problem, what I did and the impact, with a transcript",
+    title: "ONTON in about a minute: the problem, what I did and the impact, with a transcript",
   },
   heroAnimation: {
     type: "animation",

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="The ONTON case study in two minutes: the problem, what I did and the impact, told over the case's own visuals with the designer's cursor at work.">
 <title>ONTON story</title>
-<link rel="stylesheet" href="../story/player.css?v=10">
+<link rel="stylesheet" href="../story/player.css?v=11">
 <style>
   /* ONTON's scenes, on the 1200 x 675 stage. Product colours as the case's
      visuals use them (v4/case.css); everything else is the page's. */
@@ -92,6 +92,16 @@
   .dots { display: grid; grid-template-columns: repeat(20, 14px); gap: 6px; }
   .dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--mist-2); transition: background .3s; }
   .dots i.lit { background: var(--on-blue); }
+  .loop { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .node { width: 250px; min-height: 120px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .node b { font: 600 21px/1.3 "Figtree"; color: var(--ink); }
+  .mini-btn { align-self: flex-start; height: 36px; padding: 0 14px; border-radius: 10px; background: var(--on-blue); color: #fff; font: 600 15px/36px "Figtree"; transition: background .3s; }
+  .mini-btn.done { background: #008000; }
+  .arr { width: 44px; height: 2px; background: var(--on-blue); position: relative; }
+  .arr::after { content: ""; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid var(--on-blue); border-right: 0; }
+  .back { display: flex; gap: 8px; margin-top: 14px; }
+  .back i { width: 18px; height: 18px; border-radius: 50%; background: var(--mist-2); transition: background .3s; }
+  .back i.lit { background: var(--on-blue); }
   .dau { font: 700 84px/1 "Figtree"; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 
   /* Close. */
@@ -104,7 +114,7 @@
 </head>
 <body>
 <div id="story"></div>
-<script src="../story/player.js?v=10"></script>
+<script src="../story/player.js?v=11"></script>
 <script>
 (function () {
   "use strict";
@@ -146,6 +156,17 @@
       $$(root, ".rise").slice(0, 2).forEach(function (e, i) { rise(api, e, .2 + i * .35); });
     },
     // The old form filling up beside the facts.
+    // Why creation matters: every user arrives through an event, and
+    // organizers coming back keep them.
+    growth: function (root, api) {
+      put(root, '<p class="kicker" style="text-align:center">How ONTON grows</p>', 300, 110, 600);
+      put(root, '<div class="loop">' +
+        '<div class="card node rise" id="n1"><b>An organizer creates an event</b><span class="mini-btn">Create event</span></div><i class="arr rise"></i>' +
+        '<div class="card node rise" id="n2"><b>Guests join and show up</b></div><i class="arr rise"></i>' +
+        '<div class="card node rise" id="n3"><b>New users for ONTON</b></div></div>', 0, 210, 1200);
+      put(root, '<svg class="return rise" id="ret" width="840" height="120" viewBox="0 0 840 120" fill="none"><path d="M760 6 C760 96 80 96 80 6" stroke="#007AFF" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/><path d="M70 18 80 4 92 16" stroke="#007AFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<p class="sub rise" id="retl" style="text-align:center;margin-top:-6px">…and when organizers come back, users stay</p>', 180, 360, 840);
+    },
     old: function (root, api) {
       frame(root, "v4/oldflow.html?play", 60, 70, 560, 430);
       put(root, '<p class="kicker">Creating one event, before</p>' +
@@ -155,10 +176,6 @@
         '<div class="fact rise"><b style="font-size:30px">⚠︎</b><span>“Cannot be changed after creation”, on almost every screen</span></div>' +
         '<div class="fact rise"><b>~7</b><span>minutes</span></div></div>' +
         '<div class="rise" style="margin-top:30px"><p class="kicker" style="margin-bottom:12px">Where organizers left</p><div class="steps4"><i>Step 1</i><i>Step 2</i><i>Step 3</i><i>Step 4</i></div></div>', 680, 90, 460);
-    },
-    race: function (root, api) {
-      put(root, '<p class="kicker" style="text-align:center">Publishing one event</p>', 300, 130, 600);
-      frame(root, "v4/race.html?play", 270, 170, 660, 300);
     },
     heard: function (root, api) {
       // Five organizers, interviewed. Isabel and Malena are the case study's
@@ -170,11 +187,6 @@
       put(root, '<div class="card quote rise" id="q1"><p>“I didn’t even know what I was <span class="mark">being asked to decide</span>.”</p><small>Isabel · first-time organizer</small></div>', 80, 250);
       put(root, '<div class="card quote rise" id="q2"><p>“I rebuild the same event from scratch <span class="mark">every week</span>.”</p><small>Malena · weekly organizer</small></div>', 620, 250);
       put(root, '<p class="sub rise" id="halves">Over-asked, then asked all over again.</p>', 80, 470, 500);
-    },
-    team: function (root, api) {
-      put(root, '<p class="kicker" style="text-align:center">The team</p>', 300, 200, 600);
-      put(root, '<div class="roles"><div class="card role me rise">Me<small>Sole product designer</small></div><div class="card role rise">The founder<small>Product owner</small></div><div class="card role rise">4 engineers<small>Mini App &amp; backend</small></div></div>', 0, 260, 1200)
-        .firstChild.style.justifyContent = "center";
     },
     sort: function (root, api) {
       var cols = FIELDS.map(function (g, i) {
@@ -193,161 +205,132 @@
         '<div class="card event" id="ev2" style="margin-top:12px;opacity:0;transform:translateY(-20px)"><span class="poster"></span><div><b>Weekly TON meetup</b><small>Next Thu · 19:00 · Berlin</small></div></div>', 80, 360);
       frame(root, "hero-animation.html", 600, 120, 540, 354);
     },
-    loop: function (root, api) {
-      put(root, '<p class="kicker" style="text-align:center">How I worked</p>', 300, 150, 600);
-      frame(root, "v4/loop.html?play", 270, 190, 660, 290);
-    },
     impact: function (root, api) {
       put(root, '<div style="display:flex;gap:20px">' +
-        '<div class="card metric rise" id="m1"><div class="num">20%</div><div class="lbl">Event-creation completion</div><div class="from"><span class="tag pos">from 20% to 81%</span></div></div>' +
-        '<div class="card metric rise" id="m2"><div class="num">~7 min</div><div class="lbl">Time to create an event</div><div class="from"><span class="tag pos">−86%</span></div></div>' +
-        '<div class="card metric rise" id="m3"><div class="num">0%</div><div class="lbl">Events made by duplicating or repeating</div><div class="from"><span class="tag pos">not possible before</span></div></div></div>', 80, 60);
-      var dots = ""; for (var i = 0; i < 100; i++) dots += "<i></i>";
-      put(root, '<div class="card rise" id="m4" style="padding:22px 24px;width:450px"><div class="dots">' + dots + '</div><p class="lbl" style="margin-top:14px;font:500 17px/1.3 Figtree;color:var(--muted)"><b style="color:var(--ink)">15%</b> ever opened Advanced</p></div>', 80, 330);
-      put(root, '<div class="rise" id="m5"><p class="kicker">Daily active users</p><p class="dau" style="margin-top:12px"><span id="dau">87</span></p><p class="sub" style="margin-top:8px">from 87</p></div>', 600, 360, 520);
-    },
-    close: function (root, api) {
-      put(root, '<p class="claim"><span>I find the step everyone’s tripping on,</span> <span>cut it down to what people actually need,</span> <span>and stay with it until the numbers move.</span></p>', 170, 170);
-      put(root, '<button class="publish" type="button" tabindex="-1">Publish event</button>', 0, 400, 1200).style.textAlign = "center";
+        '<div class="card metric rise" id="m1"><div class="num">4</div><div class="lbl">Steps to create an event</div></div>' +
+        '<div class="card metric rise" id="m2"><div class="num">~7 min</div><div class="lbl">Time to create an event</div></div></div>', 80, 70);
+      put(root, '<div style="display:flex;gap:20px">' +
+        '<div class="card metric rise" id="m3"><div class="num">20%</div><div class="lbl">Event-creation completion</div></div>' +
+        '<div class="card metric rise" id="m4"><div class="num">2 / 5</div><div class="lbl">Organizers who came back</div><div class="back"><i></i><i></i><i></i><i></i><i></i></div></div></div>', 80, 300);
+      put(root, '<div class="rise" id="m5"><p class="kicker">Daily active users</p><p class="dau" style="margin-top:12px"><span id="dau">87</span></p><p class="sub" style="margin-top:8px">from 87</p></div>', 800, 200, 360);
     }
   };
 
   var lines = [
     // ---- The problem
-    { chapter: "problem", scene: "hook", text: "ONTON lets crypto communities run events on Telegram and reward the people who show up with an on-chain badge." },
-    { chapter: "problem", text: "But a badge only matters if there’s an event to attend, and organizers kept giving up before they ever published one.",
+    { chapter: "problem", scene: "hook", text: "ONTON is an event app for crypto communities on Telegram, and guests get an on-chain badge for showing up." },
+    { chapter: "problem", scene: "growth", text: "Every new user arrives through an event, so when organizers create more events, the app grows, and when they come back, it keeps its users.",
       cue: function (api) {
-        rise(api, $$(api.root, ".rise")[2], .4);
-        api.cursor.show(); api.cursor.to(700, 330, .9, .6); api.cursor.click(1.7);
+        var n = $$(api.root, ".node"), a = $$(api.root, ".arr"), btn = $(api.root, ".mini-btn"), p = centre(btn);
+        rise(api, n[0], .1);
+        api.cursor.show(); api.cursor.to(p[0], p[1], .8, .4); api.cursor.click(1.3);
+        api.after(1.35, function () { btn.classList.add("done"); btn.textContent = "Created ✓"; });
+        rise(api, a[0], 1.6); rise(api, n[1], 1.9); rise(api, a[1], 2.5); rise(api, n[2], api.word("grows,") - .3);
+        rise(api, $(api.root, "#ret"), api.word("come")); rise(api, $(api.root, "#retl"), api.word("come") + .3);
+        api.after(2.4, function () { api.cursor.hide(); });
       } },
-    { chapter: "problem", scene: "old", text: "Creating a simple event took four dense steps, more than twenty fields, and a warning on almost every screen that your choices were permanent.",
+    { chapter: "problem", scene: "old", text: "But creating one had grown into four long steps, more than twenty fields, and a warning on almost every screen.",
       cue: function (api) {
         var f = $$(api.root, ".fact");
-        rise(api, f[0], .3); rise(api, f[1], 2.0); rise(api, f[2], 3.6);
-        // A hesitant hand over the form.
-        api.cursor.to(330, 260, 1.0, .2); api.cursor.to(260, 330, .8, 1.6); api.cursor.to(420, 300, 1.0, 2.8); api.cursor.to(300, 420, 1.1, 4.4);
-      } },
-    { chapter: "problem", text: "It took about seven minutes.", cue: function (api) { rise(api, $$(api.root, ".fact")[3], .2); api.cursor.to(450, 480, 1.2, .2); } },
-    { chapter: "problem", text: "Most organizers dropped at step two or three.",
-      cue: function (api) {
-        var box = $$(api.root, ".rise")[4], s = $$(api.root, ".steps4 i");
-        rise(api, box, .1);
-        api.after(.9, function () { s[1].classList.add("drop"); s[2].classList.add("drop"); });
-        api.after(1.6, function () { s[3].classList.add("gone"); });
-        api.cursor.hide();
-      } },
-    { chapter: "problem", scene: "race", text: "Elsewhere, the same job takes under a minute." },
-    { chapter: "problem", scene: "heard", text: "I interviewed five organizers, and they told me the same story in two halves:",
-      cue: function (api) {
-        $$(api.root, ".person").forEach(function (p, i) { rise(api, p, .2 + i * .25); });
-        rise(api, $(api.root, ".note"), 1.6);
-      } },
-    { chapter: "problem", text: "they were asked for things they didn’t need, and then asked again, every single week, because nothing carried over.", hold: .8,
-      cue: function (api) {
-        var q1 = $(api.root, "#q1"), q2 = $(api.root, "#q2"), m = $$(api.root, ".mark");
-        rise(api, q1, .1);
-        api.after(.1, function () { $(api.root, '[data-who="isabel"]').classList.add("lit"); });
-        api.after(3.0, function () { $(api.root, '[data-who="isabel"]').classList.remove("lit"); $(api.root, '[data-who="malena"]').classList.add("lit"); });
+        rise(api, f[0], api.word("four")); rise(api, f[1], api.word("twenty")); rise(api, f[2], api.word("warning"));
         api.cursor.show();
-        var a = centre(m[0], 0, .7), b = centre(m[0], 1, .7);
-        api.cursor.to(a[0], a[1], .8, .6);
-        api.tween(1.1, function (p) { m[0].style.setProperty("--m", p); }, 1.5);
-        api.cursor.to(b[0], b[1], 1.1, 1.5);
-        rise(api, q2, 3.0);
-        var c = centre(m[1], 0, .7), d = centre(m[1], 1, .7);
-        api.cursor.to(c[0], c[1], .9, 3.5);
-        api.tween(.8, function (p) { m[1].style.setProperty("--m", p); }, 4.5);
-        api.cursor.to(d[0], d[1], .8, 4.5);
-        rise(api, $(api.root, "#halves"), 5.6);
+        api.cursor.to(330, 260, 1.0, .2); api.cursor.to(260, 330, .8, 1.6); api.cursor.to(420, 300, 1.0, 2.8); api.cursor.to(300, 420, 1.1, 4.2);
+      } },
+    { chapter: "problem", text: "It took about seven minutes, and most organizers gave up halfway.",
+      cue: function (api) {
+        rise(api, $$(api.root, ".fact")[3], .2);
+        var box = $$(api.root, ".rise")[4], st = $$(api.root, ".steps4 i");
+        rise(api, box, api.word("most"));
+        api.after(api.word("gave"), function () { st[1].classList.add("drop"); st[2].classList.add("drop"); });
+        api.after(api.word("halfway."), function () { st[3].classList.add("gone"); });
+        api.cursor.hide();
       } },
 
     // ---- What I did
-    { chapter: "did", scene: "team", text: "I was the only designer, working with the founder and four engineers.",
+    { chapter: "did", scene: "heard", text: "I talked to five organizers and heard the same story: they were asked for things they didn’t need, and asked again every week.", hold: .3,
       cue: function (api) {
-        var r = $$(api.root, ".role");
-        r.forEach(function (e, i) { rise(api, e, .2 + i * .3); });
-        var p = centre(r[0], .5, .6);
-        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.3); api.cursor.click(2.3);
-        api.after(2.35, function () { r[0].classList.add("lit"); });
+        $$(api.root, ".person").forEach(function (p, i) { rise(api, p, .2 + i * .2); });
+        rise(api, $(api.root, ".note"), 1.3);
+        var q1 = $(api.root, "#q1"), q2 = $(api.root, "#q2"), m = $$(api.root, ".mark"), t1 = api.word("asked"), t2 = api.word("asked", 2);
+        rise(api, q1, t1 - .4);
+        api.after(t1 - .4, function () { $(api.root, '[data-who="isabel"]').classList.add("lit"); });
+        api.cursor.show();
+        var a = centre(m[0], 0, .7), b = centre(m[0], 1, .7);
+        api.cursor.to(a[0], a[1], .6, t1 - .3);
+        api.tween(1, function (p) { m[0].style.setProperty("--m", p); }, t1 + .3);
+        api.cursor.to(b[0], b[1], 1, t1 + .3);
+        rise(api, q2, t2 - .5);
+        api.after(t2 - .5, function () { $(api.root, '[data-who="isabel"]').classList.remove("lit"); $(api.root, '[data-who="malena"]').classList.add("lit"); });
+        var c = centre(m[1], 0, .7), d = centre(m[1], 1, .7);
+        api.cursor.to(c[0], c[1], .6, t2 - .3);
+        api.tween(.8, function (p) { m[1].style.setProperty("--m", p); }, t2 + .3);
+        api.cursor.to(d[0], d[1], .8, t2 + .3);
+        rise(api, $(api.root, "#halves"), t2 + 1.2);
       } },
-    { chapter: "did", scene: "sort", text: "I didn’t delete what mattered; I demoted it.",
+    { chapter: "did", scene: "sort", text: "So I sorted all 22 fields.", hold: 1.2,
       cue: function (api) {
-        // Two fields carried into Advanced by hand.
         var bin = $(api.root, '[data-bin="moved"] .chips');
         function carry(name, d) {
           var chip = $$(api.root, ".cols .chip").filter(function (c) { return c.textContent === name; })[0];
           var from = centre(chip, .3, .5), to = centre(bin, .2, .3);
-          api.cursor.to(from[0], from[1], .7, d);
-          api.cursor.grab(chip, d + .75);
-          api.cursor.to(to[0] + 40, to[1] + 6, .9, d + .8);
-          api.cursor.drop(d + 1.75, function () { chip.classList.add("moved"); bin.appendChild(chip); count(api); });
+          api.cursor.to(from[0], from[1], .6, d);
+          api.cursor.grab(chip, d + .65);
+          api.cursor.to(to[0] + 40, to[1] + 6, .8, d + .7);
+          api.cursor.drop(d + 1.55, function () { chip.classList.add("moved"); bin.appendChild(chip); count(api); });
         }
         api.cursor.show();
-        carry("Description", .2);
-        carry("Ticket details", 2.0);
+        carry("Description", .1);
+        carry("Ticket details", 1.8);
       } },
-    { chapter: "did", text: "Four steps became one.",
-      cue: function (api) {
-        api.after(.3, function () { $(api.root, "#pill").innerHTML = "<s>4 steps</s> → 1 step"; });
-        api.after(.6, function () { $$(api.root, ".col h4").forEach(function (h) { h.style.opacity = ".35"; }); });
-        api.cursor.to(1000, 60, .8, .2);
-      } },
-    { chapter: "did", text: "Nine fields stayed up front, eleven moved into Advanced, two were automated away.", hold: .6,
+    { chapter: "did", text: "Nine stayed up front, eleven moved into “Advanced”, and two were removed or automated.", hold: .4,
       cue: function (api) {
         var gone = $(api.root, '[data-bin="gone"] .chips');
         var sub = $$(api.root, ".cols .chip").filter(function (c) { return /Subtitle/.test(c.textContent); })[0];
         var from = centre(sub, .3, .5), to = centre(gone, .3, .4);
-        api.cursor.to(from[0], from[1], .6, .1);
-        api.cursor.grab(sub, .75);
-        api.cursor.to(to[0] + 30, to[1] + 6, .9, .8);
-        api.cursor.drop(1.75, function () { sub.classList.add("gone"); gone.appendChild(sub); count(api); });
-        // The rest find their place.
-        api.after(2.0, function () { api.cursor.hide(); });
+        api.cursor.to(from[0], from[1], .5, .1);
+        api.cursor.grab(sub, .6);
+        api.cursor.to(to[0] + 30, to[1] + 6, .8, .65);
+        api.cursor.drop(1.5, function () { sub.classList.add("gone"); gone.appendChild(sub); count(api); });
+        api.after(1.7, function () { api.cursor.hide(); });
         var rest = $$(api.root, ".cols .chip").filter(function (c) { return c !== sub; });
         rest.forEach(function (c, i) {
-          api.after(2.0 + i * .14, function () {
+          api.after(1.6 + i * .12, function () {
             c.classList.add(c.dataset.st);
             $(api.root, '[data-bin="' + c.dataset.st + '"] .chips').appendChild(c);
             count(api);
           });
         });
+        api.after(4.4, function () { $(api.root, "#pill").innerHTML = "<s>4 steps</s> → 1 step"; $$(api.root, ".col h4").forEach(function (h) { h.style.opacity = ".35"; }); });
       } },
-    { chapter: "did", scene: "newflow", text: "Defaults now stick, events can be duplicated, and there’s one confirmation at the end instead of a warning on every screen.",
+    { chapter: "did", scene: "newflow", text: "I made settings stick, added one-tap duplicate, and replaced the warnings with one check at the end.", hold: .4,
       cue: function (api) {
         var c = $$(api.root, ".change");
-        rise(api, c[0], .2); rise(api, c[1], 1.6); rise(api, c[2], 3.4);
-        var dup = $(api.root, ".dup"), p = centre(dup);
-        api.cursor.show(); api.cursor.to(p[0], p[1], .9, 1.7); api.cursor.click(2.7);
-        api.after(2.8, function () { var e = $(api.root, "#ev2"); e.style.opacity = "1"; e.style.transform = "none"; });
-        api.cursor.to(560, 600, 1, 3.6);
+        rise(api, c[0], api.word("stick,") - .3); rise(api, c[1], api.word("duplicate,") - .3); rise(api, c[2], api.word("check") - .3);
+        var dup = $(api.root, ".dup"), p = centre(dup), d = api.word("duplicate,");
+        api.cursor.show(); api.cursor.to(p[0], p[1], .7, d - .7); api.cursor.click(d);
+        api.after(d + .05, function () { var e = $(api.root, "#ev2"); e.style.opacity = "1"; e.style.transform = "none"; });
+        api.cursor.to(560, 600, 1, d + .8);
       } },
-    { chapter: "did", scene: "loop", text: "I built the components it runs on, and kept iterating on live analytics after launch.", cue: function (api) { api.cursor.hide(); } },
 
     // ---- The impact
-    { chapter: "impact", scene: "impact", text: "Completion went from twenty percent to eighty-one.",
-      cue: function (api) { var m = $(api.root, "#m1"); rise(api, m, .1); api.count($(m, ".num"), 20, 81, 1.6, function (v) { return Math.round(v) + "%"; }, .5); } },
-    { chapter: "impact", text: "Seven minutes became one.",
-      cue: function (api) { var m = $(api.root, "#m2"); rise(api, m, .1); api.count($(m, ".num"), 7, 1, 1.2, function (v) { return "~" + Math.round(v) + " min"; }, .4); } },
-    { chapter: "impact", text: "Four in ten events are now made by duplicating or repeating one.",
-      cue: function (api) { var m = $(api.root, "#m3"); rise(api, m, .1); api.count($(m, ".num"), 0, 42, 1.4, function (v) { return Math.round(v) + "%"; }, .4); } },
-    { chapter: "impact", text: "And only fifteen percent of organizers ever opened Advanced, proof that almost no one needed what the old flow forced on everyone.",
+    { chapter: "impact", scene: "impact", text: "One step instead of four, a minute instead of seven.", hold: .3,
       cue: function (api) {
-        rise(api, $(api.root, "#m4"), .1);
-        var d = $$(api.root, ".dots i"), lit = [3, 11, 18, 24, 30, 37, 45, 52, 58, 63, 71, 77, 84, 90, 97];
-        lit.forEach(function (n, i) { api.after(.8 + i * .12, function () { d[n].classList.add("lit"); }); });
+        api.cursor.hide();
+        var m1 = $(api.root, "#m1"), m2 = $(api.root, "#m2");
+        rise(api, m1, .1); api.count($(m1, ".num"), 4, 1, .9, function (v) { return Math.round(v) + (Math.round(v) === 1 ? " step" : ""); }, .3);
+        rise(api, m2, api.word("minute") - .3); api.count($(m2, ".num"), 7, 1, .9, function (v) { return "~" + Math.round(v) + " min"; }, api.word("minute"));
       } },
-    { chapter: "impact", text: "The product grew from 87 to over 1,500 daily users.", hold: .6,
+    { chapter: "impact", text: "Completion jumped from 20% to 81%, four in five organizers came back, and daily users grew from 87 to over 1,500.", hold: 1.5,
       cue: function (api) {
-        rise(api, $(api.root, "#m5"), .1);
-        api.count($(api.root, "#dau"), 87, 1500, 2.2, function (v) { var n = Math.round(v); return n >= 1500 ? "1,500+" : n.toLocaleString("en"); }, .5);
-      } },
-    { chapter: "impact", scene: "close", text: "I find the step everyone’s tripping on, cut it down to what people actually need, and stay with it until the numbers move.", hold: 1.6,
-      cue: function (api) {
-        var s = $$(api.root, ".claim span");
-        s.forEach(function (e, i) { api.after(.3 + i * 2.1, function () { e.classList.add("lit"); }); });
-        var b = $(api.root, ".publish"), p = centre(b, .5, .6);
-        api.cursor.show(); api.cursor.to(p[0], p[1], 1, 5.6); api.cursor.click(6.7);
-        api.after(6.75, function () { b.classList.add("done"); b.textContent = "Published ✓"; });
+        var m3 = $(api.root, "#m3"), m4 = $(api.root, "#m4");
+        rise(api, m3, .1); api.count($(m3, ".num"), 20, 81, 1.2, function (v) { return Math.round(v) + "%"; }, .5);
+        var t = api.word("four");
+        rise(api, m4, t - .3);
+        $$(m4, ".back i").forEach(function (d, i) { api.after(t + i * .18, function () { if (i < 4) d.classList.add("lit"); }); });
+        api.after(t + .2, function () { $(m4, ".num").textContent = "4 / 5"; });
+        var u = api.word("daily");
+        rise(api, $(api.root, "#m5"), u - .3);
+        api.count($(api.root, "#dau"), 87, 1500, 1.8, function (v) { var n = Math.round(v); return n >= 1500 ? "1,500+" : n.toLocaleString("en"); }, u);
       } }
   ];
 
@@ -357,7 +340,7 @@
   }
 
   Story(document.getElementById("story"), {
-    title: "ONTON in two minutes",
+    title: "ONTON in one minute",
     chapters: [{ id: "problem", label: "The problem" }, { id: "did", label: "What I did" }, { id: "impact", label: "The impact" }],
     lines: lines,
     scenes: scenes
