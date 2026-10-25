@@ -24,11 +24,15 @@ html, body { background: #fff; color: var(--ink); font-family: "Figtree", system
 
 .story { max-width: 1200px; margin: 0 auto; padding: 16px; }
 /* On a case page (in its frame): flush with the column. */
-.embedded .story { padding: 0 0 4px; }
+/* On a case page the whole story, film, controls and transcript, sits in a
+   frame of its own. */
+.embedded .story { margin: 2px; padding: 20px 20px 24px; border-radius: 28px; background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 18px 40px -24px rgba(13, 18, 51, .22); }
+@media (max-width: 700px) { .embedded .story { padding: 10px 10px 16px; border-radius: 20px; } }
 .embedded, .embedded body { background: transparent; }
 
 /* ---- The film ------------------------------------------------------------- */
-.film { position: relative; container-type: inline-size; width: min(100%, calc((100svh - 150px) * 16 / 9)); margin-inline: auto; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 20px; background: var(--mist); cursor: pointer; }
+.film { position: relative; container-type: inline-size; width: min(100%, calc((100svh - 190px) * 16 / 9)); margin-inline: auto; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 20px; background: var(--mist); cursor: pointer; }
 .stage { position: absolute; left: 0; top: 0; width: 1200px; height: 675px; transform-origin: 0 0; }
 .scene { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; pointer-events: none; }
 .scene.on { opacity: 1; }
