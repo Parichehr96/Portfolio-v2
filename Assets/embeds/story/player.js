@@ -79,7 +79,7 @@
     caption.setAttribute("aria-hidden", "true");
     // Before playing (and after): play the story, or skip it for the full case.
     var start = h("div", "start",
-      '<div class="start__actions"><span class="start__play"><svg width="14" height="16" viewBox="0 0 14 16"><path d="M1 1.5v13l12-6.5z" fill="#fff"/></svg><b>Play the ' + Math.max(1, Math.round(TOTAL / 60)) + '-minute story</b></span>' +
+      '<div class="start__actions"><span class="start__play"><svg width="14" height="16" viewBox="0 0 14 16"><path d="M1 1.5v13l12-6.5z" fill="#fff"/></svg><b>Play the story · ' + fmtTime(TOTAL) + '</b></span>' +
       '<a class="start__read" href="#read">Read full case study<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3.75v12.5M4.75 11 10 16.25 15.25 11" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>');
     // On a case page the page scrolls to the case's hook (v4/case/story.njk);
     // on its own, past the film.
