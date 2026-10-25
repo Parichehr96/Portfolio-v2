@@ -42,7 +42,7 @@ module.exports = {
     { label: "Role", values: ["Co-owner, one of three product designers"] },
     { label: "Team", values: ["3 product designers, design director"] },
     { label: "Timeline", values: ["The first 6 of 15 months, 2021 – 2022,", "revisited 2026"] },
-    { label: "Outcome", values: ["65 component sets,", "370 icons,", "light and dark themes"] },
+    { label: "Outcome", values: ["Designing 50% faster (sprint-measured),", "65 component sets, 370 icons,", "light and dark themes"] },
   ],
 
   hook: "Three designers, one library, and no way to tell whose hand drew which screen",
@@ -52,7 +52,7 @@ module.exports = {
       title: "About WOW",
       nav: "About",
       muted: true,
-      text: "WOW is the design system behind Connect2WOW, an ERP for Canada's oil and gas industry. Three of us designed the product in parallel, so the library wasn't a nice-to-have; it was the only thing keeping one product from becoming three. This is the story of the system itself: its rules, its parts, and how three designers shared it.",
+      text: "WOW is the design system behind Connect2WOW, an ERP for Canada's oil and gas industry. Three of us designed the product in parallel, so the library wasn't a nice-to-have; it was the only thing keeping one product from becoming three. It's more than colours and buttons: components, their variants and the patterns they form, shaped by the company's brand, its tone of voice, the nature of an industrial product and the people using it. Its job was to keep the product consistent, so users could learn it once and always know what to expect. This is the story of the system itself: its rules, its parts, and how three designers shared it.",
       blocks: [
         { type: "related", href: "/work/connect2wow/", eyebrow: "The product it was built for", title: "Connect2WOW",
           text: "One product for the head office and the camp four hours north: the structure, personas and an interactive prototype.", cta: "Read the product case study" },
@@ -168,11 +168,11 @@ module.exports = {
           title: "A before-and-after slider over the request card: the 2022 library and the 2026 revisit" }],
     },
     {
-      title: "Reflection",
-      nav: "Reflection",
+      title: "Outcome",
+      nav: "Outcome",
       paragraphs: [
-        "The system did what it was built to do: by the end, nobody could tell whose hand was on which screen.",
-        "What it never got was users. The product shut down before launch, so every rule in it was agreed, never tested. If I built it again, I'd put the most opinionated parts (the notification model, the themes) in front of operators first, and let them argue with us.",
+        "With the system in place, we designed the rest of the product on top of it. Measured across sprints, we designed 50% faster, made decisions in less time, and explored more solutions for each problem.",
+        "And the product read as one: stakeholders and engineers could follow any screen without asking how it should work, and by the end nobody could tell whose hand was on which screen.",
       ],
     },
   ],

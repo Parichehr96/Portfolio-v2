@@ -36,10 +36,10 @@ module.exports = {
   meta: [
     { label: "Platforms", chip: "Web ERP (desktop)" },
     { label: "Craft", values: ["Information architecture,", "design system,", "product design"] },
-    { label: "Role", values: ["One of three product designers,", "co-owner of the design system"] },
+    { label: "Role", values: ["One of three product designers:", "chat, calendar, editors,", "HR flows and profile"] },
     { label: "Team", values: ["3 product designers, design director, engineering"] },
-    { label: "Timeline", values: ["May 2021 – Sep 2022,", "design system from Jul 2021"] },
-    { label: "Outcome", values: ["4 modules on one shell,", "40–50 components,", "never launched"] },
+    { label: "Timeline", values: ["May 2021 – Sep 2022,", "design system in the first 6 months"] },
+    { label: "Outcome", values: ["One consistent product from three designers,", "4 modules on one shell,", "a working prototype"] },
   ],
 
   hook: "One product for the head office and the camp four hours north",
@@ -55,7 +55,7 @@ module.exports = {
       title: "At a glance",
       nav: "At a glance",
       muted: true,
-      text: "It never launched, so there is no adoption data to show. What there is, is the system.",
+      text: "Four modules on one shell, one consistent product from three designers, and a working prototype.",
       blocks: [{ type: "animation", src: E + "glance.html", ratio: "600 / 380",
         title: "Four counts drawn as what they count: 4 module icons, 45 component blocks, a grid of 370 icons, and 6 notification types" }],
     },
@@ -129,7 +129,7 @@ module.exports = {
     {
       title: "Who designed what",
       nav: "Team",
-      text: "Three product designers, Niloufar Davoudi, Mobina Hosseini and me, under design director Amir Tavakoli. Each of us led part of the product; the design system and the notification model we built together.",
+      text: "Three product designers, Niloufar Davoudi, Mobina Hosseini and me, under design director Amir Tavakoli. Each of us led our own areas. Mine were the whole chat and messaging, the calendar, all three editors built into the product (for PDFs, Word documents and engineering drawings), key parts of HR (onboarding, offboarding, performance reviews, the org chart and job posting), and the profile section, including how a person looks to others. The design system and the notification model we built together.",
     },
     {
       title: "Design system foundations",
@@ -168,12 +168,11 @@ module.exports = {
       ],
     },
     {
-      title: "Reflection",
-      nav: "Reflection",
+      title: "Outcome",
+      nav: "Outcome",
       paragraphs: [
-        "The system held up. The product shut down before it launched.",
-        "That isn't on the design system, but it is the lesson. We spent months defining how the product should behave, and three designers and a director agreed on all of it. No HR manager or welder ever confirmed it. Agreement isn't validation.",
-        "I'd build the same system with the same team again, and I'd put it in front of a real operator before we called anything finished.",
+        "Three designers built one consistent product. We each led our own areas, but every structural decision was made together, so a record, a form or an alert works the same wherever it appears, whoever drew the screen.",
+        "The product shut down before launch, so it never met its users. If I did it again, I'd put it in front of an HR manager and a welder much earlier.",
       ],
     },
   ],
