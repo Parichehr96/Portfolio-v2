@@ -13,7 +13,7 @@
   with Amsterdam's wind right now. Behind it stands the windmill
   (v4/windmill.njk), turning in the same wind.
 #}
-<footer class="v4-footer{% if footerSky %} v5-footer{% endif %}" id="contact">
+<footer class="v4-footer{% if footerSky %} v5-footer{% endif %}{% if footerNoWindow %} v5-footer--plain{% endif %}" id="contact">
   {% include "v4/windmill.njk" %}
   <div class="v4-mill-tip" role="tooltip" hidden data-mill-tip></div>
   <div class="v4-footer__sky" aria-hidden="true" data-wind-art>
@@ -22,7 +22,10 @@
   <div class="v4-footer__content">
     {%- if footerSky %}
     {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
+    {#- Case studies (footerNoWindow) go straight to the call. #}
+    {%- if not footerNoWindow %}
     {% include "v4/sky.njk" %}
+    {%- endif %}
     {#- Then its own line, the call as a dashed link, the socials (email first), the
         stamp, the year and the cookie settings. #}
     <div class="v4-footer__cta">

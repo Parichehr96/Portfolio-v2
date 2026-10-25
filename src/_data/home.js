@@ -419,7 +419,7 @@ module.exports = {
     v5: {
       body: "I’m looking for a team in the Netherlands building ambitious products, if that sounds like what you’re working on, I’d love to hear about it.",
       cta: "Book a call",
-      socials: ["Email", "Dribbble", "Behance", "LinkedIn"],
+      socials: ["Email", "LinkedIn", "Dribbble", "Behance"],
     },
   },
 };
