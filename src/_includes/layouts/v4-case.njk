@@ -20,8 +20,8 @@ layout: layouts/v4.njk
   (--v5-col). Everything sits in it.
 #}
 {%- set c = cases[caseKey] -%}
-{#- BACK goes to this case study's card on the homepage (/#work-<id>;
-    scripts/v4-rail.js makes the jump). It sits at the top of the left column,
+{#- BACK goes to the homepage's Works with this case study picked
+    (/#work-<id>; scripts/v4-projects.js makes the jump). It sits at the top of the left column,
     with the breadcrumb under it (v4/case-nav.njk). -#}
 {%- set backHref = "/#work-" + caseKey -%}
 
@@ -78,4 +78,6 @@ layout: layouts/v4.njk
   </article>
 </div>
 
+{#- The redesign's footer: the window and the call, as on the homepage. -#}
+{%- set footerSky = true %}
 {% include "v4/footer.njk" %}

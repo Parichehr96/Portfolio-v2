@@ -6,16 +6,19 @@
    Top to bottom, as the comp cuts it (801 tall at 1512): the window's one-line
    note, the window, the title and its line, "Book a call" as a dashed link,
    three socials, the stamp and the year; the city with its windmill along the
-   bottom, behind. Exactly the screen's height. Inside the shell, so the menu
+   bottom, behind. At least the screen's height, the year clear of the lamps. Inside the shell, so the menu
    and clock stay. --u is one comp pixel.
    ========================================================================== */
 
 .v5-footer {
   --u: min(1px, 0.066138vw);
   margin-top: 0;
-  height: 100svh;
-  min-height: 0;
-  padding-top: calc(46 * var(--u));
+  height: auto;
+  min-height: 100svh;
+  padding-top: calc(24 * var(--u));
+  /* The lamp heads stand ~150 above the floor: the year stays clear of them,
+     on a short screen too (the footer grows rather than overlap). */
+  padding-bottom: calc(160 * var(--u));
 }
 
 .v5-footer .v4-footer__content {
@@ -24,7 +27,7 @@
 
 .v5-footer .v4-sky {
   width: min(var(--v4-sky-width), 100%);
-  margin: 0 0 calc(60 * var(--u));
+  margin: 0 0 calc(40 * var(--u));
   gap: calc(22 * var(--u));
   text-align: center;
 }
@@ -65,8 +68,8 @@
 .v5-footer__call:hover { border-style: solid; border-color: #0f172a; }
 
 .v5-footer .v4-footer__meta {
-  margin-top: calc(16 * var(--u));
-  gap: calc(12 * var(--u));
+  margin-top: calc(14 * var(--u));
+  gap: calc(8 * var(--u));
 }
 
 @media (max-width: 899px) {

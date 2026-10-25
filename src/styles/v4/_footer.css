@@ -226,7 +226,8 @@
    crown does), with a slower gust layered over it so the rhythm never looks
    mechanical; neighbours are out of step. How far and how fast comes from
    Amsterdam's wind right now (--wind-bend, --wind-gust, --wind-period on the
-   holder). */
+   holder). --sway (in amsterdam.svg) damps the crowns traced as cut-outs of
+   the houses behind them, which a full bend would uncover. */
 .v4-footer__art .tree {
   transform-box: view-box;
   animation:
@@ -236,13 +237,13 @@
 }
 
 @keyframes v4-bend {
-  from { transform: skewX(calc(var(--wind-bend, 5deg) * -.25)); }
-  to   { transform: skewX(var(--wind-bend, 5deg)); }
+  from { transform: skewX(calc(var(--wind-bend, 5deg) * var(--sway, 1) * -.25)); }
+  to   { transform: skewX(calc(var(--wind-bend, 5deg) * var(--sway, 1))); }
 }
 
 @keyframes v4-gust {
   from { rotate: 0deg; }
-  to   { rotate: var(--wind-gust, 1.5deg); }
+  to   { rotate: calc(var(--wind-gust, 1.5deg) * var(--sway, 1)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

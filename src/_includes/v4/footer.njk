@@ -23,7 +23,7 @@
     {%- if footerSky %}
     {#- The redesign (1669:9587): the visitor's sky, its note above it, first in the footer. #}
     {% include "v4/sky.njk" %}
-    {#- Then its own line, the call as a dashed link, three socials, the
+    {#- Then its own line, the call as a dashed link, the socials (email first), the
         stamp, the year and the cookie settings. #}
     <div class="v4-footer__cta">
       <div class="v4-footer__text">
@@ -36,7 +36,8 @@
       <ul class="v4-footer__socials">
         {%- for name in home.footer.v5.socials %}
         {%- for s in home.footer.socials %}{% if s.name == name %}
-        <li><a href="{{ s.url }}" target="_blank" rel="noopener" aria-label="{{ s.name }}"><img src="{{ s.icon }}" alt="" /></a></li>
+        {%- set mail = s.url.startsWith("mailto:") %}
+        <li><a href="{{ s.url }}"{% if not mail %} target="_blank" rel="noopener"{% endif %} aria-label="{{ s.name }}{% if mail %} {{ s.url | replace('mailto:', '') }}{% endif %}"><img src="{{ s.icon }}" alt="" /></a></li>
         {%- endif %}{% endfor %}
         {%- endfor %}
       </ul>

@@ -9,7 +9,8 @@
  *
  * THE TABS pick the project: hovering a logo with a mouse, a click or tap, or
  * the arrow keys on a focused tab; the white notch slides under the active
- * one. No scroll switching. THE WHOLE CARD opens its case study.
+ * one. No scroll switching. THE WHOLE CARD opens its case study. Back from
+ * a case study (/#work-<id>) lands here, grown, with that project picked.
  *
  * THE THUMBNAILS, one at a time. The one showing plays: a video from its
  * start, a layered one its layers, an animated one its keyframes. 1s after
@@ -306,7 +307,7 @@
     carousels.forEach(function (c, k) { c.setLive(onScreen && k === active); });
   }
 
-  function pick(k, focus) {
+  function pick(k, focus, still) {
     if (k === active) return;
     var from = active;
     active = k;
@@ -317,7 +318,7 @@
     });
     cards.forEach(function (c, j) { c.hidden = j !== k; c.classList.toggle("is-active", j === k); });
     carousels[k].go(0);
-    movePointer(from);
+    if (still) placePointer(); else movePointer(from);
     measure();
     live();
     if (focus) tabs[k].focus();
@@ -344,9 +345,20 @@
     if (!document.hidden) live();
   });
 
+  // Back from a case study: that project's tab, the section at the top.
+  var back = /^#work-(.+)$/.exec(location.hash);
+  var backTo = back && tabs.findIndex(function (t) { return t.id === "tab-" + back[1]; });
+  if (back) {
+    if (backTo > 0) pick(backTo, false, true);
+    var land = function () { window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY, behavior: "instant" }); };
+    land();
+    window.addEventListener("load", land, { once: true });
+    requestAnimationFrame(function () { document.documentElement.classList.remove("is-landing"); });
+  }
+
   measure();
   grow();
   placePointer();
   live();
-  window.addEventListener("load", function () { measure(); placePointer(); });
+  window.addEventListener("load", function () { measure(); grow(); placePointer(); });
 })();
