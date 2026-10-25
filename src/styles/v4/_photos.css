@@ -108,6 +108,20 @@
 .v5-photo__card:focus-visible .v5-photo__inner,
 .v5-photo__card.is-turned .v5-photo__inner { transform: rotateY(180deg); }
 
+/* Safari can draw the back over the front whatever backface-visibility says
+   (the card then shows its navy back, mirrored). So the faces also swap at the
+   half-turn: the back shows only once the card is edge-on. */
+.v5-photo__back { opacity: 0; transition: opacity 0s 0.3s; }
+.v5-photo__front { transition: opacity 0s 0.3s; }
+@media (hover: hover) {
+  .v5-photo__card:hover .v5-photo__back { opacity: 1; }
+  .v5-photo__card:hover .v5-photo__front { opacity: 0; }
+}
+.v5-photo__card:focus-visible .v5-photo__back,
+.v5-photo__card.is-turned .v5-photo__back { opacity: 1; }
+.v5-photo__card:focus-visible .v5-photo__front,
+.v5-photo__card.is-turned .v5-photo__front { opacity: 0; }
+
 .v5-photo__card:focus-visible {
   outline: 2px solid #0d1233;
   outline-offset: 3px;

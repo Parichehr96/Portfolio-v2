@@ -128,12 +128,17 @@
    edges, joined from the start. */
 .v5-work__cards {
   display: grid;
+  /* One column, the container's width. Sized by its content instead, the
+     phone card (thumbnails at 100% of it) is a loop Safari resolves to
+     millions of pixels, pushing the rest of the page out of reach. */
+  grid-template-columns: minmax(0, 1fr);
   margin-top: min(24px, 1.5873vw);
   opacity: clamp(0, (var(--p) - 0.55) / 0.35, 1);   /* fades only: it never moves off its notch */
 }
 
 .v5-card {
   grid-area: 1 / 1;
+  min-width: 0;
   display: flex;
   gap: min(32px, 2.1164vw);
   padding: min(32px, 2.1164vw);
